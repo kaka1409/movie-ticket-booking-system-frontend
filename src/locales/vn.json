@@ -1,0 +1,18 @@
+{
+  "header.search": "Tìm phim, rạp chiếu...",
+  "quick_booking.title": "Đặt Vé Nhanh",
+  "quick_booking.select_movie": "Chọn Phim",
+  "quick_booking.date": "Ngày",
+  "quick_booking.showtime": "Suất Chiếu",
+  "quick_booking.cinema": "Rạp",
+  "quick_booking.book": "ĐẶT VÉ",
+  "home.featured.coming_soon": "Sắp Chiếu",
+  "home.movie_row.now_showing": "Đang Chiếu",
+  "home.movie_row.coming_soon": "Sắp Chiếu",
+  "home.movie_row.see_all": "XEM TẤT CẢ",
+  "home.promo": "KHUYẾN MÃI",
+  "nav.home": "Trang Chủ",
+  "nav.movies": "Phim",
+  "nav.tickets": "Vé",
+  "nav.profile": "Cá Nhân"
+}

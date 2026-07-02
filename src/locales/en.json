@@ -1,0 +1,18 @@
+{
+  "header.search": "Search movies, cinemas...",
+  "quick_booking.title": "Quick Booking",
+  "quick_booking.select_movie": "Select Movie",
+  "quick_booking.date": "Date",
+  "quick_booking.showtime": "Showtime",
+  "quick_booking.cinema": "Cinema",
+  "quick_booking.book": "QUICK BOOK",
+  "home.featured.coming_soon": "Coming Soon",
+  "home.movie_row.now_showing": "Now Showing",
+  "home.movie_row.coming_soon": "Coming Soon",
+  "home.movie_row.see_all": "SEE ALL",
+  "home.promo": "PROMO",
+  "nav.home": "Home",
+  "nav.movies": "Movies",
+  "nav.tickets": "Tickets",
+  "nav.profile": "Profile"
+}
