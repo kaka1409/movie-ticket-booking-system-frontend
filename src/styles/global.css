@@ -67,3 +67,16 @@ body {
   }
 }
 
+/* ─── Custom Utilities ───────────────────────────────────────── */
+.bg-hero-gradient {
+  background: linear-gradient(to top, rgba(15,15,15,0.95) 0%, rgba(15,15,15,0.2) 50%, transparent 100%);
+}
+
+@utility scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+

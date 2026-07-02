@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PrimeSeat
+
+PrimeSeat is a responsive web-based movie ticket booking system designed to provide a seamless and optimized user experience for browsing movies, selecting showtimes, reserving seats, and completing ticket purchases online. The system supports both guest and registered users, while also providing administrative features for cinema management and operational monitoring:
+
+This repository contains the frontend codebase for PrimeSeat which use Next.js 16.2 with App Router and React 19 + TypeScript.
+
+## Tech Stack
+
+- **Next.js 16.2** (App Router)
+- **React 19** + **TypeScript**
+- **Tailwind CSS v4** (CSS-based config)
+- **Redux Toolkit** (store wired, no slices yet)
+- **lucide-react** (icons)
+- **i18n** (English / Vietnamese)
+
+<!--## Screenshots-->
+
+<!--| Home | Movie Detail |
+|------|-------------|
+| ![Home](public/images/screenshot-home.png) | ![Detail](public/images/screenshot-detail.png) |-->
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+
+- pnpm
+
+### Install & Run
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Other Commands
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+pnpm build    # production build
+pnpm start    # production server
+pnpm lint     # ESLint
+```
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+src/
+├── app/
+│   ├── (main)/       # Home, movies, tickets, notifications, profile
+│   └── (auth)/       # Login, register
+├── components/
+│   ├── layout/       # Header, BottomNav, LayoutProvider (responsive)
+│   └── ui/movie/     # MovieCard (reusable)
+├── contexts/         # LocaleContext (i18n)
+├── features/         # Feature modules (scaffolding)
+├── libs/             # Constants, utilities
+├── locales/          # en.json, vn.json
+├── store/            # Redux store
+├── styles/           # global.css (Tailwind + custom utilities)
+└── types/            # Shared TypeScript types
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Notes
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Responsive layout: mobile (< 768px) shows Header + BottomNav, desktop shows placeholder shell
+- Brand theme uses CSS variables (gold/black palette) in `global.css`
+- Movie poster images configured in `next.config.ts` `images.remotePatterns`

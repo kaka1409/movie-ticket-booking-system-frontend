@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { Search, ChevronDown } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
+import MovieCard from "@/components/ui/movie/MovieCard";
 import {
   MOVIES,
   DATES,
@@ -19,48 +20,16 @@ const SearchBar: React.FC = () => {
   const { t } = useLocale();
   return (
     <div className="mx-(--space-md) flex items-center gap-3 rounded-md bg-(--color-surface) px-(--space-md) py-3">
-      <Search size={16} className="shrink-0 text-(--color-text-muted)" />
+      <Search size={16} className="shrink-0 text-(--color-gold-light)" />
       <input
-        className="w-full bg-transparent text-sm text-white outline-none placeholder:text-(--color-text-muted)"
+        className="w-full bg-transparent text-sm text-(--color-gold-light) outline-none placeholder:text-(--color-text-muted)"
         placeholder={t("header.search")}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
-    </div>
+    </div>  
   );
 };
-
-/* ─── MovieCard ─────────────────────────────────────────── */
-interface MovieCardProps {
-  title: string;
-  genre: string;
-  wide?: boolean;
-}
-
-const MovieCard: React.FC<MovieCardProps> = ({ title, genre, wide }) => (
-    <article style={{ width: wide ? 160 : 130 }}>
-      <div
-        className="overflow-hidden rounded-(--radius-lg)"
-        style={{ aspectRatio: "2/3", background: "var(--color-surface-2)" }}
-      >
-        <div
-          className="flex h-full w-full items-end p-(--space-sm)"
-          style={{
-            background: "linear-gradient(160deg, #2a2a2a 0%, #1a1a1a 100%)",
-          }}
-        >
-          <span
-            className="text-xs font-bold leading-tight"
-            style={{ color: "var(--color-gold-light)", textShadow: "0 1px 4px #000" }}
-          >
-            {title}
-          </span>
-        </div>
-      </div>
-      <p className="mt-(--space-sm) text-sm font-medium text-white">{title}</p>
-    <p className="text-xs text-(--color-text-muted)">{genre}</p>
-  </article>
-);
 
 /* ─── QuickBooking ──────────────────────────────────────── */
 const QuickBooking: React.FC = () => {
@@ -87,17 +56,12 @@ const QuickBooking: React.FC = () => {
         <ChevronDown
           aria-hidden
           size={18}
-          className="text-(--color-gold) transition-transform duration-200"
-          style={{ transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)" }}
+          className={`text-(--color-gold) transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
         />
       </button>
 
       <div
-        className="grid"
-        style={{
-          gridTemplateRows: isExpanded ? "1fr" : "0fr",
-          transition: "grid-template-rows 0.3s ease",
-        }}
+        className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${isExpanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
       >
         <div className="overflow-hidden min-h-0">
           <div className="mt-(--space-md) space-y-(--space-md)">
@@ -110,8 +74,7 @@ const QuickBooking: React.FC = () => {
               </label>
               <select
                 id="qb-movie"
-                className="w-full rounded-(--radius-sm) bg-(--color-surface) px-3 py-2.5 text-sm text-white outline-none"
-                style={{ border: "1px solid var(--color-border)" }}
+                className="w-full rounded-(--radius-sm) bg-(--color-surface) px-3 py-2.5 text-sm text-white outline-none border border-(--color-border)"
                 value={selectedMovie}
                 onChange={(e) => setSelectedMovie(e.target.value)}
               >
@@ -176,8 +139,7 @@ const QuickBooking: React.FC = () => {
               </label>
               <select
                 id="qb-cinema"
-                className="w-full rounded-(--radius-sm) bg-(--color-surface) px-3 py-2.5 text-sm text-white outline-none"
-                style={{ border: "1px solid var(--color-border)" }}
+                className="w-full rounded-(--radius-sm) bg-(--color-surface) px-3 py-2.5 text-sm text-white outline-none border border-(--color-border)"
                 value={selectedCinema}
                 onChange={(e) => setSelectedCinema(e.target.value)}
               >
@@ -219,10 +181,7 @@ const HeroBanner: React.FC = () => {
 
     <div
       aria-hidden
-      className="absolute inset-0"
-      style={{
-        background: "linear-gradient(to top, rgba(15,15,15,0.95) 0%, rgba(15,15,15,0.2) 50%, transparent 100%)",
-      }}
+      className="absolute inset-0 bg-hero-gradient"
     />
 
       <span
@@ -241,17 +200,16 @@ const HeroBanner: React.FC = () => {
 interface MovieRowProps {
   title: string;
   movies: typeof NOW_SHOWING;
-  wide?: boolean;
 }
 
-const MovieRow: React.FC<MovieRowProps> = ({ title, movies, wide }) => {
+const MovieRow: React.FC<MovieRowProps> = ({ title, movies }) => {
   const { t } = useLocale();
   return (
     <section
       className="px-(--space-md)"
       aria-labelledby={`${title.replace(/\s/g, "-").toLowerCase()}-heading`}
     >
-      <div className="mb-3 flex items-center justify-between">
+      <div className="mb-3 pl-1 flex items-center justify-between border-l-4 border-(--color-gold) rounded-(--radius-xs)">
         <h2
           id={`${title.replace(/\s/g, "-").toLowerCase()}-heading`}
           className="text-lg font-bold text-white"
@@ -266,7 +224,7 @@ const MovieRow: React.FC<MovieRowProps> = ({ title, movies, wide }) => {
       <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-(--space-sm)" role="list">
         {movies.map((m) => (
           <div key={m.title} role="listitem">
-            <MovieCard {...m} wide={wide} />
+            <MovieCard {...m} />
           </div>
         ))}
       </div>
@@ -283,7 +241,7 @@ export default function HomePage() {
       <QuickBooking />
       <SearchBar />
       <MovieRow title={t("home.movie_row.now_showing")} movies={NOW_SHOWING} />
-      <MovieRow title={t("home.movie_row.coming_soon")} movies={COMING_SOON} wide />
+      <MovieRow title={t("home.movie_row.coming_soon")} movies={COMING_SOON} />
     </div>
   );
 }

@@ -21,11 +21,7 @@ const BottomNav: React.FC = () => {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-40 max-w-md mx-auto pt-(--space-xs)"
-      style={{
-        backgroundColor: "var(--color-surface)",
-        borderTop: "1px solid var(--color-border)",
-      }}
+      className="fixed bottom-0 left-0 right-0 z-40 max-w-md mx-auto bg-(--color-surface) border-t border-(--color-border)"
       aria-label="Main navigation"
     >
       <ul className="flex justify-around items-center">
@@ -35,12 +31,17 @@ const BottomNav: React.FC = () => {
             <li key={href} className="flex-1">
               <Link
                 href={href}
-                className="flex flex-col items-center w-full"
-                style={{ color: isActive ? "var(--color-gold-light)" : "var(--color-text-muted)" }}
+                className={`flex flex-col items-center w-full px-(--space-md)`}
                 aria-current={isActive ? "page" : undefined}
               >
-                <Icon size={ICON_SIZE} fill={isActive ? "currentColor" : "none"} />
-                <span>{t(key)}</span>
+                <div
+                  className={`flex flex-col items-center w-full p-1 
+                    ${isActive ? "text-(--color-gold-light) bg-(--color-gold-light)/20 rounded-(--radius-md)" : "text-(--color-text-muted)"}`
+                  }
+                >
+                  <Icon size={ICON_SIZE} fill={isActive ? "currentColor" : "none"} />
+                  <span>{t(key)}</span>
+                </div>
               </Link>
             </li>
           );

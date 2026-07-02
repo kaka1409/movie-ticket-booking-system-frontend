@@ -17,7 +17,6 @@ const Logo: React.FC = () => (
       height={20}
     />
     <span
-      style={{ fontFamily: "var(--font-sans)" }}
       className="text-(--color-gold-light) font-extrabold text-lg tracking-tight"
     >
       PRIMESEAT
@@ -39,8 +38,7 @@ const Header: React.FC = () => {
         <div className="flex items-center gap-3">
           {/* Language toggle */}
           <button
-            className="text-xs font-semibold tracking-widest px-2 py-1 rounded"
-            style={{ color: "var(--color-gold-light)", border: "1px solid var(--color-border)" }}
+            className="text-xs font-semibold tracking-widest px-2 py-1 rounded text-(--color-gold-light) border border-(--color-border)"
             aria-label="Change language"
             onClick={() => setLocale(locale === "en" ? "vn" : "en")}
           >
@@ -49,15 +47,13 @@ const Header: React.FC = () => {
 
           {/* Notification bell */}
           <button
-            className="relative"
-            style={{ color: "var(--color-gold-light)" }}
+            className="relative text-(--color-gold-light)"
             aria-label="Notifications"
           >
             <Bell />
             {/* Unread dot */}
             <span
-              className="absolute top-0 right-0 w-2 h-2 rounded-full"
-              style={{ backgroundColor: "var(--color-gold)" }}
+              className="absolute top-0 right-0 w-2 h-2 rounded-full bg-(--color-gold)"
             />
           </button>
         </div>
