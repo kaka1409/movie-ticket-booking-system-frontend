@@ -15,8 +15,8 @@ export default function LayoutProvider({
     const mql = window.matchMedia("(min-width: 768px)");
 
     const update = (e: MediaQueryListEvent | MediaQueryList) => {
-      const d = e.matches ? "desktop" : "mobile";
-      setDevice(d);
+      const device = e.matches ? "desktop" : "mobile";
+      setDevice(device);
     };
 
     update(mql);

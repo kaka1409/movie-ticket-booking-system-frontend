@@ -8,8 +8,8 @@ This repository contains the frontend codebase for PrimeSeat which use Next.js 1
 
 - **Next.js 16.2** (App Router)
 - **React 19** + **TypeScript**
-- **Tailwind CSS v4** (CSS-based config)
-- **Redux Toolkit** (store wired, no slices yet)
+- **Tailwind CSS v4**
+- **Redux Toolkit**
 - **lucide-react** (icons)
 - **i18n** (English / Vietnamese)
 
