@@ -26,17 +26,17 @@ export default function LayoutProvider({
 
   return (
     <>
-      <MobileLayout />
-      <DesktopLayout />
-      <main
-        className={
-          device === "mobile"
-            ? "flex-1 overflow-y-auto pb-20 max-w-md mx-auto w-full"
-            : "flex-1 overflow-y-auto w-full"
-        }
-      >
-        {children}
-      </main>
+      {device === "mobile" && (
+        <>
+          <MobileLayout />
+          <main className="mx-auto w-full max-w-md flex-1 overflow-y-auto pb-20">
+            {children}
+          </main>
+        </>
+      )}
+      {device === "desktop" &&
+        <DesktopLayout>{children}</DesktopLayout>
+      }
     </>
   );
 }

@@ -1,18 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Clapperboard, Landmark, Calendar, Clock, Ticket } from "lucide-react";
 import { MOVIES, DATES, SHOWTIMES, CINEMAS } from "@/libs/constants";
 
 interface SelectColProps {
-  icon: string; label: string; value: string;
+  icon: React.ReactNode; label: string; value: string;
   onChange: (v: string) => void; options: string[];
   hint?: string;
 }
 
 const SelectCol: React.FC<SelectColProps> = ({ icon, label, value, onChange, options, hint }) => (
   <div className="flex flex-1 flex-col gap-1">
-    <span className="text-[9px] font-bold tracking-widest uppercase text-(--color-gold)">
+    <span className="flex items-center gap-1.5 text-[9px] font-bold tracking-widest uppercase text-(--color-gold)">
       {icon} {label}
     </span>
     <div className="relative">
@@ -47,40 +47,35 @@ export default function QuickBookingBar() {
   const [tickets, setTickets] = useState(2);
 
   return (
-    <div className="mx-auto max-w-7xl px-8">
+    <div className="mx-auto max-w-7xl px-8 pt-8">
       <div
-        className="relative z-10 mt-[-24px] rounded-(--radius-lg) border border-(--color-border) bg-(--color-surface) px-7 pb-4 pt-5"
+        className="relative z-10 mt-0 rounded-(--radius-lg) border border-(--color-border) bg-(--color-surface) px-7 pb-4 pt-5"
         style={{ boxShadow: "var(--shadow-card)" }}
       >
         <div className="mb-4 flex items-start gap-5">
-          <SelectCol icon="🎬" label="Select Movie" value={movie} onChange={setMovie} options={MOVIES} />
+          <SelectCol icon={<Clapperboard size={14} />} label="Select Movie" value={movie} onChange={setMovie} options={MOVIES} />
           <Divider />
-          <SelectCol icon="🏛" label="Select Cinema" value={cinema} onChange={setCinema} options={CINEMAS} />
+          <SelectCol icon={<Landmark size={14} />} label="Select Cinema" value={cinema} onChange={setCinema} options={CINEMAS} />
           <Divider />
-          <SelectCol icon="📅" label="Select Date" value={date} onChange={setDate} options={DATES.map((d) => d.label)} />
+          <SelectCol icon={<Calendar size={14} />} label="Select Date" value={date} onChange={setDate} options={DATES.map((d) => d.label)} />
           <Divider />
-          <SelectCol icon="⏰" label="Showtime" value={showtime} onChange={setShowtime} options={SHOWTIMES} hint="Next available: 19:00 · 20:15 · 21:30" />
+          <SelectCol icon={<Clock size={14} />} label="Showtime" value={showtime} onChange={setShowtime} options={SHOWTIMES} hint="Next available: 19:00 · 20:15 · 21:30" />
           <Divider />
 
           <div className="flex shrink-0 flex-col gap-1">
             <span className="text-[9px] font-bold tracking-widest uppercase text-(--color-gold)">
-              🎟 Tickets
+              <Ticket size={14} /> Tickets
             </span>
             <div className="flex items-center gap-2.5 border-b border-(--color-border) pb-2">
-              {[["−", () => setTickets(Math.max(1, tickets - 1))], ["+", () => setTickets(Math.min(8, tickets + 1))]].map(([sym, fn]) => (
-                <button
-                  key={sym as string}
-                  onClick={fn as () => void}
-                  className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-full border border-(--color-border) bg-(--color-surface-2) text-base font-bold text-white"
-                >
-                  {sym as string}
-                </button>
-              )).reduce((acc, btn, i) => {
-                if (i === 0) {
-                  return [btn, <span key="count" className="min-w-5 text-center text-base font-bold text-white">{tickets}</span>];
-                }
-                return [...acc, btn];
-              }, [] as React.ReactNode[])}
+              <button
+                onClick={() => setTickets(Math.max(1, tickets - 1))}
+                className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-full border border-(--color-border) bg-(--color-surface-2) text-base font-bold text-white"
+              >−</button>
+              <span className="min-w-5 text-center text-base font-bold text-white">{tickets}</span>
+              <button
+                onClick={() => setTickets(Math.min(8, tickets + 1))}
+                className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-full border border-(--color-border) bg-(--color-surface-2) text-base font-bold text-white"
+              >+</button>
             </div>
           </div>
         </div>

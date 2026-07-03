@@ -26,7 +26,7 @@ export default function ComingSoon() {
             COMING SOON
           </h2>
           <span className="rounded-(--radius-pill) border border-(--color-border) px-2.5 py-0.5 text-[10px] font-semibold tracking-wider text-(--color-text-muted)">
-            WINTER SEASON 2024
+            WINTER SEASON 2026
           </span>
         </div>
         <div className="flex gap-2">

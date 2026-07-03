@@ -43,8 +43,10 @@ export default function NowShowing() {
         {NOW_SHOWING.map((movie) => (
           <article
             key={movie.id}
-            className="cursor-pointer overflow-hidden rounded-(--radius-lg) border border-(--color-border) bg-(--color-surface) transition-all hover:translate-y-[-2px]"
-            style={{ borderColor: "var(--color-border)" }}
+            className="
+              cursor-pointer overflow-hidden rounded-(--radius-lg) border border-(--color-border)
+              bg-(--color-surface) transition-all hover:translate-y-[-2px]
+            "
             onMouseEnter={(e) => {
               const el = e.currentTarget;
               el.style.borderColor = "rgba(255,204,77,0.4)";
@@ -74,13 +76,10 @@ export default function NowShowing() {
                 </span>
               </div>
               <button
-                className="w-full cursor-pointer rounded-(--radius-sm) border border-(--color-gold) bg-transparent py-2 text-xs font-bold tracking-wider text-(--color-gold) transition-colors"
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = "rgba(255,204,77,0.1)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = "transparent";
-                }}
+                className="
+                  w-full cursor-pointer rounded-(--radius-sm) bg-(--color-gold) 
+                  py-2 text-xs text-black font-bold tracking-wider transition-colors
+                "
               >
                 Book Now
               </button>

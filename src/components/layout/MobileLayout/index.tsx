@@ -5,7 +5,7 @@ import BottomNav from "./BottomNav";
 
 export default function MobileLayout() {
   return (
-    <div data-shell="mobile">
+    <div>
       <Header />
       <BottomNav />
     </div>

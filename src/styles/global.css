@@ -52,21 +52,6 @@ body {
   min-height: 100dvh;
 }
 
-/* ─── Layout Shell Visibility ─────────────────────────────────── */
-[data-shell="desktop"] {
-  display: none;
-}
-
-@media (min-width: 768px) {
-  [data-shell="mobile"] {
-    display: none !important;
-  }
-
-  [data-shell="desktop"] {
-    display: flex;
-  }
-}
-
 /* ─── Custom Utilities ───────────────────────────────────────── */
 .bg-hero-gradient {
   background: linear-gradient(to top, rgba(15,15,15,0.95) 0%, rgba(15,15,15,0.2) 50%, transparent 100%);

@@ -11,12 +11,12 @@ const FOR_YOU = [
 export default function ForYou() {
   return (
     <section
-      className="mt-12 px-8 py-14"
+      className="mt-12 py-14"
       style={{
         background: "linear-gradient(180deg,transparent 0%,rgba(255,204,77,0.03) 50%,transparent 100%)",
       }}
     >
-      <div className="mx-auto max-w-7xl">
+      <div className="mx-auto max-w-7xl px-8">
         <div className="mb-8 text-center">
           <h2 className="mb-1.5 text-[28px] font-black tracking-tight text-white">FOR YOU, ALEX</h2>
           <p className="text-[13px] text-(--color-text-muted)">

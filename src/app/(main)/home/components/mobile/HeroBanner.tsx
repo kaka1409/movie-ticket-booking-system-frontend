@@ -8,10 +8,11 @@ export default function HeroBanner() {
   return (
     <section className="relative h-55 w-full overflow-hidden" aria-label="Featured film">
       <Image
-        src="/images/hero-interstellar.jpg"
-        alt=""
-        fill
         className="object-cover"
+        src="/images/hero-interstellar.jpg"
+        alt="Featured movies"
+        sizes=""
+        fill
         priority
       />
       <div aria-hidden className="absolute inset-0 bg-hero-gradient" />

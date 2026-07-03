@@ -1,23 +1,23 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
+import { X, Play, Camera, BookOpen } from "lucide-react";
 import { APP_NAME } from "@/libs/constants";
 
 export default function Footer() {
   const [email, setEmail] = useState("");
 
   return (
-    <footer className="mt-16 border-t border-(--color-border) bg-(--color-bg) px-8 pb-6 pt-12">
-      <div className="mx-auto max-w-7xl">
+    <footer className="mt-16 border-t border-(--color-border) bg-(--color-bg) pb-6 pt-12">
+      <div className="mx-auto max-w-7xl px-8">
         <div className="mb-10 grid grid-cols-[1.8fr_1fr_1fr_1.6fr] gap-10">
           {/* Brand */}
           <div>
             <div className="mb-3.5 flex items-center gap-2">
-              <div className="flex h-7 w-7 items-center justify-center rounded-md bg-(--color-gold) text-xs font-black text-black">
-                P
-              </div>
-              <span className="text-[15px] font-extrabold text-white">
-                Prime<span className="text-(--color-gold)">Seat</span>
+              <Image src="/images/logo.png" alt="Logo" width={28} height={28} className="rounded-full" />
+              <span className="text-[15px] font-extrabold text-(--color-gold-light)">
+                PrimeSeat
               </span>
             </div>
             <p className="mb-5 max-w-[220px] text-xs leading-relaxed text-(--color-text-muted)">
@@ -25,12 +25,12 @@ export default function Footer() {
               cinematic wonders and exclusive perks.
             </p>
             <div className="flex gap-2.5">
-              {["X", "▶", "📷", "📘"].map((icon, i) => (
+              {[X, Play, Camera, BookOpen].map((Icon, i) => (
                 <button
                   key={i}
-                  className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border border-(--color-border) bg-transparent text-[11px] text-(--color-text-muted)"
+                  className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border border-(--color-border) bg-transparent text-(--color-text-muted)"
                 >
-                  {icon}
+                  <Icon size={14} />
                 </button>
               ))}
             </div>
@@ -44,16 +44,7 @@ export default function Footer() {
             <ul className="flex list-none flex-col gap-2.5">
               {["Find a Cinema", "Movie Grids", "Cinematic Tech", "Sitemap"].map((l) => (
                 <li key={l}>
-                  <a
-                    href="#"
-                    className="text-[13px] text-(--color-text-muted) no-underline"
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.color = "var(--color-gold-light)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.color = "var(--color-text-muted)";
-                    }}
-                  >
+                  <a href="#" className="text-[13px] text-(--color-text-muted) no-underline hover:text-(--color-gold-light)">
                     {l}
                   </a>
                 </li>
@@ -69,16 +60,7 @@ export default function Footer() {
             <ul className="flex list-none flex-col gap-2.5">
               {["Help Center", "Contact Us", "Gift Cards", "Refunds"].map((l) => (
                 <li key={l}>
-                  <a
-                    href="#"
-                    className="text-[13px] text-(--color-text-muted) no-underline"
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.color = "var(--color-gold-light)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.color = "var(--color-text-muted)";
-                    }}
-                  >
+                  <a href="#" className="text-[13px] text-(--color-text-muted) no-underline hover:text-(--color-gold-light)">
                     {l}
                   </a>
                 </li>
@@ -123,7 +105,7 @@ export default function Footer() {
             ))}
           </div>
           <p className="text-[11px] text-(--color-text-muted)">
-            &copy; 2024 PrimeSeat Cinemas Entertainment Group. All rights reserved.
+            &copy; 2026 PrimeSeat Cinemas Entertainment Group. All rights reserved.
           </p>
         </div>
       </div>

@@ -4,7 +4,7 @@ import { useLocale } from "@/contexts/LocaleContext";
 import HeroSection from "@/app/(main)/home/components/desktop/HeroSection";
 import NowShowing from "@/app/(main)/home/components/desktop/NowShowing";
 import ComingSoon from "@/app/(main)/home/components/desktop/ComingSoon";
-import Footer from "@/components/layout/DesktopLayout/Footer";
+
 import HeroBanner from "@/app/(main)/home/components/mobile/HeroBanner";
 import QuickBooking from "@/app/(main)/home/components/mobile/QuickBooking";
 import SearchBar from "@/app/(main)/home/components/mobile/SearchBar";
@@ -35,7 +35,6 @@ export default function HomePage() {
         <NowShowing />
         <ComingSoon />
         <ForYou />
-        <Footer />
       </div>
     </>
   );
