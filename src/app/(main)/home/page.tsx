@@ -4,15 +4,9 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { Search, ChevronDown } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
-import MovieCard from "@/components/ui/movie/MovieCard";
-import {
-  MOVIES,
-  DATES,
-  SHOWTIMES,
-  CINEMAS,
-  NOW_SHOWING,
-  COMING_SOON,
-} from "@/libs/constants";
+import MovieCard from "@/features/movies/components/MovieCard";
+import { MOVIES, DATES, SHOWTIMES, CINEMAS } from "@/libs/constants";
+import { NOW_SHOWING, COMING_SOON } from "@/features/movies/mock";
 
 /* ─── SearchBar ─────────────────────────────────────────── */
 const SearchBar: React.FC = () => {
