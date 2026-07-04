@@ -16,7 +16,7 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "upload.wikimedia.org" },
     ],
   },
-  allowedDevOrigins: ['10.25.32.230'], // Test
+  allowedDevOrigins: ['10.25.32.230', '192.168.88.165'], // Test ip origins
 };
 
 export default nextConfig;

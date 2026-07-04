@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { ComponentType, ReactNode } from "react";
+import type { ReactNode } from "react";
+import { useLocale } from "@/contexts/LocaleContext";
 import MobileMainLayout from "./mobile/main";
 import MobileAuthLayout from "./mobile/auth";
 import MobileSubLayout from "./mobile/sub";
@@ -12,6 +13,9 @@ import DesktopSubLayout from "./desktop/sub";
 interface LayoutProviderProps {
   children: ReactNode;
   layout?: LayoutType;
+  title?: string;
+  titleKey?: string;
+  subtitle?: string;
 }
 
 type LayoutType = "auth" | "main" | "sub";
@@ -32,7 +36,11 @@ const LAYOUTS = {
 export default function LayoutProvider({
   children,
   layout = "main",
+  title,
+  titleKey,
+  subtitle,
 }: LayoutProviderProps) {
+  const { t } = useLocale();
   const [device, setDevice] = useState<"mobile" | "desktop">("mobile");
 
   useEffect(() => {
@@ -47,6 +55,15 @@ export default function LayoutProvider({
 
   const layouts = device === "mobile" ? LAYOUTS["mobile"] : LAYOUTS["desktop"];
   const Layout = layouts[layout];
+  const resolvedTitle = titleKey ? t(titleKey) : title;
+
+  if (layout === "sub") {
+    return (
+      <Layout title={resolvedTitle} subtitle={subtitle}>
+        {children}
+      </Layout>
+    );
+  }
 
   return <Layout>{children}</Layout>;
 }

@@ -5,12 +5,15 @@ import Link from "next/link";
 import React from "react";
 import { ArrowLeft } from "lucide-react";
 
-/* ─── DesktopSubLayout ───────────────────────────────────────── */
+interface DesktopSubLayoutProps {
+  children: React.ReactNode;
+  title?: string;
+}
+
 export default function DesktopSubLayout({
   children,
-}: {
-  children: React.ReactNode;
-}) {
+  title,
+}: DesktopSubLayoutProps) {
   return (
     <div className="flex min-h-screen flex-col">
       <nav className="sticky top-0 z-50 border-b border-(--color-border) bg-black/92 backdrop-blur-md">
@@ -25,6 +28,12 @@ export default function DesktopSubLayout({
               PrimeSeat
             </span>
           </Link>
+
+          {title && (
+            <h1 className="text-lg font-bold text-(--color-gold-light)">
+              {title}
+            </h1>
+          )}
         </div>
       </nav>
 

@@ -5,5 +5,9 @@ export default function SubLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <LayoutProvider layout="sub">{children}</LayoutProvider>;
+  return (
+    <LayoutProvider layout="sub" titleKey="notif.title">
+      {children}
+    </LayoutProvider>
+  );
 }

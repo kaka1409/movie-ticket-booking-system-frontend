@@ -79,7 +79,7 @@ function BottomNav() {
                 aria-current={isActive ? "page" : undefined}
               >
                 <div
-                  className={`flex flex-col items-center w-full p-1 ${
+                  className={`flex flex-col items-center w-full p-1 text-sm ${
                     isActive
                       ? "text-(--color-gold-light) bg-(--color-gold-light)/20 rounded-(--radius-md)"
                       : "text-(--color-text-muted)"
