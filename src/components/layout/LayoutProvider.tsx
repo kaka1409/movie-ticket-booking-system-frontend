@@ -1,42 +1,52 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import MobileLayout from "./MobileLayout";
-import DesktopLayout from "./DesktopLayout";
+import type { ComponentType, ReactNode } from "react";
+import MobileMainLayout from "./mobile/main";
+import MobileAuthLayout from "./mobile/auth";
+import MobileSubLayout from "./mobile/sub";
+import DesktopMainLayout from "./desktop/main";
+import DesktopAuthLayout from "./desktop/auth";
+import DesktopSubLayout from "./desktop/sub";
+
+interface LayoutProviderProps {
+  children: ReactNode;
+  layout?: LayoutType;
+}
+
+type LayoutType = "auth" | "main" | "sub";
+
+const LAYOUTS = {
+  mobile: {
+    auth: MobileAuthLayout,
+    main: MobileMainLayout,
+    sub: MobileSubLayout,
+  },
+  desktop: {
+    auth: DesktopAuthLayout,
+    main: DesktopMainLayout,
+    sub: DesktopSubLayout,
+  },
+} as const;
 
 export default function LayoutProvider({
   children,
-}: {
-  children: React.ReactNode;
-}) {
+  layout = "main",
+}: LayoutProviderProps) {
   const [device, setDevice] = useState<"mobile" | "desktop">("mobile");
 
   useEffect(() => {
     const mql = window.matchMedia("(min-width: 768px)");
-
     const update = (e: MediaQueryListEvent | MediaQueryList) => {
-      const device = e.matches ? "desktop" : "mobile";
-      setDevice(device);
+      setDevice(e.matches ? "desktop" : "mobile");
     };
-
     update(mql);
     mql.addEventListener("change", update);
     return () => mql.removeEventListener("change", update);
   }, []);
 
-  return (
-    <>
-      {device === "mobile" && (
-        <>
-          <MobileLayout />
-          <main className="mx-auto w-full max-w-md flex-1 overflow-y-auto pb-20">
-            {children}
-          </main>
-        </>
-      )}
-      {device === "desktop" &&
-        <DesktopLayout>{children}</DesktopLayout>
-      }
-    </>
-  );
+  const layouts = device === "mobile" ? LAYOUTS["mobile"] : LAYOUTS["desktop"];
+  const Layout = layouts[layout];
+
+  return <Layout>{children}</Layout>;
 }

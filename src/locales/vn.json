@@ -1,4 +1,7 @@
 {
+  "notif.title": "Thông Báo",
+  "notif.mark_all_read": "Đánh dấu đã đọc tất cả",
+  "notif.no_notifications": "Chưa có thông báo nào",
   "header.search": "Tìm phim, rạp chiếu...",
   "quick_booking.title": "Đặt Vé Nhanh",
   "quick_booking.select_movie": "Chọn Phim",
@@ -14,5 +17,6 @@
   "nav.home": "Trang Chủ",
   "nav.movies": "Phim",
   "nav.tickets": "Vé",
-  "nav.profile": "Cá Nhân"
+  "nav.profile": "Cá Nhân",
+  "sub.back": "Quay lại"
 }

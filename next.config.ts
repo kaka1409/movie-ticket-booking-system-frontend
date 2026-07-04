@@ -13,8 +13,10 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "cdn.dribbble.com" },
       { protocol: "https", hostname: "encrypted-tbn0.gstatic.com" },
       { protocol: "https", hostname: "m.media-amazon.com" },
+      { protocol: "https", hostname: "upload.wikimedia.org" },
     ],
   },
+  allowedDevOrigins: ['10.25.32.230'], // Test
 };
 
 export default nextConfig;

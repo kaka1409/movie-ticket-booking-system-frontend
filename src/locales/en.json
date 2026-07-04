@@ -1,4 +1,7 @@
 {
+  "notif.title": "Notifications",
+  "notif.mark_all_read": "Mark all as read",
+  "notif.no_notifications": "No notifications yet",
   "header.search": "Search movies, cinemas...",
   "quick_booking.title": "Quick Booking",
   "quick_booking.select_movie": "Select Movie",
@@ -14,5 +17,6 @@
   "nav.home": "Home",
   "nav.movies": "Movies",
   "nav.tickets": "Tickets",
-  "nav.profile": "Profile"
+  "nav.profile": "Profile",
+  "sub.back": "Go back"
 }

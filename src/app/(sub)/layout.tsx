@@ -1,9 +1,9 @@
 import LayoutProvider from "@/components/layout/LayoutProvider";
 
-export default function AuthLayout({
+export default function SubLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <LayoutProvider layout="auth">{children}</LayoutProvider>;
+  return <LayoutProvider layout="sub">{children}</LayoutProvider>;
 }
