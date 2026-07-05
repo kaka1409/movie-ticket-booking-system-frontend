@@ -29,9 +29,9 @@ export default function MovieRow({ title, movies }: MovieRowProps) {
       </div>
 
       <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-(--space-sm)" role="list">
-        {movies.map((m) => (
-          <div key={m.id} role="listitem">
-            <MovieCard movie={m} />
+        {movies.map((movie) => (
+          <div key={movie.id} role="listitem">
+            <MovieCard movie={movie} />
           </div>
         ))}
       </div>

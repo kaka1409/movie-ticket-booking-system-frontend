@@ -14,6 +14,8 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "encrypted-tbn0.gstatic.com" },
       { protocol: "https", hostname: "m.media-amazon.com" },
       { protocol: "https", hostname: "upload.wikimedia.org" },
+      { protocol: "https", hostname: "image.tmdb.org" },
+      { protocol: "https", hostname: "i.pravatar.cc" },
     ],
   },
   allowedDevOrigins: ['10.25.32.230', '192.168.88.165'], // Test ip origins

@@ -46,6 +46,7 @@ No test runner. `tests/{e2e,integration,unit}/` are empty dirs. `pnpm test` unde
 - **Navigation**: `<Link>` (not `<a>`); active route via `usePathname()`.
 - **`"use client"`** required at top of every file using hooks or browser APIs.
 - **Home page** (`(main)/home/page.tsx`) renders mobile/desktop variants via `hidden md:block` / `block md:hidden`. Imports data from `@/features/movies/mock`. Sub-components under `home/components/{mobile,desktop}/`.
+- **Component split pattern**: All pages use `block md:hidden` / `hidden md:block` to render mobile/desktop variants. Each page has `components/{mobile,desktop}/` dirs. Shared components go in `components/shared/`. See `(main)/home/` as canonical example.
 - `postcss.config.mjs` only has `@tailwindcss/postcss` plugin.
 - No Prettier config, no CI/CD workflows.
 

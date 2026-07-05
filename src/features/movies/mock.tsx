@@ -13,7 +13,12 @@ export const NOW_SHOWING: Movie[] = [
     synopsis:
       "Earth's mightiest heroes must come together and learn to fight as a team if they are going to stop the mischievous Loki and his alien army from enslaving humanity.",
     director: "Joss Whedon",
-    cast: ["Robert Downey Jr.", "Chris Evans", "Mark Ruffalo", "Chris Hemsworth"],
+    cast: [
+      { name: "Robert Downey Jr.", role: "Iron Man", src: "https://upload.wikimedia.org/wikipedia/commons/2/2c/Actor_Robert_Downey_Jr._photographed_by_the_California_Department_of_Corrections.jpg" },
+      { name: "Chris Evans", role: "Captain America", src: "https://upload.wikimedia.org/wikipedia/commons/d/d8/Chris_Evans_TIFF_2012.jpg" },
+      { name: "Mark Ruffalo", role: "The Hulk", src: "https://upload.wikimedia.org/wikipedia/commons/8/81/Mark_Ruffalo_%282007%29.jpg" },
+      { name: "Chris Hemsworth", role: "Thor", src: "https://upload.wikimedia.org/wikipedia/commons/9/91/Chris_Hemsworth_by_Gage_Skidmore_2.jpg" },
+    ],
     releaseDate: "2012-05-04",
     ageRating: "PG-13",
     language: "English",
@@ -29,7 +34,11 @@ export const NOW_SHOWING: Movie[] = [
     synopsis:
       "In Gotham City, mentally troubled comedian Arthur Fleck is disregarded and mistreated by society. He then embarks on a downward spiral of revolution and bloody crime.",
     director: "Todd Phillips",
-    cast: ["Joaquin Phoenix", "Robert De Niro", "Zazie Beetz"],
+    cast: [
+      { name: "Joaquin Phoenix", role: "Arthur Fleck", src: "https://upload.wikimedia.org/wikipedia/commons/b/b7/Joaquin_Phoenix%2C_2014.jpg" },
+      { name: "Robert De Niro", role: "Murray Franklin", src: "https://upload.wikimedia.org/wikipedia/commons/8/82/Robert_De_Niro_KVIFF_portrait.jpg" },
+      { name: "Zazie Beetz", role: "Sophie Dumond", src: "https://upload.wikimedia.org/wikipedia/commons/5/51/Zazie_Beetz_by_Gage_Skidmore.jpg" },
+    ],
     releaseDate: "2019-10-04",
     ageRating: "R",
     language: "English",
@@ -45,7 +54,11 @@ export const NOW_SHOWING: Movie[] = [
     synopsis:
       "A group of strangers find themselves trapped in a mysterious building, only to realize they are all connected by a dark secret.",
     director: "James DeMonaco",
-    cast: ["Frank Grillo", "Maggie Q", "Sergio Peris-Mencheta"],
+    cast: [
+      { name: "Frank Grillo", role: "Leo Barnes", src: "https://i.pravatar.cc/300?img=11" },
+      { name: "Maggie Q", role: "Elena", src: "https://i.pravatar.cc/300?img=5" },
+      { name: "Sergio Peris-Mencheta", role: "Caleb Tucker", src: "https://i.pravatar.cc/300?img=12" },
+    ],
     releaseDate: "2024-03-15",
     ageRating: "R",
     language: "English",
@@ -61,7 +74,12 @@ export const NOW_SHOWING: Movie[] = [
     synopsis:
       "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O.",
     director: "Christopher Nolan",
-    cast: ["Leonardo DiCaprio", "Joseph Gordon-Levitt", "Elliot Page", "Tom Hardy"],
+    cast: [
+      { name: "Leonardo DiCaprio", role: "Dom Cobb", src: "https://upload.wikimedia.org/wikipedia/commons/7/71/Leonardo_DiCaprio.jpg" },
+      { name: "Joseph Gordon-Levitt", role: "Arthur", src: "https://upload.wikimedia.org/wikipedia/commons/a/a8/Joseph_Gordon-Levitt_by_Gage_Skidmore_2.jpg" },
+      { name: "Elliot Page", role: "Ariadne", src: "https://i.pravatar.cc/300?img=32" },
+      { name: "Tom Hardy", role: "Eames", src: "https://upload.wikimedia.org/wikipedia/commons/4/4c/Tom_Hardy_by_Gage_Skidmore_in_2018.jpg" },
+    ],
     releaseDate: "2010-07-16",
     ageRating: "PG-13",
     language: "English",
@@ -77,7 +95,12 @@ export const NOW_SHOWING: Movie[] = [
     synopsis:
       "When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest psychological and physical tests of his ability to fight injustice.",
     director: "Christopher Nolan",
-    cast: ["Christian Bale", "Heath Ledger", "Aaron Eckhart", "Maggie Gyllenhaal"],
+    cast: [
+      { name: "Christian Bale", role: "Batman", src: "https://upload.wikimedia.org/wikipedia/commons/b/bf/Christianbale.jpg" },
+      { name: "Heath Ledger", role: "The Joker", src: "https://upload.wikimedia.org/wikipedia/commons/f/f3/Heath_Ledger_face.jpg" },
+      { name: "Aaron Eckhart", role: "Harvey Dent", src: "https://i.pravatar.cc/300?img=53" },
+      { name: "Maggie Gyllenhaal", role: "Rachel Dawes", src: "https://i.pravatar.cc/300?img=23" },
+    ],
     releaseDate: "2008-07-18",
     ageRating: "PG-13",
     language: "English",
@@ -93,7 +116,12 @@ export const NOW_SHOWING: Movie[] = [
     synopsis:
       "The story of American scientist J. Robert Oppenheimer and his role in the development of the atomic bomb during World War II.",
     director: "Christopher Nolan",
-    cast: ["Cillian Murphy", "Emily Blunt", "Matt Damon", "Robert Downey Jr."],
+    cast: [
+      { name: "Cillian Murphy", role: "J. Robert Oppenheimer", src: "https://upload.wikimedia.org/wikipedia/commons/6/6e/MKr347645_Cillian_Murphy_%28Small_Things_Like_These%2C_Berlinale_2024%29.jpg" },
+      { name: "Emily Blunt", role: "Kitty Oppenheimer", src: "https://upload.wikimedia.org/wikipedia/commons/0/06/Emily_Blunt_%2832056670378%29.jpg" },
+      { name: "Matt Damon", role: "Leslie Groves", src: "https://upload.wikimedia.org/wikipedia/commons/5/5b/Matt_Damon_2014.jpg" },
+      { name: "Robert Downey Jr.", role: "Lewis Strauss", src: "https://upload.wikimedia.org/wikipedia/commons/2/2c/Actor_Robert_Downey_Jr._photographed_by_the_California_Department_of_Corrections.jpg" },
+    ],
     releaseDate: "2023-07-21",
     ageRating: "R",
     language: "English",
@@ -112,7 +140,10 @@ export const COMING_SOON: Movie[] = [
     synopsis:
       "A new installment in the Final Destination franchise, where death finds creative ways to claim its victims.",
     director: "Zack Lipovsky",
-    cast: ["Brec Bassinger", "Tony Todd"],
+    cast: [
+      { name: "Brec Bassinger", role: "Lead Role", src: "https://i.pravatar.cc/300?img=47" },
+      { name: "Tony Todd", role: "William Bludworth", src: "https://i.pravatar.cc/300?img=59" },
+    ],
     releaseDate: "2025-05-16",
     ageRating: "R",
     language: "English",
@@ -128,7 +159,10 @@ export const COMING_SOON: Movie[] = [
     synopsis:
       "A deep-sea exploration turns into a nightmare when the crew encounters an ancient creature lurking in the abyss.",
     director: "James Cameron",
-    cast: ["Kate Winslet", "Sam Worthington"],
+    cast: [
+      { name: "Kate Winslet", role: "Dr. Elara Vance", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Kate_Winslet_at_the_2006_Toronto_International_Film_Festival.jpg/300px-Kate_Winslet_at_the_2006_Toronto_International_Film_Festival.jpg" },
+      { name: "Sam Worthington", role: "Captain Marcus Cole", src: "https://upload.wikimedia.org/wikipedia/commons/f/f1/Sam_Worthington%2C_Jennifer_Hawkins_%288491455629%29.jpg" },
+    ],
     releaseDate: "2025-12-20",
     ageRating: "PG-13",
     language: "English",
@@ -144,7 +178,11 @@ export const COMING_SOON: Movie[] = [
     synopsis:
       "The son of Zeus must prove himself worthy of his place among the gods by completing a series of legendary labors.",
     director: "Brett Ratner",
-    cast: ["Dwayne Johnson", "Ian McShane", "Rufus Sewell"],
+    cast: [
+      { name: "Dwayne Johnson", role: "Hercules", src: "https://upload.wikimedia.org/wikipedia/commons/7/7e/Dwayne_The_Rock_Johnson_2009_portrait.jpg" },
+      { name: "Ian McShane", role: "Amphitryon", src: "https://i.pravatar.cc/300?img=60" },
+      { name: "Rufus Sewell", role: "Autolycus", src: "https://i.pravatar.cc/300?img=14" },
+    ],
     releaseDate: "2025-07-25",
     ageRating: "PG-13",
     language: "English",
@@ -160,7 +198,12 @@ export const COMING_SOON: Movie[] = [
     synopsis:
       "Diana must face two new foes as she navigates the Cold War era of the 1980s while protecting the world from a powerful artifact.",
     director: "Patty Jenkins",
-    cast: ["Gal Gadot", "Chris Pine", "Kristen Wiig", "Pedro Pascal"],
+    cast: [
+      { name: "Gal Gadot", role: "Diana Prince", src: "https://upload.wikimedia.org/wikipedia/commons/f/f2/Gal_Gadot_by_Gage_Skidmore_2.jpg" },
+      { name: "Chris Pine", role: "Steve Trevor", src: "https://i.pravatar.cc/300?img=51" },
+      { name: "Kristen Wiig", role: "Barbara Minerva", src: "https://i.pravatar.cc/300?img=25" },
+      { name: "Pedro Pascal", role: "Maxwell Lord", src: "https://upload.wikimedia.org/wikipedia/commons/3/33/Pedro_Pascal_by_Gage_Skidmore_2.jpg" },
+    ],
     releaseDate: "2025-12-25",
     ageRating: "PG-13",
     language: "English",
@@ -176,7 +219,11 @@ export const COMING_SOON: Movie[] = [
     synopsis:
       "Shang-Chi must confront the past he thought he left behind when he is drawn into the web of the mysterious Ten Rings organization.",
     director: "Destin Daniel Cretton",
-    cast: ["Simu Liu", "Awkwafina", "Tony Leung"],
+    cast: [
+      { name: "Simu Liu", role: "Shang-Chi", src: "https://upload.wikimedia.org/wikipedia/commons/b/bf/Simu_Liu_by_Gage_Skidmore.jpg" },
+      { name: "Awkwafina", role: "Katy", src: "https://upload.wikimedia.org/wikipedia/commons/b/b3/Awkwafina.png" },
+      { name: "Tony Leung", role: "Xu Wenwu", src: "https://i.pravatar.cc/300?img=68" },
+    ],
     releaseDate: "2025-11-05",
     ageRating: "PG-13",
     language: "English",
