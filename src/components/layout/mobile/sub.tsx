@@ -2,19 +2,30 @@
 
 import React from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import { useLocale } from "@/contexts/LocaleContext";
+import { ALL_MOVIES } from "@/features/movies/mock";
 
-interface MobileSubLayoutProps {
-  children: React.ReactNode;
-  title?: string;
-  subtitle?: string;
+function getSubTitle(pathname: string, t: (key: string) => string): string {
+  if (pathname.startsWith("/notifications")) return t("notif.title");
+  if (pathname.startsWith("/movies/")) {
+    const slug = pathname.split("/movies/")[1];
+    const movie = ALL_MOVIES.find((m) => m.slug === slug);
+    return movie?.title ?? "";
+  }
+  return "";
 }
 
 export default function MobileSubLayout({
   children,
-  title,
-  subtitle,
-}: MobileSubLayoutProps) {
+}: {
+  children: React.ReactNode;
+}) {
+  const pathname = usePathname();
+  const { t } = useLocale();
+  const title = getSubTitle(pathname, t);
+
   return (
     <div className="min-h-dvh bg-(--color-bg) flex flex-col max-w-md mx-auto">
       <header className="flex items-center justify-between px-4 pt-5 pb-4 border-b border-(--color-border)">
@@ -30,11 +41,6 @@ export default function MobileSubLayout({
           <h1 className="text-xl font-bold text-(--color-gold-light)">
             {title}
           </h1>
-          {subtitle && (
-            <span className="w-5 h-5 rounded-full bg-(--color-gold) text-(--color-bg) text-[10px] font-black flex items-center justify-center">
-              {subtitle}
-            </span>
-          )}
         </div>
 
         <div className="w-9 h-9" />

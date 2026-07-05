@@ -2,16 +2,11 @@
 
 import { useLocale } from "@/contexts/LocaleContext";
 import MovieCard from "@/components/common/MovieCard";
+import type { Movie } from "@/features/movies/types";
 
 interface MovieRowProps {
   title: string;
-  movies: Array<{
-    title: string;
-    genre: string;
-    rating: number;
-    duration: number;
-    src?: string;
-  }>;
+  movies: Movie[];
 }
 
 export default function MovieRow({ title, movies }: MovieRowProps) {
@@ -35,8 +30,8 @@ export default function MovieRow({ title, movies }: MovieRowProps) {
 
       <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-(--space-sm)" role="list">
         {movies.map((m) => (
-          <div key={m.title} role="listitem">
-            <MovieCard {...m} />
+          <div key={m.id} role="listitem">
+            <MovieCard movie={m} />
           </div>
         ))}
       </div>

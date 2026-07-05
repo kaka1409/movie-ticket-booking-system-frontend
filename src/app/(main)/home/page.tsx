@@ -1,16 +1,21 @@
 "use client";
 
 import { useLocale } from "@/contexts/LocaleContext";
+
+// Desktop components
 import HeroSection from "@/app/(main)/home/components/desktop/HeroSection";
 import NowShowing from "@/app/(main)/home/components/desktop/NowShowing";
 import ComingSoon from "@/app/(main)/home/components/desktop/ComingSoon";
+import QuickBookingBar from "@/app/(main)/home/components/desktop/QuickBookingBar";
+import ForYou from "@/app/(main)/home/components/desktop/ForYou";
 
+// Mobile components
 import HeroBanner from "@/app/(main)/home/components/mobile/HeroBanner";
 import QuickBooking from "@/app/(main)/home/components/mobile/QuickBooking";
 import SearchBar from "@/app/(main)/home/components/mobile/SearchBar";
 import MovieRow from "@/app/(main)/home/components/mobile/MovieRow";
-import QuickBookingBar from "@/app/(main)/home/components/desktop/QuickBookingBar";
-import ForYou from "@/app/(main)/home/components/desktop/ForYou";
+
+
 import { NOW_SHOWING, COMING_SOON } from "@/features/movies/mock";
 
 export default function HomePage() {

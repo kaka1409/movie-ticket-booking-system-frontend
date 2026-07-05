@@ -1,9 +1,9 @@
 import LayoutProvider from "@/components/layout/LayoutProvider";
 
-export default function SubLayout({
+export default function BlankLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <LayoutProvider layout="sub">{children}</LayoutProvider>;
+  return <LayoutProvider layout="blank">{children}</LayoutProvider>;
 }

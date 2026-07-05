@@ -2,45 +2,41 @@
 
 import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
-import { useLocale } from "@/contexts/LocaleContext";
 import MobileMainLayout from "./mobile/main";
 import MobileAuthLayout from "./mobile/auth";
 import MobileSubLayout from "./mobile/sub";
+import MobileBlankLayout from "./mobile/blank";
 import DesktopMainLayout from "./desktop/main";
 import DesktopAuthLayout from "./desktop/auth";
 import DesktopSubLayout from "./desktop/sub";
+import DesktopBlankLayout from "./desktop/blank";
 
 interface LayoutProviderProps {
   children: ReactNode;
   layout?: LayoutType;
-  title?: string;
-  titleKey?: string;
-  subtitle?: string;
 }
 
-type LayoutType = "auth" | "main" | "sub";
+type LayoutType = "auth" | "main" | "sub" | "blank";
 
 const LAYOUTS = {
   mobile: {
     auth: MobileAuthLayout,
     main: MobileMainLayout,
     sub: MobileSubLayout,
+    blank: MobileBlankLayout,
   },
   desktop: {
     auth: DesktopAuthLayout,
     main: DesktopMainLayout,
     sub: DesktopSubLayout,
+    blank: DesktopBlankLayout,
   },
 } as const;
 
 export default function LayoutProvider({
   children,
   layout = "main",
-  title,
-  titleKey,
-  subtitle,
 }: LayoutProviderProps) {
-  const { t } = useLocale();
   const [device, setDevice] = useState<"mobile" | "desktop">("mobile");
 
   useEffect(() => {
@@ -55,15 +51,6 @@ export default function LayoutProvider({
 
   const layouts = device === "mobile" ? LAYOUTS["mobile"] : LAYOUTS["desktop"];
   const Layout = layouts[layout];
-  const resolvedTitle = titleKey ? t(titleKey) : title;
-
-  if (layout === "sub") {
-    return (
-      <Layout title={resolvedTitle} subtitle={subtitle}>
-        {children}
-      </Layout>
-    );
-  }
 
   return <Layout>{children}</Layout>;
 }

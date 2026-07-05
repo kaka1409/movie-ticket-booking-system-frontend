@@ -3,17 +3,27 @@
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import { usePathname } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import { ALL_MOVIES } from "@/features/movies/mock";
 
-interface DesktopSubLayoutProps {
-  children: React.ReactNode;
-  title?: string;
+function getSubTitle(pathname: string): string {
+  if (pathname.startsWith("/movies/")) {
+    const slug = pathname.split("/movies/")[1];
+    const movie = ALL_MOVIES.find((m) => m.slug === slug);
+    return movie?.title ?? "";
+  }
+  return "";
 }
 
 export default function DesktopSubLayout({
   children,
-  title,
-}: DesktopSubLayoutProps) {
+}: {
+  children: React.ReactNode;
+}) {
+  const pathname = usePathname();
+  const title = getSubTitle(pathname);
+
   return (
     <div className="flex min-h-screen flex-col">
       <nav className="sticky top-0 z-50 border-b border-(--color-border) bg-black/92 backdrop-blur-md">
