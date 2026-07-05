@@ -35,7 +35,7 @@ export default function MovieDetailPage() {
   return (
     <MovieProvider movie={movie}>
       {/* Mobile */}
-      <div className="block md:hidden min-h-dvh bg-(--color-bg) max-w-md mx-auto flex flex-col">
+      <div className="block md:hidden min-h-dvh bg-(--color-bg) w-full max-w-md mx-auto flex flex-col overflow-x-hidden">
         <MobileHeroSection />
         <div className="flex flex-col gap-8 py-6 pb-12">
           <MobileSynopsis />

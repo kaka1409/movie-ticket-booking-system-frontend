@@ -14,6 +14,7 @@ export default function HeroSection() {
         src={movie.src || "/images/movie-poster-placholder.jpg"}
         alt={movie.title}
         fill
+        sizes="100vw"
         className="object-cover"
         priority
       />

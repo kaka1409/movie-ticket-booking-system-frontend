@@ -1,11 +1,18 @@
 "use client";
 
-import { useState } from "react";
-import { Star, Pencil, Trash2 } from "lucide-react";
+import { useState, useCallback, useRef, useEffect } from "react";
+import { Star, Pencil, Trash2, Check, X } from "lucide-react";
 import SectionHeading from "../shared/SectionHeading";
 import Stars from "../shared/Stars";
 import Avatar from "../shared/Avatar";
-import { RATING_BREAKDOWN, REVIEWS } from "../shared/mock";
+import {
+  RATING_BREAKDOWN,
+  REVIEWS,
+  INITIAL_REVIEWS_VISIBLE,
+  REVIEWS_LOAD_MORE,
+} from "../shared/mock";
+
+type Review = (typeof REVIEWS)[number];
 
 function RatingBar({ stars, pct }: { stars: number; pct: number }) {
   return (
@@ -23,10 +30,21 @@ function RatingBar({ stars, pct }: { stars: number; pct: number }) {
   );
 }
 
-function WriteReview() {
+function WriteReview({
+  onSubmit,
+}: {
+  onSubmit: (rating: number, text: string) => void;
+}) {
   const [userRating, setUserRating] = useState(0);
   const [hovered, setHovered] = useState(0);
   const [text, setText] = useState("");
+
+  const handleSubmit = () => {
+    if (!userRating || !text.trim()) return;
+    onSubmit(userRating, text.trim());
+    setUserRating(0);
+    setText("");
+  };
 
   return (
     <div className="rounded-2xl bg-(--color-surface) border border-(--color-border) p-4 space-y-3">
@@ -60,11 +78,12 @@ function WriteReview() {
         onChange={(e) => setText(e.target.value)}
         placeholder="Share your thoughts about the movie..."
         rows={3}
-        className="w-full bg-(--color-bg) border border-(--color-border) rounded-xl px-3 py-3 text-sm text-(--color-text-secondary) placeholder-(--color-text-muted) resize-none outline-none focus:border-(--color-gold)/50 transition-colors font-[inherit]"
+        className="w-full bg-(--color-bg) border border-(--color-border) rounded-xl px-3 py-3 text-base text-(--color-text-secondary) placeholder-(--color-text-muted) resize-none outline-none focus:border-(--color-gold)/50 transition-colors font-[inherit]"
       />
 
       <button
         disabled={!userRating || !text.trim()}
+        onClick={handleSubmit}
         className="w-full py-3 rounded-xl font-bold text-sm tracking-widest uppercase bg-(--color-gold) text-(--color-bg) hover:bg-(--color-gold-dark) active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-150"
       >
         Post Review
@@ -73,7 +92,92 @@ function WriteReview() {
   );
 }
 
-function ReviewCard({ review }: { review: (typeof REVIEWS)[number] }) {
+function ReviewCard({
+  review,
+  isOwner,
+  onSave,
+  onDelete,
+}: {
+  review: Review;
+  isOwner: boolean;
+  onSave: (rating: number, text: string) => void;
+  onDelete: () => void;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [editRating, setEditRating] = useState(review.rating);
+  const [editHovered, setEditHovered] = useState(0);
+  const [editText, setEditText] = useState(review.text);
+
+  const handleSave = () => {
+    if (!editRating || !editText.trim()) return;
+    onSave(editRating, editText.trim());
+    setEditing(false);
+  };
+
+  const handleCancel = () => {
+    setEditRating(review.rating);
+    setEditText(review.text);
+    setEditing(false);
+  };
+
+  if (editing) {
+    return (
+      <div className="py-4 border-b border-(--color-border) last:border-0 space-y-3">
+        <div className="flex items-center gap-2">
+          <Avatar src={review.src} name={review.user} size="w-9 h-9" />
+          <div>
+            <p className="text-(--color-text-primary) text-sm font-bold leading-tight">
+              {review.user}
+            </p>
+            <div className="flex gap-1 mt-1">
+              {[1, 2, 3, 4, 5].map((s) => (
+                <button
+                  key={s}
+                  onMouseEnter={() => setEditHovered(s)}
+                  onMouseLeave={() => setEditHovered(0)}
+                  onClick={() => setEditRating(s)}
+                  aria-label={`Rate ${s} stars`}
+                >
+                  <Star
+                    size={16}
+                    className={
+                      s <= (editHovered || editRating)
+                        ? "text-(--color-gold) fill-(--color-gold)"
+                        : "text-(--color-border) fill-(--color-border)"
+                    }
+                  />
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <textarea
+          value={editText}
+          onChange={(e) => setEditText(e.target.value)}
+          rows={3}
+          className="w-full bg-(--color-bg) border border-(--color-border) rounded-xl px-3 py-3 text-base text-(--color-text-secondary) resize-none outline-none focus:border-(--color-gold)/50 transition-colors font-[inherit]"
+        />
+
+        <div className="flex gap-2 pl-11">
+          <button
+            onClick={handleSave}
+            disabled={!editRating || !editText.trim()}
+            className="flex items-center gap-1 px-4 py-2 rounded-lg text-xs font-bold bg-(--color-gold) text-(--color-bg) hover:bg-(--color-gold-dark) disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          >
+            <Check size={14} /> Save
+          </button>
+          <button
+            onClick={handleCancel}
+            className="flex items-center gap-1 px-4 py-2 rounded-lg text-xs font-bold border border-(--color-border) text-(--color-text-secondary) hover:bg-(--color-surface) transition-colors"
+          >
+            <X size={14} /> Cancel
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="py-4 border-b border-(--color-border) last:border-0">
       <div className="flex items-start justify-between mb-2">
@@ -91,20 +195,22 @@ function ReviewCard({ review }: { review: (typeof REVIEWS)[number] }) {
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <button aria-label="Edit review">
-            <Pencil
-              size={14}
-              className="text-(--color-text-muted) hover:text-(--color-gold) transition-colors"
-            />
-          </button>
-          <button aria-label="Delete review">
-            <Trash2
-              size={14}
-              className="text-(--color-text-muted) hover:text-red-400 transition-colors"
-            />
-          </button>
-        </div>
+        {isOwner && (
+          <div className="flex items-center gap-2">
+            <button onClick={() => setEditing(true)} aria-label="Edit review">
+              <Pencil
+                size={14}
+                className="text-(--color-text-muted) hover:text-(--color-gold) transition-colors"
+              />
+            </button>
+            <button onClick={onDelete} aria-label="Delete review">
+              <Trash2
+                size={14}
+                className="text-(--color-text-muted) hover:text-red-400 transition-colors"
+              />
+            </button>
+          </div>
+        )}
       </div>
 
       <p className="text-(--color-text-secondary) text-sm leading-relaxed pl-11">
@@ -115,6 +221,53 @@ function ReviewCard({ review }: { review: (typeof REVIEWS)[number] }) {
 }
 
 export default function Reviews() {
+  const [reviews, setReviews] = useState<Review[]>(REVIEWS);
+  const [showCount, setShowCount] = useState(INITIAL_REVIEWS_VISIBLE);
+  const [maxH, setMaxH] = useState<string>("none");
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const visibleReviews = reviews.slice(0, showCount);
+  const hasMore = showCount < reviews.length;
+
+  useEffect(() => {
+    if (containerRef.current) {
+      setMaxH(containerRef.current.scrollHeight + "px");
+    }
+  }, [showCount]);
+
+  const handlePost = useCallback((rating: number, text: string) => {
+    const newReview: Review = {
+      id: Date.now(),
+      user: "You",
+      src: `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * 70) + 1}`,
+      rating,
+      time: "Just now",
+      text,
+    };
+    setReviews((prev) => [newReview, ...prev]);
+    setShowCount((prev) => prev + 1);
+  }, []);
+
+  const handleLoadMore = useCallback(() => {
+    setShowCount((prev) => prev + REVIEWS_LOAD_MORE);
+  }, []);
+
+  const handleSave = useCallback(
+    (id: number, rating: number, text: string) => {
+      setReviews((prev) =>
+        prev.map((r) => (r.id === id ? { ...r, rating, text } : r))
+      );
+    },
+    []
+  );
+
+  const handleDelete = useCallback((id: number) => {
+    if (window.confirm("Are you sure you want to delete this review?")) {
+      setReviews((prev) => prev.filter((r) => r.id !== id));
+      setShowCount((prev) => Math.max(prev - 1, INITIAL_REVIEWS_VISIBLE));
+    }
+  }, []);
+
   return (
     <section className="px-4 space-y-4">
       <SectionHeading>Reviews</SectionHeading>
@@ -137,17 +290,32 @@ export default function Reviews() {
         </div>
       </div>
 
-      <WriteReview />
+      <WriteReview onSubmit={handlePost} />
 
-      <div className="rounded-2xl bg-(--color-surface) border border-(--color-border) px-4 divide-y divide-(--color-border)">
-        {REVIEWS.map((r) => (
-          <ReviewCard key={r.id} review={r} />
+      <div
+        ref={containerRef}
+        style={{ maxHeight: maxH }}
+        className="animate-expand rounded-2xl bg-(--color-surface) border border-(--color-border) px-4 divide-y divide-(--color-border)"
+      >
+        {visibleReviews.map((r) => (
+          <ReviewCard
+            key={r.id}
+            review={r}
+            isOwner={r.user === "You"}
+            onSave={(rating, text) => handleSave(r.id, rating, text)}
+            onDelete={() => handleDelete(r.id)}
+          />
         ))}
       </div>
 
-      <button className="w-full py-3 rounded-2xl border border-(--color-border) text-(--color-gold) font-bold text-sm tracking-widest uppercase hover:bg-(--color-surface) transition-colors">
-        Load More Reviews
-      </button>
+      {hasMore && (
+        <button
+          onClick={handleLoadMore}
+          className="w-full py-3 rounded-2xl border border-(--color-border) text-(--color-gold) font-bold text-sm tracking-widest uppercase hover:bg-(--color-surface) transition-colors"
+        >
+          Load More Reviews
+        </button>
+      )}
     </section>
   );
 }

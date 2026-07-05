@@ -9,7 +9,7 @@ export default function TopCast() {
     <section className="px-4">
       <SectionHeading>Top Cast</SectionHeading>
 
-      <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-1">
+      <div className="flex flex-nowrap gap-4 overflow-x-auto scrollbar-hide pb-1">
         {movie.cast.map((actor) => (
           <div
             key={actor.name}
