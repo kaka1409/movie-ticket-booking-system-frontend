@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useLocale } from "@/contexts/LocaleContext";
 import MovieCard from "@/components/common/MovieCard";
 import type { Movie } from "@/features/movies/types";
@@ -7,9 +8,10 @@ import type { Movie } from "@/features/movies/types";
 interface MovieRowProps {
   title: string;
   movies: Movie[];
+  status: "now_showing" | "coming_soon";
 }
 
-export default function MovieRow({ title, movies }: MovieRowProps) {
+export default function MovieRow({ title, movies, status }: MovieRowProps) {
   const { t } = useLocale();
   return (
     <section
@@ -23,9 +25,12 @@ export default function MovieRow({ title, movies }: MovieRowProps) {
         >
           {title}
         </h2>
-        <button className="text-xs font-semibold tracking-wide text-(--color-gold)">
+        <Link
+          href={`/movies?status=${status}`}
+          className="text-xs font-semibold tracking-wide text-(--color-gold)"
+        >
           {t("home.movie_row.see_all")}
-        </button>
+        </Link>
       </div>
 
       <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-(--space-sm)" role="list">

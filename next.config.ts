@@ -18,7 +18,7 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "i.pravatar.cc" },
     ],
   },
-  allowedDevOrigins: ['10.25.32.230', '192.168.88.165'], // Test ip origins
+  allowedDevOrigins: ['10.25.32.141', '192.168.88.165'], // Test ip origins
 };
 
 export default nextConfig;

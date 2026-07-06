@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Bell, ChevronLeft, ChevronRight } from "lucide-react";
 
 const COMING_SOON = [
@@ -73,9 +74,12 @@ export default function ComingSoon() {
       </div>
 
       <div className="flex justify-center">
-        <button className="cursor-pointer rounded-(--radius-pill) border border-(--color-border) bg-transparent px-7 py-2.5 text-[13px] font-semibold text-white">
+        <Link
+          href="/movies?status=coming_soon"
+          className="rounded-(--radius-pill) border border-(--color-border) bg-transparent px-7 py-2.5 text-[13px] font-semibold text-white"
+        >
           Pre-book Tickets for Future Releases
-        </button>
+        </Link>
       </div>
     </section>
   );

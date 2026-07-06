@@ -28,8 +28,8 @@ export default function HomePage() {
           <HeroBanner />
           <QuickBooking />
           <SearchBar />
-          <MovieRow title={t("home.movie_row.now_showing")} movies={NOW_SHOWING} />
-          <MovieRow title={t("home.movie_row.coming_soon")} movies={COMING_SOON} />
+          <MovieRow title={t("home.movie_row.now_showing")} movies={NOW_SHOWING} status="now_showing" />
+          <MovieRow title={t("home.movie_row.coming_soon")} movies={COMING_SOON} status="coming_soon" />
         </div>
       </div>
 

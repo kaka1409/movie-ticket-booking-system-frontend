@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Star, Clock, ChevronRight } from "lucide-react";
 
 const NOW_SHOWING = [
@@ -34,9 +35,12 @@ export default function NowShowing() {
             Handpicked blockbusters playing in theatres near you
           </p>
         </div>
-        <button className="flex cursor-pointer items-center gap-1 border-none bg-transparent text-xs font-bold tracking-wide text-(--color-gold)">
+        <Link
+          href="/movies?status=now_showing"
+          className="flex items-center gap-1 text-xs font-bold tracking-wide text-(--color-gold)"
+        >
           Explore All <ChevronRight size={16} />
-        </button>
+        </Link>
       </div>
 
       <div className="grid grid-cols-4 gap-4">

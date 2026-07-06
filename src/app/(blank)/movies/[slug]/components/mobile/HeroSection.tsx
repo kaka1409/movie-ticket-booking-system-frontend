@@ -9,7 +9,7 @@ export default function HeroSection() {
   const movie = useMovie();
 
   return (
-    <section className="relative w-full h-[280px]">
+    <section className="relative w-full h-85">
       <Image
         src={movie.src || "/images/movie-poster-placholder.jpg"}
         alt={movie.title}
@@ -20,7 +20,7 @@ export default function HeroSection() {
       />
 
       <div className="absolute inset-0 bg-black/25" />
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-(--color-bg)" />
+      <div className="absolute inset-0 bg-linear-to-b from-transparent via-transparent to-(--color-bg)" />
 
       <button
         className="absolute inset-0 flex items-center justify-center group"
