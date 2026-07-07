@@ -3,6 +3,26 @@ import { slugify } from "@/libs/utils";
 
 export const NOW_SHOWING: Movie[] = [
   {
+    id: "0",
+    title: "Interstellar",
+    slug: slugify("Interstellar"),
+    genre: "Sci-Fi",
+    rating: 8.7,
+    duration: 169,
+    src: "/images/hero-interstellar.jpg",
+    synopsis:
+      "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival, as Earth becomes increasingly inhospitable.",
+    director: "Christopher Nolan",
+    cast: [
+      { name: "Matthew McConaughey", role: "Cooper", src: "https://i.pravatar.cc/300?img=12" },
+      { name: "Anne Hathaway", role: "Brand", src: "https://i.pravatar.cc/300?img=20" },
+      { name: "Jessica Chastain", role: "Murph", src: "https://i.pravatar.cc/300?img=25" },
+    ],
+    releaseDate: "2014-11-07",
+    ageRating: "PG-13",
+    language: "English",
+  },
+  {
     id: "1",
     title: "Avengers",
     slug: slugify("Avengers"),
