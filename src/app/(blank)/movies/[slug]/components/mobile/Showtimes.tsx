@@ -126,6 +126,9 @@ export default function Showtimes() {
                   <p className="text-(--color-text-primary) font-bold text-sm">
                     {cinema.name}
                   </p>
+                  <p className="text-(--color-text-muted) text-xs mt-0.5">
+                    {cinema.location}
+                  </p>
                   <p className="flex items-center gap-1 text-(--color-text-muted) text-xs mt-0.5">
                     <MapPin size={11} /> {cinema.distance}
                   </p>
