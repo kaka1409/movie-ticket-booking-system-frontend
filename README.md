@@ -48,13 +48,15 @@ pnpm lint     # ESLint
 ```
 src/
 ├── app/
-│   ├── (main)/       # Home, movies, tickets, notifications, profile
+│   ├── (main)/       # Home, movies list, tickets, profile
+│   ├── (blank)/      # Movie detail [slug] (full-screen, no header/nav)
+│   ├── (sub)/        # Notifications
 │   └── (auth)/       # Login, register
 ├── components/
-│   ├── layout/       # Header, BottomNav, LayoutProvider (responsive)
-│   └── ui/movie/     # MovieCard (reusable)
+│   ├── layout/       # LayoutProvider (responsive), mobile/ & desktop/ variants
+│   └── common/       # MovieCard (reusable)
 ├── contexts/         # LocaleContext (i18n)
-├── features/         # Feature modules (scaffolding)
+├── features/         # Feature modules (mock data, constants, types)
 ├── libs/             # Constants, utilities
 ├── locales/          # en.json, vn.json
 ├── store/            # Redux store
@@ -64,6 +66,6 @@ src/
 
 ## Notes
 
-- Responsive layout: mobile (< 768px) shows Header + BottomNav, desktop shows placeholder shell
+- Responsive layout: `LayoutProvider` switches between mobile (`< 768px`, Header + BottomNav) and desktop (Header + Footer) variants via `matchMedia`
 - Brand theme uses CSS variables (gold/black palette) in `global.css`
 - Movie poster images configured in `next.config.ts` `images.remotePatterns`

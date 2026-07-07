@@ -40,7 +40,7 @@ No test runner. `tests/{e2e,integration,unit}/` are empty dirs. `pnpm test` unde
 - `src/features/auth/` — `mock.ts`.
 - `src/features/profile/` — `mock.ts`.
 - `src/hooks/` exists but is empty.
-- `src/libs/constants.ts` has generic constants; `src/libs/utils.ts` and `src/types/index.ts` are empty placeholders.
+- `src/libs/constants.ts` has generic constants; `src/libs/utils.ts` has a `slugify` helper; `src/types/index.ts` is a placeholder with only a comment.
 
 ## Framework / Toolchain Quirks
 
@@ -52,7 +52,7 @@ No test runner. `tests/{e2e,integration,unit}/` are empty dirs. `pnpm test` unde
 - **`"use client"`** required at top of every file using hooks or browser APIs.
 - **Home page** (`(main)/home/page.tsx`) renders mobile/desktop variants via `hidden md:block` / `block md:hidden`. Imports data from `@/features/movies/mock`. Sub-components under `home/components/{mobile,desktop}/`. MovieRow has `status` prop for "See All" navigation to movies page.
 - **Movies page** (`(main)/movies/page.tsx`) — thin compose file wrapped in `<MoviesProvider>` + `<Suspense>`. Mobile components in `components/mobile/` (Tabs, SearchBar, FilterPanel, MovieGrid). Desktop stub in `components/desktop/MovieGrid` (returns null).
-- **Component split pattern**: All pages use `block md:hidden` / `hidden md:block` to render mobile/desktop variants. Each page has `components/{mobile,desktop}/` dirs. Shared components go in `components/shared/`. See `(main)/home/` as canonical example.
+- **Component split pattern**: Pages that render both mobile & desktop content in the same file use `block md:hidden` / `hidden md:block` (e.g. home, movies). Layout-level switching is handled by `LayoutProvider` via `matchMedia`. Each page has `components/{mobile,desktop}/` dirs. Shared components go in `components/shared/`. See `(main)/home/` as canonical example.
 - `postcss.config.mjs` only has `@tailwindcss/postcss` plugin.
 - No Prettier config, no CI/CD workflows.
 
