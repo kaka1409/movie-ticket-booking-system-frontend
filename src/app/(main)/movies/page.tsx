@@ -13,6 +13,7 @@ export default function MoviesPage() {
     <Suspense fallback={null}>
       <MoviesProvider>
         <>
+          {/* Mobile */}
           <div className="block md:hidden">
             <div className="space-y-4 py-(--space-md)">
               <Tabs />
@@ -22,6 +23,7 @@ export default function MoviesPage() {
             </div>
           </div>
 
+          {/* Desktop */}
           <div className="hidden md:block">
             <DesktopMovieGrid />
           </div>

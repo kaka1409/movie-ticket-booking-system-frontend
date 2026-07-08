@@ -40,7 +40,7 @@ function Header() {
             className="relative text-(--color-gold-light)"
             aria-label="Notifications"
           >
-            <Bell />
+            <Bell  className="w-5 h-5"/>
             <span className="absolute top-0 right-0 w-2 h-2 rounded-full bg-(--color-gold)" />
           </Link>
         </div>
