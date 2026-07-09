@@ -11,6 +11,6 @@ export const TICKET_STATUS = {
 
 export type TicketStatus = (typeof TICKET_STATUS)[keyof typeof TICKET_STATUS];
 
-export const SEAT_TYPES = ["Standard", "VIP", "Couple"] as const;
+export const SEAT_TYPES = ["Standard", "VIP", "SweetBox"] as const;
 
 export const MAX_SEATS_PER_BOOKING = 10;

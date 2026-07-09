@@ -10,9 +10,9 @@ import EmptyState from "@/app/(main)/tickets/components/mobile/EmptyState";
 export default function TicketList() {
   const { activeTab, visibleCount, loadMore } = useTickets();
 
-  const source = activeTab === "upcoming" ? UPCOMING : PAST;
-  const visible = source.slice(0, visibleCount);
-  const hasMore = source.length > visibleCount;
+  const hasMore = activeTab === "upcoming"
+    ? UPCOMING.length > visibleCount
+    : PAST.length > visibleCount;
 
   const listRef = useRef<HTMLDivElement>(null);
   const prevCountRef = useRef(visibleCount);
@@ -34,8 +34,8 @@ export default function TicketList() {
   return (
     <main ref={listRef} className="flex-1 overflow-y-auto px-4 space-y-4">
       {activeTab === "upcoming" ? (
-        visible.length > 0 ? (
-          visible.map((ticket, index) => (
+        UPCOMING.length > 0 ? (
+          UPCOMING.slice(0, visibleCount).map((ticket, index) => (
             <div
               key={ticket.id}
               data-ticket-card
@@ -48,7 +48,7 @@ export default function TicketList() {
           <EmptyState label="No upcoming tickets" />
         )
       ) : (
-        visible.map((ticket, index) => (
+        PAST.slice(0, visibleCount).map((ticket, index) => (
           <div
             key={ticket.id}
             data-ticket-card

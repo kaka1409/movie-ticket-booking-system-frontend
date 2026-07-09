@@ -85,7 +85,7 @@ export default function UpcomingCard({ ticket }: { ticket: UpcomingTicket }) {
           <p
             className={`font-extrabold text-xl text-(--color-text-primary)`}
           >
-            {failed ? `$${ticket.amount.toFixed(2)}` : ticket.id}
+            {failed ? ticket.totalPrice : ticket.id}
           </p>
         </div>
 

@@ -9,6 +9,7 @@ import { ALL_MOVIES } from "@/features/movies/mock";
 
 function getSubTitle(pathname: string, t: (key: string) => string): string {
   if (pathname.startsWith("/notifications")) return t("notif.title");
+  if (pathname.startsWith("/tickets")) return "Ticket Details";
   if (pathname.startsWith("/movies/")) {
     const slug = pathname.split("/movies/")[1];
     const movie = ALL_MOVIES.find((m) => m.slug === slug);
@@ -30,7 +31,7 @@ export default function MobileSubLayout({
     <div className="min-h-dvh bg-(--color-bg) flex flex-col max-w-md mx-auto">
       <header className="flex items-center justify-between px-4 pt-5 pb-4 border-b border-(--color-border)">
         <Link
-          href="/"
+          href={pathname.startsWith("/tickets") ? "/tickets" : "/"}
           className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-(--color-surface) transition-colors"
           aria-label="Go back"
         >

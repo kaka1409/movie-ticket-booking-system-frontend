@@ -8,6 +8,7 @@ import { ArrowLeft } from "lucide-react";
 import { ALL_MOVIES } from "@/features/movies/mock";
 
 function getSubTitle(pathname: string): string {
+  if (pathname.startsWith("/tickets")) return "Ticket Details";
   if (pathname.startsWith("/movies/")) {
     const slug = pathname.split("/movies/")[1];
     const movie = ALL_MOVIES.find((m) => m.slug === slug);
@@ -29,7 +30,7 @@ export default function DesktopSubLayout({
       <nav className="sticky top-0 z-50 border-b border-(--color-border) bg-black/92 backdrop-blur-md">
         <div className="mx-auto flex h-15 max-w-7xl items-center gap-8 px-8">
           <Link
-            href="/"
+            href={pathname.startsWith("/tickets") ? "/tickets" : "/"}
             className="flex shrink-0 items-center gap-2 no-underline"
           >
             <ArrowLeft size={20} className="text-(--color-gold)" />
