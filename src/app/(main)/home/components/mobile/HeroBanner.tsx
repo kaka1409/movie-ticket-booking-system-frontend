@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Star } from "lucide-react";
@@ -12,7 +12,6 @@ export default function HeroBanner() {
   const [index, setIndex] = useState(0);
   const [fading, setFading] = useState(false);
   const touchStart = useRef<{ x: number; y: number } | null>(null);
-  const autoRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const movie = FEATURED_MOVIES[index];
 
   const goTo = useCallback(
@@ -47,32 +46,6 @@ export default function HeroBanner() {
     else next();
   };
 
-  // Auto-advance every 5s, pause on touch
-  useEffect(() => {
-    autoRef.current = setInterval(() => {
-      setFading(true);
-      setTimeout(() => {
-        setIndex((i) => (i + 1) % FEATURED_MOVIES.length);
-        setFading(false);
-      }, 150);
-    }, 5000);
-
-    return () => {
-      if (autoRef.current) clearInterval(autoRef.current);
-    };
-  }, []);
-
-  const resetAuto = () => {
-    if (autoRef.current) clearInterval(autoRef.current);
-    autoRef.current = setInterval(() => {
-      setFading(true);
-      setTimeout(() => {
-        setIndex((i) => (i + 1) % FEATURED_MOVIES.length);
-        setFading(false);
-      }, 150);
-    }, 5000);
-  };
-
   return (
     <section
       className="relative h-55 w-full overflow-hidden"
@@ -84,7 +57,6 @@ export default function HeroBanner() {
         href={`/movies/${movie.slug}`}
         className="absolute inset-0 z-10"
         aria-label={`View ${movie.title}`}
-        onClick={resetAuto}
       >
         <div
           className={`relative h-full w-full transition-opacity duration-300 ${fading ? "opacity-0" : "opacity-100"}`}

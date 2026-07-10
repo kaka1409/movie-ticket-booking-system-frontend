@@ -6,6 +6,7 @@ import React from "react";
 import { usePathname } from "next/navigation";
 import { useLocale } from "@/contexts/LocaleContext";
 import { Bell, Home, Clapperboard, Ticket, User } from "lucide-react";
+import { INITIAL_NOTIFS } from "@/features/notifications/mock";
 
 /* ─── Logo ───────────────────────────────────────────────────── */
 const Logo: React.FC = () => (
@@ -20,6 +21,7 @@ const Logo: React.FC = () => (
 /* ─── Header ─────────────────────────────────────────────────── */
 function Header() {
   const { locale, setLocale } = useLocale();
+  const unreadCount = INITIAL_NOTIFS.filter((n) => !n.read).length;
 
   return (
     <header className="sticky bg-(--color-bg) top-0 z-40 w-full">
@@ -28,11 +30,18 @@ function Header() {
 
         <div className="flex items-center gap-3">
           <button
-            className="text-xs font-semibold tracking-widest px-2 py-1 rounded text-(--color-gold-light) border border-(--color-border)"
+            className="flex items-center gap-1.5 text-xs font-semibold tracking-widest px-2 py-1 rounded text-(--color-gold-light) border border-(--color-border)"
             aria-label="Change language"
             onClick={() => setLocale(locale === "en" ? "vn" : "en")}
           >
-            {locale === "en" ? "EN" : "VN"}
+            <Image
+              src={locale === "en" ? "/images/flag-en.svg" : "/images/flag-vn.svg"}
+              alt={locale === "en" ? "English" : "Tiếng Việt"}
+              width={16}
+              height={12}
+              className="w-4 h-3"
+            />
+            <span>{locale === "en" ? "EN" : "VN"}</span>
           </button>
 
           <Link
@@ -40,8 +49,12 @@ function Header() {
             className="relative text-(--color-gold-light)"
             aria-label="Notifications"
           >
-            <Bell  className="w-5 h-5"/>
-            <span className="absolute top-0 right-0 w-2 h-2 rounded-full bg-(--color-gold)" />
+            <Bell className="w-5 h-5" />
+            {unreadCount > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 w-[14px] h-[14px] flex items-center justify-center rounded-full bg-red-500 text-white text-[8px] font-bold">
+                {unreadCount}
+              </span>
+            )}
           </Link>
         </div>
       </div>
@@ -50,7 +63,7 @@ function Header() {
 }
 
 /* ─── BottomNav ──────────────────────────────────────────────── */
-const ICON_SIZE = 20;
+const ICON_SIZE = 18;
 
 const navItems = [
   { key: "nav.home", href: "/", icon: Home },
@@ -79,16 +92,13 @@ function BottomNav() {
                 aria-current={isActive ? "page" : undefined}
               >
                 <div
-                  className={`flex flex-col items-center w-full p-1 text-sm ${
+                  className={`flex flex-col gap-0.5 items-center w-full px-1 py-1.5 text-xs ${
                     isActive
                       ? "text-(--color-gold-light) bg-(--color-gold-light)/20 rounded-(--radius-md)"
                       : "text-(--color-text-muted)"
                   }`}
                 >
-                  <Icon
-                    size={ICON_SIZE}
-                    fill={isActive ? "currentColor" : "none"}
-                  />
+                  <Icon size={ICON_SIZE} />
                   <span>{t(key)}</span>
                 </div>
               </Link>

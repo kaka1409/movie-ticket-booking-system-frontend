@@ -29,7 +29,7 @@ export default function MobileSubLayout({
 
   return (
     <div className="min-h-dvh bg-(--color-bg) flex flex-col max-w-md mx-auto">
-      <header className="flex items-center justify-between px-4 pt-5 pb-4 border-b border-(--color-border)">
+      <header className="flex items-center justify-between px-4 py-2 border-b border-(--color-border)">
         <Link
           href={pathname.startsWith("/tickets") ? "/tickets" : "/"}
           className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-(--color-surface) transition-colors"
