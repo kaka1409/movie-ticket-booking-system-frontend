@@ -43,5 +43,12 @@
   "profile.wishlist": "Wishlist",
   "profile.edit_profile": "Edit Profile",
   "profile.change_password": "Change Password",
-  "profile.logout": "Logout"
+  "profile.logout": "Logout",
+  "booking.step": "STEP {current} OF {total}",
+  "booking.select_cinema": "SELECT CINEMA",
+  "booking.select_seats": "SELECT SEATS",
+  "booking.search_cinemas": "Search cinemas or locations...",
+  "booking.no_results": "No cinemas found",
+  "booking.clear_search": "Clear search",
+  "booking.showtime": "SHOWTIME"
 }

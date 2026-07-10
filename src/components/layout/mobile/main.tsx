@@ -85,14 +85,14 @@ function BottomNav() {
         {navItems.map(({ key, href, icon: Icon }) => {
           const isActive = pathname === href;
           return (
-            <li key={href} className="flex-1">
+            <li key={href}>
               <Link
                 href={href}
-                className="flex flex-col items-center w-full px-(--space-md)"
+                className="flex flex-col items-center min-w-15"
                 aria-current={isActive ? "page" : undefined}
               >
                 <div
-                  className={`flex flex-col gap-0.5 items-center w-full px-1 py-1.5 text-xs ${
+                  className={`flex flex-col gap-0.5 items-center w-full py-1.5 text-xs ${
                     isActive
                       ? "text-(--color-gold-light) bg-(--color-gold-light)/20 rounded-(--radius-md)"
                       : "text-(--color-text-muted)"

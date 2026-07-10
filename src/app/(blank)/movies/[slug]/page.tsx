@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useParams } from "next/navigation";
 import { ALL_MOVIES } from "@/features/movies/mock";
 import { MovieProvider } from "./components/shared/MovieContext";
@@ -24,6 +25,12 @@ export default function MovieDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const movie = ALL_MOVIES.find((m) => m.slug === slug);
 
+  const [selectedShowtime, setSelectedShowtime] = useState<{
+    cinemaId: number;
+    time: string;
+    date: string;
+  } | null>(null);
+
   if (!movie) {
     return (
       <div className="flex items-center justify-center min-h-dvh bg-(--color-bg)">
@@ -40,8 +47,12 @@ export default function MovieDetailPage() {
         <div className="flex flex-col gap-8 py-6 pb-12">
           <MobileSynopsis />
           <MobileTopCast />
-          <MobileShowtimes />
-          <MobileBookTicketCTA />
+          <MobileShowtimes onSelectionChange={setSelectedShowtime} />
+          <MobileBookTicketCTA
+            selectedCinemaId={selectedShowtime?.cinemaId ?? null}
+            selectedTime={selectedShowtime?.time ?? ""}
+            selectedDate={selectedShowtime?.date ?? ""}
+          />
           <MobileReviews />
         </div>
       </div>

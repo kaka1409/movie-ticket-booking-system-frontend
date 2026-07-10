@@ -15,8 +15,8 @@
   "home.movie_row.see_all": "XEM TẤT CẢ",
   "home.promo": "KHUYẾN MÃI",
   "nav.home": "Trang Chủ",
-  "nav.movies": "Phim",
-  "nav.tickets": "Vé",
+  "nav.movies": "Xem phim",
+  "nav.tickets": "Xem vé",
   "nav.profile": "Cá Nhân",
   "sub.back": "Quay lại",
   "movies.now_showing": "Đang Chiếu",
@@ -43,5 +43,12 @@
   "profile.wishlist": "Danh Sách Yêu Thích",
   "profile.edit_profile": "Chỉnh Sửa Hồ Sơ",
   "profile.change_password": "Đổi Mật Khẩu",
-  "profile.logout": "Đăng Xuất"
+  "profile.logout": "Đăng Xuất",
+  "booking.step": "BƯỚC {current} / {total}",
+  "booking.select_cinema": "CHỌN RẠP",
+  "booking.select_seats": "CHỌN GHẾ",
+  "booking.search_cinemas": "Tìm rạp hoặc địa điểm...",
+  "booking.no_results": "Không tìm thấy rạp",
+  "booking.clear_search": "Xóa tìm kiếm",
+  "booking.showtime": "SUẤT CHIẾU"
 }

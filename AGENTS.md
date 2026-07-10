@@ -16,7 +16,7 @@ No test runner. `tests/{e2e,integration,unit}/` are empty dirs. `pnpm test` unde
 - **Next.js 16.2.9 App Router** + **React 19.2.4** — four route groups under `src/app/`:
   - `(main)/` — home, movies list, tickets listing, profile
   - `(blank)/` — `movies/[slug]` (full-screen pages, no header/nav)
-  - `(sub)/` — notifications, `tickets/[id]` (detail page with back-arrow header)
+  - `(sub)/` — notifications, `tickets/[id]` (detail page with back-arrow header), `cinema/[slug]` (cinema & showtime selection)
   - `(auth)/` — login, register
 - **`(main)/page.tsx`** re-exports `./home/page.tsx`.
 - **Layout chain**: root layout (`LocaleProvider`) → each group wraps `LayoutProvider(layout="main"|"auth"|"sub"|"blank")`. LayoutProvider renders mobile or desktop variant via `matchMedia("(min-width: 768px)")`.
@@ -40,6 +40,7 @@ No test runner. `tests/{e2e,integration,unit}/` are empty dirs. `pnpm test` unde
 - `src/features/notifications/` — `mock.tsx`, `constants.ts`, `types.ts`.
 - `src/features/auth/` — `mock.ts`.
 - `src/features/profile/` — `mock.ts` (USER with avatarUrl from Contentful), `types.ts` (User interface).
+- `src/features/booking/` — `mock.ts` (CINEMAS with PrimeSeat data, DATES), `types.ts` (Cinema, Showtime, DateOption, BookingSelection, BOOKING_STEPS).
 - `src/hooks/` exists but is empty.
 - `src/libs/constants.ts` has generic constants; `src/libs/utils.ts` has a `slugify` helper; `src/types/index.ts` is a placeholder with only a comment.
 
@@ -67,6 +68,20 @@ Past tickets show the same detail layout but without action buttons.
 
 No BottomNav or TopNav — layout provides both. Menu items use i18n keys `profile.*`.
 
+## Cinema & Showtime Page
+
+`page.tsx` resolves movie by slug from `ALL_MOVIES`, composes mobile components directly:
+- `components/mobile/StepBar.tsx` — 5-step booking progress bar (SELECT CINEMA → SELECT SEATS → FOOD & DRINKS → PAYMENT → CONFIRM)
+- `components/mobile/MovieSummary.tsx` — mini poster + movie info (duration, genre, ageRating, rating)
+- `components/mobile/DatePicker.tsx` — horizontal scroll date picker
+- `components/mobile/SearchBar.tsx` — cinema/location search input
+- `components/mobile/CinemaCard.tsx` — cinema card with name, address, distance, badge, showtime chips (active/sold-out states)
+- `components/mobile/CinemaList.tsx` — list wrapper + empty state
+- `components/mobile/BottomBar.tsx` — sticky bottom bar with selection summary + "SELECT SEATS" CTA
+- `components/desktop/CinemaContent.tsx` — stub (returns null)
+
+Sub layout provides back button (→ movie detail) + "Cinema & Showtime" title. State managed via local `useState`.
+
 ## Framework / Toolchain Quirks
 
 - **React Compiler OFF** (`reactCompiler: false`). `babel-plugin-react-compiler` devDep present but unused.
@@ -80,7 +95,7 @@ No BottomNav or TopNav — layout provides both. Menu items use i18n keys `profi
 - **Home page** (`(main)/home/page.tsx`) renders mobile/desktop variants via `hidden md:block` / `block md:hidden`. Imports data from `@/features/movies/mock`. Sub-components under `home/components/{mobile,desktop}/`. MovieRow has `status` prop for "See All" navigation to movies page.
 - **Movies page** (`(main)/movies/page.tsx`) — thin compose file wrapped in `<MoviesProvider>` + `<Suspense>`. Mobile components in `components/mobile/` (Tabs, SearchBar, FilterPanel, MovieGrid). Desktop stub in `components/desktop/MovieGrid` (returns null).
 - **Component split pattern**: Pages that render both mobile & desktop content in the same file use `block md:hidden` / `hidden md:block` (e.g. home, movies). Layout-level switching is handled by `LayoutProvider` via `matchMedia`. Each page has `components/{mobile,desktop}/` dirs. Shared components go in `components/shared/`. See `(main)/home/` as canonical example.
-- **Sub layout `getSubTitle()`**: Handles `/notifications` (i18n), `/tickets` (returns "Ticket Details"), `/movies/[slug]` (returns movie title). Back button goes to `/tickets` for ticket routes, `/` otherwise.
+- **Sub layout `getSubTitle()`**: Handles `/notifications` (i18n), `/tickets` (returns "Ticket Details"), `/cinema/[slug]` (returns "Cinema & Showtime"), `/movies/[slug]` (returns movie title). Back button goes to `/tickets` for ticket routes, `/movies/[slug]` for cinema routes, `/` otherwise.
 - `postcss.config.mjs` only has `@tailwindcss/postcss` plugin.
 - No Prettier config, no CI/CD workflows.
 
