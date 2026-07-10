@@ -16,6 +16,7 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "upload.wikimedia.org" },
       { protocol: "https", hostname: "image.tmdb.org" },
       { protocol: "https", hostname: "i.pravatar.cc" },
+      { protocol: "https", hostname: "images.ctfassets.net" },
     ],
   },
   allowedDevOrigins: ['10.25.32.141', '192.168.88.165'], // Test ip origins

@@ -36,5 +36,12 @@
   "movies.rating": "Đánh Giá",
   "movies.length": "Thời Lượng",
   "movies.format": "Định Dạng",
-  "movies.age_rating": "Phân Loại Tuổi"
+  "movies.age_rating": "Phân Loại Tuổi",
+  "profile.activity": "Hoạt Động",
+  "profile.account": "Tài Khoản",
+  "profile.review_rating": "Đánh Giá",
+  "profile.wishlist": "Danh Sách Yêu Thích",
+  "profile.edit_profile": "Chỉnh Sửa Hồ Sơ",
+  "profile.change_password": "Đổi Mật Khẩu",
+  "profile.logout": "Đăng Xuất"
 }

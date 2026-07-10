@@ -36,5 +36,12 @@
   "movies.rating": "Rating",
   "movies.length": "Length",
   "movies.format": "Format",
-  "movies.age_rating": "Age Rating"
+  "movies.age_rating": "Age Rating",
+  "profile.activity": "Activity",
+  "profile.account": "Account",
+  "profile.review_rating": "Review & Rating",
+  "profile.wishlist": "Wishlist",
+  "profile.edit_profile": "Edit Profile",
+  "profile.change_password": "Change Password",
+  "profile.logout": "Logout"
 }

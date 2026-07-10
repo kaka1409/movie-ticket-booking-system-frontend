@@ -39,7 +39,7 @@ No test runner. `tests/{e2e,integration,unit}/` are empty dirs. `pnpm test` unde
 - `src/features/tickets/` — `constants.ts` (SEAT_TYPES: Standard/VIP/SweetBox), `mock.ts` (UPCOMING with full detail + PAST with full detail), `types.ts` (FoodDrinkItem, UpcomingTicket, PastTicket).
 - `src/features/notifications/` — `mock.tsx`, `constants.ts`, `types.ts`.
 - `src/features/auth/` — `mock.ts`.
-- `src/features/profile/` — `mock.ts`.
+- `src/features/profile/` — `mock.ts` (USER with avatarUrl from Contentful), `types.ts` (User interface).
 - `src/hooks/` exists but is empty.
 - `src/libs/constants.ts` has generic constants; `src/libs/utils.ts` has a `slugify` helper; `src/types/index.ts` is a placeholder with only a comment.
 
@@ -56,6 +56,16 @@ Detail page components under `(sub)/tickets/[id]/components/`:
 - `desktop/TicketDetail.tsx` — stub (returns null)
 
 Past tickets show the same detail layout but without action buttons.
+
+## Profile Page
+
+`page.tsx` directly imports mobile components (same pattern as home page):
+- `components/mobile/Avatar.tsx` — conic-gradient ring + `<Image>` (external URL from Contentful via `images.ctfassets.net` in `remotePatterns`)
+- `components/mobile/UserInfo.tsx` — name + tier badge (Star icon)
+- `components/mobile/MenuSection.tsx` — reusable menu card with icon rows, hover via Tailwind `hover:bg-(--color-surface-2)`
+- `components/desktop/ProfileContent.tsx` — stub (returns null)
+
+No BottomNav or TopNav — layout provides both. Menu items use i18n keys `profile.*`.
 
 ## Framework / Toolchain Quirks
 

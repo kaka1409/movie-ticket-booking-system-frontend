@@ -11,6 +11,7 @@ This repository contains the frontend codebase for PrimeSeat which use Next.js 1
 - **Tailwind CSS v4**
 - **Redux Toolkit**
 - **lucide-react** (icons)
+- **qrcode.react** (QR code generation)
 - **i18n** (English / Vietnamese)
 
 <!--## Screenshots-->
@@ -50,13 +51,14 @@ src/
 ├── app/
 │   ├── (main)/       # Home, movies list, tickets, profile
 │   ├── (blank)/      # Movie detail [slug] (full-screen, no header/nav)
-│   ├── (sub)/        # Notifications
+│   ├── (sub)/        # Notifications, tickets/[id] (detail page)
 │   └── (auth)/       # Login, register
 ├── components/
 │   ├── layout/       # LayoutProvider (responsive), mobile/ & desktop/ variants
-│   └── common/       # MovieCard (reusable)
-├── contexts/         # LocaleContext (i18n)
+│   └── common/       # MovieCard, QuickBooking (reusable)
+├── contexts/         # LocaleContext, MoviesContext, TicketsContext
 ├── features/         # Feature modules (mock data, constants, types)
+├── hooks/            # Shared custom hooks (empty)
 ├── libs/             # Constants, utilities
 ├── locales/          # en.json, vn.json
 ├── store/            # Redux store
