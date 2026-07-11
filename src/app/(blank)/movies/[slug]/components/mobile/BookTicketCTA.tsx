@@ -22,7 +22,7 @@ export default function BookTicketCTA({
     if (selectedDate) params.set("date", selectedDate);
 
     const query = params.toString();
-    router.push(`/cinema/${movie.slug}${query ? `?${query}` : ""}`);
+    router.push(`/booking/${movie.slug}/cinema${query ? `?${query}` : ""}`);
   };
 
   return (

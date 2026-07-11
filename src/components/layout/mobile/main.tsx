@@ -119,7 +119,7 @@ export default function MobileMainLayout({
   return (
     <div>
       <Header />
-      <main className="mx-auto w-full max-w-md flex-1 overflow-y-auto pb-20">
+      <main className="mx-auto w-full max-w-md flex-1 overflow-y-auto pb-15">
         {children}
       </main>
       <BottomNav />

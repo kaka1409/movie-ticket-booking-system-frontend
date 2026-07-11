@@ -10,7 +10,11 @@ import { ALL_MOVIES } from "@/features/movies/mock";
 function getSubTitle(pathname: string, t: (key: string) => string): string {
   if (pathname.startsWith("/notifications")) return t("notif.title");
   if (pathname.startsWith("/tickets")) return "Ticket Details";
-  if (pathname.startsWith("/cinema/")) return "Cinema & Showtime";
+  if (pathname.startsWith("/booking/")) {
+    if (pathname.includes("/cinema")) return "Cinema & Showtime";
+    if (pathname.includes("/seats")) return "Select Seat";
+    return "";
+  }
   if (pathname.startsWith("/movies/")) {
     const slug = pathname.split("/movies/")[1];
     const movie = ALL_MOVIES.find((m) => m.slug === slug);
@@ -21,8 +25,10 @@ function getSubTitle(pathname: string, t: (key: string) => string): string {
 
 function getBackHref(pathname: string): string {
   if (pathname.startsWith("/tickets")) return "/tickets";
-  if (pathname.startsWith("/cinema/")) {
-    const slug = pathname.split("/cinema/")[1];
+  if (pathname.startsWith("/booking/")) {
+    const slug = pathname.split("/booking/")[1]?.split("/")[0];
+    if (pathname.includes("/cinema")) return `/movies/${slug}`;
+    if (pathname.includes("/seats")) return `/booking/${slug}/cinema`;
     return `/movies/${slug}`;
   }
   return "/";
@@ -39,7 +45,7 @@ export default function MobileSubLayout({
   const backHref = getBackHref(pathname);
 
   return (
-    <div className="min-h-dvh bg-(--color-bg) flex flex-col max-w-md mx-auto min-w-0">
+    <div className="min-h-dvh bg-(--color-bg) flex flex-col max-w-[min(28rem,100%)] mx-auto min-w-0">
       <header className="flex items-center justify-between px-4 py-2 border-b border-(--color-border)">
         <Link
           href={backHref}

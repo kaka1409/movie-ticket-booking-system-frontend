@@ -33,3 +33,26 @@ export const BOOKING_STEPS = [
   "PAYMENT",
   "CONFIRM",
 ] as const;
+
+/* ─── Seat Selection Types ───────────────────────────────── */
+
+export type SeatKind = "available" | "vip" | "sweetbox";
+export type SeatStatus = "idle" | "selected" | "occupied";
+
+export interface Seat {
+  col: number;
+  kind: SeatKind;
+  status: SeatStatus;
+  pairId?: string;
+}
+
+export interface SeatRow {
+  label: string;
+  segments: Seat[][];
+}
+
+export interface SeatPrice {
+  available: number;
+  vip: number;
+  sweetbox: number;
+}

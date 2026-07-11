@@ -1,4 +1,4 @@
-import { Cinema, DateOption } from "./types";
+import { Cinema, DateOption, Seat, SeatRow, SeatPrice } from "./types";
 
 // Generate 5 days starting from today
 const today = new Date();
@@ -104,3 +104,66 @@ export const CINEMAS: Cinema[] = [
     ],
   },
 ];
+
+/* ─── Seat Map Data ───────────────────────────────────────── */
+
+function seat(col: number, kind: Seat["kind"], status: Seat["status"] = "idle", pairId?: string): Seat {
+  return { col, kind, status, pairId };
+}
+
+function regularRow(label: string, occupied: number[] = []): SeatRow {
+  const seg = (start: number) =>
+    Array.from({ length: 5 }, (_, i) => {
+      const col = start + i;
+      return seat(col, "available", occupied.includes(col) ? "occupied" : "idle");
+    });
+  return { label, segments: [seg(1), seg(6)] };
+}
+
+function vipRow(label: string, occupied: number[] = []): SeatRow {
+  const seg = (start: number) =>
+    Array.from({ length: 5 }, (_, i) => {
+      const col = start + i;
+      return seat(col, "vip", occupied.includes(col) ? "occupied" : "idle");
+    });
+  return { label, segments: [seg(1), seg(6)] };
+}
+
+function sweetBoxRow(label: string, occupiedPairs: string[] = []): SeatRow {
+  const makePair = (pairId: string): Seat => ({
+    col: parseInt(pairId.split("-")[0]),
+    kind: "sweetbox",
+    status: occupiedPairs.includes(pairId) ? "occupied" : "idle",
+    pairId,
+  });
+  return {
+    label,
+    segments: [
+      [makePair(`${label}-1-2`), makePair(`${label}-3-4`)],
+      [makePair(`${label}-5-6`), makePair(`${label}-7-8`)],
+    ],
+  };
+}
+
+export const SEAT_ROWS: SeatRow[] = [
+  regularRow("A"),
+  regularRow("B", [2, 3, 7]),
+  vipRow("C"),
+  vipRow("D", [5, 9, 10]),
+  vipRow("E", [1, 6, 7]),
+  vipRow("F", [3, 8]),
+  regularRow("G", [4, 5]),
+  regularRow("H"),
+  sweetBoxRow("I", ["I-3-4"]),
+  sweetBoxRow("J", ["J-5-6", "J-7-8"]),
+];
+
+export const SEAT_PRICES: SeatPrice = {
+  available: 90000,
+  vip: 140000,
+  sweetbox: 280000,
+};
+
+export const COUNTDOWN_SECONDS = 5 * 60 + 59; // 5m59s
+export const MAX_SEATS_PER_BOOKING = 8;
+export const SEAT_MAP_COLS = 10;

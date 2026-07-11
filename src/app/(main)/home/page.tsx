@@ -24,7 +24,7 @@ export default function HomePage() {
     <>
       {/* Mobile */}
       <div className="block md:hidden">
-        <div className="flex flex-col gap-(--space-lg) pb-(--space-xl)">
+        <div className="flex flex-col gap-(--space-lg)">
           <HeroBanner />
           <QuickBooking />
           <SearchBar />
