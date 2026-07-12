@@ -5,6 +5,7 @@ import { useParams, useSearchParams } from "next/navigation";
 import { notFound } from "next/navigation";
 import { ALL_MOVIES } from "@/features/movies/mock";
 import { CINEMAS, DATES } from "@/features/booking/mock";
+import { useBooking } from "@/contexts/BookingContext";
 
 // Mobile components
 import StepBar from "@/app/(sub)/booking/components/mobile/StepBar";
@@ -23,15 +24,17 @@ export default function CinemaShowtimePage() {
   const slug = params.slug as string;
   const movie = ALL_MOVIES.find((m) => m.slug === slug);
 
+  const { cinemaId: savedCinemaId, time: savedTime, date: savedDate } = useBooking();
+
   const [selectedDate, setSelectedDate] = useState(
-    searchParams.get("date") || DATES[0].value
+    savedDate || searchParams.get("date") || DATES[0].value
   );
   const [query, setQuery] = useState("");
   const [selectedCinemaId, setSelectedCinemaId] = useState<number | null>(
-    searchParams.get("cinema") ? Number(searchParams.get("cinema")) : null
+    savedCinemaId ?? (searchParams.get("cinema") ? Number(searchParams.get("cinema")) : null)
   );
   const [selectedTime, setSelectedTime] = useState(
-    searchParams.get("time") || ""
+    savedTime || searchParams.get("time") || ""
   );
 
   const handleSelect = (cinemaId: number, time: string) => {
@@ -91,6 +94,7 @@ export default function CinemaShowtimePage() {
         <BottomBar
           cinema={selectedCinema}
           time={selectedTime}
+          date={selectedDate}
           onClear={() => {
             setSelectedCinemaId(null);
             setSelectedTime("");

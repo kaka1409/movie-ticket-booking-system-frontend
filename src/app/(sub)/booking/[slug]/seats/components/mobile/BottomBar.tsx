@@ -5,9 +5,11 @@ import { useParams } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { SeatRow, Seat } from "@/features/booking/types";
 import { SEAT_PRICES } from "@/features/booking/mock";
+import { useBooking, type SelectedSeat } from "@/contexts/BookingContext";
 
 interface Selection {
   label: string;
+  type: string;
   price: number;
 }
 
@@ -21,6 +23,7 @@ function collectSelections(rows: SeatRow[]): Selection[] {
             s.kind === "sweetbox"
               ? `${row.label}(${s.pairId?.split("-").slice(1).join("-")})`
               : `${row.label}${s.col}`,
+          type: s.kind === "available" ? "Standard" : s.kind === "vip" ? "VIP" : "SweetBox",
           price: SEAT_PRICES[s.kind],
         }))
     )
@@ -30,10 +33,22 @@ function collectSelections(rows: SeatRow[]): Selection[] {
 export default function BottomBar({ rows }: { rows: SeatRow[] }) {
   const params = useParams();
   const slug = params.slug as string;
+  const { setSeats } = useBooking();
   const items = collectSelections(rows);
   const total = items.reduce((sum, s) => sum + s.price, 0);
   const labels = items.map((s) => s.label).join(", ");
   const hasSeats = items.length > 0;
+
+  const handleSaveAndNavigate = () => {
+    if (hasSeats) {
+      const seats: SelectedSeat[] = items.map((i) => ({
+        label: i.label,
+        type: i.type,
+        price: i.price,
+      }));
+      setSeats(seats);
+    }
+  };
 
   return (
     <div className="sticky bottom-0 z-50 bg-(--color-bg) border-t border-(--color-border) px-4 pb-6 pt-3">
@@ -71,7 +86,13 @@ export default function BottomBar({ rows }: { rows: SeatRow[] }) {
       <Link
         href={hasSeats ? `/booking/${slug}/snack` : "#"}
         aria-disabled={!hasSeats}
-        onClick={(e) => !hasSeats && e.preventDefault()}
+        onClick={(e) => {
+          if (!hasSeats) {
+            e.preventDefault();
+          } else {
+            handleSaveAndNavigate();
+          }
+        }}
         className={`flex items-center justify-center gap-2.5 w-full py-4 rounded-2xl font-extrabold text-sm tracking-widest uppercase transition-all duration-150 ${
           hasSeats
             ? "bg-(--color-gold) text-[#0F0F0F] shadow-[0_0_20px_rgba(255,204,77,0.25)] active:scale-[0.98]"

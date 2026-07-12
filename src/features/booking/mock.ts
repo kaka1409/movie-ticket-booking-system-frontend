@@ -224,23 +224,3 @@ export const FOOD_ITEMS: FoodItem[] = [
   { id: "candy-gummy", name: "Gummy Bears", category: "candy", price: 45000, image: "/images/snack/candy-gummy.jpg" },
   { id: "candy-choco", name: "Chocolate", category: "candy", price: 55000, image: "/images/snack/candy-choco.jpg" },
 ];
-
-/* ─── Order Summary (mock for credentials step) ──────────── */
-
-export const ORDER_SUMMARY = {
-  movie: "Avengers: Endgame",
-  slug: "avengers",
-  image: "https://i.ebayimg.com/images/g/wy8AAOSwGMFcv5s2/s-l1200.jpg",
-  genre: "Sci-Fi",
-  duration: 143,
-  datetime: "Today, 7:30 PM",
-  cinema: "PrimeSeat Cinema Thủ Đức",
-  room: "IMAX",
-  seats: ["G4", "G5"],
-  seatType: "Standard",
-  ticketCount: 2,
-  ticketPrice: 280000,
-  convFee: 25000,
-  combos: [{ name: "Couple's Combo", qty: 1, price: 180000 }],
-  foods: [{ name: "Regular Popcorn", qty: 2, price: 50000 }],
-};

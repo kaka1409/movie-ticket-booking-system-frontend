@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { notFound } from "next/navigation";
 import { ALL_MOVIES } from "@/features/movies/mock";
 import { SEAT_ROWS, MAX_SEATS_PER_BOOKING } from "@/features/booking/mock";
-import type { Seat } from "@/features/booking/types";
+import type { Seat, SeatRow } from "@/features/booking/types";
+import { useBooking } from "@/contexts/BookingContext";
 
 import StepBar from "@/app/(sub)/booking/components/mobile/StepBar";
 import CountdownBanner from "@/app/(sub)/booking/components/mobile/CountdownBanner";
@@ -15,12 +16,32 @@ import BottomBar from "./components/mobile/BottomBar";
 
 import DesktopSeatContent from "./components/desktop/SeatContent";
 
+function restoreSelectedSeats(base: SeatRow[], savedSeats: { label: string }[]): SeatRow[] {
+  if (savedSeats.length === 0) return base;
+  return base.map((row) => ({
+    ...row,
+    segments: row.segments.map((seg) =>
+      seg.map((seat) => {
+        const label =
+          seat.kind === "sweetbox"
+            ? `${row.label}(${seat.pairId?.split("-").slice(1).join("-")})`
+            : `${row.label}${seat.col}`;
+        const found = savedSeats.some((s) => s.label === label);
+        return found ? { ...seat, status: "selected" as const } : seat;
+      })
+    ),
+  }));
+}
+
 export default function SelectSeatPage() {
   const params = useParams();
   const slug = params.slug as string;
   const movie = ALL_MOVIES.find((m) => m.slug === slug);
+  const { selectedSeats: savedSeats, startCountdown } = useBooking();
 
-  const [rows, setRows] = useState(SEAT_ROWS);
+  const [rows, setRows] = useState<SeatRow[]>(() =>
+    restoreSelectedSeats(SEAT_ROWS, savedSeats)
+  );
 
   const handleToggle = useCallback((rowLabel: string, clickedSeat: Seat) => {
     setRows((prev) => {
@@ -52,6 +73,15 @@ export default function SelectSeatPage() {
       });
     });
   }, []);
+
+  useEffect(() => {
+    const hasSelected = rows.some((r) =>
+      r.segments.some((seg) => seg.some((s) => s.status === "selected"))
+    );
+    if (hasSelected) {
+      startCountdown();
+    }
+  }, [rows, startCountdown]);
 
   if (!movie) {
     notFound();

@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { COMBOS, FOOD_ITEMS, FOOD_CATEGORIES } from "@/features/booking/mock";
+import { useBooking } from "@/contexts/BookingContext";
 
 // Mobile components
 import StepBar from "@/app/(sub)/booking/components/mobile/StepBar";
@@ -14,13 +15,23 @@ import BottomBar from "./components/mobile/BottomBar";
 import DesktopSnackContent from "./components/desktop/SnackContent";
 
 export default function CombosPage() {
-  const [comboQty, setComboQty] = useState<Record<string, number>>(
-    () => Object.fromEntries(COMBOS.map((c) => [c.id, 0]))
-  );
+  const { combos: savedCombos, foods: savedFoods } = useBooking();
 
-  const [foodQty, setFoodQty] = useState<Record<string, number>>(
-    () => Object.fromEntries(FOOD_ITEMS.map((f) => [f.id, 0]))
-  );
+  const [comboQty, setComboQty] = useState<Record<string, number>>(() => {
+    const base = Object.fromEntries(COMBOS.map((c) => [c.id, 0]));
+    savedCombos.forEach((c) => {
+      base[c.id] = c.qty;
+    });
+    return base;
+  });
+
+  const [foodQty, setFoodQty] = useState<Record<string, number>>(() => {
+    const base = Object.fromEntries(FOOD_ITEMS.map((f) => [f.id, 0]));
+    savedFoods.forEach((f) => {
+      base[f.id] = f.qty;
+    });
+    return base;
+  });
 
   const changeCombo = (id: string, delta: number) =>
     setComboQty((prev) => ({

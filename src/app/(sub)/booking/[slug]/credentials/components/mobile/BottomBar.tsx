@@ -3,12 +3,12 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ArrowRight } from "lucide-react";
-import { ORDER_SUMMARY } from "@/features/booking/mock";
+import { useBooking } from "@/contexts/BookingContext";
 
 export default function BottomBar({ canContinue }: { canContinue: boolean }) {
   const params = useParams();
   const slug = params.slug as string;
-  const total = ORDER_SUMMARY.ticketPrice + ORDER_SUMMARY.convFee;
+  const { total } = useBooking();
 
   return (
     <div className="sticky bottom-0 z-50 bg-(--color-bg) border-t border-(--color-border) px-4 pb-6 pt-3">
