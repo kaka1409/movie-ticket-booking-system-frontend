@@ -16,7 +16,7 @@ No test runner. `tests/{e2e,integration,unit}/` are empty dirs. `pnpm test` unde
 - **Next.js 16.2.9 App Router** + **React 19.2.4** — four route groups under `src/app/`:
   - `(main)/` — home, movies list, tickets listing, profile
   - `(blank)/` — `movies/[slug]` (full-screen pages, no header/nav)
-  - `(sub)/` — notifications, `tickets/[id]` (detail page with back-arrow header), `booking/[slug]/cinema` (cinema & showtime selection), `booking/[slug]/seats` (seat selection)
+  - `(sub)/` — notifications, `tickets/[id]` (detail page with back-arrow header), `booking/[slug]/cinema` (cinema & showtime selection), `booking/[slug]/seats` (seat selection), `booking/[slug]/snack` (food & drinks)
   - `(auth)/` — login, register
 - **`(main)/page.tsx`** re-exports `./home/page.tsx`.
 - **Layout chain**: root layout (`LocaleProvider`) → each group wraps `LayoutProvider(layout="main"|"auth"|"sub"|"blank")`. LayoutProvider renders mobile or desktop variant via `matchMedia("(min-width: 768px)")`.
@@ -90,7 +90,7 @@ Sub layout provides back button (→ movie detail) + "Cinema & Showtime" title. 
 - `components/mobile/SeatMap.tsx` — seat map with zoom-to-fit (ResizeObserver measures natural width, CSS `zoom` scales to viewport). Screen rendered as curved SVG arc. Max 8 seats enforced via `MAX_SEATS_PER_BOOKING`.
 - `components/mobile/SeatCell.tsx` — regular (`w-6.5 h-6.5`), VIP (amber), sweetbox (`w-18.5 h-8`, pink). Occupied shows "×".
 - `components/mobile/Legend.tsx` — color legend with × for occupied
-- `components/mobile/BottomBar.tsx` — sticky bottom bar, selected seats + total price, "Continue to Combos" CTA → `/booking/combos`
+- `components/mobile/BottomBar.tsx` — sticky bottom bar, selected seats + total price, "Continue to Snacks" CTA → `/booking/[slug]/snack`
 - `components/desktop/SeatContent.tsx` — stub (returns null)
 
 Seat types in mock: regular (5 cols/segment), VIP (5 cols/segment), sweetbox (2 pairs/segment). Rows A–H regular/VIP, I–J sweetbox. `handleToggle` blocks new selection when `selectedCount >= MAX_SEATS_PER_BOOKING`.
@@ -98,7 +98,7 @@ Seat types in mock: regular (5 cols/segment), VIP (5 cols/segment), sweetbox (2 
 Booking flow navigation:
 - Movie detail `BookTicketCTA` → `/booking/[slug]/cinema` (passes `?cinema=X&time=Y&date=Z` for preselection)
 - Cinema BottomBar → `/booking/[slug]/seats` (active only when cinema+time selected)
-- Seats BottomBar → `/booking/combos` (not yet implemented)
+- Seats BottomBar → `/booking/[slug]/snack`
 
 ## Framework / Toolchain Quirks
 
@@ -113,7 +113,7 @@ Booking flow navigation:
 - **Home page** (`(main)/home/page.tsx`) renders mobile/desktop variants via `hidden md:block` / `block md:hidden`. Imports data from `@/features/movies/mock`. Sub-components under `home/components/{mobile,desktop}/`. MovieRow has `status` prop for "See All" navigation to movies page.
 - **Movies page** (`(main)/movies/page.tsx`) — thin compose file wrapped in `<MoviesProvider>` + `<Suspense>`. Mobile components in `components/mobile/` (Tabs, SearchBar, FilterPanel, MovieGrid). Desktop stub in `components/desktop/MovieGrid` (returns null).
 - **Component split pattern**: Pages that render both mobile & desktop content in the same file use `block md:hidden` / `hidden md:block` (e.g. home, movies). Layout-level switching is handled by `LayoutProvider` via `matchMedia`. Each page has `components/{mobile,desktop}/` dirs. Shared components go in `components/shared/`. See `(main)/home/` as canonical example.
-- **Sub layout `getSubTitle()`**: Handles `/notifications` (i18n), `/tickets` (returns "Ticket Details"), `/booking/[slug]/cinema` (returns "Cinema & Showtime"), `/booking/[slug]/seats` (returns "Select Seat"), `/movies/[slug]` (returns movie title). Back button goes to `/tickets` for ticket routes, `/movies/[slug]` for cinema routes, `/booking/[slug]/cinema` for seat routes, `/` otherwise.
+- **Sub layout `getSubTitle()`**: Handles `/notifications` (i18n), `/tickets` (returns "Ticket Details"), `/booking/[slug]/cinema` (returns "Cinema & Showtime"), `/booking/[slug]/seats` (returns "Select Seat"), `/booking/[slug]/snack` (returns "Food & Drinks"), `/movies/[slug]` (returns movie title). Back button goes to `/tickets` for ticket routes, `/movies/[slug]` for cinema routes, `/booking/[slug]/cinema` for seat routes, `/booking/[slug]/seats` for snack routes, `/` otherwise.
 - `postcss.config.mjs` only has `@tailwindcss/postcss` plugin.
 - No Prettier config, no CI/CD workflows.
 

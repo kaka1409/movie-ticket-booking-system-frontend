@@ -7,7 +7,7 @@ import { ALL_MOVIES } from "@/features/movies/mock";
 import { CINEMAS, DATES } from "@/features/booking/mock";
 
 // Mobile components
-import StepBar from "./components/mobile/StepBar";
+import StepBar from "@/app/(sub)/booking/components/mobile/StepBar";
 import MovieSummary from "./components/mobile/MovieSummary";
 import DatePicker from "./components/mobile/DatePicker";
 import SearchBar from "./components/mobile/SearchBar";

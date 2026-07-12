@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { SeatRow, Seat } from "@/features/booking/types";
 import { SEAT_PRICES } from "@/features/booking/mock";
@@ -27,6 +28,8 @@ function collectSelections(rows: SeatRow[]): Selection[] {
 }
 
 export default function BottomBar({ rows }: { rows: SeatRow[] }) {
+  const params = useParams();
+  const slug = params.slug as string;
   const items = collectSelections(rows);
   const total = items.reduce((sum, s) => sum + s.price, 0);
   const labels = items.map((s) => s.label).join(", ");
@@ -66,7 +69,7 @@ export default function BottomBar({ rows }: { rows: SeatRow[] }) {
       </div>
 
       <Link
-        href={hasSeats ? "/booking/combos" : "#"}
+        href={hasSeats ? `/booking/${slug}/snack` : "#"}
         aria-disabled={!hasSeats}
         onClick={(e) => !hasSeats && e.preventDefault()}
         className={`flex items-center justify-center gap-2.5 w-full py-4 rounded-2xl font-extrabold text-sm tracking-widest uppercase transition-all duration-150 ${
@@ -75,7 +78,7 @@ export default function BottomBar({ rows }: { rows: SeatRow[] }) {
             : "bg-(--color-surface) text-(--color-text-muted) cursor-not-allowed border border-(--color-border)"
         }`}
       >
-        Continue to Combos
+        Continue to Snacks
         <ArrowRight size={17} />
       </Link>
     </div>

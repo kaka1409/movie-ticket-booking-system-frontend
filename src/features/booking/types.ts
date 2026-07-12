@@ -56,3 +56,26 @@ export interface SeatPrice {
   vip: number;
   sweetbox: number;
 }
+
+/* ─── Combo Types ────────────────────────────────────────── */
+
+export interface ComboItem {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  image: string;
+  tag?: string;
+}
+
+/* ─── Food & Drink Types ─────────────────────────────────── */
+
+export type FoodCategory = "popcorn" | "drinks" | "candy";
+
+export interface FoodItem {
+  id: string;
+  name: string;
+  category: FoodCategory;
+  price: number;
+  image: string;
+}

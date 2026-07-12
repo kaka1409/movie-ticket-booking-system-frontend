@@ -1,4 +1,4 @@
-import { Cinema, DateOption, Seat, SeatRow, SeatPrice } from "./types";
+import { Cinema, DateOption, Seat, SeatRow, SeatPrice, ComboItem, FoodItem } from "./types";
 
 // Generate 5 days starting from today
 const today = new Date();
@@ -167,3 +167,60 @@ export const SEAT_PRICES: SeatPrice = {
 export const COUNTDOWN_SECONDS = 5 * 60 + 59; // 5m59s
 export const MAX_SEATS_PER_BOOKING = 8;
 export const SEAT_MAP_COLS = 10;
+
+/* ─── Combo Data ─────────────────────────────────────────── */
+
+export const COMBOS: ComboItem[] = [
+  {
+    id: "couples",
+    name: "Couple's Combo",
+    description: "1 Large Popcorn, 2 Regular Sodas",
+    price: 180000,
+    image: "/images/snack/couples.png",
+    tag: "POPULAR",
+  },
+  {
+    id: "family",
+    name: "Family Pack",
+    description: "2 Large Popcorns, 4 Regular Sodas, 2 Candy items",
+    price: 320000,
+    image: "/images/snack/family.png",
+    tag: "BEST VALUE",
+  },
+  {
+    id: "solo",
+    name: "Solo Snack",
+    description: "1 Regular Popcorn, 1 Regular Soda",
+    price: 120000,
+    image: "/images/snack/solo.png",
+  },
+  {
+    id: "kids",
+    name: "Kid's Box",
+    description: "1 Small Popcorn",
+    price: 95000,
+    image: "/images/snack/kids.png",
+  },
+];
+
+/* ─── Pick & Mix Food & Drink Data ───────────────────────── */
+
+export const FOOD_CATEGORIES = [
+  { id: "popcorn", label: "Popcorn" },
+  { id: "drinks", label: "Drinks" },
+  { id: "candy", label: "Candy" },
+] as const;
+
+export const FOOD_ITEMS: FoodItem[] = [
+  // Popcorn
+  { id: "pop-regular", name: "Regular Popcorn", category: "popcorn", price: 50000, image: "/images/snack/pop-regular.jpg" },
+  { id: "pop-large", name: "Large Popcorn", category: "popcorn", price: 75000, image: "/images/snack/pop-large.jpg" },
+  { id: "pop-caramel", name: "Caramel Popcorn", category: "popcorn", price: 85000, image: "/images/snack/pop-caramel.jpg" },
+  // Drinks
+  { id: "drink-cola", name: "Cola", category: "drinks", price: 35000, image: "/images/snack/drink-cola.jpeg" },
+  { id: "drink-water", name: "Mineral Water", category: "drinks", price: 25000, image: "/images/snack/drink-water.png" },
+  { id: "drink-juice", name: "Orange Juice", category: "drinks", price: 45000, image: "/images/snack/drink-juice.jpg" },
+  // Candy
+  { id: "candy-gummy", name: "Gummy Bears", category: "candy", price: 45000, image: "/images/snack/candy-gummy.jpg" },
+  { id: "candy-choco", name: "Chocolate", category: "candy", price: 55000, image: "/images/snack/candy-choco.jpg" },
+];

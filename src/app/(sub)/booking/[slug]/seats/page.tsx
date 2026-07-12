@@ -7,8 +7,8 @@ import { ALL_MOVIES } from "@/features/movies/mock";
 import { SEAT_ROWS, MAX_SEATS_PER_BOOKING } from "@/features/booking/mock";
 import type { Seat } from "@/features/booking/types";
 
-import StepBar from "./components/mobile/StepBar";
-import CountdownBanner from "./components/mobile/CountdownBanner";
+import StepBar from "@/app/(sub)/booking/components/mobile/StepBar";
+import CountdownBanner from "@/app/(sub)/booking/components/mobile/CountdownBanner";
 import SeatMap from "./components/mobile/SeatMap";
 import Legend from "./components/mobile/Legend";
 import BottomBar from "./components/mobile/BottomBar";
