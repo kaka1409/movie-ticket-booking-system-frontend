@@ -51,11 +51,11 @@ src/
 ├── app/
 │   ├── (main)/       # Home, movies list, tickets, profile
 │   ├── (blank)/      # Movie detail [slug] (full-screen, no header/nav)
-│   ├── (sub)/        # Notifications, tickets/[id] (detail page)
+│   ├── (sub)/        # Notifications, tickets/[id], booking/[slug]/cinema, booking/[slug]/seats
 │   └── (auth)/       # Login, register
 ├── components/
 │   ├── layout/       # LayoutProvider (responsive), mobile/ & desktop/ variants
-│   └── common/       # MovieCard, QuickBooking (reusable)
+│   └── common/       # MovieCard (reusable)
 ├── contexts/         # LocaleContext, MoviesContext, TicketsContext
 ├── features/         # Feature modules (mock data, constants, types)
 ├── hooks/            # Shared custom hooks (empty)

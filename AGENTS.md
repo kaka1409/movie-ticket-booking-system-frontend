@@ -16,7 +16,7 @@ No test runner. `tests/{e2e,integration,unit}/` are empty dirs. `pnpm test` unde
 - **Next.js 16.2.9 App Router** + **React 19.2.4** — four route groups under `src/app/`:
   - `(main)/` — home, movies list, tickets listing, profile
   - `(blank)/` — `movies/[slug]` (full-screen pages, no header/nav)
-  - `(sub)/` — notifications, `tickets/[id]` (detail page with back-arrow header), `cinema/[slug]` (cinema & showtime selection)
+  - `(sub)/` — notifications, `tickets/[id]` (detail page with back-arrow header), `booking/[slug]/cinema` (cinema & showtime selection), `booking/[slug]/seats` (seat selection)
   - `(auth)/` — login, register
 - **`(main)/page.tsx`** re-exports `./home/page.tsx`.
 - **Layout chain**: root layout (`LocaleProvider`) → each group wraps `LayoutProvider(layout="main"|"auth"|"sub"|"blank")`. LayoutProvider renders mobile or desktop variant via `matchMedia("(min-width: 768px)")`.
@@ -40,7 +40,7 @@ No test runner. `tests/{e2e,integration,unit}/` are empty dirs. `pnpm test` unde
 - `src/features/notifications/` — `mock.tsx`, `constants.ts`, `types.ts`.
 - `src/features/auth/` — `mock.ts`.
 - `src/features/profile/` — `mock.ts` (USER with avatarUrl from Contentful), `types.ts` (User interface).
-- `src/features/booking/` — `mock.ts` (CINEMAS with PrimeSeat data, DATES), `types.ts` (Cinema, Showtime, DateOption, BookingSelection, BOOKING_STEPS).
+- `src/features/booking/` — `types.ts` (Cinema, Showtime, DateOption, BookingSelection, BOOKING_STEPS, Seat, SeatRow, SeatKind, SeatStatus, SeatPrice), `mock.ts` (CINEMAS with PrimeSeat data, DATES, SEAT_ROWS with 10 rows A–J, SEAT_PRICES, COUNTDOWN_SECONDS, MAX_SEATS_PER_BOOKING=8, SEAT_MAP_COLS=10).
 - `src/hooks/` exists but is empty.
 - `src/libs/constants.ts` has generic constants; `src/libs/utils.ts` has a `slugify` helper; `src/types/index.ts` is a placeholder with only a comment.
 
@@ -70,24 +70,42 @@ No BottomNav or TopNav — layout provides both. Menu items use i18n keys `profi
 
 ## Cinema & Showtime Page
 
-`page.tsx` resolves movie by slug from `ALL_MOVIES`, composes mobile components directly:
+`(sub)/booking/[slug]/cinema/page.tsx` resolves movie by slug from `ALL_MOVIES`, composes mobile components directly:
 - `components/mobile/StepBar.tsx` — 5-step booking progress bar (SELECT CINEMA → SELECT SEATS → FOOD & DRINKS → PAYMENT → CONFIRM)
 - `components/mobile/MovieSummary.tsx` — mini poster + movie info (duration, genre, ageRating, rating)
 - `components/mobile/DatePicker.tsx` — horizontal scroll date picker
 - `components/mobile/SearchBar.tsx` — cinema/location search input
 - `components/mobile/CinemaCard.tsx` — cinema card with name, address, distance, badge, showtime chips (active/sold-out states)
 - `components/mobile/CinemaList.tsx` — list wrapper + empty state
-- `components/mobile/BottomBar.tsx` — sticky bottom bar with selection summary + "SELECT SEATS" CTA
+- `components/mobile/BottomBar.tsx` — sticky bottom bar with selection summary + "SELECT SEATS" CTA → links to `/booking/[slug]/seats`
 - `components/desktop/CinemaContent.tsx` — stub (returns null)
 
 Sub layout provides back button (→ movie detail) + "Cinema & Showtime" title. State managed via local `useState`.
+
+## Seat Selection Page
+
+`(sub)/booking/[slug]/seats/page.tsx` resolves movie by slug, composes mobile components:
+- `components/mobile/StepBar.tsx` — step=2
+- `components/mobile/CountdownBanner.tsx` — 5m59s countdown timer
+- `components/mobile/SeatMap.tsx` — seat map with zoom-to-fit (ResizeObserver measures natural width, CSS `zoom` scales to viewport). Screen rendered as curved SVG arc. Max 8 seats enforced via `MAX_SEATS_PER_BOOKING`.
+- `components/mobile/SeatCell.tsx` — regular (`w-6.5 h-6.5`), VIP (amber), sweetbox (`w-18.5 h-8`, pink). Occupied shows "×".
+- `components/mobile/Legend.tsx` — color legend with × for occupied
+- `components/mobile/BottomBar.tsx` — sticky bottom bar, selected seats + total price, "Continue to Combos" CTA → `/booking/combos`
+- `components/desktop/SeatContent.tsx` — stub (returns null)
+
+Seat types in mock: regular (5 cols/segment), VIP (5 cols/segment), sweetbox (2 pairs/segment). Rows A–H regular/VIP, I–J sweetbox. `handleToggle` blocks new selection when `selectedCount >= MAX_SEATS_PER_BOOKING`.
+
+Booking flow navigation:
+- Movie detail `BookTicketCTA` → `/booking/[slug]/cinema` (passes `?cinema=X&time=Y&date=Z` for preselection)
+- Cinema BottomBar → `/booking/[slug]/seats` (active only when cinema+time selected)
+- Seats BottomBar → `/booking/combos` (not yet implemented)
 
 ## Framework / Toolchain Quirks
 
 - **React Compiler OFF** (`reactCompiler: false`). `babel-plugin-react-compiler` devDep present but unused.
 - **Tailwind CSS v4** via `@tailwindcss/postcss`. Use `@import "tailwindcss"` syntax. No JS config file. Custom `@utility scrollbar-hide` in `global.css`. Custom animations: `animate-fade-in` (fadeSlideIn keyframe), `animate-expand`.
 - **Brand theme**: CSS custom properties in `global.css` (gold/black). Access via `var(--color-*)`. Spacing via `var(--space-*)`. Radius via `var(--radius-*)`. Shadows via `var(--shadow-*)`.
-- **Tailwind + CSS variables**: Use `bg-(--color-gold)`, `text-(--color-text-muted)`, `shadow-(--shadow-card)`, `border-(--color-border)` syntax (88+ instances across codebase). No inline `style={}` props — always use Tailwind utility classes.
+- **Tailwind + CSS variables**: Use `bg-(--color-gold)`, `text-(--color-text-muted)`, `shadow-(--shadow-card)`, `border-(--color-border)` syntax (88+ instances across codebase). Inline `style={}` only for dynamic/computed values — static styling always uses Tailwind utility classes.
 - **Icons**: `lucide-react`.
 - **QR codes**: `qrcode.react` (QRCodeSVG component) for ticket detail page.
 - **Navigation**: `<Link>` (not `<a>`); active route via `usePathname()`. URL search params via `useSearchParams()` from `next/navigation`.
@@ -95,7 +113,7 @@ Sub layout provides back button (→ movie detail) + "Cinema & Showtime" title. 
 - **Home page** (`(main)/home/page.tsx`) renders mobile/desktop variants via `hidden md:block` / `block md:hidden`. Imports data from `@/features/movies/mock`. Sub-components under `home/components/{mobile,desktop}/`. MovieRow has `status` prop for "See All" navigation to movies page.
 - **Movies page** (`(main)/movies/page.tsx`) — thin compose file wrapped in `<MoviesProvider>` + `<Suspense>`. Mobile components in `components/mobile/` (Tabs, SearchBar, FilterPanel, MovieGrid). Desktop stub in `components/desktop/MovieGrid` (returns null).
 - **Component split pattern**: Pages that render both mobile & desktop content in the same file use `block md:hidden` / `hidden md:block` (e.g. home, movies). Layout-level switching is handled by `LayoutProvider` via `matchMedia`. Each page has `components/{mobile,desktop}/` dirs. Shared components go in `components/shared/`. See `(main)/home/` as canonical example.
-- **Sub layout `getSubTitle()`**: Handles `/notifications` (i18n), `/tickets` (returns "Ticket Details"), `/cinema/[slug]` (returns "Cinema & Showtime"), `/movies/[slug]` (returns movie title). Back button goes to `/tickets` for ticket routes, `/movies/[slug]` for cinema routes, `/` otherwise.
+- **Sub layout `getSubTitle()`**: Handles `/notifications` (i18n), `/tickets` (returns "Ticket Details"), `/booking/[slug]/cinema` (returns "Cinema & Showtime"), `/booking/[slug]/seats` (returns "Select Seat"), `/movies/[slug]` (returns movie title). Back button goes to `/tickets` for ticket routes, `/movies/[slug]` for cinema routes, `/booking/[slug]/cinema` for seat routes, `/` otherwise.
 - `postcss.config.mjs` only has `@tailwindcss/postcss` plugin.
 - No Prettier config, no CI/CD workflows.
 
@@ -124,4 +142,4 @@ Home page "See All" / "Explore All" buttons link to movies page with appropriate
 - `"use client"` at the top of every file using hooks or browser APIs.
 - Filter components (FilterChip, FilterCheckRow, FilterLabel) are internal to movies page `components/mobile/`.
 - All cinema data uses **PrimeSeat** brand — Vietnamese addresses, km-based distances, 24h time format.
-- Inline `style={}` props are not used — always convert to Tailwind utility classes with CSS custom property syntax.
+- Inline `style={}` props are used for dynamic/computed values (gradients, animation delays, computed widths, aspect ratios). Static styling always uses Tailwind utility classes with CSS custom property syntax.
