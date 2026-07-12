@@ -14,6 +14,7 @@ function getSubTitle(pathname: string, t: (key: string) => string): string {
     if (pathname.includes("/cinema")) return "Cinema & Showtime";
     if (pathname.includes("/seats")) return "Select Seat";
     if (pathname.includes("/snack")) return "Food & Drinks";
+    if (pathname.includes("/credentials")) return "Contact Information";
     return "";
   }
   if (pathname.startsWith("/movies/")) {
@@ -31,6 +32,7 @@ function getBackHref(pathname: string): string {
     if (pathname.includes("/cinema")) return `/movies/${slug}`;
     if (pathname.includes("/seats")) return `/booking/${slug}/cinema`;
     if (pathname.includes("/snack")) return `/booking/${slug}/seats`;
+    if (pathname.includes("/credentials")) return `/booking/${slug}/snack`;
     return `/movies/${slug}`;
   }
   return "/";

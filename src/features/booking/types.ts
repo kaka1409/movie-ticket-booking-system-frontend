@@ -30,7 +30,7 @@ export const BOOKING_STEPS = [
   "SELECT CINEMA",
   "SELECT SEATS",
   "FOOD & DRINKS",
-  "PAYMENT",
+  "CONTACT INFO",
   "CONFIRM",
 ] as const;
 

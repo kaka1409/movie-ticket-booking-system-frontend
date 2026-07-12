@@ -35,7 +35,7 @@ function Header() {
             onClick={() => setLocale(locale === "en" ? "vn" : "en")}
           >
             <Image
-              src={locale === "en" ? "/images/flag-en.svg" : "/images/flag-vn.svg"}
+              src={locale === "en" ? "https://flagcdn.com/w20/gb.png" : "https://flagcdn.com/w20/vn.png"}
               alt={locale === "en" ? "English" : "Tiếng Việt"}
               width={16}
               height={12}
