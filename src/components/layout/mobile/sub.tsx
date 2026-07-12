@@ -15,6 +15,9 @@ function getSubTitle(pathname: string, t: (key: string) => string): string {
     if (pathname.includes("/seats")) return "Select Seat";
     if (pathname.includes("/snack")) return "Food & Drinks";
     if (pathname.includes("/credentials")) return "Contact Information";
+    if (pathname.includes("/payment")) return "Payment";
+    if (pathname.includes("/success")) return "Payment Success";
+    if (pathname.includes("/fail")) return "Payment Failed";
     return "";
   }
   if (pathname.startsWith("/movies/")) {
@@ -33,6 +36,12 @@ function getBackHref(pathname: string): string {
     if (pathname.includes("/seats")) return `/booking/${slug}/cinema`;
     if (pathname.includes("/snack")) return `/booking/${slug}/seats`;
     if (pathname.includes("/credentials")) return `/booking/${slug}/snack`;
+    if (pathname.includes("/payment")) return `/booking/${slug}/credentials`;
+    if (pathname.includes("/success")) return "/";
+    if (pathname.includes("/fail")) {
+      const failSlug = pathname.split("/booking/")[1]?.split("/")[0];
+      return `/booking/${failSlug}/payment`;
+    }
     return `/movies/${slug}`;
   }
   return "/";

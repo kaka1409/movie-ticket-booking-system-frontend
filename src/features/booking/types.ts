@@ -31,7 +31,7 @@ export const BOOKING_STEPS = [
   "SELECT SEATS",
   "FOOD & DRINKS",
   "CONTACT INFO",
-  "CONFIRM",
+  "PAYMENT",
 ] as const;
 
 /* ─── Seat Selection Types ───────────────────────────────── */

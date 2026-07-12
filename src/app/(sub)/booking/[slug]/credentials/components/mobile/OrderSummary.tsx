@@ -22,8 +22,6 @@ export default function OrderSummary() {
     ticketPrice,
     combos,
     foods,
-    snackTotal,
-    convFee,
     total,
   } = useBooking();
 
@@ -113,13 +111,6 @@ export default function OrderSummary() {
               </span>
             </div>
           ))}
-
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-white">Convenience Fee</span>
-            <span className="font-semibold text-sm text-white">
-              {convFee.toLocaleString("vi-VN")}₫
-            </span>
-          </div>
 
           <div className="h-px bg-(--color-border) my-1" />
 

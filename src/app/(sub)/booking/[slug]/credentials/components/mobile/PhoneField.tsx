@@ -31,7 +31,7 @@ export default function PhoneField({
 
   return (
     <div>
-      <div className="flex gap-2">
+      <div className="flex justify-between gap-2">
         <div
           className={`relative flex items-center gap-1.5 px-3 py-3.5 rounded-2xl bg-(--color-surface) border transition-all duration-150 flex-shrink-0 cursor-pointer ${
             error ? "border-red-500/70" : "border-(--color-border)"
@@ -63,7 +63,7 @@ export default function PhoneField({
         </div>
 
         <div
-          className={`flex items-center gap-3 px-4 py-3.5 rounded-2xl flex-1 bg-(--color-surface) border transition-all duration-150 ${
+          className={`flex items-center gap-3 px-4 py-3.5 rounded-2xl min-w-0 bg-(--color-surface) border transition-all duration-150 ${
             error ? "border-red-500/70" : focused ? "border-(--color-gold)/60" : "border-(--color-border)"
           }`}
         >

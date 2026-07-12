@@ -44,7 +44,6 @@ interface BookingState {
   ticketCount: number;
   ticketPrice: number;
   snackTotal: number;
-  convFee: number;
   total: number;
   countdownStarted: boolean;
   countdownStartTime: number;
@@ -79,7 +78,6 @@ const DEFAULT_STATE: BookingState = {
   ticketCount: 0,
   ticketPrice: 0,
   snackTotal: 0,
-  convFee: 25000,
   total: 0,
   countdownStarted: false,
   countdownStartTime: 0,
@@ -157,8 +155,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     const snackTotal =
       combos.reduce((s, c) => s + c.price * c.qty, 0) +
       foods.reduce((s, f) => s + f.price * f.qty, 0);
-    const convFee = 25000;
-    const total = ticketPrice + snackTotal + convFee;
+    const total = ticketPrice + snackTotal;
 
     return {
       cinemaId,
@@ -173,7 +170,6 @@ export function BookingProvider({ children }: { children: ReactNode }) {
       ticketCount,
       ticketPrice,
       snackTotal,
-      convFee,
       total,
       countdownStarted,
       countdownStartTime,
