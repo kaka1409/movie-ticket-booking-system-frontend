@@ -10,6 +10,7 @@ import { ALL_MOVIES } from "@/features/movies/mock";
 function getSubTitle(pathname: string): string {
   if (pathname.startsWith("/tickets")) return "Ticket Details";
   if (pathname.startsWith("/profile/reviews")) return "Review & Rating";
+  if (pathname.startsWith("/profile/wishlist")) return "Wishlist";
   if (pathname.startsWith("/booking/")) {
     if (pathname.includes("/cinema")) return "Cinema & Showtime";
     if (pathname.includes("/seats")) return "Select Seat";

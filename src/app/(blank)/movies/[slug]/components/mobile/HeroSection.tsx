@@ -2,11 +2,14 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, Bell, Play, Star, Clock } from "lucide-react";
+import { ArrowLeft, Heart, Play, Star, Clock } from "lucide-react";
 import { useMovie } from "../shared/MovieContext";
+import { useWishlist } from "@/contexts/WishlistContext";
 
 export default function HeroSection() {
   const movie = useMovie();
+  const { toggleWishlist, isWishlisted } = useWishlist();
+  const liked = isWishlisted(movie.id);
 
   return (
     <section className="relative w-full h-85">
@@ -40,13 +43,17 @@ export default function HeroSection() {
           <ArrowLeft size={20} className="text-(--color-gold-light)" />
         </Link>
 
-        <Link
-          href="/notifications"
+        <button
+          type="button"
+          onClick={() => toggleWishlist(movie.id)}
           className="w-9 h-9 rounded-full bg-black/40 flex items-center justify-center"
-          aria-label="Notify me"
+          aria-label={liked ? "Remove from wishlist" : "Add to wishlist"}
         >
-          <Bell size={18} className="text-(--color-gold-light)" />
-        </Link>
+          <Heart
+            size={18}
+            className={liked ? "fill-pink-400 text-pink-400" : "text-(--color-gold-light)"}
+          />
+        </button>
       </div>
 
       <div className="absolute bottom-0 left-0 right-0 flex items-end gap-3 px-4">

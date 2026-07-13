@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "@/styles/global.css";
 import { LocaleProvider } from "@/contexts/LocaleContext";
+import { WishlistProvider } from "@/contexts/WishlistContext";
 
 export const metadata: Metadata = {
   title: "PrimeSeat",
@@ -21,7 +22,9 @@ export default function RootLayout({
   return (
     <html lang="en" data-scroll-behavior="smooth">
       <body className="min-h-dvh flex flex-col">
-        <LocaleProvider>{children}</LocaleProvider>
+        <LocaleProvider>
+          <WishlistProvider>{children}</WishlistProvider>
+        </LocaleProvider>
       </body>
     </html>
   );
