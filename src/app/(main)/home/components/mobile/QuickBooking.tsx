@@ -1,17 +1,34 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import Link from "next/link";
 import { ChevronDown } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
-import { MOVIES, DATES, SHOWTIMES, CINEMAS } from "@/libs/constants";
+import { NOW_SHOWING } from "@/features/movies/mock";
+import { CINEMAS, DATES } from "@/features/booking/mock";
 
 export default function QuickBooking() {
-  const [selectedMovie, setSelectedMovie] = useState(MOVIES[0]);
-  const [selectedDate, setSelectedDate] = useState(DATES[0].value);
-  const [selectedShowtime, setSelectedShowtime] = useState(SHOWTIMES[2]);
-  const [selectedCinema, setSelectedCinema] = useState(CINEMAS[0]);
-  const [isExpanded, setIsExpanded] = useState(true);
   const { t } = useLocale();
+
+  const [selectedMovieSlug, setSelectedMovieSlug] = useState(NOW_SHOWING[0].slug);
+  const [selectedCinemaId, setSelectedCinemaId] = useState(CINEMAS[0].id);
+  const [selectedDate, setSelectedDate] = useState(DATES[0].value);
+  const [selectedTime, setSelectedTime] = useState("");
+  const [isExpanded, setIsExpanded] = useState(true);
+
+  const selectedCinema = useMemo(
+    () => CINEMAS.find((c) => c.id === selectedCinemaId),
+    [selectedCinemaId]
+  );
+
+  const availableShowtimes = useMemo(
+    () => selectedCinema?.showtimes ?? [],
+    [selectedCinema]
+  );
+
+  const dates3 = DATES.slice(0, 3);
+
+  const canBook = !!selectedMovieSlug && !!selectedCinemaId && !!selectedDate && !!selectedTime;
 
   return (
     <section
@@ -38,6 +55,7 @@ export default function QuickBooking() {
       >
         <div className="overflow-hidden min-h-0">
           <div className="mt-(--space-md) space-y-(--space-md)">
+            {/* Movie */}
             <div>
               <label
                 className="mb-(--space-sm) block text-xs font-semibold text-(--color-text-secondary)"
@@ -48,23 +66,24 @@ export default function QuickBooking() {
               <select
                 id="qb-movie"
                 className="w-full rounded-(--radius-sm) bg-(--color-surface) px-3 py-2.5 text-sm text-white outline-none border border-(--color-border)"
-                value={selectedMovie}
-                onChange={(e) => setSelectedMovie(e.target.value)}
+                value={selectedMovieSlug}
+                onChange={(e) => setSelectedMovieSlug(e.target.value)}
               >
-                {MOVIES.map((m) => (
-                  <option key={m} value={m}>
-                    {m}
+                {NOW_SHOWING.map((m) => (
+                  <option key={m.id} value={m.slug}>
+                    {m.title}
                   </option>
                 ))}
               </select>
             </div>
 
+            {/* Date */}
             <div>
               <span className="mb-(--space-xs) block text-xs font-semibold text-(--color-text-secondary)">
                 {t("quick_booking.date")}
               </span>
               <div className="flex gap-(--space-sm)">
-                {DATES.map((d) => (
+                {dates3.map((d) => (
                   <button
                     key={d.value}
                     className={`rounded-(--radius-sm) px-(--space-md) py-1.5 text-xs font-semibold transition-colors ${
@@ -75,34 +94,13 @@ export default function QuickBooking() {
                     onClick={() => setSelectedDate(d.value)}
                     aria-pressed={selectedDate === d.value}
                   >
-                    {d.label}
+                    {d.weekday} {d.day} {d.month}
                   </button>
                 ))}
               </div>
             </div>
 
-            <div>
-              <span className="mb-(--space-xs) block text-xs font-semibold text-(--color-text-secondary)">
-                {t("quick_booking.showtime")}
-              </span>
-              <div className="flex flex-wrap gap-(--space-sm)">
-                {SHOWTIMES.map((st) => (
-                  <button
-                    key={st}
-                    className={`rounded-(--radius-sm) px-(--space-md) py-1.5 text-xs font-semibold transition-colors ${
-                      selectedShowtime === st
-                        ? "border border-(--color-gold) bg-(--color-bg) text-(--color-gold)"
-                        : "border border-transparent bg-(--color-surface) text-white"
-                    }`}
-                    onClick={() => setSelectedShowtime(st)}
-                    aria-pressed={selectedShowtime === st}
-                  >
-                    {st}
-                  </button>
-                ))}
-              </div>
-            </div>
-
+            {/* Cinema */}
             <div>
               <label
                 className="mb-(--space-xs) block text-xs font-semibold text-(--color-text-secondary)"
@@ -113,22 +111,63 @@ export default function QuickBooking() {
               <select
                 id="qb-cinema"
                 className="w-full rounded-(--radius-sm) bg-(--color-surface) px-3 py-2.5 text-sm text-white outline-none border border-(--color-border)"
-                value={selectedCinema}
-                onChange={(e) => setSelectedCinema(e.target.value)}
+                value={selectedCinemaId}
+                onChange={(e) => {
+                  const id = Number(e.target.value);
+                  setSelectedCinemaId(id);
+                  setSelectedTime("");
+                }}
               >
                 {CINEMAS.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
+                  <option key={c.id} value={c.id}>
+                    {c.name}
                   </option>
                 ))}
               </select>
             </div>
 
-            <button
-              className="w-full rounded-(--radius-sm) bg-(--color-gold) py-3 text-center text-sm font-bold tracking-widest text-black transition-opacity hover:opacity-90"
-            >
-              {t("quick_booking.book")}
-            </button>
+            {/* Showtime */}
+            <div>
+              <span className="mb-(--space-xs) block text-xs font-semibold text-(--color-text-secondary)">
+                {t("quick_booking.showtime")}
+              </span>
+              <div className="flex flex-wrap gap-(--space-sm)">
+                {availableShowtimes.map((st) => (
+                  <button
+                    key={st.time}
+                    disabled={!st.available}
+                    className={`rounded-(--radius-sm) px-(--space-md) py-1.5 text-xs font-semibold transition-colors ${
+                      !st.available
+                        ? "border border-transparent bg-(--color-surface) text-(--color-text-muted) cursor-not-allowed opacity-40"
+                        : selectedTime === st.time
+                        ? "border border-(--color-gold) bg-(--color-bg) text-(--color-gold)"
+                        : "border border-transparent bg-(--color-surface) text-white"
+                    }`}
+                    onClick={() => st.available && setSelectedTime(st.time)}
+                    aria-pressed={selectedTime === st.time}
+                  >
+                    {st.time}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* CTA */}
+            {canBook ? (
+              <Link
+                href={`/booking/${selectedMovieSlug}/cinema?cinema=${selectedCinemaId}&time=${selectedTime}&date=${selectedDate}`}
+                className="block w-full rounded-(--radius-sm) bg-(--color-gold) py-3 text-center text-sm font-bold tracking-widest text-black transition-opacity hover:opacity-90"
+              >
+                {t("quick_booking.book")}
+              </Link>
+            ) : (
+              <button
+                disabled
+                className="w-full rounded-(--radius-sm) bg-(--color-surface) py-3 text-center text-sm font-bold tracking-widest text-(--color-text-muted) border border-(--color-border) cursor-not-allowed"
+              >
+                {t("quick_booking.book")}
+              </button>
+            )}
           </div>
         </div>
       </div>
