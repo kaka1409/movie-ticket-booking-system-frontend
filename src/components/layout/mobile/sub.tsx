@@ -10,6 +10,7 @@ import { ALL_MOVIES } from "@/features/movies/mock";
 function getSubTitle(pathname: string, t: (key: string) => string): string {
   if (pathname.startsWith("/notifications")) return t("notif.title");
   if (pathname.startsWith("/tickets")) return "Ticket Details";
+  if (pathname.startsWith("/profile/reviews")) return "Review & Rating";
   if (pathname.startsWith("/booking/")) {
     if (pathname.includes("/cinema")) return "Cinema & Showtime";
     if (pathname.includes("/seats")) return "Select Seat";
@@ -30,6 +31,7 @@ function getSubTitle(pathname: string, t: (key: string) => string): string {
 
 function getBackHref(pathname: string): string {
   if (pathname.startsWith("/tickets")) return "/tickets";
+  if (pathname.startsWith("/profile")) return "/profile";
   if (pathname.startsWith("/booking/")) {
     const slug = pathname.split("/booking/")[1]?.split("/")[0];
     if (pathname.includes("/cinema")) return `/movies/${slug}`;

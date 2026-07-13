@@ -9,6 +9,7 @@ import { ALL_MOVIES } from "@/features/movies/mock";
 
 function getSubTitle(pathname: string): string {
   if (pathname.startsWith("/tickets")) return "Ticket Details";
+  if (pathname.startsWith("/profile/reviews")) return "Review & Rating";
   if (pathname.startsWith("/booking/")) {
     if (pathname.includes("/cinema")) return "Cinema & Showtime";
     if (pathname.includes("/seats")) return "Select Seat";
@@ -43,6 +44,8 @@ export default function DesktopSubLayout({
             href={
               pathname.startsWith("/tickets")
                 ? "/tickets"
+                : pathname.startsWith("/profile")
+                ? "/profile"
                 : pathname.startsWith("/booking/")
                 ? pathname.includes("/cinema")
                   ? `/movies/${pathname.split("/booking/")[1]?.split("/")[0]}`
