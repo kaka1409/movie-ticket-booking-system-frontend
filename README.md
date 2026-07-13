@@ -12,6 +12,7 @@ This repository contains the frontend codebase for PrimeSeat which use Next.js 1
 - **Redux Toolkit**
 - **lucide-react** (icons)
 - **qrcode.react** (QR code generation)
+- **next/image** (optimized images for payment brand logos)
 - **i18n** (English / Vietnamese)
 
 <!--## Screenshots-->
@@ -51,12 +52,12 @@ src/
 ├── app/
 │   ├── (main)/       # Home, movies list, tickets, profile
 │   ├── (blank)/      # Movie detail [slug] (full-screen, no header/nav)
-│   ├── (sub)/        # Notifications, tickets/[id], booking/[slug]/cinema, booking/[slug]/seats
+│   ├── (sub)/        # Notifications, tickets/[id], booking/[slug] (cinema, seats, snack, credentials, payment, status/success, status/failed)
 │   └── (auth)/       # Login, register
 ├── components/
 │   ├── layout/       # LayoutProvider (responsive), mobile/ & desktop/ variants
 │   └── common/       # MovieCard (reusable)
-├── contexts/         # LocaleContext, MoviesContext, TicketsContext
+├── contexts/         # LocaleContext, MoviesContext, TicketsContext, BookingContext
 ├── features/         # Feature modules (mock data, constants, types)
 ├── hooks/            # Shared custom hooks (empty)
 ├── libs/             # Constants, utilities
@@ -71,3 +72,5 @@ src/
 - Responsive layout: `LayoutProvider` switches between mobile (`< 768px`, Header + BottomNav) and desktop (Header + Footer) variants via `matchMedia`
 - Brand theme uses CSS variables (gold/black palette) in `global.css`
 - Movie poster images configured in `next.config.ts` `images.remotePatterns`
+- Complete booking flow: cinema → seats → snack → credentials → payment → status/success or status/failed (6 pages, BookingContext persists state across steps)
+- Payment step simulates external gateway: 2s loading → random 50/50 redirect to success or fail

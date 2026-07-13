@@ -49,7 +49,7 @@ export default function PageContent() {
         </div>
       </main>
 
-      <BottomBar canPay={!!selectedMethod} />
+      <BottomBar canPay={!!selectedMethod} selectedMethod={selectedMethod} />
     </div>
   );
 }

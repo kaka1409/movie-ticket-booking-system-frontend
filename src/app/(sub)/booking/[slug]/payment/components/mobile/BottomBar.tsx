@@ -4,16 +4,27 @@ import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { useBooking } from "@/contexts/BookingContext";
+import { PAYMENT_METHODS } from "./PaymentOption";
 
-export default function BottomBar({ canPay }: { canPay: boolean }) {
+export default function BottomBar({
+  canPay,
+  selectedMethod,
+}: {
+  canPay: boolean;
+  selectedMethod: string | null;
+}) {
   const params = useParams();
   const router = useRouter();
   const slug = params.slug as string;
-  const { ticketCount, cinemaName, total } = useBooking();
+  const { ticketCount, cinemaName, total, setPaymentMethod } = useBooking();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleClick = async () => {
     if (!canPay || isLoading) return;
+
+    const method = PAYMENT_METHODS.find((m) => m.id === selectedMethod);
+    if (method) setPaymentMethod(method.name);
+
     setIsLoading(true);
 
     // Simulate external payment gateway processing
@@ -23,9 +34,9 @@ export default function BottomBar({ canPay }: { canPay: boolean }) {
     const txnId = `TXN${Date.now()}`;
 
     if (success) {
-      router.push(`/booking/${slug}/success?transactionId=${txnId}`);
+      router.push(`/booking/${slug}/status/success?transactionId=${txnId}`);
     } else {
-      router.push(`/booking/${slug}/fail?reason=payment_declined&transactionId=${txnId}`);
+      router.push(`/booking/${slug}/status/failed?reason=payment_declined&transactionId=${txnId}`);
     }
   };
 

@@ -16,7 +16,7 @@ No test runner. `tests/{e2e,integration,unit}/` are empty dirs. `pnpm test` unde
 - **Next.js 16.2.9 App Router** + **React 19.2.4** — four route groups under `src/app/`:
   - `(main)/` — home, movies list, tickets listing, profile
   - `(blank)/` — `movies/[slug]` (full-screen pages, no header/nav)
-  - `(sub)/` — notifications, `tickets/[id]` (detail page with back-arrow header), `booking/[slug]/cinema` (cinema & showtime selection), `booking/[slug]/seats` (seat selection), `booking/[slug]/snack` (food & drinks)
+  - `(sub)/` — notifications, `tickets/[id]` (detail page with back-arrow header), `booking/[slug]/cinema` (cinema & showtime selection), `booking/[slug]/seats` (seat selection), `booking/[slug]/snack` (food & drinks), `booking/[slug]/credentials` (contact information), `booking/[slug]/payment` (payment method selection), `booking/[slug]/status/success` (payment success), `booking/[slug]/status/failed` (payment failure)
   - `(auth)/` — login, register
 - **`(main)/page.tsx`** re-exports `./home/page.tsx`.
 - **Layout chain**: root layout (`LocaleProvider`) → each group wraps `LayoutProvider(layout="main"|"auth"|"sub"|"blank")`. LayoutProvider renders mobile or desktop variant via `matchMedia("(min-width: 768px)")`.
@@ -31,6 +31,7 @@ No test runner. `tests/{e2e,integration,unit}/` are empty dirs. `pnpm test` unde
 
 - **Movies page**: React Context (`src/contexts/MoviesContext.tsx`) with URL sync via `useSearchParams` + `router.replace`. State: `activeTab`, `query`, `filtersOpen`, `filters`, `appliedFilters`, `visibleCount`. URL-synced params: `status`, `genres`, `rating`, `format`, `ageRating`. Non-URL state: `query`, `filtersOpen`, `visibleCount`, `filters.releaseDate`, `filters.length`.
 - **Tickets listing**: React Context (`src/contexts/TicketsContext.tsx`) — `TicketsProvider` + `useTickets()` hook. Manages `activeTab` ("upcoming"|"past") and `visibleCount`. Tab switching resets `visibleCount` to 3; `loadMore` increments by 3.
+- **Booking flow**: React Context (`src/contexts/BookingContext.tsx`) — `BookingProvider` wraps all booking steps at `booking/[slug]/layout.tsx`. Manages cinema, seats, combos, foods, countdown, paymentMethod. Saves state on each step's CTA click. Local state initialized from context on back-navigation via `useState(contextValue)`. `paymentMethod` is included in `useMemo` dependency array.
 - **Other pages**: Local `useState` or no state needed.
 
 ## Feature Scaffolding
@@ -40,7 +41,7 @@ No test runner. `tests/{e2e,integration,unit}/` are empty dirs. `pnpm test` unde
 - `src/features/notifications/` — `mock.tsx`, `constants.ts`, `types.ts`.
 - `src/features/auth/` — `mock.ts`.
 - `src/features/profile/` — `mock.ts` (USER with avatarUrl from Contentful), `types.ts` (User interface).
-- `src/features/booking/` — `types.ts` (Cinema, Showtime, DateOption, BookingSelection, BOOKING_STEPS, Seat, SeatRow, SeatKind, SeatStatus, SeatPrice), `mock.ts` (CINEMAS with PrimeSeat data, DATES, SEAT_ROWS with 10 rows A–J, SEAT_PRICES, COUNTDOWN_SECONDS, MAX_SEATS_PER_BOOKING=8, SEAT_MAP_COLS=10).
+- `src/features/booking/` — `types.ts` (Cinema, Showtime, DateOption, BookingSelection, BOOKING_STEPS [5 steps], Seat, SeatRow, SeatKind, SeatStatus, SeatPrice, ComboItem, FoodItem, FoodCategory), `mock.ts` (CINEMAS with PrimeSeat data, DATES, SEAT_ROWS with 10 rows A–J, SEAT_PRICES, COMBOS [4 combos], FOOD_ITEMS [8 items], FOOD_CATEGORIES, COUNTDOWN_SECONDS, MAX_SEATS_PER_BOOKING=8, SEAT_MAP_COLS=10).
 - `src/hooks/` exists but is empty.
 - `src/libs/constants.ts` has generic constants; `src/libs/utils.ts` has a `slugify` helper; `src/types/index.ts` is a placeholder with only a comment.
 
@@ -71,7 +72,7 @@ No BottomNav or TopNav — layout provides both. Menu items use i18n keys `profi
 ## Cinema & Showtime Page
 
 `(sub)/booking/[slug]/cinema/page.tsx` resolves movie by slug from `ALL_MOVIES`, composes mobile components directly:
-- `components/mobile/StepBar.tsx` — 5-step booking progress bar (SELECT CINEMA → SELECT SEATS → FOOD & DRINKS → PAYMENT → CONFIRM)
+- `components/mobile/StepBar.tsx` — 5-step booking progress bar (SELECT CINEMA → SELECT SEATS → FOOD & DRINKS → CONTACT INFO → PAYMENT)
 - `components/mobile/MovieSummary.tsx` — mini poster + movie info (duration, genre, ageRating, rating)
 - `components/mobile/DatePicker.tsx` — horizontal scroll date picker
 - `components/mobile/SearchBar.tsx` — cinema/location search input
@@ -99,6 +100,74 @@ Booking flow navigation:
 - Movie detail `BookTicketCTA` → `/booking/[slug]/cinema` (passes `?cinema=X&time=Y&date=Z` for preselection)
 - Cinema BottomBar → `/booking/[slug]/seats` (active only when cinema+time selected)
 - Seats BottomBar → `/booking/[slug]/snack`
+- Snack BottomBar → `/booking/[slug]/credentials`
+- Credentials BottomBar → `/booking/[slug]/payment`
+- Payment BottomBar → 50/50 random → `/booking/[slug]/status/success` or `/booking/[slug]/status/failed` (2s simulated loading)
+
+## Snack Page
+
+`(sub)/booking/[slug]/snack/page.tsx` composes mobile components:
+- `components/mobile/ComboCard.tsx` — combo card with image, name, description, price, quantity stepper
+- `components/mobile/FoodItemCard.tsx` — food item card with Next.js `<Image>`, name, price, quantity stepper
+- `components/mobile/CategorySection.tsx` — category header + food item list
+- `components/mobile/Stepper.tsx` — quantity stepper (minus/plus buttons)
+- `components/mobile/BottomBar.tsx` — sticky bottom bar, snack total + "Continue" CTA → `/booking/[slug]/credentials`
+
+Section titles (`Quick Combos`, `Pick & Mix`) use `--color-gold-dark`. Prices use `--color-gold-light`.
+
+## Credentials Page
+
+`(sub)/booking/[slug]/credentials/page.tsx` composes mobile components:
+- `components/mobile/TextInput.tsx` — reusable text input with label
+- `components/mobile/PhoneField.tsx` — phone input with country code selector (CDN flags via `flagcdn.com/w20/{flag}.png`)
+- `components/mobile/FieldLabel.tsx` — field label component
+- `components/mobile/OrderSummary.tsx` — reads all data from BookingContext (movie poster, genre, duration, cinema, room, date/time, seats, seat type, combos, foods, total)
+- `components/mobile/BottomBar.tsx` — sticky bottom bar, total + "Continue to Payment" CTA → `/booking/[slug]/payment`
+
+## Payment Page
+
+`(sub)/booking/[slug]/payment/page.tsx` composes mobile components:
+- `components/mobile/PaymentOption.tsx` — payment method card with brand image (`public/images/VNPay.png`, `public/images/momo.png` via `next/image`), radio selection state
+- `components/mobile/OrderSummary.tsx` — same as credentials page, reads from BookingContext
+- `components/mobile/SecureBadge.tsx` — security badge
+- `components/mobile/TermsNote.tsx` — terms & conditions note
+- `components/mobile/BottomBar.tsx` — sticky bottom bar, total + "Confirm Payment" CTA. Simulates 2s payment processing → random redirect to success or fail
+
+`StepBar current={5}` maps to "PAYMENT" step.
+
+## Success & Fail Pages
+
+Both pages use `<Suspense>` wrapper (required for `useSearchParams()`). White text theme throughout.
+
+- `(sub)/booking/[slug]/status/success/page.tsx`:
+  - `SuccessIcon.tsx` — animated green checkmark
+  - `DetailRow.tsx` — reusable label/value row with `labelClass` prop for alignment
+  - `TicketCard.tsx` — full ticket card with:
+    - Movie info (poster, title, age rating)
+    - Tear line (dashed border + circle cutouts)
+    - Theater + Date & Time (flex justify-between, Date & Time right-aligned)
+    - Seats: prominent seat labels (`text-lg font-extrabold`), ticket type, per-ticket price
+    - Snacks & Combos (itemized, only if present)
+    - Payment Method + Total Price (same row)
+    - QR code via `qrcode.react` (URL: `https://primseat.com/tickets/{id}`, level H)
+    - Booking ID
+  - `SuccessContent.tsx` — composes all above + share/download action buttons
+
+- `(sub)/booking/[slug]/status/failed/page.tsx`:
+  - `FailedIcon.tsx` — animated red X with shake keyframe
+  - `DetailRow.tsx` — same structure as success (self-contained duplicate, `labelClass` prop)
+  - `FailedOrderCard.tsx` — same layout as success TicketCard but:
+    - Red border (`border-red-500/20`) instead of standard border
+    - Movie poster with `opacity-70`
+    - Error code pill (`ERR_PAYMENT_DECLINED`, etc.) + "Your card was not charged"
+    - Bottom tear line (no QR section)
+  - `FailContent.tsx` — composes all above + retry/home/help action buttons
+
+## Shared Booking Components
+
+`booking/components/mobile/` (shared across all booking steps):
+- `StepBar.tsx` — 5-step booking progress bar, reads `BOOKING_STEPS`, highlights current step
+- `CountdownBanner.tsx` — 5m59s countdown timer, reads from BookingContext (only visible after first seat selection)
 
 ## Framework / Toolchain Quirks
 
@@ -113,7 +182,7 @@ Booking flow navigation:
 - **Home page** (`(main)/home/page.tsx`) renders mobile/desktop variants via `hidden md:block` / `block md:hidden`. Imports data from `@/features/movies/mock`. Sub-components under `home/components/{mobile,desktop}/`. MovieRow has `status` prop for "See All" navigation to movies page.
 - **Movies page** (`(main)/movies/page.tsx`) — thin compose file wrapped in `<MoviesProvider>` + `<Suspense>`. Mobile components in `components/mobile/` (Tabs, SearchBar, FilterPanel, MovieGrid). Desktop stub in `components/desktop/MovieGrid` (returns null).
 - **Component split pattern**: Pages that render both mobile & desktop content in the same file use `block md:hidden` / `hidden md:block` (e.g. home, movies). Layout-level switching is handled by `LayoutProvider` via `matchMedia`. Each page has `components/{mobile,desktop}/` dirs. Shared components go in `components/shared/`. See `(main)/home/` as canonical example.
-- **Sub layout `getSubTitle()`**: Handles `/notifications` (i18n), `/tickets` (returns "Ticket Details"), `/booking/[slug]/cinema` (returns "Cinema & Showtime"), `/booking/[slug]/seats` (returns "Select Seat"), `/booking/[slug]/snack` (returns "Food & Drinks"), `/movies/[slug]` (returns movie title). Back button goes to `/tickets` for ticket routes, `/movies/[slug]` for cinema routes, `/booking/[slug]/cinema` for seat routes, `/booking/[slug]/seats` for snack routes, `/` otherwise.
+- **Sub layout `getSubTitle()`**: Handles `/notifications` (i18n), `/tickets` (returns "Ticket Details"), `/booking/[slug]/cinema` (returns "Cinema & Showtime"), `/booking/[slug]/seats` (returns "Select Seat"), `/booking/[slug]/snack` (returns "Food & Drinks"), `/booking/[slug]/credentials` (returns "Contact Information"), `/booking/[slug]/payment` (returns "Payment"), `/booking/[slug]/status/success` (returns "Payment Success"), `/booking/[slug]/status/failed` (returns "Payment Failed"), `/movies/[slug]` (returns movie title). Back button goes to `/tickets` for ticket routes, `/movies/[slug]` for cinema routes, `/booking/[slug]/cinema` for seat routes, `/booking/[slug]/seats` for snack routes, `/booking/[slug]/snack` for credentials routes, `/booking/[slug]/credentials` for payment routes, `/` for success routes, `/booking/[slug]/payment` for failed routes.
 - `postcss.config.mjs` only has `@tailwindcss/postcss` plugin.
 - No Prettier config, no CI/CD workflows.
 
@@ -143,3 +212,5 @@ Home page "See All" / "Explore All" buttons link to movies page with appropriate
 - Filter components (FilterChip, FilterCheckRow, FilterLabel) are internal to movies page `components/mobile/`.
 - All cinema data uses **PrimeSeat** brand — Vietnamese addresses, km-based distances, 24h time format.
 - Inline `style={}` props are used for dynamic/computed values (gradients, animation delays, computed widths, aspect ratios). Static styling always uses Tailwind utility classes with CSS custom property syntax.
+- Payment method logos use `next/image` (`public/images/VNPay.png`, `public/images/momo.png`).
+- Pages using `useSearchParams()` must wrap content in `<Suspense>` to avoid 404 during SSR.

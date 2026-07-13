@@ -41,6 +41,7 @@ interface BookingState {
   seatType: string;
   combos: SelectedCombo[];
   foods: SelectedFood[];
+  paymentMethod: string;
   ticketCount: number;
   ticketPrice: number;
   snackTotal: number;
@@ -59,6 +60,7 @@ interface BookingContextType extends BookingState {
   ) => void;
   setSeats: (seats: SelectedSeat[]) => void;
   setSnacks: (combos: SelectedCombo[], foods: SelectedFood[]) => void;
+  setPaymentMethod: (method: string) => void;
   startCountdown: () => void;
   resetBooking: () => void;
 }
@@ -75,6 +77,7 @@ const DEFAULT_STATE: BookingState = {
   seatType: "Standard",
   combos: [],
   foods: [],
+  paymentMethod: "",
   ticketCount: 0,
   ticketPrice: 0,
   snackTotal: 0,
@@ -96,6 +99,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
   const [selectedSeats, setSelectedSeats] = useState<SelectedSeat[]>([]);
   const [combos, setCombos] = useState<SelectedCombo[]>([]);
   const [foods, setFoods] = useState<SelectedFood[]>([]);
+  const [paymentMethod, setPaymentMethod] = useState("");
   const [countdownStarted, setCountdownStarted] = useState(false);
   const [countdownStartTime, setCountdownStartTime] = useState(0);
 
@@ -144,6 +148,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     setSelectedSeats([]);
     setCombos([]);
     setFoods([]);
+    setPaymentMethod("");
     setCountdownStarted(false);
     setCountdownStartTime(0);
   }, []);
@@ -167,6 +172,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
       seatType,
       combos,
       foods,
+      paymentMethod,
       ticketCount,
       ticketPrice,
       snackTotal,
@@ -176,6 +182,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
       setCinema,
       setSeats,
       setSnacks,
+      setPaymentMethod,
       startCountdown,
       resetBooking,
     };
@@ -188,11 +195,13 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     selectedSeats,
     combos,
     foods,
+    paymentMethod,
     countdownStarted,
     countdownStartTime,
     setCinema,
     setSeats,
     setSnacks,
+    setPaymentMethod,
     startCountdown,
     resetBooking,
   ]);

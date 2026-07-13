@@ -177,7 +177,6 @@ export const COMBOS: ComboItem[] = [
     description: "1 Large Popcorn, 2 Regular Sodas",
     price: 180000,
     image: "/images/snack/couples.png",
-    tag: "POPULAR",
   },
   {
     id: "family",
@@ -185,7 +184,6 @@ export const COMBOS: ComboItem[] = [
     description: "2 Large Popcorns, 4 Regular Sodas, 2 Candy items",
     price: 320000,
     image: "/images/snack/family.png",
-    tag: "BEST VALUE",
   },
   {
     id: "solo",

@@ -15,8 +15,8 @@ function getSubTitle(pathname: string): string {
     if (pathname.includes("/snack")) return "Food & Drinks";
     if (pathname.includes("/credentials")) return "Contact Information";
     if (pathname.includes("/payment")) return "Payment";
-    if (pathname.includes("/success")) return "Payment Success";
-    if (pathname.includes("/fail")) return "Payment Failed";
+    if (pathname.includes("/status/success")) return "Payment Success";
+    if (pathname.includes("/status/failed")) return "Payment Failed";
     return "";
   }
   if (pathname.startsWith("/movies/")) {
@@ -54,9 +54,9 @@ export default function DesktopSubLayout({
                   ? `/booking/${pathname.split("/booking/")[1]?.split("/")[0]}/snack`
                   : pathname.includes("/payment")
                   ? `/booking/${pathname.split("/booking/")[1]?.split("/")[0]}/credentials`
-                  : pathname.includes("/success")
+                  : pathname.includes("/status/success")
                   ? "/"
-                  : pathname.includes("/fail")
+                  : pathname.includes("/status/failed")
                   ? `/booking/${pathname.split("/booking/")[1]?.split("/")[0]}/payment`
                   : `/movies/${pathname.split("/booking/")[1]?.split("/")[0]}`
                 : "/"

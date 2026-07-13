@@ -73,7 +73,7 @@ export default function OrderSummary() {
             {cinemaName || "—"}
             {room && ` • ${room}`}
           </span>
-          <span className="text-sm font-semibold text-(--color-text-primary)">
+          <span className="text-sm text-right font-semibold text-(--color-text-primary)">
             {date && time ? `${date} • ${time}` : "—"}
           </span>
         </div>
