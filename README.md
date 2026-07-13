@@ -52,12 +52,12 @@ src/
 ├── app/
 │   ├── (main)/       # Home, movies list, tickets, profile
 │   ├── (blank)/      # Movie detail [slug] (full-screen, no header/nav)
-│   ├── (sub)/        # Notifications, tickets/[id], booking/[slug] (cinema, seats, snack, credentials, payment, status/success, status/failed)
+│   ├── (sub)/        # Notifications, tickets/[id], booking/[slug] (cinema, seats, snack, credentials, payment, status/success, status/failed), profile/edit, profile/password, profile/reviews, profile/wishlist
 │   └── (auth)/       # Login, register
 ├── components/
 │   ├── layout/       # LayoutProvider (responsive), mobile/ & desktop/ variants
 │   └── common/       # MovieCard (reusable)
-├── contexts/         # LocaleContext, MoviesContext, TicketsContext, BookingContext
+├── contexts/         # LocaleContext, MoviesContext, TicketsContext, BookingContext, WishlistContext
 ├── features/         # Feature modules (mock data, constants, types)
 ├── hooks/            # Shared custom hooks (empty)
 ├── libs/             # Constants, utilities
@@ -74,3 +74,7 @@ src/
 - Movie poster images configured in `next.config.ts` `images.remotePatterns`
 - Complete booking flow: cinema → seats → snack → credentials → payment → status/success or status/failed (6 pages, BookingContext persists state across steps)
 - Payment step simulates external gateway: 2s loading → random 50/50 redirect to success or fail
+- Edit profile page with field validation (full name, phone, DOB as date picker) — SAVE CHANGES button only active when changes detected
+- Change password page with 4 requirement checks (8+ chars, uppercase, number, special char), errors shown on submit
+- Wishlist page with persistent WishlistContext at root layout, heart toggle on movie detail
+- Review & Rating page using ALL_MOVIES mock, filter by rating, load more pattern

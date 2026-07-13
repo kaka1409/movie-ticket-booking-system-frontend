@@ -69,6 +69,19 @@ Past tickets show the same detail layout but without action buttons.
 
 No BottomNav or TopNav — layout provides both. Menu items use i18n keys `profile.*`.
 
+## Change Password Page
+
+`(sub)/profile/password/page.tsx` — thin compose (mobile + desktop stub), same pattern as edit profile:
+- `components/mobile/PasswordField.tsx` — reusable password input with Eye/EyeOff toggle, focus + error border states (same logic as edit profile `Field.tsx`)
+- `components/mobile/PasswordRequirements.tsx` — 4 requirement checks with CheckCircle2/Circle icons, `text-(--color-gold)` for met, `text-(--color-text-muted)` for unmet
+- `components/mobile/FormActions.tsx` — UPDATE PASSWORD + CANCEL buttons (same pattern as edit profile `SaveActions.tsx`)
+- `components/mobile/ChangePasswordContent.tsx` — orchestrator with `validate()`, `touched` state, validation on submit
+- `components/desktop/ChangePasswordContent.tsx` — stub (returns null)
+
+Validation: Current Password (required), New Password (required + min 8 chars + uppercase + number + special char), Confirm Password (required + must match). `showErrors = touched && !isValid`.
+
+Sub layout routing: `getSubTitle()` returns "Change Password", `getBackHref()` → `/profile` (handled by existing `/profile` prefix rule).
+
 ## Cinema & Showtime Page
 
 `(sub)/booking/[slug]/cinema/page.tsx` resolves movie by slug from `ALL_MOVIES`, composes mobile components directly:
@@ -182,7 +195,7 @@ Both pages use `<Suspense>` wrapper (required for `useSearchParams()`). White te
 - **Home page** (`(main)/home/page.tsx`) renders mobile/desktop variants via `hidden md:block` / `block md:hidden`. Imports data from `@/features/movies/mock`. Sub-components under `home/components/{mobile,desktop}/`. MovieRow has `status` prop for "See All" navigation to movies page.
 - **Movies page** (`(main)/movies/page.tsx`) — thin compose file wrapped in `<MoviesProvider>` + `<Suspense>`. Mobile components in `components/mobile/` (Tabs, SearchBar, FilterPanel, MovieGrid). Desktop stub in `components/desktop/MovieGrid` (returns null).
 - **Component split pattern**: Pages that render both mobile & desktop content in the same file use `block md:hidden` / `hidden md:block` (e.g. home, movies). Layout-level switching is handled by `LayoutProvider` via `matchMedia`. Each page has `components/{mobile,desktop}/` dirs. Shared components go in `components/shared/`. See `(main)/home/` as canonical example.
-- **Sub layout `getSubTitle()`**: Handles `/notifications` (i18n), `/tickets` (returns "Ticket Details"), `/booking/[slug]/cinema` (returns "Cinema & Showtime"), `/booking/[slug]/seats` (returns "Select Seat"), `/booking/[slug]/snack` (returns "Food & Drinks"), `/booking/[slug]/credentials` (returns "Contact Information"), `/booking/[slug]/payment` (returns "Payment"), `/booking/[slug]/status/success` (returns "Payment Success"), `/booking/[slug]/status/failed` (returns "Payment Failed"), `/movies/[slug]` (returns movie title). Back button goes to `/tickets` for ticket routes, `/movies/[slug]` for cinema routes, `/booking/[slug]/cinema` for seat routes, `/booking/[slug]/seats` for snack routes, `/booking/[slug]/snack` for credentials routes, `/booking/[slug]/credentials` for payment routes, `/` for success routes, `/booking/[slug]/payment` for failed routes.
+- **Sub layout `getSubTitle()`**: Handles `/notifications` (i18n), `/tickets` (returns "Ticket Details"), `/booking/[slug]/cinema` (returns "Cinema & Showtime"), `/booking/[slug]/seats` (returns "Select Seat"), `/booking/[slug]/snack` (returns "Food & Drinks"), `/booking/[slug]/credentials` (returns "Contact Information"), `/booking/[slug]/payment` (returns "Payment"), `/booking/[slug]/status/success` (returns "Payment Success"), `/booking/[slug]/status/failed` (returns "Payment Failed"), `/movies/[slug]` (returns movie title), `/profile/edit` (returns "Edit Profile"), `/profile/password` (returns "Change Password"). Back button goes to `/tickets` for ticket routes, `/movies/[slug]` for cinema routes, `/booking/[slug]/cinema` for seat routes, `/booking/[slug]/seats` for snack routes, `/booking/[slug]/snack` for credentials routes, `/booking/[slug]/credentials` for payment routes, `/` for success routes, `/booking/[slug]/payment` for failed routes, `/profile` for all profile routes.
 - `postcss.config.mjs` only has `@tailwindcss/postcss` plugin.
 - No Prettier config, no CI/CD workflows.
 
