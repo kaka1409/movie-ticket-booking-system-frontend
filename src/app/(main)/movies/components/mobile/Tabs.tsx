@@ -4,7 +4,7 @@ import { useLocale } from "@/contexts/LocaleContext";
 import { useMovies } from "@/contexts/MoviesContext";
 
 export default function Tabs() {
-  const { t } = useLocale();
+  const { translate } = useLocale();
   const { activeTab, setActiveTab } = useMovies();
 
   return (
@@ -12,8 +12,8 @@ export default function Tabs() {
       {(["now_showing", "coming_soon"] as const).map((tab) => {
         const label =
           tab === "now_showing"
-            ? t("movies.now_showing")
-            : t("movies.coming_soon");
+            ? translate("movies.now_showing")
+            : translate("movies.coming_soon");
         const active = activeTab === tab;
         return (
           <button

@@ -7,8 +7,8 @@ import { ArrowLeft } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { ALL_MOVIES } from "@/features/movies/mock";
 
-function getSubTitle(pathname: string, t: (key: string) => string): string {
-  if (pathname.startsWith("/notifications")) return t("notif.title");
+function getSubTitle(pathname: string, translate: (key: string) => string): string {
+  if (pathname.startsWith("/notifications")) return translate("notif.title");
   if (pathname.startsWith("/tickets")) return "Ticket Details";
   if (pathname.startsWith("/profile/reviews")) return "Review & Rating";
   if (pathname.startsWith("/profile/wishlist")) return "Wishlist";
@@ -26,7 +26,7 @@ function getSubTitle(pathname: string, t: (key: string) => string): string {
   }
   if (pathname.startsWith("/movies/")) {
     const slug = pathname.split("/movies/")[1];
-    const movie = ALL_MOVIES.find((m) => m.slug === slug);
+    const movie = ALL_MOVIES.find((movie) => movie.slug === slug);
     return movie?.title ?? "";
   }
   return "";
@@ -58,8 +58,8 @@ export default function MobileSubLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const { t } = useLocale();
-  const title = getSubTitle(pathname, t);
+  const { translate } = useLocale();
+  const title = getSubTitle(pathname, translate);
   const backHref = getBackHref(pathname);
 
   return (

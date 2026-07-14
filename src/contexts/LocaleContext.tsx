@@ -17,8 +17,8 @@ const messages: Record<Locale, Messages> = { en, vn };
 
 interface LocaleContextType {
   locale: Locale;
-  setLocale: (l: Locale) => void;
-  t: (key: string) => string;
+  setLocale: (newLocale: Locale) => void;
+  translate: (key: string) => string;
 }
 
 const LocaleContext = createContext<LocaleContextType | null>(null);
@@ -43,18 +43,18 @@ function subscribe(callback: () => void): () => void {
 export function LocaleProvider({ children }: { children: ReactNode }) {
   const locale = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
-  const setLocale = useCallback((l: Locale) => {
-    localStorage.setItem("locale", l);
+  const setLocale = useCallback((newLocale: Locale) => {
+    localStorage.setItem("locale", newLocale);
     window.dispatchEvent(new Event(LOCALE_EVENT));
   }, []);
 
-  const t = useCallback(
+  const translate = useCallback(
     (key: string) => messages[locale][key] ?? key,
     [locale],
   );
 
   return (
-    <LocaleContext.Provider value={{ locale, setLocale, t }}>
+    <LocaleContext.Provider value={{ locale, setLocale, translate }}>
       {children}
     </LocaleContext.Provider>
   );

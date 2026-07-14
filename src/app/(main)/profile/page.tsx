@@ -12,17 +12,17 @@ import UserInfo from "./components/mobile/UserInfo";
 import MenuSection from "./components/mobile/MenuSection";
 
 export default function ProfilePage() {
-  const { t } = useLocale();
+  const { translate } = useLocale();
 
   const activityItems = [
-    { label: t("profile.review_rating"), Icon: Star, href: "/profile/reviews" },
-    { label: t("profile.wishlist"), Icon: Heart, href: "/profile/wishlist" },
+    { label: translate("profile.review_rating"), Icon: Star, href: "/profile/reviews" },
+    { label: translate("profile.wishlist"), Icon: Heart, href: "/profile/wishlist" },
   ];
 
   const accountItems = [
-    { label: t("profile.edit_profile"), Icon: UserCog, href: "/profile/edit" },
+    { label: translate("profile.edit_profile"), Icon: UserCog, href: "/profile/edit" },
     {
-      label: t("profile.change_password"),
+      label: translate("profile.change_password"),
       Icon: LockKeyhole,
       href: "/profile/password",
     },
@@ -37,14 +37,14 @@ export default function ProfilePage() {
           <UserInfo />
 
           <div className="mt-8 w-full space-y-6">
-            <MenuSection label={t("profile.activity")} items={activityItems} />
-            <MenuSection label={t("profile.account")} items={accountItems} />
+            <MenuSection label={translate("profile.activity")} items={activityItems} />
+            <MenuSection label={translate("profile.account")} items={accountItems} />
 
             {/* Logout */}
             <div className="px-4">
               <button className="w-full flex items-center justify-center gap-2.5 py-4 rounded-2xl font-extrabold text-sm tracking-widest uppercase transition-all duration-150 active:scale-[0.98] bg-(--color-gold) text-[#0F0F0F] shadow-(--shadow-glow)">
                 <LogOut size={17} />
-                {t("profile.logout")}
+                {translate("profile.logout")}
               </button>
             </div>
           </div>

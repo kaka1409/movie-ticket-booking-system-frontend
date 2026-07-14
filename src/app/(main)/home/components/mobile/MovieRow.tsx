@@ -6,13 +6,14 @@ import MovieCard from "@/components/common/MovieCard";
 import type { Movie } from "@/features/movies/types";
 
 interface MovieRowProps {
-  title: string;
+  titleKey: string;
   movies: Movie[];
   status: "now_showing" | "coming_soon";
 }
 
-export default function MovieRow({ title, movies, status }: MovieRowProps) {
-  const { t } = useLocale();
+export default function MovieRow({ titleKey, movies, status }: MovieRowProps) {
+  const { translate } = useLocale();
+  const title = translate(titleKey);
   return (
     <section
       className="px-(--space-md)"
@@ -29,7 +30,7 @@ export default function MovieRow({ title, movies, status }: MovieRowProps) {
           href={`/movies?status=${status}`}
           className="text-xs font-semibold tracking-wide text-(--color-gold)"
         >
-          {t("home.movie_row.see_all")}
+          {translate("home.movie_row.see_all")}
         </Link>
       </div>
 

@@ -5,7 +5,7 @@ import { useLocale } from "@/contexts/LocaleContext";
 import { useMovies } from "@/contexts/MoviesContext";
 
 export default function SearchBar() {
-  const { t } = useLocale();
+  const { translate } = useLocale();
   const { query, setQuery } = useMovies();
 
   return (
@@ -14,9 +14,9 @@ export default function SearchBar() {
         <Search size={16} className="shrink-0 text-(--color-text-muted)" />
         <input
           type="search"
-          placeholder={t("movies.search_placeholder")}
+          placeholder={translate("movies.search_placeholder")}
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={(event) => setQuery(event.target.value)}
           className="flex-1 bg-transparent text-sm text-white outline-none placeholder:text-(--color-text-muted)"
         />
         {query && (

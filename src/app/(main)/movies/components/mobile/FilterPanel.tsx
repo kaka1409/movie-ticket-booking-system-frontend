@@ -17,7 +17,7 @@ import FilterLabel from "./FilterLabel";
 import type { Filters } from "./types";
 
 export default function FilterPanel() {
-  const { t } = useLocale();
+  const { translate } = useLocale();
   const {
     filtersOpen,
     toggleFiltersOpen,
@@ -28,18 +28,18 @@ export default function FilterPanel() {
     applyFilters,
   } = useMovies();
 
-  const toggleGenre = (g: string) =>
+  const toggleGenre = (genre: string) =>
     setFilters({
       ...filters,
-      genres: filters.genres.includes(g)
-        ? filters.genres.filter((x) => x !== g)
-        : [...filters.genres, g],
+      genres: filters.genres.includes(genre)
+        ? filters.genres.filter((existingGenre) => existingGenre !== genre)
+        : [...filters.genres, genre],
     });
 
-  const toggleSingle = (field: keyof Omit<Filters, "genres">) => (val: string) => {
+  const toggleSingle = (field: keyof Omit<Filters, "genres">) => (selectedValue: string) => {
     setFilters({
       ...filters,
-      [field]: filters[field] === val ? "" : val,
+      [field]: filters[field] === selectedValue ? "" : selectedValue,
     });
   };
 
@@ -54,7 +54,7 @@ export default function FilterPanel() {
         <div className="flex items-center gap-2">
           <SlidersHorizontal size={16} className="text-(--color-gold)" />
           <span className="text-sm font-bold text-white">
-            {t("movies.filters")}
+            {translate("movies.filters")}
           </span>
           {activeFilterCount > 0 && (
             <span className="flex h-5 w-5 items-center justify-center rounded-full bg-(--color-gold) text-[10px] font-black text-black">
@@ -67,13 +67,13 @@ export default function FilterPanel() {
           {activeFilterCount > 0 && (
             <span
               role="button"
-              onClick={(e) => {
-                e.stopPropagation();
+              onClick={(event) => {
+                event.stopPropagation();
                 clearFilters();
               }}
               className="text-xs font-semibold uppercase tracking-widest text-(--color-text-muted) hover:text-(--color-gold)"
             >
-              {t("movies.clear_all")}
+              {translate("movies.clear_all")}
             </span>
           )}
           <ChevronDown
@@ -91,14 +91,14 @@ export default function FilterPanel() {
           <div className="space-y-5 border-t border-(--color-border) p-(--space-md)">
             {/* Release Date */}
             <div>
-              <FilterLabel>{t("movies.release_date")}</FilterLabel>
+              <FilterLabel>{translate("movies.release_date")}</FilterLabel>
               <div className="flex flex-wrap gap-2">
-                {RELEASE_OPTIONS.map((o) => (
+                {RELEASE_OPTIONS.map((option) => (
                   <FilterChip
-                    key={o}
-                    label={o}
-                    active={filters.releaseDate === o}
-                    onClick={() => setFilters({ ...filters, releaseDate: o })}
+                    key={option}
+                    label={option}
+                    active={filters.releaseDate === option}
+                    onClick={() => setFilters({ ...filters, releaseDate: option })}
                   />
                 ))}
               </div>
@@ -106,14 +106,14 @@ export default function FilterPanel() {
 
             {/* Genre */}
             <div>
-              <FilterLabel>{t("movies.genre")}</FilterLabel>
+              <FilterLabel>{translate("movies.genre")}</FilterLabel>
               <div className="grid grid-cols-2 gap-x-4 gap-y-2">
-                {GENRES.map((g) => (
+                {GENRES.map((genre) => (
                   <FilterCheckRow
-                    key={g}
-                    label={g}
-                    checked={filters.genres.includes(g)}
-                    onChange={() => toggleGenre(g)}
+                    key={genre}
+                    label={genre}
+                    checked={filters.genres.includes(genre)}
+                    onChange={() => toggleGenre(genre)}
                   />
                 ))}
               </div>
@@ -122,27 +122,27 @@ export default function FilterPanel() {
             {/* Rating + Length */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <FilterLabel>{t("movies.rating")}</FilterLabel>
+                <FilterLabel>{translate("movies.rating")}</FilterLabel>
                 <div className="flex flex-col gap-2">
-                  {RATING_OPTIONS.map((o) => (
+                  {RATING_OPTIONS.map((option) => (
                     <FilterCheckRow
-                      key={o}
-                      label={o}
-                      checked={filters.rating === o}
-                      onChange={() => toggleSingle("rating")(o)}
+                      key={option}
+                      label={option}
+                      checked={filters.rating === option}
+                      onChange={() => toggleSingle("rating")(option)}
                     />
                   ))}
                 </div>
               </div>
               <div>
-                <FilterLabel>{t("movies.length")}</FilterLabel>
+                <FilterLabel>{translate("movies.length")}</FilterLabel>
                 <div className="flex flex-col gap-2">
-                  {LENGTH_OPTIONS.map((o) => (
+                  {LENGTH_OPTIONS.map((option) => (
                     <FilterCheckRow
-                      key={o}
-                      label={o}
-                      checked={filters.length === o}
-                      onChange={() => toggleSingle("length")(o)}
+                      key={option}
+                      label={option}
+                      checked={filters.length === option}
+                      onChange={() => toggleSingle("length")(option)}
                     />
                   ))}
                 </div>
@@ -152,27 +152,27 @@ export default function FilterPanel() {
             {/* Format + Age Rating */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <FilterLabel>{t("movies.format")}</FilterLabel>
+                <FilterLabel>{translate("movies.format")}</FilterLabel>
                 <div className="flex flex-wrap gap-2">
-                  {FORMAT_OPTIONS.map((o) => (
+                  {FORMAT_OPTIONS.map((option) => (
                     <FilterChip
-                      key={o}
-                      label={o}
-                      active={filters.format === o}
-                      onClick={() => toggleSingle("format")(o)}
+                      key={option}
+                      label={option}
+                      active={filters.format === option}
+                      onClick={() => toggleSingle("format")(option)}
                     />
                   ))}
                 </div>
               </div>
               <div>
-                <FilterLabel>{t("movies.age_rating")}</FilterLabel>
+                <FilterLabel>{translate("movies.age_rating")}</FilterLabel>
                 <div className="flex flex-wrap gap-2">
-                  {AGE_RATINGS.map((o) => (
+                  {AGE_RATINGS.map((option) => (
                     <FilterChip
-                      key={o}
-                      label={o}
-                      active={filters.ageRating === o}
-                      onClick={() => toggleSingle("ageRating")(o)}
+                      key={option}
+                      label={option}
+                      active={filters.ageRating === option}
+                      onClick={() => toggleSingle("ageRating")(option)}
                     />
                   ))}
                 </div>
@@ -189,7 +189,7 @@ export default function FilterPanel() {
                 hover:bg-(--color-gold-dark) active:scale-[0.98]
               "
             >
-              {t("movies.apply_filters")}
+              {translate("movies.apply_filters")}
             </button>
           </div>
         </div>

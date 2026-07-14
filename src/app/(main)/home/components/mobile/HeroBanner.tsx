@@ -4,47 +4,48 @@ import { useState, useRef, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Star } from "lucide-react";
-import { FEATURED_MOVIES } from "../shared/featured";
+import type { FeaturedMovie } from "@/features/movies/types";
 
 const SWIPE_THRESHOLD = 50;
 
-export default function HeroBanner() {
+export default function HeroBanner({ movies }: { movies: FeaturedMovie[] }) {
   const [index, setIndex] = useState(0);
   const [fading, setFading] = useState(false);
   const touchStart = useRef<{ x: number; y: number } | null>(null);
-  const movie = FEATURED_MOVIES[index];
 
-  const goTo = useCallback(
-    (next: number) => {
-      if (fading) return;
+  const navigateToSlide = useCallback(
+    (nextIndex: number) => {
+      if (fading || movies.length === 0) return;
       setFading(true);
-      setTimeout(() => setIndex(next), 150);
+      setTimeout(() => setIndex(nextIndex), 150);
       setTimeout(() => setFading(false), 300);
     },
-    [fading],
+    [fading, movies.length],
   );
 
-  const prev = () =>
-    goTo((index - 1 + FEATURED_MOVIES.length) % FEATURED_MOVIES.length);
-  const next = () => goTo((index + 1) % FEATURED_MOVIES.length);
+  const goToPreviousSlide = () =>
+    navigateToSlide((index - 1 + movies.length) % movies.length);
+  const goToNextSlide = () => navigateToSlide((index + 1) % movies.length);
 
-  // Touch swipe
-  const onTouchStart = (e: React.TouchEvent) => {
-    touchStart.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+  const onTouchStart = (event: React.TouchEvent) => {
+    touchStart.current = { x: event.touches[0].clientX, y: event.touches[0].clientY };
   };
 
-  const onTouchEnd = (e: React.TouchEvent) => {
+  const onTouchEnd = (event: React.TouchEvent) => {
     if (!touchStart.current) return;
-    const dx = e.changedTouches[0].clientX - touchStart.current.x;
-    const dy = e.changedTouches[0].clientY - touchStart.current.y;
+    const deltaX = event.changedTouches[0].clientX - touchStart.current.x;
+    const deltaY = event.changedTouches[0].clientY - touchStart.current.y;
     touchStart.current = null;
 
-    // Only handle horizontal swipes
-    if (Math.abs(dx) < SWIPE_THRESHOLD || Math.abs(dy) > Math.abs(dx)) return;
+    if (Math.abs(deltaX) < SWIPE_THRESHOLD || Math.abs(deltaY) > Math.abs(deltaX)) return;
 
-    if (dx > 0) prev();
-    else next();
+    if (deltaX > 0) goToPreviousSlide();
+    else goToNextSlide();
   };
+
+  if (movies.length === 0) return null;
+
+  const currentMovie = movies[index];
 
   return (
     <section
@@ -54,9 +55,9 @@ export default function HeroBanner() {
       onTouchEnd={onTouchEnd}
     >
       <Link
-        href={`/movies/${movie.slug}`}
+        href={`/movies/${currentMovie.slug}`}
         className="absolute inset-0 z-10"
-        aria-label={`View ${movie.title}`}
+        aria-label={`View ${currentMovie.title}`}
       >
         <div
           className={`relative h-full w-full transition-opacity duration-300 ${fading ? "opacity-0" : "opacity-100"}`}
@@ -64,8 +65,8 @@ export default function HeroBanner() {
           <Image
             key={index}
             className="object-cover"
-            src={movie.src || "/images/hero-interstellar.jpg"}
-            alt={movie.title}
+            src={currentMovie.src || "/images/hero-interstellar.jpg"}
+            alt={currentMovie.title}
             fill
             sizes="100vw"
             priority
@@ -77,14 +78,14 @@ export default function HeroBanner() {
         <div className="absolute bottom-10 left-(--space-md) right-(--space-md) z-20">
           <div className="mb-1 flex items-center gap-1.5">
             <span className="rounded-(--radius-sm) bg-(--color-gold) px-1.5 py-0.5 text-[7px] font-bold tracking-widest text-black">
-              {movie.label}
+              {currentMovie.label}
             </span>
             <span className="flex items-center gap-0.5 text-[10px] font-bold text-(--color-gold)">
-              <Star size={9} fill="currentColor" /> {movie.rating}
+              <Star size={9} fill="currentColor" /> {currentMovie.rating}
             </span>
           </div>
           <h2 className="font-black uppercase leading-tight tracking-tight text-white text-lg">
-            {movie.title}
+            {currentMovie.title}
           </h2>
         </div>
       </Link>
@@ -92,14 +93,14 @@ export default function HeroBanner() {
       {/* Dot indicators */}
       <div className="absolute bottom-2 left-0 right-0 z-20 flex items-center justify-center">
         <div className="flex gap-1.5">
-          {FEATURED_MOVIES.map((_, i) => (
+          {movies.map((_, movieIndex) => (
             <div
-              key={i}
+              key={movieIndex}
               className="h-1.5 rounded-full transition-all duration-300"
               style={{
-                width: i === index ? 16 : 5,
+                width: movieIndex === index ? 16 : 5,
                 background:
-                  i === index
+                  movieIndex === index
                     ? "var(--color-gold)"
                     : "rgba(255,255,255,0.2)",
               }}

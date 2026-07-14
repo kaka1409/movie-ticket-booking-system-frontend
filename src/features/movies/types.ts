@@ -19,3 +19,8 @@ export interface Movie {
   ageRating: string;
   language: string;
 }
+
+export interface FeaturedMovie extends Movie {
+  label: string;
+  description: string;
+}

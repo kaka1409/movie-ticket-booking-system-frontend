@@ -4,21 +4,33 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import { ChevronDown } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
-import { NOW_SHOWING } from "@/features/movies/mock";
-import { CINEMAS, DATES } from "@/features/booking/mock";
+import type { Movie } from "@/features/movies/types";
+import type { Cinema, DateOption } from "@/features/booking/types";
 
-export default function QuickBooking() {
-  const { t } = useLocale();
+export default function QuickBooking({
+  movies,
+  cinemas,
+  dates,
+}: {
+  movies: Movie[];
+  cinemas: Cinema[];
+  dates: DateOption[];
+}) {
+  const { translate } = useLocale();
 
-  const [selectedMovieSlug, setSelectedMovieSlug] = useState(NOW_SHOWING[0].slug);
-  const [selectedCinemaId, setSelectedCinemaId] = useState(CINEMAS[0].id);
-  const [selectedDate, setSelectedDate] = useState(DATES[0].value);
+  const [selectedMovieSlug, setSelectedMovieSlug] = useState("");
+  const [selectedCinemaId, setSelectedCinemaId] = useState(cinemas[0]?.id ?? 0);
+  const [selectedDate, setSelectedDate] = useState(dates[0]?.value ?? "");
   const [selectedTime, setSelectedTime] = useState("");
   const [isExpanded, setIsExpanded] = useState(true);
 
+  if (movies.length === 0) return null;
+
+  const effectiveMovieSlug = selectedMovieSlug || movies[0].slug;
+
   const selectedCinema = useMemo(
-    () => CINEMAS.find((c) => c.id === selectedCinemaId),
-    [selectedCinemaId]
+    () => cinemas.find((cinema) => cinema.id === selectedCinemaId),
+    [cinemas, selectedCinemaId]
   );
 
   const availableShowtimes = useMemo(
@@ -26,9 +38,9 @@ export default function QuickBooking() {
     [selectedCinema]
   );
 
-  const dates3 = DATES.slice(0, 3);
+  const firstThreeDates = dates.slice(0, 3);
 
-  const canBook = !!selectedMovieSlug && !!selectedCinemaId && !!selectedDate && !!selectedTime;
+  const canBook = !!effectiveMovieSlug && !!selectedCinemaId && !!selectedDate && !!selectedTime;
 
   return (
     <section
@@ -37,11 +49,11 @@ export default function QuickBooking() {
     >
       <button
         className="flex w-full items-center justify-between"
-        onClick={() => setIsExpanded((v) => !v)}
+        onClick={() => setIsExpanded((previousValue) => !previousValue)}
         aria-expanded={isExpanded}
       >
         <h2 id="qb-heading" className="text-lg font-bold text-(--color-gold)">
-          {t("quick_booking.title")}
+          {translate("quick_booking.title")}
         </h2>
         <ChevronDown
           aria-hidden
@@ -61,17 +73,17 @@ export default function QuickBooking() {
                 className="mb-(--space-sm) block text-xs font-semibold text-(--color-text-secondary)"
                 htmlFor="qb-movie"
               >
-                {t("quick_booking.select_movie")}
+                {translate("quick_booking.select_movie")}
               </label>
               <select
                 id="qb-movie"
                 className="w-full rounded-(--radius-sm) bg-(--color-surface) px-3 py-2.5 text-sm text-white outline-none border border-(--color-border)"
-                value={selectedMovieSlug}
-                onChange={(e) => setSelectedMovieSlug(e.target.value)}
+                value={effectiveMovieSlug}
+                onChange={(event) => setSelectedMovieSlug(event.target.value)}
               >
-                {NOW_SHOWING.map((m) => (
-                  <option key={m.id} value={m.slug}>
-                    {m.title}
+                {movies.map((movie) => (
+                  <option key={movie.id} value={movie.slug}>
+                    {movie.title}
                   </option>
                 ))}
               </select>
@@ -80,21 +92,21 @@ export default function QuickBooking() {
             {/* Date */}
             <div>
               <span className="mb-(--space-xs) block text-xs font-semibold text-(--color-text-secondary)">
-                {t("quick_booking.date")}
+                {translate("quick_booking.date")}
               </span>
               <div className="flex gap-(--space-sm)">
-                {dates3.map((d) => (
+                {firstThreeDates.map((dateOption) => (
                   <button
-                    key={d.value}
+                    key={dateOption.value}
                     className={`rounded-(--radius-sm) px-(--space-md) py-1.5 text-xs font-semibold transition-colors ${
-                      selectedDate === d.value
+                      selectedDate === dateOption.value
                         ? "border border-(--color-gold) bg-(--color-bg) text-(--color-gold)"
                         : "border border-transparent bg-(--color-surface) text-white"
                     }`}
-                    onClick={() => setSelectedDate(d.value)}
-                    aria-pressed={selectedDate === d.value}
+                    onClick={() => setSelectedDate(dateOption.value)}
+                    aria-pressed={selectedDate === dateOption.value}
                   >
-                    {d.weekday} {d.day} {d.month}
+                    {dateOption.weekday} {dateOption.day} {dateOption.month}
                   </button>
                 ))}
               </div>
@@ -106,21 +118,21 @@ export default function QuickBooking() {
                 className="mb-(--space-xs) block text-xs font-semibold text-(--color-text-secondary)"
                 htmlFor="qb-cinema"
               >
-                {t("quick_booking.cinema")}
+                {translate("quick_booking.cinema")}
               </label>
               <select
                 id="qb-cinema"
                 className="w-full rounded-(--radius-sm) bg-(--color-surface) px-3 py-2.5 text-sm text-white outline-none border border-(--color-border)"
                 value={selectedCinemaId}
-                onChange={(e) => {
-                  const id = Number(e.target.value);
-                  setSelectedCinemaId(id);
+                onChange={(event) => {
+                  const cinemaId = Number(event.target.value);
+                  setSelectedCinemaId(cinemaId);
                   setSelectedTime("");
                 }}
               >
-                {CINEMAS.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
+                {cinemas.map((cinema) => (
+                  <option key={cinema.id} value={cinema.id}>
+                    {cinema.name}
                   </option>
                 ))}
               </select>
@@ -129,24 +141,24 @@ export default function QuickBooking() {
             {/* Showtime */}
             <div>
               <span className="mb-(--space-xs) block text-xs font-semibold text-(--color-text-secondary)">
-                {t("quick_booking.showtime")}
+                {translate("quick_booking.showtime")}
               </span>
               <div className="flex flex-wrap gap-(--space-sm)">
-                {availableShowtimes.map((st) => (
+                {availableShowtimes.map((showtime) => (
                   <button
-                    key={st.time}
-                    disabled={!st.available}
+                    key={showtime.time}
+                    disabled={!showtime.available}
                     className={`rounded-(--radius-sm) px-(--space-md) py-1.5 text-xs font-semibold transition-colors ${
-                      !st.available
+                      !showtime.available
                         ? "border border-transparent bg-(--color-surface) text-(--color-text-muted) cursor-not-allowed opacity-40"
-                        : selectedTime === st.time
+                        : selectedTime === showtime.time
                         ? "border border-(--color-gold) bg-(--color-bg) text-(--color-gold)"
                         : "border border-transparent bg-(--color-surface) text-white"
                     }`}
-                    onClick={() => st.available && setSelectedTime(st.time)}
-                    aria-pressed={selectedTime === st.time}
+                    onClick={() => showtime.available && setSelectedTime(showtime.time)}
+                    aria-pressed={selectedTime === showtime.time}
                   >
-                    {st.time}
+                    {showtime.time}
                   </button>
                 ))}
               </div>
@@ -155,17 +167,17 @@ export default function QuickBooking() {
             {/* CTA */}
             {canBook ? (
               <Link
-                href={`/booking/${selectedMovieSlug}/cinema?cinema=${selectedCinemaId}&time=${selectedTime}&date=${selectedDate}`}
+                href={`/booking/${effectiveMovieSlug}/cinema?cinema=${selectedCinemaId}&time=${selectedTime}&date=${selectedDate}`}
                 className="block w-full rounded-(--radius-sm) bg-(--color-gold) py-3 text-center text-sm font-bold tracking-widest text-black transition-opacity hover:opacity-90"
               >
-                {t("quick_booking.book")}
+                {translate("quick_booking.book")}
               </Link>
             ) : (
               <button
                 disabled
                 className="w-full rounded-(--radius-sm) bg-(--color-surface) py-3 text-center text-sm font-bold tracking-widest text-(--color-text-muted) border border-(--color-border) cursor-not-allowed"
               >
-                {t("quick_booking.book")}
+                {translate("quick_booking.book")}
               </button>
             )}
           </div>

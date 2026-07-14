@@ -21,7 +21,7 @@ const Logo: React.FC = () => (
 /* ─── Header ─────────────────────────────────────────────────── */
 function Header() {
   const { locale, setLocale } = useLocale();
-  const unreadCount = INITIAL_NOTIFS.filter((n) => !n.read).length;
+  const unreadCount = INITIAL_NOTIFS.filter((notification) => !notification.read).length;
 
   return (
     <header className="sticky bg-(--color-bg) top-0 z-40 w-full">
@@ -74,7 +74,7 @@ const navItems = [
 
 function BottomNav() {
   const pathname = usePathname();
-  const { t } = useLocale();
+  const { translate } = useLocale();
 
   return (
     <nav
@@ -99,7 +99,7 @@ function BottomNav() {
                   }`}
                 >
                   <Icon size={ICON_SIZE} />
-                  <span>{t(key)}</span>
+                  <span>{translate(key)}</span>
                 </div>
               </Link>
             </li>

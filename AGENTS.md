@@ -23,7 +23,7 @@ No test runner. `tests/{e2e,integration,unit}/` are empty dirs. `pnpm test` unde
 - **Mobile layout variants**: `mobile/main` (Header + BottomNav), `mobile/auth`, `mobile/sub` (back + title), `mobile/blank` (no chrome).
 - **Desktop layout variants**: `desktop/main` (Header + Footer), `desktop/auth`, `desktop/sub` (nav bar + back + title), `desktop/blank` (no chrome).
 - **Redux Toolkit**: store wired at `src/store/index.ts` — `reducer: {}` (unused, available for future features).
-- **i18n**: `useLocale()` from `LocaleContext` via `useSyncExternalStore`. Persists to `localStorage("locale")`. Translations at `src/locales/{en,vn}.json`. Throws if used outside `LocaleProvider`.
+- **i18n**: `useLocale()` from `LocaleContext` via `useSyncExternalStore`. Returns `{ locale, setLocale, translate }`. Persists to `localStorage("locale")`. Translations at `src/locales/{en,vn}.json`. Throws if used outside `LocaleProvider`.
 - **`@/`** alias → `src/` in `tsconfig.json`.
 - Error & not-found pages at `src/app/errors.tsx` / `not-found.tsx`.
 
@@ -36,7 +36,7 @@ No test runner. `tests/{e2e,integration,unit}/` are empty dirs. `pnpm test` unde
 
 ## Feature Scaffolding
 
-- `src/features/movies/` — `mock.tsx` (NOW_SHOWING, COMING_SOON), `constants.ts` (GENRES, AGE_RATINGS, RELEASE_OPTIONS, RATING_OPTIONS, LENGTH_OPTIONS, FORMAT_OPTIONS), `types.ts`, `api.ts`/`hooks.ts` (empty).
+- `src/features/movies/` — `mock.tsx` (NOW_SHOWING, COMING_SOON, ALL_MOVIES, FEATURED_MOVIES), `constants.ts` (GENRES, AGE_RATINGS, RELEASE_OPTIONS, RATING_OPTIONS, LENGTH_OPTIONS, FORMAT_OPTIONS), `types.ts` (Movie, CastMember, FeaturedMovie), `api.ts` (getNowShowingMovies, getComingSoonMovies, getAllMovies, getFeaturedMovies — mock with commented-out fetch), `hooks.ts` (useNowShowingMovies, useComingSoonMovies, useFeaturedMovies).
 - `src/features/tickets/` — `constants.ts` (SEAT_TYPES: Standard/VIP/SweetBox), `mock.ts` (UPCOMING with full detail + PAST with full detail), `types.ts` (FoodDrinkItem, UpcomingTicket, PastTicket).
 - `src/features/notifications/` — `mock.tsx`, `constants.ts`, `types.ts`.
 - `src/features/auth/` — `mock.ts`.
@@ -192,7 +192,7 @@ Both pages use `<Suspense>` wrapper (required for `useSearchParams()`). White te
 - **QR codes**: `qrcode.react` (QRCodeSVG component) for ticket detail page.
 - **Navigation**: `<Link>` (not `<a>`); active route via `usePathname()`. URL search params via `useSearchParams()` from `next/navigation`.
 - **`"use client"`** required at top of every file using hooks or browser APIs.
-- **Home page** (`(main)/home/page.tsx`) renders mobile/desktop variants via `hidden md:block` / `block md:hidden`. Imports data from `@/features/movies/mock`. Sub-components under `home/components/{mobile,desktop}/`. MovieRow has `status` prop for "See All" navigation to movies page.
+- **Home page** (`(main)/home/page.tsx`) is a **server component** that fetches all data via API layer (`features/movies/api.ts`, `features/booking/api.ts`) and passes as props to mobile/desktop components. Sub-components under `home/components/{mobile,desktop}/`. MovieRow has `status` prop for "See All" navigation to movies page. API functions return mock data with commented-out `apiFetch()` calls — uncomment when backend is ready.
 - **Movies page** (`(main)/movies/page.tsx`) — thin compose file wrapped in `<MoviesProvider>` + `<Suspense>`. Mobile components in `components/mobile/` (Tabs, SearchBar, FilterPanel, MovieGrid). Desktop stub in `components/desktop/MovieGrid` (returns null).
 - **Component split pattern**: Pages that render both mobile & desktop content in the same file use `block md:hidden` / `hidden md:block` (e.g. home, movies). Layout-level switching is handled by `LayoutProvider` via `matchMedia`. Each page has `components/{mobile,desktop}/` dirs. Shared components go in `components/shared/`. See `(main)/home/` as canonical example.
 - **Sub layout `getSubTitle()`**: Handles `/notifications` (i18n), `/tickets` (returns "Ticket Details"), `/booking/[slug]/cinema` (returns "Cinema & Showtime"), `/booking/[slug]/seats` (returns "Select Seat"), `/booking/[slug]/snack` (returns "Food & Drinks"), `/booking/[slug]/credentials` (returns "Contact Information"), `/booking/[slug]/payment` (returns "Payment"), `/booking/[slug]/status/success` (returns "Payment Success"), `/booking/[slug]/status/failed` (returns "Payment Failed"), `/movies/[slug]` (returns movie title), `/profile/edit` (returns "Edit Profile"), `/profile/password` (returns "Change Password"). Back button goes to `/tickets` for ticket routes, `/movies/[slug]` for cinema routes, `/booking/[slug]/cinema` for seat routes, `/booking/[slug]/seats` for snack routes, `/booking/[slug]/snack` for credentials routes, `/booking/[slug]/credentials` for payment routes, `/` for success routes, `/booking/[slug]/payment` for failed routes, `/profile` for all profile routes.
@@ -222,6 +222,7 @@ Home page "See All" / "Explore All" buttons link to movies page with appropriate
 - Pages and layouts are default-exported.
 - Types defined inline or in `features/*/types.ts`.
 - `"use client"` at the top of every file using hooks or browser APIs.
+- No single-letter variables or abbreviations — all variable names must be clear and descriptive (e.g. `translate` not `t`, `movie` not `m`, `event` not `e`).
 - Filter components (FilterChip, FilterCheckRow, FilterLabel) are internal to movies page `components/mobile/`.
 - All cinema data uses **PrimeSeat** brand — Vietnamese addresses, km-based distances, 24h time format.
 - Inline `style={}` props are used for dynamic/computed values (gradients, animation delays, computed widths, aspect ratios). Static styling always uses Tailwind utility classes with CSS custom property syntax.

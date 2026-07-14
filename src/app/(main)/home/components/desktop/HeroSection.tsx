@@ -4,12 +4,15 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Star, Play, ChevronLeft, ChevronRight } from "lucide-react";
-import { FEATURED_MOVIES } from "../shared/featured";
+import type { FeaturedMovie } from "@/features/movies/types";
 
-export default function HeroSection() {
+export default function HeroSection({ movies }: { movies: FeaturedMovie[] }) {
   const [index, setIndex] = useState(0);
   const [fading, setFading] = useState(false);
-  const movie = FEATURED_MOVIES[index];
+
+  if (movies.length === 0) return null;
+
+  const movie = movies[index];
 
   const goTo = (next: number) => {
     if (fading) return;
@@ -18,9 +21,9 @@ export default function HeroSection() {
     setTimeout(() => setFading(false), 300);
   };
 
-  const prev = () => goTo((index - 1 + FEATURED_MOVIES.length) % FEATURED_MOVIES.length);
-  const next = () => goTo((index + 1) % FEATURED_MOVIES.length);
-  
+  const prev = () => goTo((index - 1 + movies.length) % movies.length);
+  const next = () => goTo((index + 1) % movies.length);
+
   return (
     <section className="group relative flex w-full items-center overflow-hidden">
       <div className="relative mx-auto w-full max-w-7xl px-8 py-16 my-8">
@@ -100,7 +103,7 @@ export default function HeroSection() {
 
         <div className="absolute bottom-0 left-0 right-0 flex h-12 items-center justify-center">
             <div className="flex gap-1.5">
-              {FEATURED_MOVIES.map((_, i) => (
+              {movies.map((_, i) => (
                 <div
                   key={i}
                   className="h-1.5 cursor-pointer rounded-full transition-all duration-300"

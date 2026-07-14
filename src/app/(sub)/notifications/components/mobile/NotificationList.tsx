@@ -8,19 +8,19 @@ import type { Notification } from "@/features/notifications/types";
 import NotificationCard from "../shared/NotificationCard";
 
 export default function NotificationList() {
-  const { t } = useLocale();
+  const { translate } = useLocale();
   const [notifications, setNotifications] =
     useState<Notification[]>(INITIAL_NOTIFS);
 
-  const unreadCount = notifications.filter((n) => !n.read).length;
+  const unreadCount = notifications.filter((notification) => !notification.read).length;
 
   const markRead = (id: number) =>
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, read: true } : n))
+    setNotifications((previousNotifications) =>
+      previousNotifications.map((notification) => (notification.id === id ? { ...notification, read: true } : notification))
     );
 
   const markAllRead = () =>
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+    setNotifications((previousNotifications) => previousNotifications.map((notification) => ({ ...notification, read: true })));
 
   return (
     <div className="flex flex-col">
@@ -30,16 +30,16 @@ export default function NotificationList() {
             onClick={markAllRead}
             className="text-[11px] font-semibold text-(--color-gold) underline underline-offset-2"
           >
-            {t("notif.mark_all_read")} ({unreadCount})
+            {translate("notif.mark_all_read")} ({unreadCount})
           </button>
         </div>
       )}
 
       <div className="px-4 py-3 space-y-3">
-        {notifications.map((n) => (
+        {notifications.map((notification) => (
           <NotificationCard
-            key={n.id}
-            notification={n}
+            key={notification.id}
+            notification={notification}
             onMarkRead={markRead}
           />
         ))}
@@ -48,7 +48,7 @@ export default function NotificationList() {
           <div className="flex flex-col items-center justify-center h-64 gap-3">
             <Bell size={40} className="text-(--color-border)" />
             <p className="text-(--color-text-muted) text-sm">
-              {t("notif.no_notifications")}
+              {translate("notif.no_notifications")}
             </p>
           </div>
         )}

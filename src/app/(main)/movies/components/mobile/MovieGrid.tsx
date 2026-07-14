@@ -4,11 +4,11 @@ import { useRef, useEffect } from "react";
 import { Search } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useMovies } from "@/contexts/MoviesContext";
-import { NOW_SHOWING, COMING_SOON } from "@/features/movies/mock";
+import { useNowShowingMovies, useComingSoonMovies } from "@/features/movies/hooks";
 import MovieCard from "@/components/common/MovieCard";
 
 export default function MovieGrid() {
-  const { t } = useLocale();
+  const { translate } = useLocale();
   const {
     activeTab,
     query,
@@ -19,37 +19,43 @@ export default function MovieGrid() {
     clearFilters,
   } = useMovies();
 
-  const sourceMovies = activeTab === "now_showing" ? NOW_SHOWING : COMING_SOON;
+  const { movies: nowShowing, loading: loadingNow } = useNowShowingMovies();
+  const { movies: comingSoon, loading: loadingComing } = useComingSoonMovies();
 
-  const filtered = sourceMovies.filter((m) => {
-    const q = query.toLowerCase();
+  const loading = loadingNow || loadingComing;
+  const sourceMovies = activeTab === "now_showing" ? nowShowing : comingSoon;
+
+  if (loading) return null;
+
+  const filtered = sourceMovies.filter((movie) => {
+    const searchQuery = query.toLowerCase();
     const matchesSearch =
-      !q ||
-      m.title.toLowerCase().includes(q) ||
-      m.genre.toLowerCase().includes(q);
+      !searchQuery ||
+      movie.title.toLowerCase().includes(searchQuery) ||
+      movie.genre.toLowerCase().includes(searchQuery);
 
     const matchesGenre =
       appliedFilters.genres.length === 0 ||
-      appliedFilters.genres.some((g) =>
-        m.genre.toLowerCase().includes(g.toLowerCase()),
+      appliedFilters.genres.some((genre) =>
+        movie.genre.toLowerCase().includes(genre.toLowerCase()),
       );
 
     const matchesRating =
       !appliedFilters.rating ||
-      (appliedFilters.rating === "4.5+" && m.rating >= 4.5) ||
-      (appliedFilters.rating === "4.0+" && m.rating >= 4.0) ||
-      (appliedFilters.rating === "3.5+" && m.rating >= 3.5);
+      (appliedFilters.rating === "4.5+" && movie.rating >= 4.5) ||
+      (appliedFilters.rating === "4.0+" && movie.rating >= 4.0) ||
+      (appliedFilters.rating === "3.5+" && movie.rating >= 3.5);
 
     const matchesLength =
       !appliedFilters.length ||
-      (appliedFilters.length === "< 90 min" && m.duration < 90) ||
+      (appliedFilters.length === "< 90 min" && movie.duration < 90) ||
       (appliedFilters.length === "90-120 min" &&
-        m.duration >= 90 &&
-        m.duration <= 120) ||
-      (appliedFilters.length === "> 120 min" && m.duration > 120);
+        movie.duration >= 90 &&
+        movie.duration <= 120) ||
+      (appliedFilters.length === "> 120 min" && movie.duration > 120);
 
     const matchesAge =
-      !appliedFilters.ageRating || m.ageRating === appliedFilters.ageRating;
+      !appliedFilters.ageRating || movie.ageRating === appliedFilters.ageRating;
 
     return (
       matchesSearch && matchesGenre && matchesRating && matchesLength && matchesAge
@@ -85,7 +91,7 @@ export default function MovieGrid() {
           <p className="text-base font-bold text-white">
             {filtered.length}{" "}
             <span className="font-medium text-(--color-text-muted)">
-              {t("movies.results_found")}
+              {translate("movies.results_found")}
             </span>
           </p>
         </div>
@@ -110,15 +116,15 @@ export default function MovieGrid() {
         <div className="flex flex-col items-center justify-center gap-3 px-(--space-md) py-16">
           <Search size={36} className="text-(--color-border)" />
           <p className="text-center text-sm text-(--color-text-muted)">
-            {t("movies.no_results")}
+            {translate("movies.no_results")}
             <br />
-            {t("movies.no_results_hint")}
+            {translate("movies.no_results_hint")}
           </p>
           <button
             onClick={clearFilters}
             className="text-sm font-bold text-(--color-gold) underline underline-offset-2"
           >
-            {t("movies.clear_filters")}
+            {translate("movies.clear_filters")}
           </button>
         </div>
       )}
@@ -137,7 +143,7 @@ export default function MovieGrid() {
               active:scale-[0.98]
             "
           >
-            {t("movies.load_more")}
+            {translate("movies.load_more")}
           </button>
         </div>
       )}
