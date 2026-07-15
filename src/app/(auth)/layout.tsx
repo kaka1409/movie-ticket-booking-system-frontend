@@ -1,4 +1,4 @@
-import LayoutProvider from "@/components/layout/LayoutProvider";
+import LayoutProvider from "@/layouts/LayoutProvider";
 
 export default function AuthLayout({
   children,

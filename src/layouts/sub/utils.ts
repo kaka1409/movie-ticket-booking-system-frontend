@@ -1,14 +1,10 @@
-"use client";
-
-import React from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
-import { useLocale } from "@/contexts/LocaleContext";
-import { ALL_MOVIES } from "@/features/movies/mock";
-
-function getSubTitle(pathname: string, translate: (key: string) => string): string {
-  if (pathname.startsWith("/notifications")) return translate("notif.title");
+export function getSubTitle(
+  pathname: string,
+  translate?: (key: string) => string,
+): string {
+  if (pathname.startsWith("/notifications")) {
+    return translate ? translate("notif.title") : "Notifications";
+  }
   if (pathname.startsWith("/tickets")) return "Ticket Details";
   if (pathname.startsWith("/profile/reviews")) return "Review & Rating";
   if (pathname.startsWith("/profile/wishlist")) return "Wishlist";
@@ -24,15 +20,10 @@ function getSubTitle(pathname: string, translate: (key: string) => string): stri
     if (pathname.includes("/status/failed")) return "Payment Failed";
     return "";
   }
-  if (pathname.startsWith("/movies/")) {
-    const slug = pathname.split("/movies/")[1];
-    const movie = ALL_MOVIES.find((movie) => movie.slug === slug);
-    return movie?.title ?? "";
-  }
   return "";
 }
 
-function getBackHref(pathname: string): string {
+export function getBackHref(pathname: string): string {
   if (pathname.startsWith("/tickets")) return "/tickets";
   if (pathname.startsWith("/profile")) return "/profile";
   if (pathname.startsWith("/booking/")) {
@@ -50,39 +41,4 @@ function getBackHref(pathname: string): string {
     return `/movies/${slug}`;
   }
   return "/";
-}
-
-export default function MobileSubLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const pathname = usePathname();
-  const { translate } = useLocale();
-  const title = getSubTitle(pathname, translate);
-  const backHref = getBackHref(pathname);
-
-  return (
-    <div className="min-h-dvh bg-(--color-bg) flex flex-col max-w-[min(28rem,100%)] min-w-0">
-      <header className="flex items-center justify-between px-4 py-2 border-b border-(--color-border)">
-        <Link
-          href={backHref}
-          className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-(--color-surface) transition-colors"
-          aria-label="Go back"
-        >
-          <ArrowLeft size={22} className="text-(--color-gold-light)" />
-        </Link>
-
-        <div className="flex items-center gap-2">
-          <h1 className="text-xl font-bold text-(--color-gold-light)">
-            {title}
-          </h1>
-        </div>
-
-        <div className="w-9 h-9" />
-      </header>
-
-      <main className="flex-1 min-w-0">{children}</main>
-    </div>
-  );
 }
