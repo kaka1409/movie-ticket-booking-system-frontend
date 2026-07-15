@@ -1,3 +1,5 @@
+export type { PaymentMethod } from "@/types";
+
 export interface Showtime {
   time: string;
   available: boolean;

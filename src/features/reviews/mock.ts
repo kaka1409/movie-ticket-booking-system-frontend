@@ -4,4 +4,4 @@ export const FILTERS = [
   { key: "lowest", label: "Lowest Rated" },
 ] as const;
 
-export type FilterKey = (typeof FILTERS)[number]["key"];
+export type { FilterKey } from "./types";
