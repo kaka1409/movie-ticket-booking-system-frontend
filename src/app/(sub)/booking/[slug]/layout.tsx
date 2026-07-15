@@ -1,9 +1,16 @@
-import { BookingProvider } from "@/contexts/BookingContext";
+import { getCountdownSeconds } from "@/features/booking/api";
+import { BookingProvider } from "@/features/booking/context";
 
-export default function BookingLayout({
+export default async function BookingLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <BookingProvider>{children}</BookingProvider>;
+  const countdownSeconds = await getCountdownSeconds();
+
+  return (
+    <BookingProvider initialCountdownSeconds={countdownSeconds}>
+      {children}
+    </BookingProvider>
+  );
 }

@@ -1,23 +1,30 @@
-"use client";
+import { Suspense } from "react";
+import { TicketsProvider } from "@/features/tickets/context";
+import { getUpcomingTickets, getPastTickets } from "@/features/tickets/api";
 
-import { TicketsProvider } from "@/contexts/TicketsContext";
-
-// Mobile componenets
+// Mobile components
 import Tabs from "@/app/(main)/tickets/components/mobile/Tabs";
-import TicketList from "@/app/(main)/tickets/components/mobile/TicketList";
+import UpcomingTicketList from "@/app/(main)/tickets/components/mobile/UpcomingTicketList";
+import PastTicketList from "@/app/(main)/tickets/components/mobile/PastTicketList";
 
 // Desktop components
-import TicketsContent from '@/app/(main)/tickets/components/desktop/TicketsContent'
+import TicketsContent from "@/app/(main)/tickets/components/desktop/TicketsContent";
 
-export default function TicketsPage() {
+export default async function TicketsPage() {
+  const [upcoming, past] = await Promise.all([
+    getUpcomingTickets(),
+    getPastTickets(),
+  ]);
+
   return (
-    <TicketsProvider>
-      <>
+    <Suspense fallback={null}>
+      <TicketsProvider>
         {/* Mobile */}
         <div className="block md:hidden">
           <div className="space-y-4 py-(--space-md)">
             <Tabs />
-            <TicketList />
+            <UpcomingTicketList tickets={upcoming} />
+            <PastTicketList tickets={past} />
           </div>
         </div>
 
@@ -25,7 +32,7 @@ export default function TicketsPage() {
         <div className="hidden md:block">
           <TicketsContent />
         </div>
-      </>
-    </TicketsProvider>
+      </TicketsProvider>
+    </Suspense>
   );
 }

@@ -2,7 +2,7 @@
 
 import { Search, X } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
-import { useMovies } from "@/contexts/MoviesContext";
+import { useMovies } from "@/features/movies/context";
 
 export default function SearchBar() {
   const { translate } = useLocale();

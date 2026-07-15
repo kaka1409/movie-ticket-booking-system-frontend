@@ -3,25 +3,20 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ArrowRight } from "lucide-react";
-import { COMBOS, FOOD_ITEMS } from "@/features/booking/mock";
-import { useBooking, type SelectedCombo, type SelectedFood } from "@/contexts/BookingContext";
+import { useBooking, type SelectedCombo, type SelectedFood } from "@/features/booking/context";
+import { useSnackSelection } from "./SnackSelectionContext";
 
-export default function BottomBar({
-  comboQty,
-  foodQty,
-}: {
-  comboQty: Record<string, number>;
-  foodQty: Record<string, number>;
-}) {
+export default function BottomBar() {
   const params = useParams();
   const slug = params.slug as string;
   const { setSnacks } = useBooking();
+  const { combos, foodItems, comboQty, foodQty } = useSnackSelection();
 
-  const comboTotal = COMBOS.reduce(
+  const comboTotal = combos.reduce(
     (sum, c) => sum + c.price * (comboQty[c.id] ?? 0),
     0
   );
-  const foodTotal = FOOD_ITEMS.reduce(
+  const foodTotal = foodItems.reduce(
     (sum, f) => sum + f.price * (foodQty[f.id] ?? 0),
     0
   );
@@ -33,23 +28,23 @@ export default function BottomBar({
   const hasItems = totalItems > 0;
 
   const handleSaveAndNavigate = () => {
-    const selectedCombos: SelectedCombo[] = COMBOS.filter(
-      (c) => (comboQty[c.id] ?? 0) > 0
-    ).map((c) => ({
-      id: c.id,
-      name: c.name,
-      qty: comboQty[c.id] ?? 0,
-      price: c.price,
-    }));
+    const selectedCombos: SelectedCombo[] = combos
+      .filter((c) => (comboQty[c.id] ?? 0) > 0)
+      .map((c) => ({
+        id: c.id,
+        name: c.name,
+        qty: comboQty[c.id] ?? 0,
+        price: c.price,
+      }));
 
-    const selectedFoods: SelectedFood[] = FOOD_ITEMS.filter(
-      (f) => (foodQty[f.id] ?? 0) > 0
-    ).map((f) => ({
-      id: f.id,
-      name: f.name,
-      qty: foodQty[f.id] ?? 0,
-      price: f.price,
-    }));
+    const selectedFoods: SelectedFood[] = foodItems
+      .filter((f) => (foodQty[f.id] ?? 0) > 0)
+      .map((f) => ({
+        id: f.id,
+        name: f.name,
+        qty: foodQty[f.id] ?? 0,
+        price: f.price,
+      }));
 
     setSnacks(selectedCombos, selectedFoods);
   };

@@ -1,13 +1,11 @@
-"use client";
-
-import ChangePasswordContent from "./components/mobile/ChangePasswordContent";
+import PasswordForm from "./components/mobile/PasswordForm";
 import DesktopChangePasswordContent from "./components/desktop/ChangePasswordContent";
 
-export default function ChangePasswordPage() {
+export default async function ChangePasswordPage() {
   return (
     <>
       <div className="block md:hidden">
-        <ChangePasswordContent />
+        <PasswordForm />
       </div>
       <div className="hidden md:block">
         <DesktopChangePasswordContent />

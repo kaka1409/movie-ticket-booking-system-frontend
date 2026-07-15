@@ -1,20 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import { ComboItem } from "@/features/booking/types";
+import type { ComboItem } from "@/features/booking/types";
 import Stepper from "./Stepper";
+import { useSnackSelection } from "./SnackSelectionContext";
 
-export default function ComboCard({
-  item,
-  qty,
-  onDecrement,
-  onIncrement,
-}: {
-  item: ComboItem;
-  qty: number;
-  onDecrement: () => void;
-  onIncrement: () => void;
-}) {
+export default function ComboCard({ item }: { item: ComboItem }) {
+  const { comboQty, changeCombo } = useSnackSelection();
+  const qty = comboQty[item.id] ?? 0;
   const isSelected = qty > 0;
 
   return (
@@ -63,8 +56,8 @@ export default function ComboCard({
             </span>
             <Stepper
               value={qty}
-              onDecrement={onDecrement}
-              onIncrement={onIncrement}
+              onDecrement={() => changeCombo(item.id, -1)}
+              onIncrement={() => changeCombo(item.id, +1)}
             />
           </div>
         </div>

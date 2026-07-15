@@ -3,11 +3,17 @@
 import { useRef, useEffect } from "react";
 import { Search } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
-import { useMovies } from "@/contexts/MoviesContext";
-import { useNowShowingMovies, useComingSoonMovies } from "@/features/movies/hooks";
+import { useMovies } from "@/features/movies/context";
 import MovieCard from "@/components/common/MovieCard";
+import type { Movie } from "@/features/movies/types";
 
-export default function MovieGrid() {
+export default function MovieGrid({
+  nowShowing,
+  comingSoon,
+}: {
+  nowShowing: Movie[];
+  comingSoon: Movie[];
+}) {
   const { translate } = useLocale();
   const {
     activeTab,
@@ -19,13 +25,25 @@ export default function MovieGrid() {
     clearFilters,
   } = useMovies();
 
-  const { movies: nowShowing, loading: loadingNow } = useNowShowingMovies();
-  const { movies: comingSoon, loading: loadingComing } = useComingSoonMovies();
-
-  const loading = loadingNow || loadingComing;
   const sourceMovies = activeTab === "now_showing" ? nowShowing : comingSoon;
 
-  if (loading) return null;
+  /* ── Hooks must run before any early return ── */
+  const gridRef = useRef<HTMLDivElement>(null);
+  const prevCountRef = useRef(visibleCount);
+
+  useEffect(() => {
+    if (visibleCount > prevCountRef.current) {
+      const grid = gridRef.current;
+      if (grid) {
+        const cards = grid.querySelectorAll<HTMLElement>("[data-movie-card]");
+        const firstNew = cards[prevCountRef.current];
+        if (firstNew) {
+          firstNew.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }
+    }
+    prevCountRef.current = visibleCount;
+  }, [visibleCount]);
 
   const filtered = sourceMovies.filter((movie) => {
     const searchQuery = query.toLowerCase();
@@ -64,24 +82,6 @@ export default function MovieGrid() {
 
   const visible = filtered.slice(0, visibleCount);
   const hasMore = filtered.length > visibleCount;
-
-  /* ── Scroll to first new card after load more ── */
-  const gridRef = useRef<HTMLDivElement>(null);
-  const prevCountRef = useRef(visibleCount);
-
-  useEffect(() => {
-    if (visibleCount > prevCountRef.current) {
-      const grid = gridRef.current;
-      if (grid) {
-        const cards = grid.querySelectorAll<HTMLElement>("[data-movie-card]");
-        const firstNew = cards[prevCountRef.current];
-        if (firstNew) {
-          firstNew.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
-      }
-    }
-    prevCountRef.current = visibleCount;
-  }, [visibleCount]);
 
   return (
     <>

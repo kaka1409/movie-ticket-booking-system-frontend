@@ -1,17 +1,23 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { ALL_MOVIES } from "@/features/movies/mock";
-import { type FilterKey } from "@/features/reviews/mock";
+import type { FilterKey } from "@/features/reviews/mock";
+import type { Movie } from "@/features/movies/types";
 import FilterBar from "./FilterBar";
 import ReviewCard from "./ReviewCard";
 import LoadMoreButton from "./LoadMoreButton";
 
-export default function ReviewContent() {
+export default function ReviewList({
+  allMovies,
+  filters,
+}: {
+  allMovies: Movie[];
+  filters: readonly { key: string; label: string }[];
+}) {
   const [activeFilter, setActiveFilter] = useState<FilterKey>("recent");
   const [visibleCount, setVisibleCount] = useState(8);
 
-  const sortedMovies = [...ALL_MOVIES].sort((a, b) => {
+  const sortedMovies = [...allMovies].sort((a, b) => {
     if (activeFilter === "highest") return b.rating - a.rating;
     if (activeFilter === "lowest") return a.rating - b.rating;
     return (
@@ -46,7 +52,7 @@ export default function ReviewContent() {
 
   return (
     <main className="flex-1 overflow-y-auto py-4 space-y-4 px-4">
-      <FilterBar active={activeFilter} onChange={handleFilterChange} />
+      <FilterBar filters={filters} active={activeFilter} onChange={handleFilterChange} />
 
       <div ref={listRef} className="space-y-3">
         {visible.map((movie, index) => (

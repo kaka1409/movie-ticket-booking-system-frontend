@@ -1,25 +1,14 @@
 "use client";
 
 import { MapPin } from "lucide-react";
-import { Cinema } from "@/features/booking/types";
+import { useCinemaSelection } from "./CinemaSelectionContext";
 import CinemaCard from "./CinemaCard";
 
-export default function CinemaList({
-  cinemas,
-  selectedCinemaId,
-  selectedTime,
-  onSelect,
-  query,
-  onClearQuery,
-}: {
-  cinemas: Cinema[];
-  selectedCinemaId: number | null;
-  selectedTime: string;
-  onSelect: (cinemaId: number, time: string) => void;
-  query: string;
-  onClearQuery: () => void;
-}) {
-  if (cinemas.length === 0) {
+export default function CinemaList() {
+  const { filteredCinemas, selectedCinemaId, selectedTime, handleSelect, query, setQuery } =
+    useCinemaSelection();
+
+  if (filteredCinemas.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 gap-3">
         <MapPin size={36} className="text-(--color-border)" />
@@ -27,7 +16,7 @@ export default function CinemaList({
           No cinemas found for &ldquo;{query}&rdquo;
         </p>
         <button
-          onClick={onClearQuery}
+          onClick={() => setQuery("")}
           className="text-sm font-bold underline underline-offset-2 text-(--color-gold)"
         >
           Clear search
@@ -38,13 +27,13 @@ export default function CinemaList({
 
   return (
     <div className="space-y-3">
-      {cinemas.map((cinema) => (
+      {filteredCinemas.map((cinema) => (
         <CinemaCard
           key={cinema.id}
           cinema={cinema}
           selectedCinemaId={selectedCinemaId}
           selectedTime={selectedTime}
-          onSelect={onSelect}
+          onSelect={handleSelect}
         />
       ))}
     </div>

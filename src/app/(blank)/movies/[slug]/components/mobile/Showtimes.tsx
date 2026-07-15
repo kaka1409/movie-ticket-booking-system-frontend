@@ -4,17 +4,11 @@ import { useState, useRef, useEffect } from "react";
 import { MapPin, ChevronDown, ChevronUp } from "lucide-react";
 import SectionHeading from "../shared/SectionHeading";
 import { CINEMAS, DATES, INITIAL_CINEMAS_VISIBLE } from "../shared/mock";
+import { useMovieSelection } from "../shared/MovieSelectionContext";
 
-export default function Showtimes({
-  onSelectionChange,
-}: {
-  onSelectionChange?: (selection: {
-    cinemaId: number;
-    time: string;
-    date: string;
-  } | null) => void;
-}) {
-  // Date section's states
+export default function Showtimes() {
+  const { setSelectedShowtime } = useMovieSelection();
+
   const [selectedDate, setSelectedDate] = useState(DATES[0].value);
   const [selected, setSelected] = useState<{
     cinemaId: number;
@@ -77,7 +71,7 @@ export default function Showtimes({
         ? null
         : { cinemaId, time };
     setSelected(next);
-    onSelectionChange?.(next ? { ...next, date: selectedDate } : null);
+    setSelectedShowtime(next ? { ...next, date: selectedDate } : null);
   };
 
   return (
@@ -93,7 +87,7 @@ export default function Showtimes({
               onClick={() => {
                 setSelectedDate(date.value);
                 setSelected(null);
-                onSelectionChange?.(null);
+                setSelectedShowtime(null);
               }}
               className={`
                 shrink-0 flex flex-col items-center justify-center

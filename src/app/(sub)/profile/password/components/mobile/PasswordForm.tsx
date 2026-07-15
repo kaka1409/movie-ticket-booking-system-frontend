@@ -32,7 +32,7 @@ function validate(
   return errors;
 }
 
-export default function ChangePasswordContent() {
+export default function PasswordForm() {
   const router = useRouter();
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");

@@ -1,13 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import type { Movie } from "@/features/movies/types";
-import type {
-  SelectedSeat,
-  SelectedCombo,
-  SelectedFood,
-} from "@/contexts/BookingContext";
-import DetailRow from "./DetailRow";
+import { useBooking } from "@/features/booking/context";
+import { useStatus } from "../../../components/mobile/StatusContext";
+import DetailRow from "@/features/booking/components/common/DetailRow";
 import {
   MonitorPlay,
   CalendarDays,
@@ -16,48 +12,37 @@ import {
   CreditCard,
 } from "lucide-react";
 
-interface FailedOrderCardProps {
-  movie: Movie | undefined;
-  transactionId: string;
-  cinemaName: string;
-  room: string;
-  date: string;
-  time: string;
-  selectedSeats: SelectedSeat[];
-  seatType: string;
-  paymentMethod: string;
-  combos: SelectedCombo[];
-  foods: SelectedFood[];
-  total: number;
-  reason: string;
-}
-
-const REASONS: Record<string, string> = {
+const ERROR_CODES: Record<string, string> = {
   payment_declined: "ERR_PAYMENT_DECLINED",
   insufficient_funds: "ERR_INSUFFICIENT_FUNDS",
   network_error: "ERR_NETWORK",
   expired_card: "ERR_CARD_EXPIRED",
 };
 
-export default function FailedOrderCard({
-  movie,
-  cinemaName,
-  room,
-  date,
-  time,
-  selectedSeats,
-  seatType,
-  paymentMethod,
-  combos,
-  foods,
-  total,
-  reason,
-}: FailedOrderCardProps) {
-  const errorCode = REASONS[reason] ?? "ERR_UNKNOWN";
+export default function FailedOrderCard() {
+  const {
+    cinemaName,
+    room,
+    date,
+    time,
+    selectedSeats,
+    seatType,
+    paymentMethod,
+    combos,
+    foods,
+    total,
+  } = useBooking();
+  const { transactionId, reason, movie, mounted } = useStatus();
+
+  const errorCode = ERROR_CODES[reason ?? ""] ?? "ERR_UNKNOWN";
   const hasSnacks = combos.length > 0 || foods.length > 0;
 
   return (
-    <div className="mx-4 rounded-3xl overflow-visible bg-(--color-surface) border border-red-500/20 shadow-[0_0_0_1px_rgba(239,68,68,0.06)]">
+    <div
+      className={`mx-4 rounded-3xl overflow-visible bg-(--color-surface) border border-red-500/20 shadow-[0_0_0_1px_rgba(239,68,68,0.06)] transition-all duration-700 delay-300 ${
+        mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+      }`}
+    >
       {/* Top: movie info */}
       <div className="flex gap-3 p-4">
         {movie?.src && (
@@ -75,9 +60,7 @@ export default function FailedOrderCard({
           <h3 className="font-bold text-base text-white mb-1">
             {movie?.title ?? "N/A"}
           </h3>
-          <p className="text-xs text-white/60 mb-2">
-            {movie?.ageRating}
-          </p>
+          <p className="text-xs text-white/60 mb-2">{movie?.ageRating}</p>
         </div>
       </div>
 
@@ -119,11 +102,10 @@ export default function FailedOrderCard({
             {selectedSeats.map((s) => s.label).join(", ")}
           </p>
           <div className="flex justify-between text-sm">
-            <span className="text-white">
-              {seatType} Ticket
-            </span>
+            <span className="text-white">{seatType} Ticket</span>
             <span className="font-medium text-white">
-              {selectedSeats.length}× {selectedSeats[0]?.price.toLocaleString("vi-VN")}₫
+              {selectedSeats.length}×{" "}
+              {selectedSeats[0]?.price.toLocaleString("vi-VN")}₫
             </span>
           </div>
         </div>
@@ -137,9 +119,7 @@ export default function FailedOrderCard({
             <div className="space-y-1">
               {combos.map((c) => (
                 <div key={c.id} className="flex justify-between text-sm">
-                  <span className="text-white">
-                    {c.name}
-                  </span>
+                  <span className="text-white">{c.name}</span>
                   <span className="font-medium text-white">
                     {c.qty}× {(c.qty * c.price).toLocaleString("vi-VN")}₫
                   </span>
@@ -147,9 +127,7 @@ export default function FailedOrderCard({
               ))}
               {foods.map((f) => (
                 <div key={f.id} className="flex justify-between text-sm">
-                  <span className="text-white">
-                    {f.name}
-                  </span>
+                  <span className="text-white">{f.name}</span>
                   <span className="font-medium text-white">
                     {f.qty}× {(f.qty * f.price).toLocaleString("vi-VN")}₫
                   </span>

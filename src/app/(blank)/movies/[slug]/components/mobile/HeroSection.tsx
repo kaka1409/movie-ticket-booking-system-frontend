@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, Heart, Play, Star, Clock } from "lucide-react";
 import { useMovie } from "../shared/MovieContext";
-import { useWishlist } from "@/contexts/WishlistContext";
+import { useWishlist } from "@/features/wishlist/context";
 
 export default function HeroSection() {
   const movie = useMovie();

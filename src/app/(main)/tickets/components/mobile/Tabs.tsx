@@ -1,6 +1,6 @@
 "use client";
 
-import { useTickets } from "@/contexts/TicketsContext";
+import { useTickets } from "@/features/tickets/context";
 
 export default function Tabs() {
   const { activeTab, setActiveTab } = useTickets();

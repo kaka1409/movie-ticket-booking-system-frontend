@@ -2,13 +2,9 @@
 
 import Image from "next/image";
 import { QRCodeSVG } from "qrcode.react";
-import type { Movie } from "@/features/movies/types";
-import type {
-  SelectedSeat,
-  SelectedCombo,
-  SelectedFood,
-} from "@/contexts/BookingContext";
-import DetailRow from "./DetailRow";
+import { useBooking } from "@/features/booking/context";
+import { useStatus } from "../../../components/mobile/StatusContext";
+import DetailRow from "@/features/booking/components/common/DetailRow";
 import {
   MonitorPlay,
   CalendarDays,
@@ -17,39 +13,29 @@ import {
   CreditCard,
 } from "lucide-react";
 
-interface TicketCardProps {
-  movie: Movie | undefined;
-  transactionId: string;
-  cinemaName: string;
-  room: string;
-  date: string;
-  time: string;
-  selectedSeats: SelectedSeat[];
-  seatType: string;
-  paymentMethod: string;
-  combos: SelectedCombo[];
-  foods: SelectedFood[];
-  total: number;
-}
+export default function TicketCard() {
+  const {
+    cinemaName,
+    room,
+    date,
+    time,
+    selectedSeats,
+    seatType,
+    paymentMethod,
+    combos,
+    foods,
+    total,
+  } = useBooking();
+  const { transactionId, movie, mounted } = useStatus();
 
-export default function TicketCard({
-  movie,
-  transactionId,
-  cinemaName,
-  room,
-  date,
-  time,
-  selectedSeats,
-  seatType,
-  paymentMethod,
-  combos,
-  foods,
-  total,
-}: TicketCardProps) {
   const hasSnacks = combos.length > 0 || foods.length > 0;
 
   return (
-    <div className="mx-4 rounded-3xl overflow-visible bg-(--color-surface) border border-(--color-border) shadow-[--shadow-card]">
+    <div
+      className={`mx-4 rounded-3xl overflow-visible bg-(--color-surface) border border-(--color-border) shadow-[--shadow-card] transition-all duration-700 delay-300 ${
+        mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+      }`}
+    >
       {/* Top: movie info */}
       <div className="flex gap-3 p-4">
         {movie?.src && (
@@ -67,9 +53,7 @@ export default function TicketCard({
           <h3 className="font-bold text-base text-white mb-1">
             {movie?.title ?? "N/A"}
           </h3>
-          <p className="text-xs text-white/60 mb-2">
-            {movie?.ageRating}
-          </p>
+          <p className="text-xs text-white/60 mb-2">{movie?.ageRating}</p>
         </div>
       </div>
 
@@ -111,11 +95,10 @@ export default function TicketCard({
             {selectedSeats.map((s) => s.label).join(", ")}
           </p>
           <div className="flex justify-between text-sm">
-            <span className="text-white">
-              {seatType} Ticket
-            </span>
+            <span className="text-white">{seatType} Ticket</span>
             <span className="font-medium text-white">
-              {selectedSeats.length}× {selectedSeats[0]?.price.toLocaleString("vi-VN")}₫
+              {selectedSeats.length}×{" "}
+              {selectedSeats[0]?.price.toLocaleString("vi-VN")}₫
             </span>
           </div>
         </div>
@@ -129,9 +112,7 @@ export default function TicketCard({
             <div className="space-y-1">
               {combos.map((c) => (
                 <div key={c.id} className="flex justify-between text-sm">
-                  <span className="text-white">
-                    {c.name}
-                  </span>
+                  <span className="text-white">{c.name}</span>
                   <span className="font-medium text-white">
                     {c.qty}× {(c.qty * c.price).toLocaleString("vi-VN")}₫
                   </span>
@@ -139,9 +120,7 @@ export default function TicketCard({
               ))}
               {foods.map((f) => (
                 <div key={f.id} className="flex justify-between text-sm">
-                  <span className="text-white">
-                    {f.name}
-                  </span>
+                  <span className="text-white">{f.name}</span>
                   <span className="font-medium text-white">
                     {f.qty}× {(f.qty * f.price).toLocaleString("vi-VN")}₫
                   </span>
@@ -189,9 +168,7 @@ export default function TicketCard({
         </div>
         <p className="text-xs text-white/60 tracking-wide">
           Booking ID:{" "}
-          <span className="font-bold text-white">
-            #{transactionId}
-          </span>
+          <span className="font-bold text-white">#{transactionId}</span>
         </p>
       </div>
     </div>

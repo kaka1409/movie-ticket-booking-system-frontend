@@ -1,9 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { USER } from "@/features/profile/mock";
+import type { User } from "@/features/profile/types";
 
-export default function Avatar() {
+export default function Avatar({ user }: { user: User }) {
   return (
     <div className="relative w-28 h-28">
       {/* Conic gradient ring */}
@@ -20,8 +20,8 @@ export default function Avatar() {
       {/* Avatar circle */}
       <div className="absolute inset-[3px] rounded-full overflow-hidden bg-(--color-surface-2)">
         <Image
-          src={USER.avatarUrl}
-          alt={USER.name}
+          src={user.avatarUrl}
+          alt={user.name}
           fill
           sizes="112px"
           className="object-cover"

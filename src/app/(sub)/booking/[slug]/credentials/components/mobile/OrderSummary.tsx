@@ -1,16 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import { useParams } from "next/navigation";
 import { CalendarDays, MapPin, Armchair, Ticket, Popcorn } from "lucide-react";
-import { useBooking } from "@/contexts/BookingContext";
-import { ALL_MOVIES } from "@/features/movies/mock";
+import { useBooking } from "@/features/booking/context";
+import type { Movie } from "@/features/movies/types";
 
-export default function OrderSummary() {
-  const params = useParams();
-  const slug = params.slug as string;
-  const movie = ALL_MOVIES.find((m) => m.slug === slug);
-
+export default function OrderSummary({ movie }: { movie: Movie }) {
   const {
     cinemaName,
     room,

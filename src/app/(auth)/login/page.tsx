@@ -1,5 +1,3 @@
-"use client";
-
 import MobileLoginForm from "./components/mobile/LoginForm";
 import DesktopLoginForm from "./components/desktop/LoginForm";
 

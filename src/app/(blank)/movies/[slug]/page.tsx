@@ -1,9 +1,7 @@
-"use client";
-
-import { useState } from "react";
-import { useParams } from "next/navigation";
-import { ALL_MOVIES } from "@/features/movies/mock";
+import { notFound } from "next/navigation";
+import { getMovieBySlug } from "@/features/movies/api";
 import { MovieProvider } from "./components/shared/MovieContext";
+import { MovieSelectionProvider } from "./components/shared/MovieSelectionContext";
 
 // Mobile
 import MobileHeroSection from "./components/mobile/HeroSection";
@@ -21,15 +19,13 @@ import DesktopShowtimes from "./components/desktop/Showtimes";
 import DesktopBookTicketCTA from "./components/desktop/BookTicketCTA";
 import DesktopReviews from "./components/desktop/Reviews";
 
-export default function MovieDetailPage() {
-  const { slug } = useParams<{ slug: string }>();
-  const movie = ALL_MOVIES.find((m) => m.slug === slug);
-
-  const [selectedShowtime, setSelectedShowtime] = useState<{
-    cinemaId: number;
-    time: string;
-    date: string;
-  } | null>(null);
+export default async function MovieDetailPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const movie = await getMovieBySlug(slug);
 
   if (!movie) {
     return (
@@ -41,31 +37,29 @@ export default function MovieDetailPage() {
 
   return (
     <MovieProvider movie={movie}>
-      {/* Mobile */}
-      <div className="block md:hidden min-h-dvh bg-(--color-bg) w-full max-w-md mx-auto flex flex-col overflow-x-hidden">
-        <MobileHeroSection />
-        <div className="flex flex-col gap-8 py-6 pb-12">
-          <MobileSynopsis />
-          <MobileTopCast />
-          <MobileShowtimes onSelectionChange={setSelectedShowtime} />
-          <MobileBookTicketCTA
-            selectedCinemaId={selectedShowtime?.cinemaId ?? null}
-            selectedTime={selectedShowtime?.time ?? ""}
-            selectedDate={selectedShowtime?.date ?? ""}
-          />
-          <MobileReviews />
+      <MovieSelectionProvider>
+        {/* Mobile */}
+        <div className="block md:hidden min-h-dvh bg-(--color-bg) w-full max-w-md mx-auto flex flex-col overflow-x-hidden">
+          <MobileHeroSection />
+          <div className="flex flex-col gap-8 py-6 pb-12">
+            <MobileSynopsis />
+            <MobileTopCast />
+            <MobileShowtimes />
+            <MobileBookTicketCTA />
+            <MobileReviews />
+          </div>
         </div>
-      </div>
 
-      {/* Desktop */}
-      <div className="hidden md:block">
-        <DesktopHeroSection />
-        <DesktopSynopsis />
-        <DesktopTopCast />
-        <DesktopShowtimes />
-        <DesktopBookTicketCTA />
-        <DesktopReviews />
-      </div>
+        {/* Desktop */}
+        <div className="hidden md:block">
+          <DesktopHeroSection />
+          <DesktopSynopsis />
+          <DesktopTopCast />
+          <DesktopShowtimes />
+          <DesktopBookTicketCTA />
+          <DesktopReviews />
+        </div>
+      </MovieSelectionProvider>
     </MovieProvider>
   );
 }

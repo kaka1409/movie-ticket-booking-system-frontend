@@ -3,21 +3,19 @@
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowRight, Loader2 } from "lucide-react";
-import { useBooking } from "@/contexts/BookingContext";
+import { useBooking } from "@/features/booking/context";
+import { usePayment } from "./PaymentContext";
 import { PAYMENT_METHODS } from "./PaymentOption";
 
-export default function BottomBar({
-  canPay,
-  selectedMethod,
-}: {
-  canPay: boolean;
-  selectedMethod: string | null;
-}) {
+export default function BottomBar() {
   const params = useParams();
   const router = useRouter();
   const slug = params.slug as string;
   const { ticketCount, cinemaName, total, setPaymentMethod } = useBooking();
+  const { selectedMethod } = usePayment();
   const [isLoading, setIsLoading] = useState(false);
+
+  const canPay = !!selectedMethod;
 
   const handleClick = async () => {
     if (!canPay || isLoading) return;

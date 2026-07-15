@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ArrowRight } from "lucide-react";
-import { SeatRow, Seat } from "@/features/booking/types";
-import { SEAT_PRICES } from "@/features/booking/mock";
-import { useBooking, type SelectedSeat } from "@/contexts/BookingContext";
+import type { SeatPrice, SeatRow } from "@/features/booking/types";
+import { useBooking, type SelectedSeat } from "@/features/booking/context";
+import { useSeatSelection } from "./SeatSelectionContext";
 
 interface Selection {
   label: string;
@@ -13,7 +13,7 @@ interface Selection {
   price: number;
 }
 
-function collectSelections(rows: SeatRow[]): Selection[] {
+function collectSelections(rows: SeatRow[], seatPrices: SeatPrice): Selection[] {
   return rows.flatMap((row) =>
     row.segments.flatMap((seg) =>
       seg
@@ -24,17 +24,19 @@ function collectSelections(rows: SeatRow[]): Selection[] {
               ? `${row.label}(${s.pairId?.split("-").slice(1).join("-")})`
               : `${row.label}${s.col}`,
           type: s.kind === "available" ? "Standard" : s.kind === "vip" ? "VIP" : "SweetBox",
-          price: SEAT_PRICES[s.kind],
+          price: seatPrices[s.kind as keyof SeatPrice],
         }))
     )
   );
 }
 
-export default function BottomBar({ rows }: { rows: SeatRow[] }) {
+export default function BottomBar({ seatPrices }: { seatPrices: SeatPrice }) {
   const params = useParams();
   const slug = params.slug as string;
   const { setSeats } = useBooking();
-  const items = collectSelections(rows);
+  const { rows } = useSeatSelection();
+
+  const items = collectSelections(rows, seatPrices);
   const total = items.reduce((sum, s) => sum + s.price, 0);
   const labels = items.map((s) => s.label).join(", ");
   const hasSeats = items.length > 0;

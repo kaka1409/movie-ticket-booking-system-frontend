@@ -1,3 +1,5 @@
+'use client';
+
 import Image from "next/image";
 import SectionHeading from "../shared/SectionHeading";
 import { useMovie } from "../shared/MovieContext";

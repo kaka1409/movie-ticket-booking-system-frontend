@@ -2,16 +2,15 @@
 
 import { useState, useEffect } from "react";
 import { Timer } from "lucide-react";
-import { useBooking } from "@/contexts/BookingContext";
-import { COUNTDOWN_SECONDS } from "@/features/booking/mock";
+import { useBooking } from "@/features/booking/context";
 
 export default function CountdownBanner() {
-  const { countdownStarted, countdownStartTime } = useBooking();
+  const { countdownStarted, countdownStartTime, countdownSeconds } = useBooking();
 
   const [remaining, setRemaining] = useState(() => {
-    if (!countdownStarted) return COUNTDOWN_SECONDS;
+    if (!countdownStarted) return countdownSeconds;
     const elapsed = Math.floor((Date.now() - countdownStartTime) / 1000);
-    return Math.max(0, COUNTDOWN_SECONDS - elapsed);
+    return Math.max(0, countdownSeconds - elapsed);
   });
 
   useEffect(() => {
@@ -19,12 +18,12 @@ export default function CountdownBanner() {
 
     const tick = () => {
       const elapsed = Math.floor((Date.now() - countdownStartTime) / 1000);
-      setRemaining(Math.max(0, COUNTDOWN_SECONDS - elapsed));
+      setRemaining(Math.max(0, countdownSeconds - elapsed));
     };
 
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
-  }, [countdownStarted, countdownStartTime]);
+  }, [countdownStarted, countdownStartTime, countdownSeconds]);
 
   const mm = String(Math.floor(remaining / 60)).padStart(2, "0");
   const ss = String(remaining % 60).padStart(2, "0");

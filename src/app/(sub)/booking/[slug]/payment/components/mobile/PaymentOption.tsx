@@ -2,14 +2,8 @@
 
 import Image from "next/image";
 import { CheckCircle2 } from "lucide-react";
-
-interface PaymentMethod {
-  id: string;
-  name: string;
-  description: string;
-  imageSrc: string;
-  badge?: string;
-}
+import type { PaymentMethod } from "@/types";
+import { usePayment } from "./PaymentContext";
 
 const PAYMENT_METHODS: PaymentMethod[] = [
   {
@@ -27,22 +21,15 @@ const PAYMENT_METHODS: PaymentMethod[] = [
 ];
 
 export { PAYMENT_METHODS };
-export type { PaymentMethod };
 
-export default function PaymentOption({
-  method,
-  selected,
-  onSelect,
-}: {
-  method: PaymentMethod;
-  selected: boolean;
-  onSelect: () => void;
-}) {
-  const { imageSrc, badge } = method;
+export default function PaymentOption({ method }: { method: PaymentMethod }) {
+  const { selectedMethod, setSelectedMethod } = usePayment();
+  const selected = selectedMethod === method.id;
+  const { imageSrc } = method;
 
   return (
     <button
-      onClick={onSelect}
+      onClick={() => setSelectedMethod(method.id)}
       aria-pressed={selected}
       className={`w-full flex items-center gap-4 px-4 py-4 rounded-2xl border transition-all duration-150 active:scale-[0.99] text-left ${
         selected

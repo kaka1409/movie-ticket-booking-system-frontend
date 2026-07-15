@@ -1,16 +1,11 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
-import { SeatRow, Seat } from "@/features/booking/types";
+import { useSeatSelection } from "./SeatSelectionContext";
 import SeatCell from "./SeatCell";
 
-export default function SeatMap({
-  rows,
-  onToggle,
-}: {
-  rows: SeatRow[];
-  onToggle: (rowLabel: string, seat: Seat) => void;
-}) {
+export default function SeatMap() {
+  const { rows, handleToggle } = useSeatSelection();
   const contentRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
   const [contentHeight, setContentHeight] = useState(0);
@@ -65,7 +60,7 @@ export default function SeatMap({
                   <SeatCell
                     key={`${row.label}-L-${si}`}
                     seat={seat}
-                    onToggle={(s) => onToggle(row.label, s)}
+                    onToggle={(s) => handleToggle(row.label, s)}
                   />
                 ))}
               </div>
@@ -77,7 +72,7 @@ export default function SeatMap({
                   <SeatCell
                     key={`${row.label}-R-${si}`}
                     seat={seat}
-                    onToggle={(s) => onToggle(row.label, s)}
+                    onToggle={(s) => handleToggle(row.label, s)}
                   />
                 ))}
               </div>

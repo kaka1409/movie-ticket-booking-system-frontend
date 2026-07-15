@@ -3,24 +3,35 @@
 import { useState } from "react";
 import { Bell } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
-import { INITIAL_NOTIFS } from "@/features/notifications/mock";
 import type { Notification } from "@/features/notifications/types";
 import NotificationCard from "../shared/NotificationCard";
 
-export default function NotificationList() {
+export default function NotificationList({
+  notifications: initialNotifications,
+}: {
+  notifications: Notification[];
+}) {
   const { translate } = useLocale();
-  const [notifications, setNotifications] =
-    useState<Notification[]>(INITIAL_NOTIFS);
+  const [notifications, setNotifications] = useState(initialNotifications);
 
-  const unreadCount = notifications.filter((notification) => !notification.read).length;
+  const unreadCount = notifications.filter(
+    (notification) => !notification.read
+  ).length;
 
   const markRead = (id: number) =>
     setNotifications((previousNotifications) =>
-      previousNotifications.map((notification) => (notification.id === id ? { ...notification, read: true } : notification))
+      previousNotifications.map((notification) =>
+        notification.id === id ? { ...notification, read: true } : notification
+      )
     );
 
   const markAllRead = () =>
-    setNotifications((previousNotifications) => previousNotifications.map((notification) => ({ ...notification, read: true })));
+    setNotifications((previousNotifications) =>
+      previousNotifications.map((notification) => ({
+        ...notification,
+        read: true,
+      }))
+    );
 
   return (
     <div className="flex flex-col">

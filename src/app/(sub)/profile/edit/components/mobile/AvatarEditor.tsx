@@ -3,11 +3,13 @@
 import { useRef, useState } from "react";
 import Image from "next/image";
 import { Camera } from "lucide-react";
-import { USER } from "@/features/profile/mock";
+import type { User } from "@/features/profile/types";
 
 export default function AvatarEditor({
+  user,
   onAvatarChange,
 }: {
+  user: User;
   onAvatarChange?: (changed: boolean) => void;
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -38,11 +40,12 @@ export default function AvatarEditor({
         {/* Avatar image */}
         <div className="absolute inset-[4px] rounded-full overflow-hidden bg-(--color-surface-2)">
           <Image
-            src={preview || USER.avatarUrl}
-            alt={USER.name}
+            src={preview || user?.avatarUrl || "/images/default-avatar.jpg"}
+            alt={user?.name || ""}
             fill
             sizes="128px"
             className="object-cover"
+            loading="eager"
           />
         </div>
       </div>
@@ -65,9 +68,9 @@ export default function AvatarEditor({
       />
 
       <p className="mt-4 text-xl font-bold text-(--color-text-primary)">
-        {USER.name}
+        {user?.name}
       </p>
-      <p className="text-sm text-(--color-text-secondary)">{USER.tier}</p>
+      <p className="text-sm text-(--color-text-secondary)">{user?.tier}</p>
     </div>
   );
 }

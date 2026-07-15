@@ -1,19 +1,18 @@
 "use client";
 
-import { FoodItem } from "@/features/booking/types";
+import { useSnackSelection } from "./SnackSelectionContext";
 import FoodItemCard from "./FoodItemCard";
+import type { FoodItem } from "@/features/booking/types";
 
 export default function CategorySection({
   label,
   items,
-  quantities,
-  onChange,
 }: {
   label: string;
   items: FoodItem[];
-  quantities: Record<string, number>;
-  onChange: (id: string, delta: number) => void;
 }) {
+  const { foodQty, changeFood } = useSnackSelection();
+
   return (
     <div className="space-y-2">
       <h3 className="px-4 text-xs font-bold tracking-widest uppercase text-(--color-gold-dark)">
@@ -24,9 +23,9 @@ export default function CategorySection({
           <FoodItemCard
             key={item.id}
             item={item}
-            qty={quantities[item.id] ?? 0}
-            onDecrement={() => onChange(item.id, -1)}
-            onIncrement={() => onChange(item.id, +1)}
+            qty={foodQty[item.id] ?? 0}
+            onDecrement={() => changeFood(item.id, -1)}
+            onIncrement={() => changeFood(item.id, +1)}
           />
         ))}
       </div>

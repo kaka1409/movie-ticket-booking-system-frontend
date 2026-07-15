@@ -1,15 +1,15 @@
 "use client";
 
-import { ALL_MOVIES } from "@/features/movies/mock";
-import { useWishlist } from "@/contexts/WishlistContext";
+import { useWishlist } from "@/features/wishlist/context";
+import type { Movie } from "@/features/movies/types";
 import WishlistCard from "./WishlistCard";
 import EmptyState from "./EmptyState";
 
-export default function WishlistContent() {
+export default function WishlistMovieList({ allMovies }: { allMovies: Movie[] }) {
   const { wishlist } = useWishlist();
 
   const movies = wishlist
-    .map((id) => ALL_MOVIES.find((m) => m.id === id))
+    .map((id) => allMovies.find((m) => m.id === id))
     .filter(Boolean);
 
   if (movies.length === 0) {

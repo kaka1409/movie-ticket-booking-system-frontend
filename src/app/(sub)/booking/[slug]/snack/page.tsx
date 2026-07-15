@@ -1,65 +1,34 @@
-"use client";
+import { getCombos, getFoodItems, getFoodCategories } from "@/features/booking/api";
+import { SnackSelectionProvider } from "./components/mobile/SnackSelectionContext";
 
-import { useState, useMemo } from "react";
-import { COMBOS, FOOD_ITEMS, FOOD_CATEGORIES } from "@/features/booking/mock";
-import { useBooking } from "@/contexts/BookingContext";
-
-// Mobile components
+// Shared
 import StepBar from "@/app/(sub)/booking/components/mobile/StepBar";
 import CountdownBanner from "@/app/(sub)/booking/components/mobile/CountdownBanner";
+
+// Local mobile
 import ComboCard from "./components/mobile/ComboCard";
 import CategorySection from "./components/mobile/CategorySection";
 import BottomBar from "./components/mobile/BottomBar";
 
-// Desktop components
+// Desktop
 import DesktopSnackContent from "./components/desktop/SnackContent";
 
-export default function CombosPage() {
-  const { combos: savedCombos, foods: savedFoods } = useBooking();
-
-  const [comboQty, setComboQty] = useState<Record<string, number>>(() => {
-    const base = Object.fromEntries(COMBOS.map((c) => [c.id, 0]));
-    savedCombos.forEach((c) => {
-      base[c.id] = c.qty;
-    });
-    return base;
-  });
-
-  const [foodQty, setFoodQty] = useState<Record<string, number>>(() => {
-    const base = Object.fromEntries(FOOD_ITEMS.map((f) => [f.id, 0]));
-    savedFoods.forEach((f) => {
-      base[f.id] = f.qty;
-    });
-    return base;
-  });
-
-  const changeCombo = (id: string, delta: number) =>
-    setComboQty((prev) => ({
-      ...prev,
-      [id]: Math.max(0, Math.min(10, (prev[id] ?? 0) + delta)),
-    }));
-
-  const changeFood = (id: string, delta: number) =>
-    setFoodQty((prev) => ({
-      ...prev,
-      [id]: Math.max(0, Math.min(10, (prev[id] ?? 0) + delta)),
-    }));
-
-  const foodByCategory = useMemo(
-    () =>
-      FOOD_CATEGORIES.map((cat) => ({
-        ...cat,
-        items: FOOD_ITEMS.filter((f) => f.category === cat.id),
-      })),
-    []
-  );
+export default async function CombosPage() {
+  const [combos, foodItems, foodCategories] = await Promise.all([
+    getCombos(),
+    getFoodItems(),
+    getFoodCategories(),
+  ]);
 
   return (
-    <>
+    <SnackSelectionProvider
+      combos={combos}
+      foodItems={foodItems}
+      foodCategories={foodCategories}
+    >
       {/* Mobile */}
       <div className="block md:hidden">
         <StepBar current={3} />
-
         <main className="space-y-5 pt-1 pb-10">
           <CountdownBanner />
 
@@ -78,39 +47,30 @@ export default function CombosPage() {
               Quick Combos
             </h3>
             <div className="space-y-3">
-              {COMBOS.map((item) => (
-                <ComboCard
-                  key={item.id}
-                  item={item}
-                  qty={comboQty[item.id] ?? 0}
-                  onDecrement={() => changeCombo(item.id, -1)}
-                  onIncrement={() => changeCombo(item.id, +1)}
-                />
+              {combos.map((item) => (
+                <ComboCard key={item.id} item={item} />
               ))}
             </div>
           </div>
 
           {/* Pick & Mix */}
           <div className="space-y-4">
-            {foodByCategory.map((cat) => (
+            {foodCategories.map((category) => (
               <CategorySection
-                key={cat.id}
-                label={cat.label}
-                items={cat.items}
-                quantities={foodQty}
-                onChange={changeFood}
+                key={category.id}
+                label={category.label}
+                items={foodItems.filter((food) => food.category === category.id)}
               />
             ))}
           </div>
         </main>
-
-        <BottomBar comboQty={comboQty} foodQty={foodQty} />
+        <BottomBar />
       </div>
 
       {/* Desktop */}
       <div className="hidden md:block">
         <DesktopSnackContent />
       </div>
-    </>
+    </SnackSelectionProvider>
   );
 }

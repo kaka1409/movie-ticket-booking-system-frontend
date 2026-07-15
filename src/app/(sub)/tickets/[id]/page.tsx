@@ -1,19 +1,15 @@
-"use client";
-
-import { useParams } from "next/navigation";
-import { UPCOMING, PAST } from "@/features/tickets/mock";
-import type { UpcomingTicket, PastTicket } from "@/features/tickets/types";
-
-// Mobile
+import { getTicketById } from "@/features/tickets/api";
 import MobileTicketInfo from "./components/mobile/TicketInfo";
 import MobileTicketActions from "./components/mobile/TicketActions";
-
-// Desktop
 import DesktopTicketDetail from "./components/desktop/TicketDetail";
 
-export default function TicketDetailPage() {
-  const { id } = useParams<{ id: string }>();
-  const ticket = UPCOMING.find((t) => t.id === id) ?? PAST.find((t) => t.id === id);
+export default async function TicketDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const ticket = await getTicketById(id);
 
   if (!ticket) {
     return (
@@ -24,14 +20,19 @@ export default function TicketDetailPage() {
   }
 
   const isUpcoming = "cinema" in ticket;
-  const detail = isUpcoming ? ticket as UpcomingTicket : ticket as PastTicket;
+  const detail = isUpcoming ? ticket : ticket;
 
   return (
     <>
       {/* Mobile */}
       <div className="block md:hidden">
-        <MobileTicketInfo ticket={ticket} detail={detail} />
-        {isUpcoming && <MobileTicketActions status={ticket.status} />}
+        <MobileTicketInfo
+          ticket={ticket}
+          detail={detail}
+        />
+        {isUpcoming &&
+          <MobileTicketActions status={ticket.status}
+        />}
       </div>
 
       {/* Desktop */}

@@ -1,5 +1,3 @@
-"use client";
-
 import MobileRegisterForm from "./components/mobile/RegisterForm";
 import DesktopRegisterForm from "./components/desktop/RegisterForm";
 

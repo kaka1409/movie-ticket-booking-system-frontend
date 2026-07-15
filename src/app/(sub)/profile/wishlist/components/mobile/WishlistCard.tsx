@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Star, Heart, Ticket } from "lucide-react";
 import type { Movie } from "@/features/movies/types";
-import { useWishlist } from "@/contexts/WishlistContext";
+import { useWishlist } from "@/features/wishlist/context";
 
 export default function WishlistCard({ movie }: { movie: Movie }) {
   const { toggleWishlist, isWishlisted } = useWishlist();

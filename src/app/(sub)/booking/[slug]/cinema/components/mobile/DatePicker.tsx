@@ -1,24 +1,18 @@
 "use client";
 
-import { DateOption } from "@/features/booking/types";
+import { useCinemaSelection } from "./CinemaSelectionContext";
 
-export default function DatePicker({
-  dates,
-  selected,
-  onSelect,
-}: {
-  dates: DateOption[];
-  selected: string;
-  onSelect: (v: string) => void;
-}) {
+export default function DatePicker() {
+  const { dates, selectedDate, setSelectedDate } = useCinemaSelection();
+
   return (
     <div className="flex overflow-x-scroll scrollbar-hide gap-2 pb-1">
       {dates.map((d) => {
-        const active = selected === d.value;
+        const active = selectedDate === d.value;
         return (
           <button
             key={d.value}
-            onClick={() => onSelect(d.value)}
+            onClick={() => setSelectedDate(d.value)}
             aria-pressed={active}
             className={`shrink-0 flex flex-col items-center justify-center w-17 py-2.5 rounded-xl transition-all duration-150 active:scale-[0.97] border ${
               active

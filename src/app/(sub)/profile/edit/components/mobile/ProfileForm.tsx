@@ -6,8 +6,7 @@ import { User, Mail, Lock, Smartphone, Calendar } from "lucide-react";
 import AvatarEditor from "./AvatarEditor";
 import Field from "./Field";
 import SaveActions from "./SaveActions";
-
-const INITIAL = { name: "Jane Doe", phone: "+1 (555) 123-4567", dob: "1990-05-15" };
+import type { User as UserType } from "@/features/profile/types";
 
 function validate(name: string, phone: string, dob: string) {
   const errors: { name?: string; phone?: string; dob?: string } = {};
@@ -19,18 +18,18 @@ function validate(name: string, phone: string, dob: string) {
   return errors;
 }
 
-export default function EditProfileContent() {
+export default function ProfileForm({ user }: { user: UserType }) {
   const router = useRouter();
-  const [fullName, setFullName] = useState(INITIAL.name);
-  const [phone, setPhone] = useState(INITIAL.phone);
-  const [dob, setDob] = useState(INITIAL.dob);
+  const [fullName, setFullName] = useState(user.name);
+  const [phone, setPhone] = useState(user.phone);
+  const [dob, setDob] = useState(user.dob);
   const [touched, setTouched] = useState(false);
   const [avatarChanged, setAvatarChanged] = useState(false);
 
   const hasChanges =
-    fullName !== INITIAL.name ||
-    phone !== INITIAL.phone ||
-    dob !== INITIAL.dob ||
+    fullName !== user.name ||
+    phone !== user.phone ||
+    dob !== user.dob ||
     avatarChanged;
 
   const errors = validate(fullName, phone, dob);
@@ -52,7 +51,7 @@ export default function EditProfileContent() {
 
   return (
     <main className="flex-1 overflow-y-auto px-4 pb-24">
-      <AvatarEditor onAvatarChange={setAvatarChanged} />
+      <AvatarEditor user={user} onAvatarChange={setAvatarChanged} />
 
       <div className="flex flex-col gap-5">
         <Field
@@ -72,7 +71,7 @@ export default function EditProfileContent() {
           <Field label="Email Address" icon={Mail} disabled>
             <input
               type="email"
-              value="jane.doe@example.com"
+              value={user.email}
               disabled
               className="w-full bg-transparent text-(--color-text-muted) outline-none"
             />
@@ -103,7 +102,6 @@ export default function EditProfileContent() {
         >
           <input
             type="date"
-            
             value={dob}
             onChange={(e) => setDob(e.target.value)}
             className="w-full bg-transparent text-(--color-text-primary) outline-none [&::-webkit-calendar-picker-indicator]:hidden"

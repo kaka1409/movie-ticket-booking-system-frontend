@@ -1,7 +1,7 @@
 "use client";
 
 import { useLocale } from "@/contexts/LocaleContext";
-import { useMovies } from "@/contexts/MoviesContext";
+import { useMovies } from "@/features/movies/context";
 
 export default function Tabs() {
   const { translate } = useLocale();

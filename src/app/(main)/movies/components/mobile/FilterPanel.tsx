@@ -2,7 +2,7 @@
 
 import { ChevronDown, SlidersHorizontal } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
-import { useMovies } from "@/contexts/MoviesContext";
+import { useMovies } from "@/features/movies/context";
 import {
   GENRES,
   AGE_RATINGS,
