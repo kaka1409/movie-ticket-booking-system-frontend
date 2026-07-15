@@ -55,11 +55,18 @@ src/
 │   ├── (sub)/        # Notifications, tickets/[id], booking/[slug] (cinema, seats, snack, credentials, payment, status/success, status/failed), profile/edit, profile/password, profile/reviews, profile/wishlist
 │   └── (auth)/       # Login, register
 ├── components/
-│   ├── layout/       # LayoutProvider (responsive), mobile/ & desktop/ variants
+│   ├── layout/       # Shared layout components (Logo, LanguageToggle)
 │   └── common/       # MovieCard (reusable)
-├── contexts/         # LocaleContext, MoviesContext, TicketsContext, BookingContext, WishlistContext
+├── layouts/          # Layout system
+│   ├── LayoutProvider.tsx
+│   ├── constants.ts
+│   ├── main/         # Home, movies, tickets, profile (Header + BottomNav / Header + Footer)
+│   ├── sub/          # Detail pages (back button + title)
+│   ├── auth/         # Login, register
+│   └── blank/        # Full-screen pages (no chrome)
+├── contexts/         # LocaleContext (cross-cutting only)
 ├── features/         # Feature modules (mock data, constants, types)
-├── hooks/            # Shared custom hooks (empty)
+├── hooks/            # Shared custom hooks (useDevice)
 ├── libs/             # Constants, utilities
 ├── locales/          # en.json, vn.json
 ├── store/            # Redux store
@@ -69,9 +76,11 @@ src/
 
 ## Notes
 
-- Responsive layout: `LayoutProvider` switches between mobile (`< 768px`, Header + BottomNav) and desktop (Header + Footer) variants via `matchMedia`
+- Responsive layout: `LayoutProvider` selects layout type (main/auth/sub/blank), each layout's `index.tsx` uses `useDevice()` hook to switch between mobile/desktop variants via `matchMedia`
 - Brand theme uses CSS variables (gold/black palette) in `global.css`
 - Movie poster images configured in `next.config.ts` `images.remotePatterns`
+- API layer (`features/*/api.ts`): all data fetching goes through API functions that return mock data with commented-out `fetch()` calls — uncomment when backend is ready
+- Server components: all `page.tsx` files are server components that fetch data via API layer (`await`) and pass props to client components. No API calls in client components.
 - Complete booking flow: cinema → seats → snack → credentials → payment → status/success or status/failed (6 pages, BookingContext persists state across steps)
 - Payment step simulates external gateway: 2s loading → random 50/50 redirect to success or fail
 - Edit profile page with field validation (full name, phone, DOB as date picker) — SAVE CHANGES button only active when changes detected
