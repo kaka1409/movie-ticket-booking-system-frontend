@@ -4,7 +4,7 @@ import Image from "next/image";
 import { QRCodeSVG } from "qrcode.react";
 import { useBooking } from "@/features/booking/context";
 import { useStatus } from "../../../components/mobile/StatusContext";
-import DetailRow from "@/features/booking/components/common/DetailRow";
+import DetailRow from "@/app/(sub)/booking/components/mobile/DetailRow";
 import {
   MonitorPlay,
   CalendarDays,

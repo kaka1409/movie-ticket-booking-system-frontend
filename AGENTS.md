@@ -57,7 +57,7 @@ No test runner. `tests/{e2e,integration,unit}/` are empty dirs. `pnpm test` unde
 - `src/features/profile/` — `mock.ts` (USER with avatarUrl from Contentful), `types.ts` (User interface), `api.ts` (getUser).
 - `src/features/reviews/` — `mock.ts` (FILTERS with FilterKey), `api.ts` (getReviewFilters).
 - `src/features/wishlist/` — `mock.ts` (INITIAL_WISHLIST IDs), `api.ts` (getInitialWishlist, re-exports INITIAL_WISHLIST).
-- `src/features/booking/` — `types.ts` (Cinema, Showtime, DateOption, BookingSelection, BOOKING_STEPS [5 steps], Seat, SeatRow, SeatKind, SeatStatus, SeatPrice, ComboItem, FoodItem, FoodCategory), `mock.ts` (CINEMAS with PrimeSeat data, DATES, SEAT_ROWS with 10 rows A–J, SEAT_PRICES, COMBOS [4 combos], FOOD_ITEMS [8 items], FOOD_CATEGORIES, COUNTDOWN_SECONDS, MAX_SEATS_PER_BOOKING=8, SEAT_MAP_COLS=10), `api.ts` (getCinemas, getDates, getSeatRows, getSeatPrices, getCombos, getFoodItems, getFoodCategories, getCountdownSeconds, getMaxSeatsPerBooking).
+- `src/features/booking/` — `types.ts` (Cinema, Showtime, DateOption, BookingSelection, BOOKING_STEPS [5 steps], Seat, SeatRow, SeatKind, SeatStatus, SeatPrice, ComboItem, FoodItem, FoodCategory), `mock.ts` (CINEMAS with PrimeSeat data, DATES, SEAT_ROWS with 10 rows A–J, SEAT_PRICES, COMBOS [4 combos], FOOD_ITEMS [8 items], FOOD_CATEGORIES, COUNTDOWN_SECONDS, MAX_SEATS_PER_BOOKING=8, SEAT_MAP_COLS=10), `api.ts` (getCinemas, getDates, getSeatRows, getSeatPrices, getCombos, getFoodItems, getFoodCategories, getCountdownSeconds, getMaxSeatsPerBooking), `context.tsx` (BookingProvider, useBooking).
 - `src/hooks/` — `useDevice.ts` (returns `"mobile" | "desktop"` via `matchMedia`)
 - `src/libs/constants.ts` has generic constants; `src/libs/utils.ts` has a `slugify` helper; `src/types/index.ts` has shared types (`Device`, `Movie`, `CastMember`, `FeaturedMovie`, `User`, `NotifType`, `Notification`, `SelectedSeat`, `SelectedCombo`, `SelectedFood`, `PaymentMethod`, `OrderDisplayProps`). Feature files re-export from `@/types` for backward compat.
 
@@ -191,6 +191,7 @@ Both pages use `<Suspense>` wrapper (required for `useSearchParams()`). White te
 `booking/components/mobile/` (shared across all booking steps):
 - `StepBar.tsx` — 5-step booking progress bar, reads `BOOKING_STEPS`, highlights current step
 - `CountdownBanner.tsx` — 5m59s countdown timer, reads from BookingContext (only visible after first seat selection)
+- `DetailRow.tsx` — reusable label/value row with icon, used in ticket cards
 
 ## Framework / Toolchain Quirks
 

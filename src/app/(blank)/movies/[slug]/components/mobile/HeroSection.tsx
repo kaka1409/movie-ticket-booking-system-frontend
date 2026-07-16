@@ -1,12 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowLeft, Heart, Play, Star, Clock } from "lucide-react";
 import { useMovie } from "../shared/MovieContext";
 import { useWishlist } from "@/features/wishlist/context";
 
 export default function HeroSection() {
+  const router = useRouter();
   const movie = useMovie();
   const { toggleWishlist, isWishlisted } = useWishlist();
   const liked = isWishlisted(movie.id);
@@ -35,13 +36,13 @@ export default function HeroSection() {
       </button>
 
       <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-4 pt-5">
-        <Link
-          href="/"
+        <button
+          onClick={() => router.back()}
           className="w-9 h-9 rounded-full bg-black/40 flex items-center justify-center"
           aria-label="Back"
         >
           <ArrowLeft size={20} className="text-(--color-gold-light)" />
-        </Link>
+        </button>
 
         <button
           type="button"
