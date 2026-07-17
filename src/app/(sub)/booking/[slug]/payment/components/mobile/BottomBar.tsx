@@ -4,8 +4,8 @@ import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { useBooking } from "@/features/booking/context";
-import { usePayment } from "./PaymentContext";
-import { PAYMENT_METHODS } from "./PaymentOption";
+import { usePayment } from "@/features/booking/contexts/PaymentContext";
+import { PAYMENT_METHODS } from "@/features/booking/mock";
 
 export default function BottomBar() {
   const params = useParams();

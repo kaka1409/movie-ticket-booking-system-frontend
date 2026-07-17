@@ -2,8 +2,8 @@
 
 import { createContext, useContext, useState, useMemo, useEffect } from "react";
 import type { ReactNode } from "react";
-import type { ComboItem, FoodItem } from "@/features/booking/types";
-import { useBooking } from "@/features/booking/context";
+import type { ComboItem, FoodItem, SelectedCombo, SelectedFood } from "../types";
+import { useBooking } from "../context";
 
 interface SnackSelectionContextType {
   combos: ComboItem[];
@@ -29,30 +29,23 @@ export function SnackSelectionProvider({
   foodCategories: readonly { id: string; label: string }[];
   children: ReactNode;
 }) {
-  const { combos: savedCombos, foods: savedFoods } = useBooking();
+  const { combos: savedCombos, foods: savedFoods, setSnacks } = useBooking();
 
-  const [comboQty, setComboQty] = useState<Record<string, number>>({});
-  const [foodQty, setFoodQty] = useState<Record<string, number>>({});
+  const [comboQty, setComboQty] = useState<Record<string, number>>(() => {
+    const base = Object.fromEntries(combos.map((combo) => [combo.id, 0]));
+    savedCombos.forEach((savedCombo) => {
+      base[savedCombo.id] = savedCombo.qty;
+    });
+    return base;
+  });
 
-  useEffect(() => {
-    if (combos.length > 0) {
-      const base = Object.fromEntries(combos.map((combo) => [combo.id, 0]));
-      savedCombos.forEach((savedCombo) => {
-        base[savedCombo.id] = savedCombo.qty;
-      });
-      setComboQty(base);
-    }
-  }, [combos, savedCombos]);
-
-  useEffect(() => {
-    if (foodItems.length > 0) {
-      const base = Object.fromEntries(foodItems.map((food) => [food.id, 0]));
-      savedFoods.forEach((savedFood) => {
-        base[savedFood.id] = savedFood.qty;
-      });
-      setFoodQty(base);
-    }
-  }, [foodItems, savedFoods]);
+  const [foodQty, setFoodQty] = useState<Record<string, number>>(() => {
+    const base = Object.fromEntries(foodItems.map((food) => [food.id, 0]));
+    savedFoods.forEach((savedFood) => {
+      base[savedFood.id] = savedFood.qty;
+    });
+    return base;
+  });
 
   const changeCombo = (id: string, delta: number) =>
     setComboQty((previous) => ({
@@ -65,6 +58,33 @@ export function SnackSelectionProvider({
       ...previous,
       [id]: Math.max(0, Math.min(10, (previous[id] ?? 0) + delta)),
     }));
+
+  useEffect(() => {
+    const totalItems =
+      Object.values(comboQty).reduce((s, q) => s + q, 0) +
+      Object.values(foodQty).reduce((s, q) => s + q, 0);
+    if (totalItems === 0) return;
+
+    const selectedCombos: SelectedCombo[] = combos
+      .filter((c) => (comboQty[c.id] ?? 0) > 0)
+      .map((c) => ({
+        id: c.id,
+        name: c.name,
+        qty: comboQty[c.id] ?? 0,
+        price: c.price,
+      }));
+
+    const selectedFoods: SelectedFood[] = foodItems
+      .filter((f) => (foodQty[f.id] ?? 0) > 0)
+      .map((f) => ({
+        id: f.id,
+        name: f.name,
+        qty: foodQty[f.id] ?? 0,
+        price: f.price,
+      }));
+
+    setSnacks(selectedCombos, selectedFoods);
+  }, [comboQty, foodQty, combos, foodItems, setSnacks]);
 
   const foodByCategory = useMemo(
     () =>

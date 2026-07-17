@@ -1,4 +1,7 @@
-import { Cinema, DateOption, Seat, SeatRow, SeatPrice, ComboItem, FoodItem } from "./types";
+import {
+  Cinema, DateOption, Seat, SeatRow, SeatPrice,
+  ComboItem, FoodItem, PaymentMethod
+} from "./types";
 
 // Generate 5 days starting from today
 const today = new Date();
@@ -15,6 +18,8 @@ export const DATES: DateOption[] = Array.from({ length: 10 }, (_, i) => {
         : d.toLocaleString("en", { weekday: "short" }).toUpperCase(),
   };
 });
+
+
 
 export const CINEMAS: Cinema[] = [
   {
@@ -221,4 +226,19 @@ export const FOOD_ITEMS: FoodItem[] = [
   // Candy
   { id: "candy-gummy", name: "Gummy Bears", category: "candy", price: 45000, image: "/images/snack/candy-gummy.jpg" },
   { id: "candy-choco", name: "Chocolate", category: "candy", price: 55000, image: "/images/snack/candy-choco.jpg" },
+];
+
+export const PAYMENT_METHODS: PaymentMethod[] = [
+  {
+    id: "vnpay",
+    name: "VNPAY",
+    description: "Bank Transfer",
+    imageSrc: "/images/VNPay.png",
+  },
+  {
+    id: "momo",
+    name: "MoMo E-Wallet",
+    description: "Fast & Secure",
+    imageSrc: "/images/momo.png",
+  },
 ];

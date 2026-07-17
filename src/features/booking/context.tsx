@@ -11,8 +11,7 @@ import {
 
 /* ─── Types ─────────────────────────────────────────────── */
 
-export type { SelectedSeat, SelectedCombo, SelectedFood } from "@/types";
-import type { SelectedSeat, SelectedCombo, SelectedFood } from "@/types";
+import type { SelectedSeat, SelectedCombo, SelectedFood } from "./types";
 
 interface BookingState {
   cinemaId: number | null;

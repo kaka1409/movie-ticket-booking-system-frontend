@@ -2,8 +2,8 @@
 
 import { createContext, useContext, useState, useCallback, useEffect } from "react";
 import type { ReactNode } from "react";
-import type { Seat, SeatRow } from "@/features/booking/types";
-import { useBooking } from "@/features/booking/context";
+import type { Seat, SeatRow, SeatPrice, SelectedSeat } from "../types";
+import { useBooking } from "../context";
 
 interface SeatSelectionContextType {
   rows: SeatRow[];
@@ -33,13 +33,15 @@ function restoreSelectedSeats(base: SeatRow[], savedSeats: { label: string }[]):
 export function SeatSelectionProvider({
   initialRows,
   maxSeats,
+  seatPrices,
   children,
 }: {
   initialRows: SeatRow[];
   maxSeats: number;
+  seatPrices: SeatPrice;
   children: ReactNode;
 }) {
-  const { selectedSeats: savedSeats, startCountdown } = useBooking();
+  const { selectedSeats: savedSeats, setSeats, startCountdown } = useBooking();
   const [rows, setRows] = useState<SeatRow[]>(() => restoreSelectedSeats(initialRows, savedSeats));
 
   const handleToggle = useCallback((rowLabel: string, clickedSeat: Seat) => {
@@ -90,6 +92,29 @@ export function SeatSelectionProvider({
       startCountdown();
     }
   }, [rows, startCountdown]);
+
+  useEffect(() => {
+    const allSelected: SelectedSeat[] = rows.flatMap((row) =>
+      row.segments.flatMap((segment) =>
+        segment
+          .filter((seat) => seat.status === "selected")
+          .map((seat) => ({
+            label:
+              seat.kind === "sweetbox"
+                ? `${row.label}(${seat.pairId?.split("-").slice(1).join("-")})`
+                : `${row.label}${seat.col}`,
+            type:
+              seat.kind === "available"
+                ? "Standard"
+                : seat.kind === "vip"
+                ? "VIP"
+                : "SweetBox",
+            price: seatPrices[seat.kind as keyof SeatPrice],
+          }))
+      )
+    );
+    setSeats(allSelected);
+  }, [rows, seatPrices, setSeats]);
 
   return (
     <SeatSelectionContext.Provider value={{ rows, maxSeats, handleToggle }}>

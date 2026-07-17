@@ -1,7 +1,7 @@
 "use client";
 
 import { AlertCircle } from "lucide-react";
-import { useStatus } from "../../../components/mobile/StatusContext";
+import { useStatus } from "@/features/booking/contexts/StatusContext";
 
 export default function FailedIcon() {
   const { mounted } = useStatus();

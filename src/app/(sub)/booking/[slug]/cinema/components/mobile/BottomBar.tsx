@@ -2,19 +2,11 @@
 
 import Link from "next/link";
 import { ArrowRight, X } from "lucide-react";
-import { useBooking } from "@/features/booking/context";
-import { useCinemaSelection } from "./CinemaSelectionContext";
+import { useCinemaSelection } from "@/features/booking/contexts/CinemaSelectionContext";
 
 export default function BottomBar({ movieSlug }: { movieSlug: string }) {
-  const { setCinema } = useBooking();
   const { selectedCinema, selectedTime, selectedDate, hasSelection, clearSelection } =
     useCinemaSelection();
-
-  const handleSaveAndNavigate = () => {
-    if (selectedCinema && hasSelection) {
-      setCinema(selectedCinema.id, selectedCinema.name, selectedTime, selectedDate, selectedCinema.badge);
-    }
-  };
 
   return (
     <div className="sticky bottom-0 z-50 px-4 pb-6 pt-3 bg-(--color-bg) border-t border-(--color-border)">
@@ -57,7 +49,6 @@ export default function BottomBar({ movieSlug }: { movieSlug: string }) {
       {hasSelection ? (
         <Link
           href={`/booking/${movieSlug}/seats`}
-          onClick={handleSaveAndNavigate}
           className="flex items-center justify-center gap-2.5 w-full py-4 rounded-2xl font-extrabold text-sm tracking-widest uppercase transition-all duration-150 active:scale-[0.98] bg-(--color-gold) text-[#0F0F0F] shadow-(--shadow-glow)"
         >
           SELECT SEATS

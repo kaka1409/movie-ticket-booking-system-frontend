@@ -1,6 +1,6 @@
 "use client";
 
-import { useSnackSelection } from "./SnackSelectionContext";
+import { useSnackSelection } from "@/features/booking/contexts/SnackSelectionContext";
 import FoodItemCard from "./FoodItemCard";
 import type { FoodItem } from "@/features/booking/types";
 

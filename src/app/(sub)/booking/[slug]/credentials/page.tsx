@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { getMovieBySlug } from "@/features/movies/api";
-import { CredentialsProvider } from "./components/mobile/CredentialsContext";
+import { CredentialsProvider } from "@/features/booking/contexts/CredentialsContext";
 
 // Mobile components
 import StepBar from "@/app/(sub)/booking/components/mobile/StepBar";

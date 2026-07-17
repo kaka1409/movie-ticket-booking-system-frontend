@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useBooking } from "@/features/booking/context";
-import { useStatus } from "../../../components/mobile/StatusContext";
+import { useStatus } from "@/features/booking/contexts/StatusContext";
 import DetailRow from "@/app/(sub)/booking/components/mobile/DetailRow";
 import {
   MonitorPlay,

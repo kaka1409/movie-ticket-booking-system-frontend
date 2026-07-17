@@ -2,7 +2,27 @@
 
 import { useState } from "react";
 import { ChevronDown, Clapperboard, Landmark, Calendar, Clock, Ticket } from "lucide-react";
-import { MOVIES, DATES, SHOWTIMES, CINEMAS } from "@/libs/constants";
+const MOVIES = [
+  "Dune: Part Two",
+  "Avengers: Endgame",
+  "Joker",
+  "Divided",
+  "Final Destination",
+];
+
+const DATES = [
+  { label: "Today", value: "today" },
+  { label: "Tomorrow", value: "tomorrow" },
+  { label: "15 Oct", value: "15-oct" },
+];
+
+const SHOWTIMES = ["10:00 AM", "1:30 PM", "4:15 PM", "7:00 PM"];
+
+const CINEMAS = [
+  "PrimeSeat Downtown IMAX",
+  "PrimeSeat Saigon Centre",
+  "PrimeSeat Landmark 81",
+];
 
 interface SelectColProps {
   icon: React.ReactNode; label: string; value: string;

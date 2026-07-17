@@ -10,9 +10,11 @@ import {
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import {
   DEFAULT_FILTERS,
-  type Tab,
-  type Filters,
-} from "@/app/(main)/movies/components/mobile/types";
+} from "./constants";
+import type {
+  Tab,
+  Filters,
+} from "./types";
 
 /* ─── Context Type ──────────────────────────────────────────── */
 

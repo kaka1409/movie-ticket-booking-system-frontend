@@ -1,12 +1,13 @@
 import { notFound } from "next/navigation";
 import { getMovieBySlug } from "@/features/movies/api";
-import { PaymentProvider } from "./components/mobile/PaymentContext";
+import { PaymentProvider } from "@/features/booking/contexts/PaymentContext";
 
 // Mobile components
 import StepBar from "@/app/(sub)/booking/components/mobile/StepBar";
 import CountdownBanner from "@/app/(sub)/booking/components/mobile/CountdownBanner";
 import OrderSummary from "./components/mobile/OrderSummary";
-import PaymentOption, { PAYMENT_METHODS } from "./components/mobile/PaymentOption";
+import PaymentOption from "./components/mobile/PaymentOption";
+import { PAYMENT_METHODS } from "@/features/booking/mock";
 import SecureBadge from "./components/mobile/SecureBadge";
 import TermsNote from "./components/mobile/TermsNote";
 import BottomBar from "./components/mobile/BottomBar";

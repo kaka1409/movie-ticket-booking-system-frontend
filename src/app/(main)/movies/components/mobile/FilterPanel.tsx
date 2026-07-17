@@ -14,7 +14,7 @@ import {
 import FilterChip from "./FilterChip";
 import FilterCheckRow from "./FilterCheckRow";
 import FilterLabel from "./FilterLabel";
-import type { Filters } from "./types";
+import type { Filters } from "@/features/movies/types";
 
 export default function FilterPanel() {
   const { translate } = useLocale();

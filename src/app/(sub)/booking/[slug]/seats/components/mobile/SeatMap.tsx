@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
-import { useSeatSelection } from "./SeatSelectionContext";
+import { useSeatSelection } from "@/features/booking/contexts/SeatSelectionContext";
 import SeatCell from "./SeatCell";
 
 export default function SeatMap() {

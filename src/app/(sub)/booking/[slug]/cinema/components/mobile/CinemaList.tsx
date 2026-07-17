@@ -1,7 +1,7 @@
 "use client";
 
 import { MapPin } from "lucide-react";
-import { useCinemaSelection } from "./CinemaSelectionContext";
+import { useCinemaSelection } from "@/features/booking/contexts/CinemaSelectionContext";
 import CinemaCard from "./CinemaCard";
 
 export default function CinemaList() {

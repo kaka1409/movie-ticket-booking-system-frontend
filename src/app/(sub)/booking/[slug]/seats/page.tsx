@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { getMovieBySlug } from "@/features/movies/api";
 import { getSeatRows, getMaxSeatsPerBooking, getSeatPrices } from "@/features/booking/api";
-import { SeatSelectionProvider } from "./components/mobile/SeatSelectionContext";
+import { SeatSelectionProvider } from "@/features/booking/contexts/SeatSelectionContext";
 
 // Shared
 import StepBar from "@/app/(sub)/booking/components/mobile/StepBar";
@@ -33,7 +33,7 @@ export default async function SelectSeatPage({
   }
 
   return (
-    <SeatSelectionProvider initialRows={seatRows} maxSeats={maxSeats}>
+    <SeatSelectionProvider initialRows={seatRows} maxSeats={maxSeats} seatPrices={seatPrices}>
       {/* Mobile */}
       <div className="block md:hidden">
         <StepBar current={2} />

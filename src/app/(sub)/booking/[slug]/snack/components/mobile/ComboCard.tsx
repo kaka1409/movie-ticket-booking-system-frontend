@@ -3,7 +3,7 @@
 import Image from "next/image";
 import type { ComboItem } from "@/features/booking/types";
 import Stepper from "./Stepper";
-import { useSnackSelection } from "./SnackSelectionContext";
+import { useSnackSelection } from "@/features/booking/contexts/SnackSelectionContext";
 
 export default function ComboCard({ item }: { item: ComboItem }) {
   const { comboQty, changeCombo } = useSnackSelection();

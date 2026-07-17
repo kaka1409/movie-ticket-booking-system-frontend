@@ -1,7 +1,7 @@
 "use client";
 
 import { Check } from "lucide-react";
-import { useStatus } from "../../../components/mobile/StatusContext";
+import { useStatus } from "@/features/booking/contexts/StatusContext";
 
 export default function SuccessIcon() {
   const { mounted } = useStatus();

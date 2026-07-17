@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { RefreshCw, Home, ChevronRight, HeadphonesIcon } from "lucide-react";
-import { useStatus } from "../../../components/mobile/StatusContext";
+import { useStatus } from "@/features/booking/contexts/StatusContext";
 
 export default function FailActions() {
   const params = useParams();

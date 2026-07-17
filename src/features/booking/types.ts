@@ -1,4 +1,34 @@
-export type { PaymentMethod } from "@/types";
+/* ─── Payment Types ─────────────────────────────────────── */
+
+export interface PaymentMethod {
+  id: string;
+  name: string;
+  description: string;
+  imageSrc: string;
+  badge?: string;
+}
+
+/* ─── Selected Items (used across booking steps) ────────── */
+
+export interface SelectedSeat {
+  label: string;
+  type: string;
+  price: number;
+}
+
+export interface SelectedCombo {
+  id: string;
+  name: string;
+  qty: number;
+  price: number;
+}
+
+export interface SelectedFood {
+  id: string;
+  name: string;
+  qty: number;
+  price: number;
+}
 
 export interface Showtime {
   time: string;

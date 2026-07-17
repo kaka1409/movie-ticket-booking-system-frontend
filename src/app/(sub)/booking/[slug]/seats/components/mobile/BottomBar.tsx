@@ -4,8 +4,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import type { SeatPrice, SeatRow } from "@/features/booking/types";
-import { useBooking, type SelectedSeat } from "@/features/booking/context";
-import { useSeatSelection } from "./SeatSelectionContext";
+import { useSeatSelection } from "@/features/booking/contexts/SeatSelectionContext";
 
 interface Selection {
   label: string;
@@ -33,24 +32,12 @@ function collectSelections(rows: SeatRow[], seatPrices: SeatPrice): Selection[] 
 export default function BottomBar({ seatPrices }: { seatPrices: SeatPrice }) {
   const params = useParams();
   const slug = params.slug as string;
-  const { setSeats } = useBooking();
   const { rows } = useSeatSelection();
 
   const items = collectSelections(rows, seatPrices);
   const total = items.reduce((sum, s) => sum + s.price, 0);
   const labels = items.map((s) => s.label).join(", ");
   const hasSeats = items.length > 0;
-
-  const handleSaveAndNavigate = () => {
-    if (hasSeats) {
-      const seats: SelectedSeat[] = items.map((i) => ({
-        label: i.label,
-        type: i.type,
-        price: i.price,
-      }));
-      setSeats(seats);
-    }
-  };
 
   return (
     <div className="sticky bottom-0 z-50 bg-(--color-bg) border-t border-(--color-border) px-4 pb-6 pt-3">
@@ -91,8 +78,6 @@ export default function BottomBar({ seatPrices }: { seatPrices: SeatPrice }) {
         onClick={(e) => {
           if (!hasSeats) {
             e.preventDefault();
-          } else {
-            handleSaveAndNavigate();
           }
         }}
         className={`flex items-center justify-center gap-2.5 w-full py-4 rounded-2xl font-extrabold text-sm tracking-widest uppercase transition-all duration-150 ${

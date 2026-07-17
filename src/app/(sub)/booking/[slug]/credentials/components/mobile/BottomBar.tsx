@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { useBooking } from "@/features/booking/context";
-import { useCredentials } from "./CredentialsContext";
+import { useCredentials } from "@/features/booking/contexts/CredentialsContext";
 
 export default function BottomBar() {
   const params = useParams();

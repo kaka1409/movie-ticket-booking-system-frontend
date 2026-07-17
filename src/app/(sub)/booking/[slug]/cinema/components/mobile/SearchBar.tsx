@@ -1,7 +1,7 @@
 "use client";
 
 import { Search, X } from "lucide-react";
-import { useCinemaSelection } from "./CinemaSelectionContext";
+import { useCinemaSelection } from "@/features/booking/contexts/CinemaSelectionContext";
 
 export default function SearchBar() {
   const { query, setQuery } = useCinemaSelection();

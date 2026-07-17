@@ -2,25 +2,8 @@
 
 import Image from "next/image";
 import { CheckCircle2 } from "lucide-react";
-import type { PaymentMethod } from "@/types";
-import { usePayment } from "./PaymentContext";
-
-const PAYMENT_METHODS: PaymentMethod[] = [
-  {
-    id: "vnpay",
-    name: "VNPAY",
-    description: "Bank Transfer",
-    imageSrc: "/images/VNPay.png",
-  },
-  {
-    id: "momo",
-    name: "MoMo E-Wallet",
-    description: "Fast & Secure",
-    imageSrc: "/images/momo.png",
-  },
-];
-
-export { PAYMENT_METHODS };
+import type { PaymentMethod } from "@/features/booking/types";
+import { usePayment } from "@/features/booking/contexts/PaymentContext";
 
 export default function PaymentOption({ method }: { method: PaymentMethod }) {
   const { selectedMethod, setSelectedMethod } = usePayment();

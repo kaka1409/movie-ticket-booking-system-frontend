@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { getMovieBySlug } from "@/features/movies/api";
 import { getCinemas, getDates } from "@/features/booking/api";
-import { CinemaSelectionProvider } from "./components/mobile/CinemaSelectionContext";
+import { CinemaSelectionProvider } from "@/features/booking/contexts/CinemaSelectionContext";
 
 // Shared
 import StepBar from "@/app/(sub)/booking/components/mobile/StepBar";

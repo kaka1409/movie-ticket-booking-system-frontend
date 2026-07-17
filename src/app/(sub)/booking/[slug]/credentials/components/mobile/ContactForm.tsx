@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { User, Mail } from "lucide-react";
-import { useCredentials } from "./CredentialsContext";
+import { useCredentials } from "@/features/booking/contexts/CredentialsContext";
 import FieldLabel from "./FieldLabel";
 import TextInput from "./TextInput";
 import PhoneField from "./PhoneField";
@@ -29,12 +29,9 @@ export default function ContactForm() {
   const isValid = Object.keys(errors).length === 0;
   const showErrors = touched && !isValid;
 
-  const handleChange = useCallback(() => {
-    if (touched) {
-      const updatedErrors = validateFields(name, email, phone);
-      setIsValid(Object.keys(updatedErrors).length === 0);
-    }
-  }, [touched, name, email, phone, setIsValid]);
+  useEffect(() => {
+    setIsValid(isValid);
+  }, [isValid, setIsValid]);
 
   return (
     <section className="px-4 space-y-4">
@@ -45,7 +42,7 @@ export default function ContactForm() {
         <TextInput
           id="full-name"
           value={name}
-          onChange={(v) => { setName(v); handleChange(); }}
+          onChange={(v) => { setName(v); setTouched(true); }}
           placeholder="John Doe"
           icon={User}
           autoComplete="name"
@@ -59,7 +56,7 @@ export default function ContactForm() {
           id="email"
           type="email"
           value={email}
-          onChange={(v) => { setEmail(v); handleChange(); }}
+          onChange={(v) => { setEmail(v); setTouched(true); }}
           placeholder="john.doe@example.com"
           icon={Mail}
           autoComplete="email"
@@ -74,7 +71,7 @@ export default function ContactForm() {
           countryCode={countryCode}
           onCountryChange={setCountryCode}
           phone={phone}
-          onPhoneChange={(v) => { setPhone(v); handleChange(); }}
+          onPhoneChange={(v) => { setPhone(v); setTouched(true); }}
           error={showErrors ? errors.phone : undefined}
         />
       </div>

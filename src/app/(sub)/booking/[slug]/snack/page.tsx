@@ -1,5 +1,5 @@
 import { getCombos, getFoodItems, getFoodCategories } from "@/features/booking/api";
-import { SnackSelectionProvider } from "./components/mobile/SnackSelectionContext";
+import { SnackSelectionProvider } from "@/features/booking/contexts/SnackSelectionContext";
 
 // Shared
 import StepBar from "@/app/(sub)/booking/components/mobile/StepBar";

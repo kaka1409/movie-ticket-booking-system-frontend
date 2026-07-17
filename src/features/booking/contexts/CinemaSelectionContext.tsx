@@ -1,8 +1,9 @@
 "use client";
 
-import { createContext, useContext, useState, useMemo } from "react";
+import { createContext, useContext, useState, useMemo, useEffect } from "react";
 import type { ReactNode } from "react";
-import type { Cinema, DateOption } from "@/features/booking/types";
+import type { Cinema, DateOption } from "../types";
+import { useBooking } from "../context";
 
 interface CinemaSelectionContextType {
   cinemas: Cinema[];
@@ -37,10 +38,24 @@ export function CinemaSelectionProvider({
   initialDate: string;
   children: ReactNode;
 }) {
-  const [selectedDate, setSelectedDate] = useState(initialDate || dates[0]?.value || "");
+  const { cinemaId: savedCinemaId, time: savedTime, date: savedDate, setCinema } = useBooking();
+
+  const resolvedCinemaId = savedCinemaId ?? initialCinemaId;
+  const resolvedTime = savedTime || initialTime;
+  const resolvedDate = savedDate || initialDate || dates[0]?.value || "";
+
+  const [selectedDate, setSelectedDate] = useState(resolvedDate);
   const [query, setQuery] = useState("");
-  const [selectedCinemaId, setSelectedCinemaId] = useState<number | null>(initialCinemaId);
-  const [selectedTime, setSelectedTime] = useState(initialTime);
+  const [selectedCinemaId, setSelectedCinemaId] = useState<number | null>(resolvedCinemaId);
+  const [selectedTime, setSelectedTime] = useState(resolvedTime);
+
+  const selectedCinema = cinemas.find((cinema) => cinema.id === selectedCinemaId);
+
+  useEffect(() => {
+    if (selectedCinema && selectedTime) {
+      setCinema(selectedCinema.id, selectedCinema.name, selectedTime, selectedDate, selectedCinema.badge);
+    }
+  }, [selectedCinemaId, selectedTime, selectedDate, selectedCinema, setCinema]);
 
   const handleSelect = (cinemaId: number, time: string) => {
     if (selectedCinemaId === cinemaId && selectedTime === time) {
@@ -67,7 +82,6 @@ export function CinemaSelectionProvider({
     [cinemas, query]
   );
 
-  const selectedCinema = cinemas.find((cinema) => cinema.id === selectedCinemaId);
   const hasSelection = !!selectedCinema && !!selectedTime;
 
   return (

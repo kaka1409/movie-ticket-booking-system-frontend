@@ -1,6 +1,6 @@
 "use client";
 
-import { useCinemaSelection } from "./CinemaSelectionContext";
+import { useCinemaSelection } from "@/features/booking/contexts/CinemaSelectionContext";
 
 export default function DatePicker() {
   const { dates, selectedDate, setSelectedDate } = useCinemaSelection();

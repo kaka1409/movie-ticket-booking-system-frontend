@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { getAllMovies } from "@/features/movies/api";
-import { StatusProvider } from "../components/mobile/StatusContext";
+import { StatusProvider } from "@/features/booking/contexts/StatusContext";
 
 // Mobile components
 import FailedIcon from "./components/mobile/FailedIcon";
