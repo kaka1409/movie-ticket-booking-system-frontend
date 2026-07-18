@@ -12,6 +12,7 @@ import {
 /* ─── Types ─────────────────────────────────────────────── */
 
 import type { SelectedSeat, SelectedCombo, SelectedFood } from "./types";
+import { useLocale } from "@/contexts/LocaleContext";
 
 interface BookingState {
   cinemaId: number | null;
@@ -91,6 +92,7 @@ export function BookingProvider({
   const [paymentMethod, setPaymentMethod] = useState("");
   const [countdownStarted, setCountdownStarted] = useState(false);
   const [countdownStartTime, setCountdownStartTime] = useState(0);
+  const { translate } = useLocale();
 
   const setCinema = useCallback(
     (
@@ -145,7 +147,7 @@ export function BookingProvider({
   const value = useMemo<BookingContextType>(() => {
     const ticketCount = selectedSeats.length;
     const ticketPrice = selectedSeats.reduce((s, seat) => s + seat.price, 0);
-    const seatType = selectedSeats[0]?.type ?? "Standard";
+    const seatType = selectedSeats[0]?.type ?? translate("booking.seats.standard");
     const snackTotal =
       combos.reduce((s, c) => s + c.price * c.qty, 0) +
       foods.reduce((s, f) => s + f.price * f.qty, 0);

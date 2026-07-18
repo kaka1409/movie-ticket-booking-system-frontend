@@ -11,7 +11,7 @@ import en from "@/locales/en.json";
 import vn from "@/locales/vn.json";
 
 type Locale = "en" | "vn";
-type Messages = Record<string, string>;
+type Messages = Record<string, unknown>;
 
 const messages: Record<Locale, Messages> = { en, vn };
 
@@ -49,7 +49,15 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const translate = useCallback(
-    (key: string) => messages[locale][key] ?? key,
+    (key: string) => {
+      const parts = key.split(".");
+      let result: unknown = messages[locale];
+      for (const part of parts) {
+        if (result == null || typeof result !== "object") return key;
+        result = (result as Record<string, unknown>)[part];
+      }
+      return typeof result === "string" ? result : key;
+    },
     [locale],
   );
 
