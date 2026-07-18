@@ -3,11 +3,13 @@
 import { useRouter } from "next/navigation";
 import { useMovie } from "../shared/MovieContext";
 import { useMovieSelection } from "../shared/MovieSelectionContext";
+import { useLocale } from "@/contexts/LocaleContext";
 
 export default function BookTicketCTA() {
   const movie = useMovie();
   const router = useRouter();
   const { selectedShowtime } = useMovieSelection();
+  const { translate } = useLocale();
 
   const handleClick = () => {
     const params = new URLSearchParams();
@@ -25,7 +27,7 @@ export default function BookTicketCTA() {
         onClick={handleClick}
         className="w-full py-4 rounded-2xl bg-(--color-gold) text-(--color-bg) font-extrabold text-sm tracking-widest uppercase flex items-center justify-center gap-2 hover:bg-(--color-gold-dark) active:scale-[0.98] transition-all duration-150 shadow-[0_0_24px_rgba(255,204,77,0.3)]"
       >
-        Book Ticket
+        {translate("movies.detail.book_ticket")}
       </button>
     </div>
   );

@@ -11,6 +11,7 @@ import {
   INITIAL_REVIEWS_VISIBLE,
   REVIEWS_LOAD_MORE,
 } from "../shared/mock";
+import { useLocale } from "@/contexts/LocaleContext";
 
 type Review = (typeof REVIEWS)[number];
 
@@ -38,6 +39,7 @@ function WriteReview({
   const [userRating, setUserRating] = useState(0);
   const [hovered, setHovered] = useState(0);
   const [text, setText] = useState("");
+  const { translate } = useLocale();
 
   const handleSubmit = () => {
     if (!userRating || !text.trim()) return;
@@ -49,7 +51,7 @@ function WriteReview({
   return (
     <div className="rounded-2xl bg-(--color-surface) border border-(--color-border) p-4 space-y-3">
       <p className="text-(--color-text-primary) font-bold text-sm">
-        Write a Review
+        {translate("movies.detail.write_review")}
       </p>
 
       <div className="flex gap-1">
@@ -59,7 +61,7 @@ function WriteReview({
             onMouseEnter={() => setHovered(s)}
             onMouseLeave={() => setHovered(0)}
             onClick={() => setUserRating(s)}
-            aria-label={`Rate ${s} stars`}
+            aria-label={translate("movies.detail.rate_star")}
           >
             <Star
               size={22}
@@ -76,7 +78,7 @@ function WriteReview({
       <textarea
         value={text}
         onChange={(e) => setText(e.target.value)}
-        placeholder="Share your thoughts about the movie..."
+        placeholder={translate("movies.detail.review_placeholder")}
         rows={3}
         className="w-full bg-(--color-bg) border border-(--color-border) rounded-xl px-3 py-3 text-base text-(--color-text-secondary) placeholder-(--color-text-muted) resize-none outline-none focus:border-(--color-gold)/50 transition-colors font-[inherit]"
       />
@@ -86,7 +88,7 @@ function WriteReview({
         onClick={handleSubmit}
         className="w-full py-3 rounded-xl font-bold text-sm tracking-widest uppercase bg-(--color-gold) text-(--color-bg) hover:bg-(--color-gold-dark) active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-150"
       >
-        Post Review
+        {translate("movies.detail.post_review")}
       </button>
     </div>
   );
@@ -107,6 +109,7 @@ function ReviewCard({
   const [editRating, setEditRating] = useState(review.rating);
   const [editHovered, setEditHovered] = useState(0);
   const [editText, setEditText] = useState(review.text);
+  const { translate } = useLocale();
 
   const handleSave = () => {
     if (!editRating || !editText.trim()) return;
@@ -136,7 +139,7 @@ function ReviewCard({
                   onMouseEnter={() => setEditHovered(s)}
                   onMouseLeave={() => setEditHovered(0)}
                   onClick={() => setEditRating(s)}
-                  aria-label={`Rate ${s} stars`}
+                  aria-label={translate("movies.detail.rate_star")}
                 >
                   <Star
                     size={16}
@@ -165,13 +168,13 @@ function ReviewCard({
             disabled={!editRating || !editText.trim()}
             className="flex items-center gap-1 px-4 py-2 rounded-lg text-xs font-bold bg-(--color-gold) text-(--color-bg) hover:bg-(--color-gold-dark) disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
-            <Check size={14} /> Save
+            <Check size={14} /> {translate("movies.detail.save")}
           </button>
           <button
             onClick={handleCancel}
             className="flex items-center gap-1 px-4 py-2 rounded-lg text-xs font-bold border border-(--color-border) text-(--color-text-secondary) hover:bg-(--color-surface) transition-colors"
           >
-            <X size={14} /> Cancel
+            <X size={14} /> {translate("movies.detail.cancel")}
           </button>
         </div>
       </div>
@@ -197,13 +200,13 @@ function ReviewCard({
         </div>
         {isOwner && (
           <div className="flex items-center gap-2">
-            <button onClick={() => setEditing(true)} aria-label="Edit review">
+            <button onClick={() => setEditing(true)} aria-label={translate("movies.detail.edit_review")}>
               <Pencil
                 size={14}
                 className="text-(--color-text-muted) hover:text-(--color-gold) transition-colors"
               />
             </button>
-            <button onClick={onDelete} aria-label="Delete review">
+            <button onClick={onDelete} aria-label={translate("movies.detail.delete_review")}>
               <Trash2
                 size={14}
                 className="text-(--color-text-muted) hover:text-red-400 transition-colors"
@@ -225,6 +228,7 @@ export default function Reviews() {
   const [showCount, setShowCount] = useState(INITIAL_REVIEWS_VISIBLE);
   const [maxH, setMaxH] = useState<string>("none");
   const containerRef = useRef<HTMLDivElement>(null);
+  const { translate } = useLocale();
 
   const visibleReviews = reviews.slice(0, showCount);
   const hasMore = showCount < reviews.length;
@@ -238,15 +242,15 @@ export default function Reviews() {
   const handlePost = useCallback((rating: number, text: string) => {
     const newReview: Review = {
       id: Date.now(),
-      user: "You",
+      user: translate("movies.detail.you"),
       src: `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * 70) + 1}`,
       rating,
-      time: "Just now",
+      time: translate("movies.detail.just_now"),
       text,
     };
     setReviews((prev) => [newReview, ...prev]);
     setShowCount((prev) => prev + 1);
-  }, []);
+  }, [translate]);
 
   const handleLoadMore = useCallback(() => {
     setShowCount((prev) => prev + REVIEWS_LOAD_MORE);
@@ -262,15 +266,15 @@ export default function Reviews() {
   );
 
   const handleDelete = useCallback((id: number) => {
-    if (window.confirm("Are you sure you want to delete this review?")) {
+    if (window.confirm(translate("movies.detail.delete_confirm"))) {
       setReviews((prev) => prev.filter((r) => r.id !== id));
       setShowCount((prev) => Math.max(prev - 1, INITIAL_REVIEWS_VISIBLE));
     }
-  }, []);
+  }, [translate]);
 
   return (
     <section className="px-4 space-y-4">
-      <SectionHeading>Reviews</SectionHeading>
+      <SectionHeading>{translate("movies.detail.reviews")}</SectionHeading>
 
       <div className="flex items-center gap-5 py-1">
         <div className="flex flex-col items-center gap-1 shrink-0">
@@ -279,7 +283,7 @@ export default function Reviews() {
           </span>
           <Stars rating={4.8} size={13} />
           <span className="text-(--color-text-muted) text-[10px] mt-0.5">
-            2.4k ratings
+            2.4k {translate("movies.detail.ratings")}
           </span>
         </div>
 
@@ -301,7 +305,7 @@ export default function Reviews() {
           <ReviewCard
             key={r.id}
             review={r}
-            isOwner={r.user === "You"}
+            isOwner={r.user === translate("movies.detail.you")}
             onSave={(rating, text) => handleSave(r.id, rating, text)}
             onDelete={() => handleDelete(r.id)}
           />
@@ -313,7 +317,7 @@ export default function Reviews() {
           onClick={handleLoadMore}
           className="w-full py-3 rounded-2xl border border-(--color-border) text-(--color-gold) font-bold text-sm tracking-widest uppercase hover:bg-(--color-surface) transition-colors"
         >
-          Load More Reviews
+          {translate("movies.detail.load_more_reviews")}
         </button>
       )}
     </section>

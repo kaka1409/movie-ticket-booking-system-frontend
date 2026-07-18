@@ -10,6 +10,7 @@ import MobileTopCast from "./components/mobile/TopCast";
 import MobileShowtimes from "./components/mobile/Showtimes";
 import MobileBookTicketCTA from "./components/mobile/BookTicketCTA";
 import MobileReviews from "./components/mobile/Reviews";
+import MobileMovieNotFound from "./components/mobile/MovieNotFound";
 
 // Desktop
 import DesktopHeroSection from "./components/desktop/HeroSection";
@@ -28,11 +29,7 @@ export default async function MovieDetailPage({
   const movie = await getMovieBySlug(slug);
 
   if (!movie) {
-    return (
-      <div className="flex items-center justify-center min-h-dvh bg-(--color-bg)">
-        <p className="text-(--color-text-secondary) text-lg">Movie not found</p>
-      </div>
-    );
+    return <MobileMovieNotFound />;
   }
 
   return (

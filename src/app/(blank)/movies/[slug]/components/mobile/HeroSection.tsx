@@ -5,11 +5,13 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, Heart, Play, Star, Clock } from "lucide-react";
 import { useMovie } from "../shared/MovieContext";
 import { useWishlist } from "@/features/wishlist/context";
+import { useLocale } from "@/contexts/LocaleContext";
 
 export default function HeroSection() {
   const router = useRouter();
   const movie = useMovie();
   const { toggleWishlist, isWishlisted } = useWishlist();
+  const { translate } = useLocale();
   const liked = isWishlisted(movie.id);
 
   return (
@@ -28,7 +30,7 @@ export default function HeroSection() {
 
       <button
         className="absolute inset-0 flex items-center justify-center group"
-        aria-label="Watch trailer"
+        aria-label={translate("movies.detail.watch_trailer")}
       >
         <div className="w-14 h-14 rounded-full backdrop-blur-xs bg-(--color-gold)/20 border border-(--color-gold) flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-200">
           <Play size={18} className="text-(--color-gold)" />
@@ -39,7 +41,7 @@ export default function HeroSection() {
         <button
           onClick={() => router.back()}
           className="w-9 h-9 rounded-full bg-black/40 flex items-center justify-center"
-          aria-label="Back"
+          aria-label={translate("movies.detail.back")}
         >
           <ArrowLeft size={20} className="text-(--color-gold-light)" />
         </button>
@@ -48,7 +50,7 @@ export default function HeroSection() {
           type="button"
           onClick={() => toggleWishlist(movie.id)}
           className="w-9 h-9 rounded-full bg-black/40 flex items-center justify-center"
-          aria-label={liked ? "Remove from wishlist" : "Add to wishlist"}
+          aria-label={liked ? translate("movies.detail.remove_wishlist") : translate("movies.detail.add_wishlist")}
         >
           <Heart
             size={18}
@@ -84,7 +86,7 @@ export default function HeroSection() {
             <span className="text-(--color-text-muted) text-xs">•</span>
             <span className="flex items-center gap-1 text-(--color-text-secondary) text-xs">
               <Clock size={11} />
-              {movie.duration} min
+              {movie.duration} {translate("movies.detail.min")}
             </span>
           </div>
           <span className="inline-block mt-1.5 px-2 py-0.5 rounded text-[10px] font-bold border border-(--color-border) text-(--color-text-secondary)">

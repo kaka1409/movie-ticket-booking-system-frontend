@@ -3,13 +3,15 @@
 import Image from "next/image";
 import SectionHeading from "../shared/SectionHeading";
 import { useMovie } from "../shared/MovieContext";
+import { useLocale } from "@/contexts/LocaleContext";
 
 export default function TopCast() {
   const movie = useMovie();
+  const { translate } = useLocale();
 
   return (
     <section className="px-4">
-      <SectionHeading>Top Cast</SectionHeading>
+      <SectionHeading>{translate("movies.detail.top_cast")}</SectionHeading>
 
       <div className="flex flex-nowrap gap-4 overflow-x-auto scrollbar-hide pb-1">
         {movie.cast.map((actor) => (

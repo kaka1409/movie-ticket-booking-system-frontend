@@ -5,9 +5,11 @@ import { MapPin, ChevronDown, ChevronUp } from "lucide-react";
 import SectionHeading from "../shared/SectionHeading";
 import { CINEMAS, DATES, INITIAL_CINEMAS_VISIBLE } from "../shared/mock";
 import { useMovieSelection } from "../shared/MovieSelectionContext";
+import { useLocale } from "@/contexts/LocaleContext";
 
 export default function Showtimes() {
   const { setSelectedShowtime } = useMovieSelection();
+  const { translate } = useLocale();
 
   const [selectedDate, setSelectedDate] = useState(DATES[0].value);
   const [selected, setSelected] = useState<{
@@ -76,7 +78,7 @@ export default function Showtimes() {
 
   return (
     <section className="px-4">
-      <SectionHeading>Showtimes</SectionHeading>
+      <SectionHeading>{translate("movies.detail.showtimes")}</SectionHeading>
 
       <div className="flex gap-2 mb-5 overflow-x-auto scrollbar-hide pb-1">
         {DATES.map((date) => {
@@ -185,11 +187,11 @@ export default function Showtimes() {
         >
           {showAll ? (
             <>
-              Show Less <ChevronUp size={16} />
+              {translate("movies.detail.show_less")} <ChevronUp size={16} />
             </>
           ) : (
             <>
-              Load More Cinemas <ChevronDown size={16} />
+              {translate("movies.detail.load_more_cinemas")} <ChevronDown size={16} />
             </>
           )}
         </button>
