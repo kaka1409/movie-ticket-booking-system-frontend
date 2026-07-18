@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { CreditCard, MapPin, UtensilsCrossed, Calendar, Armchair } from "lucide-react";
 import type { UpcomingTicket, PastTicket } from "@/features/tickets/types";
+import { useLocale } from "@/contexts/LocaleContext";
 import QRCode from "./QRCode";
 
 interface TicketInfoProps {
@@ -11,6 +12,7 @@ interface TicketInfoProps {
 }
 
 export default function TicketInfo({ ticket, detail }: TicketInfoProps) {
+  const { translate } = useLocale();
   return (
     <main className="flex-1 overflow-y-auto pb-8 p-4">
       {/* Hero ticket card */}
@@ -49,7 +51,7 @@ export default function TicketInfo({ ticket, detail }: TicketInfoProps) {
             <div>
               <p className="text-[9px] font-bold tracking-[0.15em] uppercase mb-1 text-(--color-text-muted)">
                 <MapPin size={11} className="inline mr-1.5" />
-                Theater
+                {translate("tickets.detail.theater")}
               </p>
               <p className="text-white font-bold text-sm">{detail?.cinema}</p>
               {detail?.location && (
@@ -61,7 +63,7 @@ export default function TicketInfo({ ticket, detail }: TicketInfoProps) {
             <div>
               <p className="text-[9px] font-bold tracking-[0.15em] uppercase mb-1 text-(--color-text-muted)">
                 <Calendar size={11} className="inline mr-1.5" />
-                Date & Time
+                {translate("tickets.detail.date_time")}
               </p>
               <p className="text-white font-bold text-sm">{ticket.datetime}</p>
             </div>
@@ -71,14 +73,14 @@ export default function TicketInfo({ ticket, detail }: TicketInfoProps) {
           <div>
             <p className="text-[9px] font-bold tracking-[0.15em] uppercase mb-1 text-(--color-text-muted)">
               <Armchair size={11} className="inline mr-1.5" />
-              Seat
+              {translate("tickets.detail.seat")}
             </p>
             <p className="text-white font-extrabold text-xl tracking-wide mb-1">
               {detail?.seats}
             </p>
             <div className="flex items-center justify-between">
               <p className="text-white font-bold text-sm">
-                {detail?.seatClass ?? "Standard"} Ticket
+                {detail?.seatClass ?? translate("tickets.detail.standard")} {translate("tickets.detail.ticket")}
               </p>
               <p className="text-white font-bold text-sm">
                 {detail?.seatPrice} × {detail?.seats.split(",").length}
@@ -91,7 +93,7 @@ export default function TicketInfo({ ticket, detail }: TicketInfoProps) {
             <div>
               <p className="text-[9px] font-bold tracking-[0.15em] uppercase mb-1 text-(--color-text-muted)">
                 <UtensilsCrossed size={11} className="inline mr-1.5" />
-                Food & Drink
+                {translate("tickets.detail.food_drink")}
               </p>
               <div className="space-y-1.5">
                 {detail.foodDrink.map((item, i) => (
@@ -118,7 +120,7 @@ export default function TicketInfo({ ticket, detail }: TicketInfoProps) {
 
           {/* Booking ID row */}
           <div className="flex items-center justify-between py-1">
-            <p className="text-sm text-(--color-text-muted)">Booking ID</p>
+            <p className="text-sm text-(--color-text-muted)">{translate("tickets.detail.booking_id")}</p>
             <p className="font-bold text-sm text-(--color-text-secondary)">
               #{ticket.id}
             </p>
@@ -134,12 +136,12 @@ export default function TicketInfo({ ticket, detail }: TicketInfoProps) {
           {/* Payment summary */}
           <div className="space-y-3 pb-2">
             <p className="text-[9px] font-bold tracking-[0.18em] uppercase text-(--color-text-muted)">
-              Payment Summary
+              {translate("tickets.detail.payment_summary")}
             </p>
 
             <div className="flex items-center justify-between">
               <p className="text-sm text-(--color-text-secondary)">
-                Total Price
+                {translate("tickets.detail.total_price")}
               </p>
               <p className="font-extrabold text-base text-(--color-gold)">
                 {detail?.totalPrice}
@@ -149,7 +151,7 @@ export default function TicketInfo({ ticket, detail }: TicketInfoProps) {
             {detail?.paymentMethod && (
               <div className="flex items-center justify-between">
                 <p className="text-sm text-(--color-text-secondary)">
-                  Payment Method
+                  {translate("tickets.detail.payment_method")}
                 </p>
                 <p className="flex items-center gap-1.5 font-semibold text-sm text-(--color-text-secondary)">
                   <CreditCard size={14} className="text-(--color-gold)" />
