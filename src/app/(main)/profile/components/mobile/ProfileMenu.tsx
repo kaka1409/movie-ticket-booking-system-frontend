@@ -13,7 +13,7 @@ export default function ProfileMenu() {
         labelKey="profile.activity"
         items={[
           { labelKey: "profile.review_rating", Icon: Star, href: "/profile/reviews" },
-          { labelKey: "profile.wishlist", Icon: Heart, href: "/profile/wishlist" },
+          { labelKey: "profile.wishlist_label", Icon: Heart, href: "/profile/wishlist" },
         ]}
       />
       <MenuSection

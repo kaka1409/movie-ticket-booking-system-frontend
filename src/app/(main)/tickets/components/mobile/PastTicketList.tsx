@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useEffect } from "react";
+import { useLocale } from "@/contexts/LocaleContext";
 import { useTickets } from "@/features/tickets/context";
 import type { PastTicket } from "@/features/tickets/types";
 import PastCard from "@/app/(main)/tickets/components/mobile/PastCard";
@@ -11,6 +12,7 @@ export default function PastTicketList({
 }: {
   tickets: PastTicket[];
 }) {
+  const { translate } = useLocale();
   const { activeTab, visibleCount, loadMore } = useTickets();
 
   const hasMore = tickets.length > visibleCount;
@@ -35,7 +37,7 @@ export default function PastTicketList({
   if (activeTab !== "past") return null;
 
   if (tickets.length === 0) {
-    return <EmptyState label="No past tickets" />;
+    return <EmptyState label={translate("tickets.no_past")} />;
   }
 
   return (
@@ -55,7 +57,7 @@ export default function PastTicketList({
           onClick={loadMore}
           className="w-full py-3.5 rounded-2xl text-sm font-bold tracking-widest uppercase transition-colors bg-transparent border border-(--color-border) text-(--color-text-secondary)"
         >
-          Load Older Tickets
+          {translate("tickets.load_older")}
         </button>
       )}
     </main>

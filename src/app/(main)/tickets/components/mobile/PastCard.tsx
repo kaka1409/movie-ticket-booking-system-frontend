@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useLocale } from "@/contexts/LocaleContext";
 import type { PastTicket } from "@/features/tickets/types";
 
 export default function PastCard({ ticket }: { ticket: PastTicket }) {
+  const { translate } = useLocale();
   const expired = ticket.status === "expired";
 
   return (
@@ -46,7 +48,7 @@ export default function PastCard({ ticket }: { ticket: PastTicket }) {
                 : "text-(--color-text-secondary)"
             }`}
           >
-            {ticket.status === "used" ? "Used" : "Expired"}
+            {ticket.status === "used" ? translate("tickets.used") : translate("tickets.expired")}
           </span>
         </div>
 
@@ -73,13 +75,13 @@ export default function PastCard({ ticket }: { ticket: PastTicket }) {
 
         <div className="flex items-center justify-between">
           <p className="text-sm font-light text-(--color-text-secondary)">
-            {ticket.ticketCount} Ticket{ticket.ticketCount > 1 ? "s" : ""}
+            {ticket.ticketCount} {ticket.ticketCount > 1 ? translate("common.tickets") : translate("common.ticket")}
           </p>
           <Link
             href={`/tickets/${ticket.id}`}
             className="text-sm font-bold underline underline-offset-2 transition-colors text-(--color-gold)"
           >
-            View Details
+            {translate("tickets.view_details")}
           </Link>
         </div>
       </div>

@@ -1,14 +1,16 @@
 "use client";
 
+import { useLocale } from "@/contexts/LocaleContext";
 import { useTickets } from "@/features/tickets/context";
 
 export default function Tabs() {
+  const { translate } = useLocale();
   const { activeTab, setActiveTab } = useTickets();
 
   return (
     <div className="flex gap-0 border-b border-(--color-border) px-(--space-md)">
       {(["upcoming", "past"] as const).map((tab) => {
-        const label = tab === "upcoming" ? "Upcoming Tickets" : "Past Tickets";
+        const label = tab === "upcoming" ? translate("tickets.upcoming") : translate("tickets.past");
         const active = activeTab === tab;
         return (
           <button

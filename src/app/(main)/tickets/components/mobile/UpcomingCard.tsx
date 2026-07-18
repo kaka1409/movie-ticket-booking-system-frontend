@@ -3,9 +3,11 @@
 import Link from "next/link";
 import Image from "next/image";
 import { CalendarDays, MapPin, RefreshCw } from "lucide-react";
+import { useLocale } from "@/contexts/LocaleContext";
 import type { UpcomingTicket } from "@/features/tickets/types";
 
 export default function UpcomingCard({ ticket }: { ticket: UpcomingTicket }) {
+  const { translate } = useLocale();
   const failed = ticket.status === "failed";
 
   return (
@@ -35,7 +37,7 @@ export default function UpcomingCard({ ticket }: { ticket: UpcomingTicket }) {
                 : "bg-green-500 text-white"
             }`}
           >
-            {failed ? "Failed" : "Success"}
+            {failed ? translate("tickets.failed") : translate("tickets.success")}
           </span>
         </div>
 
@@ -61,7 +63,7 @@ export default function UpcomingCard({ ticket }: { ticket: UpcomingTicket }) {
               {ticket.format}
             </span>
             <span className="px-3 py-1 rounded-full text-[11px] font-bold bg-(--color-surface-2) text-(--color-text-secondary) border border-(--color-border)">
-              Seats: {ticket.seats}
+              {translate("tickets.seats_label")}{ticket.seats}
             </span>
           </div>
         </div>
@@ -80,7 +82,7 @@ export default function UpcomingCard({ ticket }: { ticket: UpcomingTicket }) {
           <p
             className={`text-xs font-bold tracking-widest uppercase mb-0.5 text-(--color-gold-light)/70`}
           >
-            {failed ? "Payment Failed" : "Booking ID"}
+            {failed ? translate("tickets.failed") : translate("tickets.booking_id")}
           </p>
           <p
             className={`font-extrabold text-xl text-(--color-text-primary)`}
@@ -92,14 +94,14 @@ export default function UpcomingCard({ ticket }: { ticket: UpcomingTicket }) {
         {failed ? (
           <button className="flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all duration-150 active:scale-[0.97] bg-(--color-gold) text-[#0F0F0F] shadow-(--shadow-glow)">
             <RefreshCw size={15} />
-            Pay Now
+            {translate("tickets.pay_now")}
           </button>
         ) : (
           <Link
             href={`/tickets/${ticket.id}`}
             className="flex items-center justify-center px-6 py-3 rounded-xl font-bold text-sm transition-all duration-150 active:scale-[0.97] border border-(--color-gold) text-(--color-gold) bg-transparent"
           >
-            View details
+            {translate("tickets.view_details")}
           </Link>
         )}
       </div>

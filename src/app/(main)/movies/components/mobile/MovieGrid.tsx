@@ -108,7 +108,7 @@ export default function MovieGrid({
                 index >= prevCountRef.current ? "animate-fade-in" : ""
               }`}
             >
-              <MovieCard movie={movie} />
+              <MovieCard movie={movie} minLabel={translate("common.min")} />
             </div>
           ))}
         </div>
