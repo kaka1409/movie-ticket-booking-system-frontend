@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { ReactNode } from "react";
 import { Eye, EyeOff, AlertCircle } from "lucide-react";
+import { useLocale } from "@/contexts/LocaleContext";
 
 export default function PasswordField({
   label,
@@ -24,6 +25,7 @@ export default function PasswordField({
   error?: string;
 }) {
   const [focused, setFocused] = useState(false);
+  const { translate } = useLocale();
 
   return (
     <label className="flex flex-col gap-2">
@@ -59,7 +61,7 @@ export default function PasswordField({
         />
         <button
           type="button"
-          aria-label={visible ? "Hide password" : "Show password"}
+          aria-label={visible ? translate("profile.password.hide_password") : translate("profile.password.show_password")}
           onClick={onToggleVisible}
           className="shrink-0 text-(--color-text-muted)"
         >

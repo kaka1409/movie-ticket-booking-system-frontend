@@ -1,3 +1,7 @@
+"use client";
+
+import { useLocale } from "@/contexts/LocaleContext";
+
 export default function SaveActions({
   onSave,
   onCancel,
@@ -7,6 +11,8 @@ export default function SaveActions({
   onCancel: () => void;
   disabled?: boolean;
 }) {
+  const { translate } = useLocale();
+
   return (
     <div className="mt-8 flex flex-col gap-4">
       <button
@@ -15,14 +21,14 @@ export default function SaveActions({
         disabled={disabled}
         className="w-full rounded-xl bg-(--color-gold) py-4 text-base font-extrabold tracking-wide text-black active:scale-[0.98] transition-all duration-150 disabled:opacity-40 disabled:pointer-events-none"
       >
-        SAVE CHANGES
+        {translate("profile.edit.save")}
       </button>
       <button
         type="button"
         onClick={onCancel}
         className="w-full rounded-xl border border-(--color-gold) py-4 text-base font-extrabold tracking-wide text-(--color-gold) active:scale-[0.98] transition-all duration-150"
       >
-        CANCEL
+        {translate("profile.edit.cancel")}
       </button>
     </div>
   );

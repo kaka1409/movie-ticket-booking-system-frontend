@@ -1,4 +1,9 @@
+"use client";
+
+import { useLocale } from "@/contexts/LocaleContext";
+
 export default function LoadMoreButton({ onClick }: { onClick: () => void }) {
+  const { translate } = useLocale();
   return (
     <div>
       <button
@@ -12,7 +17,7 @@ export default function LoadMoreButton({ onClick }: { onClick: () => void }) {
           active:scale-[0.98]
         "
       >
-        Load More
+        {translate("movies.load_more")}
       </button>
     </div>
   );

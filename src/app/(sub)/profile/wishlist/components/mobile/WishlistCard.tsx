@@ -5,9 +5,11 @@ import Image from "next/image";
 import { Star, Heart, Ticket } from "lucide-react";
 import type { Movie } from "@/features/movies/types";
 import { useWishlist } from "@/features/wishlist/context";
+import { useLocale } from "@/contexts/LocaleContext";
 
 export default function WishlistCard({ movie }: { movie: Movie }) {
   const { toggleWishlist, isWishlisted } = useWishlist();
+  const { translate } = useLocale();
   const liked = isWishlisted(movie.id);
 
   return (
@@ -51,7 +53,7 @@ export default function WishlistCard({ movie }: { movie: Movie }) {
       {/* Heart toggle */}
       <button
         type="button"
-        aria-label={liked ? "Remove from wishlist" : "Add to wishlist"}
+        aria-label={liked ? translate("profile.wishlist.remove_wishlist") : translate("profile.wishlist.add_wishlist")}
         onClick={() => toggleWishlist(movie.id)}
         className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full bg-black/50 backdrop-blur-sm z-10"
       >
@@ -71,7 +73,7 @@ export default function WishlistCard({ movie }: { movie: Movie }) {
           className="flex w-full items-center justify-center gap-2 rounded-xl bg-(--color-gold) py-3.5 text-sm font-extrabold tracking-wide text-black"
         >
           <Ticket className="h-5 w-5" strokeWidth={2.2} />
-          BOOK NOW
+          {translate("profile.wishlist.book_now")}
         </Link>
       </div>
     </article>

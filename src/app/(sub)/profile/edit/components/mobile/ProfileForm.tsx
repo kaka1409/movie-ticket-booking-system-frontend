@@ -6,20 +6,22 @@ import { User, Mail, Lock, Smartphone, Calendar } from "lucide-react";
 import AvatarEditor from "./AvatarEditor";
 import Field from "./Field";
 import SaveActions from "./SaveActions";
+import { useLocale } from "@/contexts/LocaleContext";
 import type { User as UserType } from "@/features/profile/types";
 
-function validate(name: string, phone: string, dob: string) {
+function validate(name: string, phone: string, dob: string, translate: (key: string) => string) {
   const errors: { name?: string; phone?: string; dob?: string } = {};
-  if (!name.trim()) errors.name = "Full name is required.";
-  if (!phone.trim()) errors.phone = "Phone number is required.";
+  if (!name.trim()) errors.name = translate("profile.edit.error_name_required");
+  if (!phone.trim()) errors.phone = translate("profile.edit.error_phone_required");
   else if (phone.replace(/\D/g, "").length < 7)
-    errors.phone = "Enter a valid phone number.";
-  if (!dob) errors.dob = "Date of birth is required.";
+    errors.phone = translate("profile.edit.error_phone_invalid");
+  if (!dob) errors.dob = translate("profile.edit.error_dob_required");
   return errors;
 }
 
 export default function ProfileForm({ user }: { user: UserType }) {
   const router = useRouter();
+  const { translate } = useLocale();
   const [fullName, setFullName] = useState(user.name);
   const [phone, setPhone] = useState(user.phone);
   const [dob, setDob] = useState(user.dob);
@@ -32,7 +34,7 @@ export default function ProfileForm({ user }: { user: UserType }) {
     dob !== user.dob ||
     avatarChanged;
 
-  const errors = validate(fullName, phone, dob);
+  const errors = validate(fullName, phone, dob, translate);
   const isValid = Object.keys(errors).length === 0;
   const showErrors = touched && !isValid;
 
@@ -55,7 +57,7 @@ export default function ProfileForm({ user }: { user: UserType }) {
 
       <div className="flex flex-col gap-5">
         <Field
-          label="Full Name"
+          label={translate("profile.edit.full_name")}
           icon={User}
           error={showErrors ? errors.name : undefined}
         >
@@ -68,7 +70,7 @@ export default function ProfileForm({ user }: { user: UserType }) {
         </Field>
 
         <div>
-          <Field label="Email Address" icon={Mail} disabled>
+          <Field label={translate("profile.edit.email")} icon={Mail} disabled>
             <input
               type="email"
               value={user.email}
@@ -78,12 +80,12 @@ export default function ProfileForm({ user }: { user: UserType }) {
             <Lock className="h-4 w-4 shrink-0 text-(--color-text-muted)" />
           </Field>
           <p className="mt-2 px-1 text-sm text-(--color-text-muted)">
-            Email cannot be changed.
+            {translate("profile.edit.email_readonly")}
           </p>
         </div>
 
         <Field
-          label="Phone Number"
+          label={translate("profile.edit.phone")}
           icon={Smartphone}
           error={showErrors ? errors.phone : undefined}
         >
@@ -96,7 +98,7 @@ export default function ProfileForm({ user }: { user: UserType }) {
         </Field>
 
         <Field
-          label="Date of Birth"
+          label={translate("profile.edit.dob")}
           icon={Calendar}
           error={showErrors ? errors.dob : undefined}
         >

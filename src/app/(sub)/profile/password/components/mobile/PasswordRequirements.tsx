@@ -1,32 +1,25 @@
+"use client";
+
 import { CheckCircle2, Circle } from "lucide-react";
-
-type Requirement = {
-  label: string;
-  test: (value: string) => boolean;
-};
-
-const REQUIREMENTS: Requirement[] = [
-  { label: "At least 8 characters long", test: (v) => v.length >= 8 },
-  {
-    label: "Contains at least one uppercase letter",
-    test: (v) => /[A-Z]/.test(v),
-  },
-  { label: "Contains at least one number", test: (v) => /[0-9]/.test(v) },
-  {
-    label: "Contains a special character (!@#$%^&*)",
-    test: (v) => /[!@#$%^&*]/.test(v),
-  },
-];
+import { useLocale } from "@/contexts/LocaleContext";
 
 export default function PasswordRequirements({
   password,
 }: {
   password: string;
 }) {
+  const { translate } = useLocale();
+
+  const REQUIREMENTS: { label: string; test: (value: string) => boolean }[] = [
+    { label: translate("profile.password.req_length"), test: (v) => v.length >= 8 },
+    { label: translate("profile.password.req_uppercase"), test: (v) => /[A-Z]/.test(v) },
+    { label: translate("profile.password.req_number"), test: (v) => /[0-9]/.test(v) },
+    { label: translate("profile.password.req_special"), test: (v) => /[!@#$%^&*]/.test(v) },
+  ];
   return (
     <div className="mt-8 rounded-xl border border-(--color-border) bg-(--color-surface) p-4">
       <h2 className="mb-3 text-lg font-bold text-(--color-text-primary)">
-        Password Requirements
+        {translate("profile.password.requirements")}
       </h2>
       <ul className="flex flex-col gap-2">
         {REQUIREMENTS.map((req) => {

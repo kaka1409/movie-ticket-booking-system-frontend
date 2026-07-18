@@ -6,34 +6,37 @@ import { Lock, KeyRound, LockKeyhole } from "lucide-react";
 import PasswordField from "./PasswordField";
 import PasswordRequirements from "./PasswordRequirements";
 import FormActions from "./FormActions";
+import { useLocale } from "@/contexts/LocaleContext";
 
 function validate(
   current: string,
   newPass: string,
   confirm: string,
+  translate: (key: string) => string,
 ) {
   const errors: { current?: string; newPass?: string; confirm?: string } = {};
-  if (!current.trim()) errors.current = "Current password is required.";
+  if (!current.trim()) errors.current = translate("profile.password.error_current_required");
   if (!newPass.trim()) {
-    errors.newPass = "New password is required.";
+    errors.newPass = translate("profile.password.error_new_required");
   } else if (
     newPass.length < 8 ||
     !/[A-Z]/.test(newPass) ||
     !/[0-9]/.test(newPass) ||
     !/[!@#$%^&*]/.test(newPass)
   ) {
-    errors.newPass = "New password does not meet all requirements.";
+    errors.newPass = translate("profile.password.error_new_requirements");
   }
   if (!confirm.trim()) {
-    errors.confirm = "Please confirm your new password.";
+    errors.confirm = translate("profile.password.error_confirm_required");
   } else if (confirm !== newPass) {
-    errors.confirm = "Passwords do not match.";
+    errors.confirm = translate("profile.password.error_confirm_match");
   }
   return errors;
 }
 
 export default function PasswordForm() {
   const router = useRouter();
+  const { translate } = useLocale();
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -42,7 +45,7 @@ export default function PasswordForm() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [touched, setTouched] = useState(false);
 
-  const errors = validate(currentPassword, newPassword, confirmPassword);
+  const errors = validate(currentPassword, newPassword, confirmPassword, translate);
   const isValid = Object.keys(errors).length === 0;
   const showErrors = touched && !isValid;
 
@@ -62,8 +65,8 @@ export default function PasswordForm() {
     <main className="flex-1 overflow-y-auto px-4 pb-24 pt-4">
       <div className="flex flex-col gap-5">
         <PasswordField
-          label="Current Password"
-          placeholder="Enter current password"
+          label={translate("profile.password.current")}
+          placeholder={translate("profile.password.current_placeholder")}
           icon={Lock}
           value={currentPassword}
           onChange={setCurrentPassword}
@@ -73,8 +76,8 @@ export default function PasswordForm() {
         />
 
         <PasswordField
-          label="New Password"
-          placeholder="Enter new password"
+          label={translate("profile.password.new")}
+          placeholder={translate("profile.password.new_placeholder")}
           icon={KeyRound}
           value={newPassword}
           onChange={setNewPassword}
@@ -84,8 +87,8 @@ export default function PasswordForm() {
         />
 
         <PasswordField
-          label="Confirm New Password"
-          placeholder="Confirm new password"
+          label={translate("profile.password.confirm")}
+          placeholder={translate("profile.password.confirm_placeholder")}
           icon={LockKeyhole}
           value={confirmPassword}
           onChange={setConfirmPassword}

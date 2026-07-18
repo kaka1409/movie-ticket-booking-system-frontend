@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import Image from "next/image";
 import { Camera } from "lucide-react";
+import { useLocale } from "@/contexts/LocaleContext";
 import type { User } from "@/features/profile/types";
 
 export default function AvatarEditor({
@@ -14,6 +15,7 @@ export default function AvatarEditor({
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const { translate } = useLocale();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -53,7 +55,7 @@ export default function AvatarEditor({
       {/* Camera button */}
       <button
         type="button"
-        aria-label="Change photo"
+        aria-label={translate("profile.edit.change_photo")}
         onClick={() => fileInputRef.current?.click()}
         className="relative -mt-5 ml-20 flex h-10 w-10 items-center justify-center rounded-full bg-(--color-gold) shadow-[--shadow-card] z-10"
       >
