@@ -16,7 +16,7 @@ export default function Header() {
       <button
         onClick={() => router.back()}
         className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-(--color-surface) transition-colors"
-        aria-label="Go back"
+        aria-label={translate("layout.sub.back")}
       >
         <ArrowLeft size={22} className="text-(--color-gold-light)" />
       </button>

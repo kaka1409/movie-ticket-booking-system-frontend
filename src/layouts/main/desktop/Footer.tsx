@@ -3,8 +3,30 @@
 import { useState } from "react";
 import Image from "next/image";
 import { X, Play, Camera, BookOpen } from "lucide-react";
+import { useLocale } from "@/contexts/LocaleContext";
+
+const CINEMA_LINKS = [
+  { labelKey: "layout.footer.find_cinema", href: "#" },
+  { labelKey: "layout.footer.movie_grids", href: "#" },
+  { labelKey: "layout.footer.cinematic_tech", href: "#" },
+  { labelKey: "layout.footer.sitemap", href: "#" },
+] as const;
+
+const SUPPORT_LINKS = [
+  { labelKey: "layout.footer.help_center", href: "#" },
+  { labelKey: "layout.footer.contact_us", href: "#" },
+  { labelKey: "layout.footer.gift_cards", href: "#" },
+  { labelKey: "layout.footer.refunds", href: "#" },
+] as const;
+
+const BOTTOM_LINKS = [
+  { labelKey: "layout.footer.privacy", href: "#" },
+  { labelKey: "layout.footer.terms", href: "#" },
+  { labelKey: "layout.footer.cookies", href: "#" },
+] as const;
 
 export default function Footer() {
+  const { translate } = useLocale();
   const [email, setEmail] = useState("");
 
   return (
@@ -20,8 +42,7 @@ export default function Footer() {
               </span>
             </div>
             <p className="mb-5 max-w-[220px] text-xs leading-relaxed text-(--color-text-muted)">
-              Redefining the premium movie-going experience since 2012. Join us for a world of
-              cinematic wonders and exclusive perks.
+              {translate("layout.footer.description")}
             </p>
             <div className="flex gap-2.5">
               {[X, Play, Camera, BookOpen].map((Icon, i) => (
@@ -38,13 +59,13 @@ export default function Footer() {
           {/* Cinema links */}
           <div>
             <h4 className="mb-4 text-[11px] font-bold tracking-widest uppercase text-white">
-              Cinema
+              {translate("layout.footer.cinema")}
             </h4>
             <ul className="flex list-none flex-col gap-2.5">
-              {["Find a Cinema", "Movie Grids", "Cinematic Tech", "Sitemap"].map((l) => (
-                <li key={l}>
-                  <a href="#" className="text-[13px] text-(--color-text-muted) no-underline hover:text-(--color-gold-light)">
-                    {l}
+              {CINEMA_LINKS.map(({ labelKey, href }) => (
+                <li key={labelKey}>
+                  <a href={href} className="text-[13px] text-(--color-text-muted) no-underline hover:text-(--color-gold-light)">
+                    {translate(labelKey)}
                   </a>
                 </li>
               ))}
@@ -54,13 +75,13 @@ export default function Footer() {
           {/* Support links */}
           <div>
             <h4 className="mb-4 text-[11px] font-bold tracking-widest uppercase text-white">
-              Support
+              {translate("layout.footer.support")}
             </h4>
             <ul className="flex list-none flex-col gap-2.5">
-              {["Help Center", "Contact Us", "Gift Cards", "Refunds"].map((l) => (
-                <li key={l}>
-                  <a href="#" className="text-[13px] text-(--color-text-muted) no-underline hover:text-(--color-gold-light)">
-                    {l}
+              {SUPPORT_LINKS.map(({ labelKey, href }) => (
+                <li key={labelKey}>
+                  <a href={href} className="text-[13px] text-(--color-text-muted) no-underline hover:text-(--color-gold-light)">
+                    {translate(labelKey)}
                   </a>
                 </li>
               ))}
@@ -70,21 +91,21 @@ export default function Footer() {
           {/* Newsletter */}
           <div>
             <h4 className="mb-2 text-[11px] font-bold tracking-widest uppercase text-white">
-              Subscribe to Premiere
+              {translate("layout.footer.subscribe")}
             </h4>
             <p className="mb-3.5 text-xs leading-relaxed text-(--color-text-muted)">
-              Get weekly updates on exclusive screenings and early bird offers.
+              {translate("layout.footer.subscribe_desc")}
             </p>
             <div className="flex">
               <input
                 type="email"
-                placeholder="Enter your email"
+                placeholder={translate("layout.footer.email_placeholder")}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="flex-1 border border-r-0 border-(--color-border) bg-(--color-surface) px-3.5 py-2.5 text-xs text-white outline-none font-sans rounded-l-(--radius-sm)"
               />
               <button className="cursor-pointer rounded-r-(--radius-sm) border-none bg-(--color-gold) px-4 py-2.5 text-xs font-extrabold text-black">
-                Join
+                {translate("layout.footer.join")}
               </button>
             </div>
           </div>
@@ -93,18 +114,18 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="flex items-center justify-between border-t border-(--color-border) pt-5">
           <div className="flex gap-5">
-            {["Privacy Policy", "Terms of Service", "Cookie Settings"].map((l) => (
+            {BOTTOM_LINKS.map(({ labelKey, href }) => (
               <a
-                key={l}
-                href="#"
+                key={labelKey}
+                href={href}
                 className="text-[11px] text-(--color-text-muted) no-underline tracking-wide"
               >
-                {l}
+                {translate(labelKey)}
               </a>
             ))}
           </div>
           <p className="text-[11px] text-(--color-text-muted)">
-            &copy; 2026 PrimeSeat Cinemas Entertainment Group. All rights reserved.
+            {translate("layout.footer.copyright")}
           </p>
         </div>
       </div>

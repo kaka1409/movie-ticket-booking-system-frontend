@@ -4,8 +4,10 @@ import Link from "next/link";
 import { Bell } from "lucide-react";
 import Logo from "@/components/layout/Logo";
 import LanguageToggle from "@/components/layout/LanguageToggle";
+import { useLocale } from "@/contexts/LocaleContext";
 
 export default function Header({ unreadCount }: { unreadCount: number }) {
+  const { translate } = useLocale();
   return (
     <header className="sticky bg-(--color-bg) top-0 z-40 w-full">
       <div className="flex items-center justify-between px-4 py-3 max-w-md mx-auto">
@@ -17,7 +19,7 @@ export default function Header({ unreadCount }: { unreadCount: number }) {
           <Link
             href="/notifications"
             className="relative text-(--color-gold-light)"
-            aria-label="Notifications"
+            aria-label={translate("layout.header.notifications")}
           >
             <Bell className="w-5 h-5" />
             {unreadCount > 0 && (

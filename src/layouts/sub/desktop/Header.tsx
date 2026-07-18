@@ -2,13 +2,15 @@
 
 import { useRouter, usePathname } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import { useLocale } from "@/contexts/LocaleContext";
 import Logo from "@/components/layout/Logo";
 import { getSubTitle } from "../utils";
 
 export default function Header() {
   const router = useRouter();
   const pathname = usePathname();
-  const title = getSubTitle(pathname);
+  const { translate } = useLocale();
+  const title = getSubTitle(pathname, translate);
 
   return (
     <nav className="sticky top-0 z-50 border-b border-(--color-border) bg-black/92 backdrop-blur-md">
