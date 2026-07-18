@@ -8,13 +8,13 @@ interface LanguageToggleProps {
 }
 
 export default function LanguageToggle({ variant = "flag" }: LanguageToggleProps) {
-  const { locale, setLocale } = useLocale();
+  const { locale, setLocale, translate } = useLocale();
 
   if (variant === "text") {
     return (
       <button
         className="text-xs font-semibold tracking-widest px-2 py-1 rounded text-(--color-gold-light) border border-(--color-border)"
-        aria-label="Change language"
+        aria-label={translate("common.change_language")}
         onClick={() => setLocale(locale === "en" ? "vn" : "en")}
       >
         {locale === "en" ? "EN" : "VN"}
@@ -25,7 +25,7 @@ export default function LanguageToggle({ variant = "flag" }: LanguageToggleProps
   return (
     <button
       className="flex items-center gap-1.5 text-xs font-semibold tracking-widest px-2 py-1 rounded text-(--color-gold-light) border border-(--color-border)"
-      aria-label="Change language"
+      aria-label={translate("common.change_language")}
       onClick={() => setLocale(locale === "en" ? "vn" : "en")}
     >
       <Image

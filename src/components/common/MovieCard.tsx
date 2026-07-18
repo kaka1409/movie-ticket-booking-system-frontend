@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Star, Clock } from "lucide-react";
 import type { Movie } from "@/features/movies/types";
 
-const MovieCard: React.FC<{ movie: Movie }> = ({ movie }) => (
+const MovieCard: React.FC<{ movie: Movie; minLabel?: string }> = ({ movie, minLabel = "min" }) => (
   <Link href={`/movies/${movie.slug}`} className="block w-[130px]">
     <article className="cursor-pointer">
       <div
@@ -38,7 +38,7 @@ const MovieCard: React.FC<{ movie: Movie }> = ({ movie }) => (
                 "
               >
                 <Clock size={12} />
-                {movie.duration} min
+                {movie.duration} {minLabel}
               </span>
             )}
           </div>

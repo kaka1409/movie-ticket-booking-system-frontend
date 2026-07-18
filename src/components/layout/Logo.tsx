@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useLocale } from "@/contexts/LocaleContext";
 
 interface LogoProps {
   size?: "sm" | "lg";
@@ -14,6 +15,7 @@ export default function Logo({
   tagline = false,
   href = "/",
 }: LogoProps) {
+  const { translate } = useLocale();
   const dimensions = size === "sm" ? 20 : 32;
 
   return (
@@ -34,7 +36,7 @@ export default function Logo({
       </span>
       {tagline && (
         <span className="ml-1 text-[9px] font-semibold tracking-widest uppercase text-(--color-text-muted)">
-          Cinematic Excellence
+          {translate("common.cinematic_excellence")}
         </span>
       )}
     </Link>
