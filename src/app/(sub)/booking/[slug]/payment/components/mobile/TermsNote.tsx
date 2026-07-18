@@ -1,16 +1,18 @@
 "use client";
 
 import Link from "next/link";
+import { useLocale } from "@/contexts/LocaleContext";
 
 export default function TermsNote() {
+  const { translate } = useLocale();
   return (
     <p className="text-xs text-(--color-text-muted) text-center leading-relaxed px-4">
-      By clicking Confirm Payment, you agree to our{" "}
+      {translate("booking.payment.terms_prefix")}
       <Link
         href="/terms"
         className="text-(--color-gold) underline underline-offset-2"
       >
-        Terms &amp; Conditions
+        {translate("booking.payment.terms_link")}
       </Link>
       .
     </p>

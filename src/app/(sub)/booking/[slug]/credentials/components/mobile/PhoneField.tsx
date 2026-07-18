@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { Phone, ChevronDown, AlertCircle } from "lucide-react";
+import { useLocale } from "@/contexts/LocaleContext";
 
 const COUNTRY_CODES = [
   { code: "+84", label: "VN", flag: "vn" },
@@ -28,6 +29,7 @@ export default function PhoneField({
 }) {
   const [focused, setFocused] = useState(false);
   const selected = COUNTRY_CODES.find((c) => c.code === countryCode) ?? COUNTRY_CODES[0];
+  const { translate } = useLocale();
 
   return (
     <div>
@@ -40,7 +42,7 @@ export default function PhoneField({
           <select
             value={countryCode}
             onChange={(e) => onCountryChange(e.target.value)}
-            aria-label="Country code"
+            aria-label={translate("booking.credentials.country_code")}
             className="absolute inset-0 opacity-0 w-full text-black text-center cursor-pointer"
           >
             {COUNTRY_CODES.map((c) => (
@@ -77,7 +79,7 @@ export default function PhoneField({
             type="tel"
             inputMode="tel"
             autoComplete="tel"
-            placeholder="(555) 123-4567"
+            placeholder={translate("booking.credentials.phone_placeholder")}
             value={phone}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}

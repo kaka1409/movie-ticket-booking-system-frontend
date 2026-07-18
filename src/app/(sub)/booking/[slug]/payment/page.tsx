@@ -10,6 +10,7 @@ import PaymentOption from "./components/mobile/PaymentOption";
 import { PAYMENT_METHODS } from "@/features/booking/mock";
 import SecureBadge from "./components/mobile/SecureBadge";
 import TermsNote from "./components/mobile/TermsNote";
+import PaymentHeader from "./components/mobile/PaymentHeader";
 import BottomBar from "./components/mobile/BottomBar";
 
 // Desktop components
@@ -38,9 +39,7 @@ export default async function PaymentPage({
               <CountdownBanner />
               <OrderSummary movie={movie} />
               <section className="px-4 space-y-3">
-                <h2 className="font-bold text-lg text-(--color-text-primary)">
-                  Select Payment Method
-                </h2>
+                <PaymentHeader />
                 <div className="space-y-2.5">
                   {PAYMENT_METHODS.map((m) => (
                     <PaymentOption key={m.id} method={m} />
@@ -49,11 +48,6 @@ export default async function PaymentPage({
               </section>
               <SecureBadge />
               <TermsNote />
-              <div className="flex items-center justify-center gap-2 pb-2">
-                <span className="text-xs text-(--color-text-muted)">
-                  E-ticket will be sent to your email after payment.
-                </span>
-              </div>
             </main>
             <BottomBar />
           </div>

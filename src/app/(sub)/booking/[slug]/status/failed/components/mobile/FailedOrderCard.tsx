@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useBooking } from "@/features/booking/context";
 import { useStatus } from "@/features/booking/contexts/StatusContext";
+import { useLocale } from "@/contexts/LocaleContext";
 import DetailRow from "@/app/(sub)/booking/components/mobile/DetailRow";
 import {
   MonitorPlay,
@@ -33,6 +34,7 @@ export default function FailedOrderCard() {
     total,
   } = useBooking();
   const { transactionId, reason, movie, mounted } = useStatus();
+  const { translate } = useLocale();
 
   const errorCode = ERROR_CODES[reason ?? ""] ?? "ERR_UNKNOWN";
   const hasSnacks = combos.length > 0 || foods.length > 0;
@@ -76,7 +78,7 @@ export default function FailedOrderCard() {
         <div className="flex justify-between gap-4">
           <DetailRow
             icon={MonitorPlay}
-            label="Theater"
+            label={translate("booking.common.theater")}
             value={
               <>
                 {cinemaName}
@@ -86,7 +88,7 @@ export default function FailedOrderCard() {
           />
           <DetailRow
             icon={CalendarDays}
-            label="Date & Time"
+            label={translate("booking.common.date_time")}
             value={`${date} • ${time}`}
             valueClass="font-bold text-sm text-white text-right"
             labelClass="justify-end"
@@ -96,13 +98,13 @@ export default function FailedOrderCard() {
         <div className="space-y-2">
           <p className="flex items-center gap-1.5 text-[9px] font-black tracking-[0.16em] uppercase text-white/60">
             <Armchair size={10} />
-            Seats ({selectedSeats.length})
+            {translate("booking.common.seats")} ({selectedSeats.length})
           </p>
           <p className="text-lg font-extrabold text-white">
             {selectedSeats.map((s) => s.label).join(", ")}
           </p>
           <div className="flex justify-between text-sm">
-            <span className="text-white">{seatType} Ticket</span>
+            <span className="text-white">{seatType} {translate("booking.common.ticket")}</span>
             <span className="font-medium text-white">
               {selectedSeats.length}×{" "}
               {selectedSeats[0]?.price.toLocaleString("vi-VN")}₫
@@ -114,7 +116,7 @@ export default function FailedOrderCard() {
           <div className="space-y-2">
             <p className="flex items-center gap-1.5 text-[9px] font-black tracking-[0.16em] uppercase text-white/60">
               <Popcorn size={10} />
-              Snacks & Combos
+              {translate("booking.common.snacks_combos")}
             </p>
             <div className="space-y-1">
               {combos.map((c) => (
@@ -140,12 +142,12 @@ export default function FailedOrderCard() {
         <div className="flex justify-between items-end gap-4">
           <DetailRow
             icon={CreditCard}
-            label="Payment Method"
+            label={translate("booking.common.payment_method")}
             value={paymentMethod || "N/A"}
           />
           <div className="text-right">
             <p className="flex items-center justify-end gap-1.5 text-[9px] font-black tracking-[0.16em] uppercase text-white/60">
-              Total Price
+              {translate("booking.common.total_price")}
             </p>
             <p className="font-bold text-base text-white">
               {total.toLocaleString("vi-VN")}₫
@@ -159,7 +161,7 @@ export default function FailedOrderCard() {
             {errorCode}
           </span>
           <span className="text-[10px] text-white/60">
-            Your card was not charged.
+            {translate("booking.status.failed.card_not_charged")}
           </span>
         </div>
       </div>

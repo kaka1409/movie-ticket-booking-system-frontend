@@ -3,9 +3,11 @@
 import Image from "next/image";
 import { CalendarDays, MapPin, Armchair, Ticket, Popcorn } from "lucide-react";
 import { useBooking } from "@/features/booking/context";
+import { useLocale } from "@/contexts/LocaleContext";
 import type { Movie } from "@/features/movies/types";
 
 export default function OrderSummary({ movie }: { movie: Movie }) {
+  const { translate } = useLocale();
   const {
     cinemaName,
     room,
@@ -24,7 +26,7 @@ export default function OrderSummary({ movie }: { movie: Movie }) {
 
   return (
     <div className="px-4 space-y-3">
-      <h2 className="font-bold text-lg text-white">Order Summary</h2>
+      <h2 className="font-bold text-lg text-white">{translate("booking.common.order_summary")}</h2>
 
       <div className="rounded-2xl bg-(--color-surface) border border-(--color-border) overflow-hidden">
         {/* Movie info */}
@@ -67,7 +69,7 @@ export default function OrderSummary({ movie }: { movie: Movie }) {
           </p>
           <p className="flex items-center gap-2 text-sm text-white">
             <Armchair size={13} className="text-(--color-text-muted) flex-shrink-0" />
-            Seats: {seatLabels || "—"}
+            {translate("booking.common.seats")}: {seatLabels || "—"}
           </p>
         </div>
 
@@ -76,7 +78,7 @@ export default function OrderSummary({ movie }: { movie: Movie }) {
           <div className="flex items-center justify-between">
             <span className="flex items-center gap-2 text-sm text-white">
               <Ticket size={13} className="text-(--color-text-muted)" />
-              {ticketCount}× {seatType} Ticket
+              {ticketCount}× {seatType} {translate("booking.common.ticket")}
             </span>
             <span className="font-semibold text-sm text-white">
               {ticketPrice.toLocaleString("vi-VN")}₫
@@ -110,7 +112,7 @@ export default function OrderSummary({ movie }: { movie: Movie }) {
           <div className="h-px bg-(--color-border) my-1" />
 
           <div className="flex items-center justify-between">
-            <span className="font-bold text-sm text-white">Total</span>
+            <span className="font-bold text-sm text-white">{translate("booking.common.total")}</span>
             <span className="font-extrabold text-lg text-(--color-gold)">
               {total.toLocaleString("vi-VN")}₫
             </span>

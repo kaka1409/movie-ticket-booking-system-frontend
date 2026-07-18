@@ -2,9 +2,11 @@
 
 import { AlertCircle } from "lucide-react";
 import { useStatus } from "@/features/booking/contexts/StatusContext";
+import { useLocale } from "@/contexts/LocaleContext";
 
 export default function FailedIcon() {
   const { mounted } = useStatus();
+  const { translate } = useLocale();
 
   return (
     <section className="flex flex-col items-center text-center px-6 gap-4">
@@ -32,7 +34,7 @@ export default function FailedIcon() {
         }`}
       >
         <h1 className="font-extrabold text-3xl text-white leading-tight mb-2">
-          Payment Failed
+          {translate("booking.status.failed.title")}
         </h1>
         <FailReason />
       </div>
@@ -42,15 +44,16 @@ export default function FailedIcon() {
 
 function FailReason() {
   const { reason, mounted } = useStatus();
+  const { translate } = useLocale();
 
   const REASONS: Record<string, string> = {
-    payment_declined: "Your payment was declined by the bank.",
-    insufficient_funds: "Insufficient funds in your account.",
-    network_error: "A network error occurred. Please try again.",
-    expired_card: "Your card has expired. Please use a different card.",
+    payment_declined: translate("booking.status.failed.reason_payment_declined"),
+    insufficient_funds: translate("booking.status.failed.reason_insufficient_funds"),
+    network_error: translate("booking.status.failed.reason_network_error"),
+    expired_card: translate("booking.status.failed.reason_expired_card"),
   };
 
-  const message = REASONS[reason ?? ""] ?? "An unexpected error occurred.";
+  const message = REASONS[reason ?? ""] ?? translate("booking.status.failed.reason_unknown");
 
   return (
     <p className="text-sm text-white/60 leading-relaxed max-w-xs mx-auto">

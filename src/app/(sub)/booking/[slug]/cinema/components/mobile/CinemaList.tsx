@@ -2,24 +2,26 @@
 
 import { MapPin } from "lucide-react";
 import { useCinemaSelection } from "@/features/booking/contexts/CinemaSelectionContext";
+import { useLocale } from "@/contexts/LocaleContext";
 import CinemaCard from "./CinemaCard";
 
 export default function CinemaList() {
   const { filteredCinemas, selectedCinemaId, selectedTime, handleSelect, query, setQuery } =
     useCinemaSelection();
+  const { translate } = useLocale();
 
   if (filteredCinemas.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 gap-3">
         <MapPin size={36} className="text-(--color-border)" />
         <p className="text-sm text-center text-(--color-text-muted)">
-          No cinemas found for &ldquo;{query}&rdquo;
+          {translate("booking.cinema.no_results")} &ldquo;{query}&rdquo;
         </p>
         <button
           onClick={() => setQuery("")}
           className="text-sm font-bold underline underline-offset-2 text-(--color-gold)"
         >
-          Clear search
+          {translate("booking.cinema.clear_search")}
         </button>
       </div>
     );

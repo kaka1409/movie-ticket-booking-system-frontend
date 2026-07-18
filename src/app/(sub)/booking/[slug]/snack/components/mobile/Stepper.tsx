@@ -1,6 +1,7 @@
 "use client";
 
 import { Minus, Plus } from "lucide-react";
+import { useLocale } from "@/contexts/LocaleContext";
 
 export default function Stepper({
   value,
@@ -11,12 +12,13 @@ export default function Stepper({
   onDecrement: () => void;
   onIncrement: () => void;
 }) {
+  const { translate } = useLocale();
   return (
     <div className="flex items-center gap-3 bg-(--color-surface-2) rounded-xl px-1 py-1">
       <button
         onClick={onDecrement}
         disabled={value === 0}
-        aria-label="Decrease quantity"
+        aria-label={translate("booking.snack.decrease_qty")}
         className="w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-150 active:scale-90 disabled:opacity-30 disabled:cursor-not-allowed bg-(--color-border) text-(--color-text-secondary) hover:bg-(--color-gold)/20 hover:text-(--color-gold)"
       >
         <Minus size={14} />
@@ -28,7 +30,7 @@ export default function Stepper({
 
       <button
         onClick={onIncrement}
-        aria-label="Increase quantity"
+        aria-label={translate("booking.snack.increase_qty")}
         className="w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-150 active:scale-90 bg-(--color-border) text-(--color-text-secondary) hover:bg-(--color-gold)/20 hover:text-(--color-gold)"
       >
         <Plus size={14} />

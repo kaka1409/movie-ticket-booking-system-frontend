@@ -4,6 +4,7 @@ import Image from "next/image";
 import { QRCodeSVG } from "qrcode.react";
 import { useBooking } from "@/features/booking/context";
 import { useStatus } from "@/features/booking/contexts/StatusContext";
+import { useLocale } from "@/contexts/LocaleContext";
 import DetailRow from "@/app/(sub)/booking/components/mobile/DetailRow";
 import {
   MonitorPlay,
@@ -27,6 +28,7 @@ export default function TicketCard() {
     total,
   } = useBooking();
   const { transactionId, movie, mounted } = useStatus();
+  const { translate } = useLocale();
 
   const hasSnacks = combos.length > 0 || foods.length > 0;
 
@@ -69,7 +71,7 @@ export default function TicketCard() {
         <div className="flex justify-between gap-4">
           <DetailRow
             icon={MonitorPlay}
-            label="Theater"
+            label={translate("booking.common.theater")}
             value={
               <>
                 {cinemaName}
@@ -79,7 +81,7 @@ export default function TicketCard() {
           />
           <DetailRow
             icon={CalendarDays}
-            label="Date & Time"
+            label={translate("booking.common.date_time")}
             value={`${date} • ${time}`}
             valueClass="text-white font-bold text-sm text-right"
             labelClass="justify-end"
@@ -89,13 +91,13 @@ export default function TicketCard() {
         <div className="space-y-2">
           <p className="flex items-center gap-1.5 text-[9px] font-black tracking-[0.16em] uppercase text-white/60">
             <Armchair size={10} />
-            Seats ({selectedSeats.length})
+            {translate("booking.common.seats")} ({selectedSeats.length})
           </p>
           <p className="text-lg font-extrabold text-white">
             {selectedSeats.map((s) => s.label).join(", ")}
           </p>
           <div className="flex justify-between text-sm">
-            <span className="text-white">{seatType} Ticket</span>
+            <span className="text-white">{seatType} {translate("booking.common.ticket")}</span>
             <span className="font-medium text-white">
               {selectedSeats.length}×{" "}
               {selectedSeats[0]?.price.toLocaleString("vi-VN")}₫
@@ -107,7 +109,7 @@ export default function TicketCard() {
           <div className="space-y-2">
             <p className="flex items-center gap-1.5 text-[9px] font-black tracking-[0.16em] uppercase text-white/60">
               <Popcorn size={10} />
-              Snacks & Combos
+              {translate("booking.common.snacks_combos")}
             </p>
             <div className="space-y-1">
               {combos.map((c) => (
@@ -133,12 +135,12 @@ export default function TicketCard() {
         <div className="flex justify-between items-end gap-4">
           <DetailRow
             icon={CreditCard}
-            label="Payment Method"
+            label={translate("booking.common.payment_method")}
             value={paymentMethod || "N/A"}
           />
           <div className="text-right">
             <p className="flex items-center justify-end gap-1.5 text-[9px] font-black tracking-[0.16em] uppercase text-white/60">
-              Total Price
+              {translate("booking.common.total_price")}
             </p>
             <p className="font-bold text-base text-(--color-gold)">
               {total.toLocaleString("vi-VN")}₫
@@ -163,11 +165,11 @@ export default function TicketCard() {
             level="H"
           />
           <p className="text-[11px] font-bold tracking-[0.2em] uppercase text-gray-500">
-            Scan to Enter
+            {translate("booking.common.scan_enter")}
           </p>
         </div>
         <p className="text-xs text-white/60 tracking-wide">
-          Booking ID:{" "}
+          {translate("booking.status.success.booking_id")}
           <span className="font-bold text-white">#{transactionId}</span>
         </p>
       </div>

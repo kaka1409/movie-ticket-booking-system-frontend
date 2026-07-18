@@ -3,9 +3,11 @@
 import { useState, useEffect } from "react";
 import { Timer } from "lucide-react";
 import { useBooking } from "@/features/booking/context";
+import { useLocale } from "@/contexts/LocaleContext";
 
 export default function CountdownBanner() {
   const { countdownStarted, countdownStartTime, countdownSeconds } = useBooking();
+  const { translate } = useLocale();
 
   const [remaining, setRemaining] = useState(() => {
     if (!countdownStarted) return countdownSeconds;
@@ -34,7 +36,7 @@ export default function CountdownBanner() {
     <div className="mx-4 flex items-center justify-between px-4 py-3 rounded-xl bg-(--color-surface) border border-(--color-border)">
       <div className="flex items-center gap-2 text-sm font-medium text-(--color-text-secondary)">
         <Timer size={15} className="text-(--color-gold)" />
-        {expired ? "Time expired" : "Time remaining"}
+        {expired ? translate("booking.common.time_expired") : translate("booking.common.time_remaining")}
       </div>
       <span
         className={`font-extrabold text-lg tabular-nums tracking-tight ${

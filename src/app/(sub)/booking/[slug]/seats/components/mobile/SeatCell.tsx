@@ -1,6 +1,7 @@
 "use client";
 
 import { Seat } from "@/features/booking/types";
+import { useLocale } from "@/contexts/LocaleContext";
 
 export default function SeatCell({
   seat,
@@ -11,6 +12,7 @@ export default function SeatCell({
 }) {
   const occupied = seat.status === "occupied";
   const selected = seat.status === "selected";
+  const { translate } = useLocale();
 
   if (seat.kind === "sweetbox") {
     const pairLabel = seat.pairId?.split("-").slice(1).join("-") ?? "";
@@ -19,7 +21,7 @@ export default function SeatCell({
         disabled={occupied}
         onClick={() => !occupied && onToggle(seat)}
         aria-pressed={selected}
-        aria-label={`SweetBox ${pairLabel}`}
+        aria-label={`${translate("booking.seats.sweetbox")} ${pairLabel}`}
         className={`w-18.5 h-8 rounded-sm text-[11px] font-bold tracking-wide transition-all duration-150 active:scale-[0.95] ${
           occupied
             ? "bg-(--color-surface-2) border border-(--color-border) text-(--color-text-muted) line-through cursor-not-allowed"
@@ -49,7 +51,7 @@ export default function SeatCell({
       disabled={occupied}
       onClick={() => !occupied && onToggle(seat)}
       aria-pressed={selected}
-      aria-label={`Seat ${seat.col}`}
+      aria-label={`${translate("booking.seats.seat_label")} ${seat.col}`}
       className={`w-6.5 h-6.5 rounded-sm text-[11px] font-bold transition-all duration-150 active:scale-[0.92] ${cls}`}
     >
       {occupied ? "×" : seat.col}

@@ -8,6 +8,8 @@ import CountdownBanner from "@/app/(sub)/booking/components/mobile/CountdownBann
 // Local mobile
 import ComboCard from "./components/mobile/ComboCard";
 import CategorySection from "./components/mobile/CategorySection";
+import SnackHeader from "./components/mobile/SnackHeader";
+import SnackSectionHeading from "./components/mobile/SnackSectionHeading";
 import BottomBar from "./components/mobile/BottomBar";
 
 // Desktop
@@ -32,20 +34,11 @@ export default async function CombosPage() {
         <main className="space-y-5 pt-1 pb-10">
           <CountdownBanner />
 
-          <div className="px-4 pt-1">
-            <h2 className="font-extrabold text-2xl text-(--color-text-primary) mb-1">
-              Grab a Snack
-            </h2>
-            <p className="text-sm text-(--color-text-muted)">
-              Add combos or pick your favourites — totally optional.
-            </p>
-          </div>
+          <SnackHeader />
 
           {/* Quick Combos */}
           <div className="space-y-3">
-            <h3 className="px-4 text-xs font-bold tracking-widest uppercase text-(--color-gold-dark)">
-              Quick Combos
-            </h3>
+            <SnackSectionHeading sectionKey="booking.snack.quick_combos" />
             <div className="space-y-3">
               {combos.map((item) => (
                 <ComboCard key={item.id} item={item} />

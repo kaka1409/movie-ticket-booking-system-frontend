@@ -3,29 +3,31 @@
 import { useState, useEffect } from "react";
 import { User, Mail } from "lucide-react";
 import { useCredentials } from "@/features/booking/contexts/CredentialsContext";
+import { useLocale } from "@/contexts/LocaleContext";
 import FieldLabel from "./FieldLabel";
 import TextInput from "./TextInput";
 import PhoneField from "./PhoneField";
 
-function validateFields(name: string, email: string, phone: string) {
+function validateFields(name: string, email: string, phone: string, translate: (key: string) => string) {
   const errors: { name?: string; email?: string; phone?: string } = {};
-  if (!name.trim()) errors.name = "Full name is required.";
-  if (!email.trim()) errors.email = "Email address is required.";
-  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.email = "Enter a valid email address.";
-  if (!phone.trim()) errors.phone = "Phone number is required.";
-  else if (phone.replace(/\D/g, "").length < 7) errors.phone = "Enter a valid phone number.";
+  if (!name.trim()) errors.name = translate("booking.credentials.error_name_required");
+  if (!email.trim()) errors.email = translate("booking.credentials.error_email_required");
+  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.email = translate("booking.credentials.error_email_invalid");
+  if (!phone.trim()) errors.phone = translate("booking.credentials.error_phone_required");
+  else if (phone.replace(/\D/g, "").length < 7) errors.phone = translate("booking.credentials.error_phone_invalid");
   return errors;
 }
 
 export default function ContactForm() {
   const { setIsValid } = useCredentials();
+  const { translate } = useLocale();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [countryCode, setCountryCode] = useState("+84");
   const [touched, setTouched] = useState(false);
 
-  const errors = validateFields(name, email, phone);
+  const errors = validateFields(name, email, phone, translate);
   const isValid = Object.keys(errors).length === 0;
   const showErrors = touched && !isValid;
 
@@ -35,15 +37,15 @@ export default function ContactForm() {
 
   return (
     <section className="px-4 space-y-4">
-      <h2 className="font-bold text-xl text-(--color-text-primary)">Your Details</h2>
+      <h2 className="font-bold text-xl text-(--color-text-primary)">{translate("booking.credentials.your_details")}</h2>
 
       <div>
-        <FieldLabel>Full Name</FieldLabel>
+        <FieldLabel>{translate("booking.credentials.full_name")}</FieldLabel>
         <TextInput
           id="full-name"
           value={name}
           onChange={(v) => { setName(v); setTouched(true); }}
-          placeholder="John Doe"
+          placeholder={translate("booking.credentials.name_placeholder")}
           icon={User}
           autoComplete="name"
           error={showErrors ? errors.name : undefined}
@@ -51,13 +53,13 @@ export default function ContactForm() {
       </div>
 
       <div>
-        <FieldLabel>Email Address</FieldLabel>
+        <FieldLabel>{translate("booking.credentials.email")}</FieldLabel>
         <TextInput
           id="email"
           type="email"
           value={email}
           onChange={(v) => { setEmail(v); setTouched(true); }}
-          placeholder="john.doe@example.com"
+          placeholder={translate("booking.credentials.email_placeholder")}
           icon={Mail}
           autoComplete="email"
           inputMode="email"
@@ -66,7 +68,7 @@ export default function ContactForm() {
       </div>
 
       <div>
-        <FieldLabel>Phone Number</FieldLabel>
+        <FieldLabel>{translate("booking.credentials.phone")}</FieldLabel>
         <PhoneField
           countryCode={countryCode}
           onCountryChange={setCountryCode}
@@ -77,7 +79,7 @@ export default function ContactForm() {
       </div>
 
       <p className="text-[11px] text-(--color-text-muted) leading-relaxed">
-        Your e-ticket will be sent to the email address above. We&apos;ll only use your phone number to contact you about this booking.
+        {translate("booking.credentials.email_notice")}
       </p>
     </section>
   );

@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import type { SeatPrice, SeatRow } from "@/features/booking/types";
 import { useSeatSelection } from "@/features/booking/contexts/SeatSelectionContext";
+import { useLocale } from "@/contexts/LocaleContext";
 
 interface Selection {
   label: string;
@@ -12,7 +13,7 @@ interface Selection {
   price: number;
 }
 
-function collectSelections(rows: SeatRow[], seatPrices: SeatPrice): Selection[] {
+function collectSelections(rows: SeatRow[], seatPrices: SeatPrice, translate: (key: string) => string): Selection[] {
   return rows.flatMap((row) =>
     row.segments.flatMap((seg) =>
       seg
@@ -22,7 +23,7 @@ function collectSelections(rows: SeatRow[], seatPrices: SeatPrice): Selection[] 
             s.kind === "sweetbox"
               ? `${row.label}(${s.pairId?.split("-").slice(1).join("-")})`
               : `${row.label}${s.col}`,
-          type: s.kind === "available" ? "Standard" : s.kind === "vip" ? "VIP" : "SweetBox",
+          type: s.kind === "available" ? translate("booking.seats.standard") : s.kind === "vip" ? "VIP" : "SweetBox",
           price: seatPrices[s.kind as keyof SeatPrice],
         }))
     )
@@ -33,8 +34,9 @@ export default function BottomBar({ seatPrices }: { seatPrices: SeatPrice }) {
   const params = useParams();
   const slug = params.slug as string;
   const { rows } = useSeatSelection();
+  const { translate } = useLocale();
 
-  const items = collectSelections(rows, seatPrices);
+  const items = collectSelections(rows, seatPrices, translate);
   const total = items.reduce((sum, s) => sum + s.price, 0);
   const labels = items.map((s) => s.label).join(", ");
   const hasSeats = items.length > 0;
@@ -44,7 +46,7 @@ export default function BottomBar({ seatPrices }: { seatPrices: SeatPrice }) {
       <div className="flex items-end justify-between mb-3 min-h-[40px]">
         <div>
           <p className="text-[9px] font-bold tracking-widest uppercase text-(--color-text-muted) mb-0.5">
-            Selected Seats
+            {translate("booking.seats.selected_seats")}
           </p>
           <p
             className={`font-bold text-base ${
@@ -58,7 +60,7 @@ export default function BottomBar({ seatPrices }: { seatPrices: SeatPrice }) {
         </div>
         <div className="text-right">
           <p className="text-[9px] font-bold tracking-widest uppercase text-(--color-text-muted) mb-0.5">
-            Total Price
+            {translate("booking.common.total_price")}
           </p>
           <p
             className={`font-extrabold text-xl tabular-nums ${
@@ -86,7 +88,7 @@ export default function BottomBar({ seatPrices }: { seatPrices: SeatPrice }) {
             : "bg-(--color-surface) text-(--color-text-muted) cursor-not-allowed border border-(--color-border)"
         }`}
       >
-        Continue to Snacks
+        {translate("booking.seats.continue_snacks")}
         <ArrowRight size={17} />
       </Link>
     </div>

@@ -2,8 +2,10 @@
 
 import { Clock, Star } from "lucide-react";
 import { Movie } from "@/features/movies/types";
+import { useLocale } from "@/contexts/LocaleContext";
 
 export default function MovieSummary({ movie }: { movie: Movie }) {
+  const { translate } = useLocale();
   return (
     <div className="flex items-center gap-3 p-3 rounded-2xl bg-(--color-surface) border border-(--color-border)">
       {/* Mini poster */}
@@ -31,7 +33,7 @@ export default function MovieSummary({ movie }: { movie: Movie }) {
         </h2>
         <p className="flex items-center gap-1.5 text-xs mb-2 text-(--color-text-muted)">
           <Clock size={11} />
-          {movie.duration} min
+          {movie.duration} {translate("booking.min")}
           <span>•</span>
           {movie.genre}
         </p>

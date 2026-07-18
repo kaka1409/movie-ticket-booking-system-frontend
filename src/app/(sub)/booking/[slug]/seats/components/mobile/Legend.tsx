@@ -1,16 +1,19 @@
 "use client";
 
+import { useLocale } from "@/contexts/LocaleContext";
+
 export default function Legend() {
+  const { translate } = useLocale();
   return (
     <div className="px-4 flex flex-col items-center gap-x-5 gap-y-2">
       <div className="flex justify-between w-full">
-        <LegendItem color="bg-(--color-surface-2) border border-(--color-border)" label="Available" />
-        <LegendItem color="bg-(--color-gold)" label="Selected" />
-        <LegendItem color="bg-(--color-surface-2) border border-(--color-border)" label="Occupied" icon="×" />
+        <LegendItem color="bg-(--color-surface-2) border border-(--color-border)" label={translate("booking.seats.available")} />
+        <LegendItem color="bg-(--color-gold)" label={translate("booking.seats.selected")} />
+        <LegendItem color="bg-(--color-surface-2) border border-(--color-border)" label={translate("booking.seats.occupied")} icon="×" />
       </div>
       <div className="flex justify-center gap-20 w-full">
-        <LegendItem color="bg-amber-700" label="VIP" />
-        <LegendItem color="bg-pink-500" label="SweetBox" />
+        <LegendItem color="bg-amber-700" label={translate("booking.seats.vip")} />
+        <LegendItem color="bg-pink-500" label={translate("booking.seats.sweetbox")} />
       </div>
     </div>
   );

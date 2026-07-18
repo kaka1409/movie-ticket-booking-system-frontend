@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { useBooking } from "@/features/booking/context";
 import { usePayment } from "@/features/booking/contexts/PaymentContext";
+import { useLocale } from "@/contexts/LocaleContext";
 import { PAYMENT_METHODS } from "@/features/booking/mock";
 
 export default function BottomBar() {
@@ -13,6 +14,7 @@ export default function BottomBar() {
   const slug = params.slug as string;
   const { ticketCount, cinemaName, total, setPaymentMethod } = useBooking();
   const { selectedMethod } = usePayment();
+  const { translate } = useLocale();
   const [isLoading, setIsLoading] = useState(false);
 
   const canPay = !!selectedMethod;
@@ -54,11 +56,11 @@ export default function BottomBar() {
         {isLoading ? (
           <>
             <Loader2 size={17} className="animate-spin" />
-            Processing...
+            {translate("booking.payment.processing")}
           </>
         ) : (
           <>
-            Confirm Payment
+            {translate("booking.payment.confirm")}
             <ArrowRight size={17} />
           </>
         )}

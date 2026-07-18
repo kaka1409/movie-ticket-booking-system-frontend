@@ -2,10 +2,12 @@
 
 import { useRef, useState, useEffect } from "react";
 import { useSeatSelection } from "@/features/booking/contexts/SeatSelectionContext";
+import { useLocale } from "@/contexts/LocaleContext";
 import SeatCell from "./SeatCell";
 
 export default function SeatMap() {
   const { rows, handleToggle } = useSeatSelection();
+  const { translate } = useLocale();
   const contentRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
   const [contentHeight, setContentHeight] = useState(0);
@@ -33,7 +35,7 @@ export default function SeatMap() {
     <>
       <div className="flex flex-col items-center gap-1 mb-4">
         <span className="text-[10px] font-bold tracking-[0.2em] text-(--color-gold) uppercase">
-          Screen
+          {translate("booking.common.screen")}
         </span>
         <svg width="300" height="24" viewBox="0 0 260 24" fill="none">
           <path

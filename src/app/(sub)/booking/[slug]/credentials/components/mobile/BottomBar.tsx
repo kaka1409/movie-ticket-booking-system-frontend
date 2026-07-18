@@ -5,18 +5,20 @@ import { useParams } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { useBooking } from "@/features/booking/context";
 import { useCredentials } from "@/features/booking/contexts/CredentialsContext";
+import { useLocale } from "@/contexts/LocaleContext";
 
 export default function BottomBar() {
   const params = useParams();
   const slug = params.slug as string;
   const { total } = useBooking();
   const { isValid } = useCredentials();
+  const { translate } = useLocale();
 
   return (
     <div className="sticky bottom-0 z-50 bg-(--color-bg) border-t border-(--color-border) px-4 pb-6 pt-3">
       <div className="flex items-end justify-between mb-3">
         <p className="text-[9px] font-bold tracking-widest uppercase text-(--color-text-muted)">
-          TOTAL
+          {translate("booking.common.total")}
         </p>
         <p className="font-extrabold text-xl text-(--color-gold) tabular-nums">
           {total.toLocaleString("vi-VN")}₫
@@ -33,7 +35,7 @@ export default function BottomBar() {
             : "bg-(--color-surface) text-(--color-text-muted) border border-(--color-border) cursor-not-allowed"
         }`}
       >
-        Continue to Payment
+        {translate("booking.credentials.continue_payment")}
         <ArrowRight size={17} />
       </Link>
     </div>

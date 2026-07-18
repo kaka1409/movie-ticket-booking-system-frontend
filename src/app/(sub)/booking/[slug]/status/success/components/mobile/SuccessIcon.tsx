@@ -2,9 +2,11 @@
 
 import { Check } from "lucide-react";
 import { useStatus } from "@/features/booking/contexts/StatusContext";
+import { useLocale } from "@/contexts/LocaleContext";
 
 export default function SuccessIcon() {
   const { mounted } = useStatus();
+  const { translate } = useLocale();
 
   return (
     <section className="flex flex-col items-center text-center px-6 gap-4">
@@ -32,10 +34,10 @@ export default function SuccessIcon() {
         }`}
       >
         <h1 className="font-extrabold text-3xl text-white leading-tight mb-2">
-          Booking Successful
+          {translate("booking.status.success.title")}
         </h1>
         <p className="text-sm text-white/60 leading-relaxed max-w-xs mx-auto">
-          Your tickets have been successfully booked and sent to your email.
+          {translate("booking.status.success.message")}
         </p>
       </div>
     </section>

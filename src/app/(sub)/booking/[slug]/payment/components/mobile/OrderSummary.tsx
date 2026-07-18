@@ -2,9 +2,11 @@
 
 import Image from "next/image";
 import { useBooking } from "@/features/booking/context";
+import { useLocale } from "@/contexts/LocaleContext";
 import type { Movie } from "@/features/movies/types";
 
 export default function OrderSummary({ movie }: { movie: Movie }) {
+  const { translate } = useLocale();
   const {
     cinemaName,
     room,
@@ -26,7 +28,7 @@ export default function OrderSummary({ movie }: { movie: Movie }) {
     <div className="mx-4 rounded-2xl bg-(--color-surface) border border-(--color-border) overflow-hidden">
       <div className="px-4 pt-3 pb-2 border-b border-(--color-border)">
         <p className="text-[9px] font-black tracking-[0.18em] uppercase text-(--color-text-muted)">
-          Order Summary
+          {translate("booking.common.order_summary")}
         </p>
       </div>
 
@@ -76,7 +78,7 @@ export default function OrderSummary({ movie }: { movie: Movie }) {
         {/* Seats */}
         <div className="flex items-center justify-between">
           <span className="text-sm text-(--color-text-muted)">
-            Seats ({ticketCount})
+            {translate("booking.payment.seats_count").replace("{count}", String(ticketCount))}
           </span>
           <span className="font-bold text-sm text-(--color-gold)">
             {seatLabels || "—"}
@@ -112,7 +114,7 @@ export default function OrderSummary({ movie }: { movie: Movie }) {
         {/* Total */}
         <div className="flex items-center justify-between">
           <span className="font-bold text-base text-(--color-text-primary)">
-            Total
+            {translate("booking.common.total")}
           </span>
           <span className="font-extrabold text-xl text-(--color-gold) tabular-nums">
             {total.toLocaleString("vi-VN")}₫
