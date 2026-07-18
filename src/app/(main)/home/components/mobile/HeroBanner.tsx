@@ -5,10 +5,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { Star } from "lucide-react";
 import type { FeaturedMovie } from "@/features/movies/types";
+import { useLocale } from "@/contexts/LocaleContext";
 
 const SWIPE_THRESHOLD = 50;
 
 export default function HeroBanner({ movies }: { movies: FeaturedMovie[] }) {
+  const { translate } = useLocale();
   const [index, setIndex] = useState(0);
   const [fading, setFading] = useState(false);
   const touchStart = useRef<{ x: number; y: number } | null>(null);
@@ -50,7 +52,7 @@ export default function HeroBanner({ movies }: { movies: FeaturedMovie[] }) {
   return (
     <section
       className="relative h-55 w-full overflow-hidden"
-      aria-label="Featured films"
+      aria-label={translate("home.featured_films")}
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
     >

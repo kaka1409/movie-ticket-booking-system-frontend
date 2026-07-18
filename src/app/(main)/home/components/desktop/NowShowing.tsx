@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Star, Clock, ChevronRight } from "lucide-react";
+import { useLocale } from "@/contexts/LocaleContext";
 
 const NOW_SHOWING = [
   {
@@ -23,23 +24,25 @@ const NOW_SHOWING = [
 ];
 
 export default function NowShowing() {
+  const { translate } = useLocale();
+
   return (
     <section className="mx-auto max-w-7xl px-8 pt-12">
       <div className="mb-6 flex items-end justify-between">
         <div>
           <h2 className="flex items-center gap-2.5 text-[26px] font-black tracking-tight text-white">
             <span className="inline-block h-[26px] w-1 rounded-sm bg-(--color-gold)" />
-            NOW SHOWING
+            {translate("home.desktop.now_showing")}
           </h2>
           <p className="mt-1 text-xs text-(--color-text-muted)">
-            Handpicked blockbusters playing in theatres near you
+            {translate("home.desktop.now_showing_desc")}
           </p>
         </div>
         <Link
           href="/movies?status=now_showing"
           className="flex items-center gap-1 text-xs font-bold tracking-wide text-(--color-gold)"
         >
-          Explore All <ChevronRight size={16} />
+          {translate("home.desktop.explore_all")} <ChevronRight size={16} />
         </Link>
       </div>
 
@@ -85,7 +88,7 @@ export default function NowShowing() {
                   py-2 text-xs text-black font-bold tracking-wider transition-colors
                 "
               >
-                Book Now
+                {translate("home.desktop.book_now")}
               </button>
             </div>
           </article>

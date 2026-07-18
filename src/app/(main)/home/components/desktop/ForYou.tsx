@@ -1,5 +1,7 @@
 "use client";
 
+import { useLocale } from "@/contexts/LocaleContext";
+
 const FOR_YOU = [
   { id: 1, title: "Gravity Wells",     reason: "Because you watched Interstellar",  gradient: "linear-gradient(160deg,#1a1000 0%,#3d2800 50%,#0d0800 100%)" },
   { id: 2, title: "City of Shadows",   reason: "Similar to The Batman",             gradient: "linear-gradient(160deg,#100808 0%,#2a0a0a 50%,#0a0404 100%)" },
@@ -9,6 +11,8 @@ const FOR_YOU = [
 ];
 
 export default function ForYou() {
+  const { translate } = useLocale();
+
   return (
     <section
       className="mt-12 py-14"
@@ -18,7 +22,7 @@ export default function ForYou() {
     >
       <div className="mx-auto max-w-7xl px-8">
         <div className="mb-8 text-center">
-          <h2 className="mb-1.5 text-[28px] font-black tracking-tight text-white">FOR YOU, ALEX</h2>
+          <h2 className="mb-1.5 text-[28px] font-black tracking-tight text-white">{translate("home.desktop.for_you")}, ALEX</h2>
           <p className="text-[13px] text-(--color-text-muted)">
             Based on your love for Space Adventures &amp; Thrillers
           </p>

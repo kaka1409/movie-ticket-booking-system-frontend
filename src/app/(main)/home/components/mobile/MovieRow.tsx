@@ -30,14 +30,14 @@ export default function MovieRow({ titleKey, movies, status }: MovieRowProps) {
           href={`/movies?status=${status}`}
           className="text-xs font-semibold tracking-wide text-(--color-gold)"
         >
-          {translate("home.movie_row.see_all")}
+          {translate("home.see_all")}
         </Link>
       </div>
 
       <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-(--space-sm)" role="list">
         {movies.map((movie) => (
           <div key={movie.id} role="listitem">
-            <MovieCard movie={movie} />
+            <MovieCard movie={movie} minLabel={translate("common.min")} />
           </div>
         ))}
       </div>

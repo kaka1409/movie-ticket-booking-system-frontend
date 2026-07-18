@@ -12,7 +12,7 @@ export default function SearchBar() {
       <Search size={16} className="shrink-0 text-(--color-gold-light)" />
       <input
         className="w-full bg-transparent text-sm text-(--color-gold-light) outline-none placeholder:text-(--color-text-muted)"
-        placeholder={translate("header.search")}
+        placeholder={translate("layout.header.search")}
         value={query}
         onChange={(event) => setQuery(event.target.value)}
       />

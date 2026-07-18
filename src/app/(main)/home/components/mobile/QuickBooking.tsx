@@ -53,7 +53,7 @@ export default function QuickBooking({
         aria-expanded={isExpanded}
       >
         <h2 id="qb-heading" className="text-lg font-bold text-(--color-gold)">
-          {translate("quick_booking.title")}
+          {translate("home.quick_booking.title")}
         </h2>
         <ChevronDown
           aria-hidden
@@ -73,7 +73,7 @@ export default function QuickBooking({
                 className="mb-(--space-sm) block text-xs font-semibold text-(--color-text-secondary)"
                 htmlFor="qb-movie"
               >
-                {translate("quick_booking.select_movie")}
+                {translate("home.quick_booking.select_movie")}
               </label>
               <select
                 id="qb-movie"
@@ -92,7 +92,7 @@ export default function QuickBooking({
             {/* Date */}
             <div>
               <span className="mb-(--space-xs) block text-xs font-semibold text-(--color-text-secondary)">
-                {translate("quick_booking.date")}
+                {translate("home.quick_booking.date")}
               </span>
               <div className="flex gap-(--space-sm)">
                 {firstThreeDates.map((dateOption) => (
@@ -118,7 +118,7 @@ export default function QuickBooking({
                 className="mb-(--space-xs) block text-xs font-semibold text-(--color-text-secondary)"
                 htmlFor="qb-cinema"
               >
-                {translate("quick_booking.cinema")}
+                {translate("home.quick_booking.cinema")}
               </label>
               <select
                 id="qb-cinema"
@@ -141,7 +141,7 @@ export default function QuickBooking({
             {/* Showtime */}
             <div>
               <span className="mb-(--space-xs) block text-xs font-semibold text-(--color-text-secondary)">
-                {translate("quick_booking.showtime")}
+                {translate("home.quick_booking.showtime")}
               </span>
               <div className="flex flex-wrap gap-(--space-sm)">
                 {availableShowtimes.map((showtime) => (
@@ -170,14 +170,14 @@ export default function QuickBooking({
                 href={`/booking/${effectiveMovieSlug}/cinema?cinema=${selectedCinemaId}&time=${selectedTime}&date=${selectedDate}`}
                 className="block w-full rounded-(--radius-sm) bg-(--color-gold) py-3 text-center text-sm font-bold tracking-widest text-black transition-opacity hover:opacity-90"
               >
-                {translate("quick_booking.book")}
+                {translate("home.quick_booking.book")}
               </Link>
             ) : (
               <button
                 disabled
                 className="w-full rounded-(--radius-sm) bg-(--color-surface) py-3 text-center text-sm font-bold tracking-widest text-(--color-text-muted) border border-(--color-border) cursor-not-allowed"
               >
-                {translate("quick_booking.book")}
+                {translate("home.quick_booking.book")}
               </button>
             )}
           </div>

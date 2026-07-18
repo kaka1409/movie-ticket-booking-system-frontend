@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Bell, ChevronLeft, ChevronRight } from "lucide-react";
+import { useLocale } from "@/contexts/LocaleContext";
 
 const COMING_SOON = [
   {
@@ -19,12 +20,14 @@ const COMING_SOON = [
 ];
 
 export default function ComingSoon() {
+  const { translate } = useLocale();
+
   return (
     <section className="mx-auto max-w-7xl px-8 pt-12">
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <h2 className="text-[26px] font-black tracking-tight text-white">
-            COMING SOON
+            {translate("home.desktop.coming_soon")}
           </h2>
           <span className="rounded-(--radius-pill) border border-(--color-border) px-2.5 py-0.5 text-[10px] font-semibold tracking-wider text-(--color-text-muted)">
             WINTER SEASON 2026
@@ -78,7 +81,7 @@ export default function ComingSoon() {
           href="/movies?status=coming_soon"
           className="rounded-(--radius-pill) border border-(--color-border) bg-transparent px-7 py-2.5 text-[13px] font-semibold text-white"
         >
-          Pre-book Tickets for Future Releases
+          {translate("home.desktop.coming_soon_desc")}
         </Link>
       </div>
     </section>

@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { ChevronDown, Clapperboard, Landmark, Calendar, Clock, Ticket } from "lucide-react";
+import { useLocale } from "@/contexts/LocaleContext";
+
 const MOVIES = [
   "Dune: Part Two",
   "Avengers: Endgame",
@@ -60,6 +62,7 @@ const Divider = () => (
 );
 
 export default function QuickBookingBar() {
+  const { translate } = useLocale();
   const [movie, setMovie] = useState(MOVIES[0]);
   const [cinema, setCinema] = useState(CINEMAS[0]);
   const [date, setDate] = useState(DATES[0].value);
@@ -73,18 +76,18 @@ export default function QuickBookingBar() {
         style={{ boxShadow: "var(--shadow-card)" }}
       >
         <div className="mb-4 flex items-start gap-5">
-          <SelectCol icon={<Clapperboard size={14} />} label="Select Movie" value={movie} onChange={setMovie} options={MOVIES} />
+          <SelectCol icon={<Clapperboard size={14} />} label={translate("home.quick_booking.select_movie")} value={movie} onChange={setMovie} options={MOVIES} />
           <Divider />
-          <SelectCol icon={<Landmark size={14} />} label="Select Cinema" value={cinema} onChange={setCinema} options={CINEMAS} />
+          <SelectCol icon={<Landmark size={14} />} label={translate("home.quick_booking.cinema")} value={cinema} onChange={setCinema} options={CINEMAS} />
           <Divider />
-          <SelectCol icon={<Calendar size={14} />} label="Select Date" value={date} onChange={setDate} options={DATES.map((d) => d.label)} />
+          <SelectCol icon={<Calendar size={14} />} label={translate("home.quick_booking.date")} value={date} onChange={setDate} options={DATES.map((d) => d.label)} />
           <Divider />
-          <SelectCol icon={<Clock size={14} />} label="Showtime" value={showtime} onChange={setShowtime} options={SHOWTIMES} hint="Next available: 19:00 · 20:15 · 21:30" />
+          <SelectCol icon={<Clock size={14} />} label={translate("home.quick_booking.showtime")} value={showtime} onChange={setShowtime} options={SHOWTIMES} hint="Next available: 19:00 · 20:15 · 21:30" />
           <Divider />
 
           <div className="flex shrink-0 flex-col gap-1">
             <span className="text-[9px] font-bold tracking-widest uppercase text-(--color-gold)">
-              <Ticket size={14} /> Tickets
+              <Ticket size={14} /> {translate("nav.tickets")}
             </span>
             <div className="flex items-center gap-2.5 border-b border-(--color-border) pb-2">
               <button
@@ -102,17 +105,17 @@ export default function QuickBookingBar() {
 
         <div className="flex items-center justify-between">
           <div className="flex items-baseline gap-1.5">
-            <span className="text-xs text-(--color-text-muted)">Estimated Total:</span>
+            <span className="text-xs text-(--color-text-muted)">{translate("home.desktop.estimated_total")}</span>
             <span className="text-[22px] font-extrabold tracking-tight text-(--color-gold)">
               ${(tickets * 17.25).toFixed(2)}
             </span>
           </div>
           <div className="flex items-center gap-3">
             <button className="cursor-pointer border-none bg-transparent text-xs font-semibold text-(--color-text-secondary) underline underline-offset-3">
-              View Full Schedule
+              {translate("home.desktop.view_schedule")}
             </button>
             <button className="cursor-pointer whitespace-nowrap rounded-(--radius-md) border-none bg-(--color-gold) px-6 py-2.5 text-[13px] font-extrabold tracking-wide text-black">
-              Quick Book Now
+              {translate("home.desktop.quick_book_now")}
             </button>
           </div>
         </div>

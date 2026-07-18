@@ -4,11 +4,13 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Star, Play, ChevronLeft, ChevronRight } from "lucide-react";
+import { useLocale } from "@/contexts/LocaleContext";
 import type { FeaturedMovie } from "@/features/movies/types";
 
 export default function HeroSection({ movies }: { movies: FeaturedMovie[] }) {
   const [index, setIndex] = useState(0);
   const [fading, setFading] = useState(false);
+  const { translate } = useLocale();
 
   if (movies.length === 0) return null;
 
@@ -49,7 +51,7 @@ export default function HeroSection({ movies }: { movies: FeaturedMovie[] }) {
               bg-black/50 p-2 text-white backdrop-blur-sm transition-all duration-300
               opacity-0 group-hover:opacity-100 hover:bg-black/70 hover:scale-110
             "
-            aria-label="Previous movie"
+            aria-label={translate("home.desktop.prev_slide")}
           >
             <ChevronLeft size={22} />
           </button>
@@ -60,7 +62,7 @@ export default function HeroSection({ movies }: { movies: FeaturedMovie[] }) {
               bg-black/50 p-2 text-white backdrop-blur-sm transition-all duration-300
               opacity-0 group-hover:opacity-100 hover:bg-black/70 hover:scale-110
             "
-            aria-label="Next movie"
+            aria-label={translate("home.desktop.next_slide")}
           >
             <ChevronRight size={22} />
           </button>
@@ -93,10 +95,10 @@ export default function HeroSection({ movies }: { movies: FeaturedMovie[] }) {
               href={`/movies/${movie.slug}`}
               className="cursor-pointer rounded-(--radius-md) border-none bg-(--color-gold) px-7 py-3 text-[13px] font-extrabold tracking-wide text-black no-underline"
             >
-              Book Now
+              {translate("home.desktop.book_now")}
             </Link>
             <button className="flex cursor-pointer items-center gap-1.5 rounded-(--radius-md) border border-white/15 bg-white/8 px-6 py-3 text-[13px] font-semibold text-white backdrop-blur-sm">
-              <Play size={14} fill="currentColor" /> Watch Trailer
+              <Play size={14} fill="currentColor" /> {translate("home.desktop.watch_trailer")}
             </button>
           </div>
         </div>
