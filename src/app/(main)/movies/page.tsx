@@ -10,6 +10,7 @@ import Tabs from "./components/mobile/Tabs";
 import SearchBar from "./components/mobile/SearchBar";
 import FilterPanel from "./components/mobile/FilterPanel";
 import MovieGrid from "./components/mobile/MovieGrid";
+import MoviesSkeleton from "./components/mobile/MoviesSkeleton";
 
 // Desktop
 import DesktopMovieGrid from "./components/desktop/MovieGrid";
@@ -21,7 +22,7 @@ export default async function MoviesPage() {
   ]);
 
   return (
-    <Suspense fallback={null}>
+    <>
       <MoviesProvider>
         {/* Mobile */}
         <div className="block md:hidden">
@@ -38,6 +39,6 @@ export default async function MoviesPage() {
           <DesktopMovieGrid />
         </div>
       </MoviesProvider>
-    </Suspense>
+    </>
   );
 }

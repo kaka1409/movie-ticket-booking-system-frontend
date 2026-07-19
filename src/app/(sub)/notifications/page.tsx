@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { getNotifications } from "@/features/notifications/api";
 import MobileNotificationList from "./components/mobile/NotificationList";
 import DesktopNotificationList from "./components/desktop/NotificationList";

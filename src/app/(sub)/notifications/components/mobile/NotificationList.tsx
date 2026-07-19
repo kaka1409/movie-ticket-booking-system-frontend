@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Bell } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import type { Notification } from "@/features/notifications/types";
-import NotificationCard from "../shared/NotificationCard";
+import NotificationCard from "./NotificationCard";
 
 export default function NotificationList({
   notifications: initialNotifications,

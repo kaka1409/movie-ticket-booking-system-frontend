@@ -6,6 +6,7 @@ import { getUpcomingTickets, getPastTickets } from "@/features/tickets/api";
 import Tabs from "@/app/(main)/tickets/components/mobile/Tabs";
 import UpcomingTicketList from "@/app/(main)/tickets/components/mobile/UpcomingTicketList";
 import PastTicketList from "@/app/(main)/tickets/components/mobile/PastTicketList";
+import TicketsSkeleton from "@/app/(main)/tickets/components/mobile/TicketsSkeleton";
 
 // Desktop components
 import TicketsContent from "@/app/(main)/tickets/components/desktop/TicketsContent";
@@ -17,7 +18,7 @@ export default async function TicketsPage() {
   ]);
 
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<TicketsSkeleton />}>
       <TicketsProvider>
         {/* Mobile */}
         <div className="block md:hidden">
