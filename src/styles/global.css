@@ -87,5 +87,22 @@ body {
   overflow: hidden;
 }
 
+/* ─── Film Strip Scroll — 404 page ──────────────────────────── */
+@keyframes filmStripScroll {
+  0%   { transform: translateY(-100%); opacity: 0; }
+  60%  { transform: translateY(8%); opacity: 1; }
+  80%  { transform: translateY(-3%); }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+/* ─── Glitch Decode — error page ────────────────────────────── */
+@keyframes glitchDecode {
+  0%, 100% { text-shadow: none; transform: translate(0); }
+  20%      { text-shadow: -2px 0 #ff0040, 2px 0 #00d4ff; transform: translate(-1px, 1px); }
+  40%      { text-shadow: 2px 0 #ff0040, -2px 0 #00d4ff; transform: translate(1px, -1px); }
+  60%      { text-shadow: -1px 0 #ff0040, 1px 0 #00d4ff; transform: translate(-1px, 0); }
+  80%      { text-shadow: 1px 0 #ff0040, -1px 0 #00d4ff; transform: translate(0, 1px); }
+}
+
 
 

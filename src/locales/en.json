@@ -144,7 +144,7 @@
       "payment_summary": "Payment Summary",
       "total_price": "Total Price",
       "payment_method": "Payment Method",
-      "scan_enter": "Scan to Enter",
+      "scan_enter": "Scan to Print Tickets",
       "download_ticket": "Download Ticket",
       "cancel_refund": "Cancel & Refund",
       "standard": "Standard",
@@ -346,6 +346,16 @@
       "has_account": "Already have an account?",
       "login_link": "Sign In"
     }
+  },
+  "not_found": {
+    "back_home": "Back to Home",
+    "explore_movies": "Explore Movies"
+  },
+  "error": {
+    "title": "Error",
+    "description": "Something went wrong. Please try again.",
+    "try_again": "Try Again",
+    "back_home": "Back to Home"
   },
   "common": {
     "min": "min",

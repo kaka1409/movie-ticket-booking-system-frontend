@@ -33,7 +33,7 @@
   "nav": {
     "home": "Trang Chủ",
     "movies": "Xem Phim",
-    "tickets": "Vé Của Tôi",
+    "tickets": "Xem vé",
     "profile": "Cá Nhân"
   },
   "home": {
@@ -144,7 +144,7 @@
       "payment_summary": "Tóm Tắt Thanh Toán",
       "total_price": "Tổng Tiền",
       "payment_method": "Phương Thức Thanh Toán",
-      "scan_enter": "Quét Để Vào",
+      "scan_enter": "Quét Để In Vé",
       "download_ticket": "Tải Vé",
       "cancel_refund": "Hủy & Hoàn Tiền",
       "standard": "Standard",
@@ -346,6 +346,16 @@
       "has_account": "Đã có tài khoản?",
       "login_link": "Đăng Nhập"
     }
+  },
+  "not_found": {
+    "back_home": "Về Trang Chủ",
+    "explore_movies": "Khám Phá Phim"
+  },
+  "error": {
+    "title": "Lỗi",
+    "description": "Đã xảy ra lỗi. Vui lòng thử lại.",
+    "try_again": "Thử Lại",
+    "back_home": "Về Trang Chủ"
   },
   "common": {
     "min": "phút",
