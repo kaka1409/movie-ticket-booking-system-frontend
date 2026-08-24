@@ -8,3 +8,16 @@ export function slugify(text: string): string {
     .replace(/-+/g, "-")
     .replace(/^-|-$/g, "");
 }
+
+export function formatVND(amount: number): string {
+  return `${amount.toLocaleString("vi-VN")}₫`;
+}
+
+export function formatDate(dateStr: string): string {
+  const d = new Date(dateStr);
+  return d.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
