@@ -19,8 +19,6 @@ export const DATES: DateOption[] = Array.from({ length: 10 }, (_, i) => {
   };
 });
 
-
-
 export const CINEMAS: Cinema[] = [
   {
     id: 1,
@@ -30,10 +28,10 @@ export const CINEMAS: Cinema[] = [
     badge: "IMAX",
     badgeColor: "bg-(--color-gold) text-(--color-bg)",
     showtimes: [
-      { time: "11:30", available: true },
-      { time: "14:45", available: true },
-      { time: "18:15", available: true },
-      { time: "21:30", available: true },
+      { time: "11:30", room: "Screen 1", available: true },
+      { time: "14:45", room: "Screen 3", available: true },
+      { time: "18:15", room: "Screen 1", available: true },
+      { time: "21:30", room: "Screen 5", available: true },
     ],
   },
   {
@@ -44,10 +42,10 @@ export const CINEMAS: Cinema[] = [
     badge: "STANDARD",
     badgeColor: "bg-(--color-border) text-(--color-text-secondary)",
     showtimes: [
-      { time: "12:15", available: true },
-      { time: "15:30", available: true },
-      { time: "19:00", available: false },
-      { time: "22:15", available: true },
+      { time: "12:15", room: "Screen 2", available: true },
+      { time: "15:30", room: "Screen 4", available: true },
+      { time: "19:00", room: "Screen 2", available: false },
+      { time: "22:15", room: "Screen 4", available: true },
     ],
   },
   {
@@ -58,11 +56,11 @@ export const CINEMAS: Cinema[] = [
     badge: "IMAX",
     badgeColor: "bg-(--color-gold) text-(--color-bg)",
     showtimes: [
-      { time: "10:45", available: true },
-      { time: "13:15", available: true },
-      { time: "16:00", available: true },
-      { time: "19:30", available: false },
-      { time: "22:00", available: true },
+      { time: "10:45", room: "Screen 1", available: true },
+      { time: "13:15", room: "Screen 3", available: true },
+      { time: "16:00", room: "Screen 5", available: true },
+      { time: "19:30", room: "Screen 1", available: false },
+      { time: "22:00", room: "Screen 3", available: true },
     ],
   },
   {
@@ -73,10 +71,10 @@ export const CINEMAS: Cinema[] = [
     badge: "DOLBY ATMOS",
     badgeColor: "bg-(--color-gold) text-(--color-bg)",
     showtimes: [
-      { time: "11:00", available: true },
-      { time: "14:00", available: true },
-      { time: "17:30", available: true },
-      { time: "21:00", available: true },
+      { time: "11:00", room: "Screen 2", available: true },
+      { time: "14:00", room: "Screen 4", available: true },
+      { time: "17:30", room: "Screen 2", available: true },
+      { time: "21:00", room: "Screen 6", available: true },
     ],
   },
   {
@@ -87,10 +85,10 @@ export const CINEMAS: Cinema[] = [
     badge: "STANDARD",
     badgeColor: "bg-(--color-border) text-(--color-text-secondary)",
     showtimes: [
-      { time: "12:00", available: true },
-      { time: "15:15", available: true },
-      { time: "18:45", available: true },
-      { time: "21:45", available: false },
+      { time: "12:00", room: "Screen 1", available: true },
+      { time: "15:15", room: "Screen 3", available: true },
+      { time: "18:45", room: "Screen 1", available: true },
+      { time: "21:45", room: "Screen 3", available: false },
     ],
   },
   {
@@ -101,11 +99,11 @@ export const CINEMAS: Cinema[] = [
     badge: "PREMIUM",
     badgeColor: "bg-(--color-gold) text-(--color-bg)",
     showtimes: [
-      { time: "10:30", available: true },
-      { time: "13:45", available: true },
-      { time: "16:30", available: true },
-      { time: "19:15", available: true },
-      { time: "22:30", available: false },
+      { time: "10:30", room: "Screen 1", available: true },
+      { time: "13:45", room: "Screen 2", available: true },
+      { time: "16:30", room: "Screen 1", available: true },
+      { time: "19:15", room: "Screen 3", available: true },
+      { time: "22:30", room: "Screen 2", available: false },
     ],
   },
 ];

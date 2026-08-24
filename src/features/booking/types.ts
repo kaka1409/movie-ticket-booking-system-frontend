@@ -32,6 +32,7 @@ export interface SelectedFood {
 
 export interface Showtime {
   time: string;
+  room: string;
   available: boolean;
 }
 

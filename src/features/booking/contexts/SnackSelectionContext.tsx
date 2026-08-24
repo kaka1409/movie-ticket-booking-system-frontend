@@ -29,8 +29,13 @@ export function SnackSelectionProvider({
   foodCategories: readonly { id: string; label: string }[];
   children: ReactNode;
 }) {
-  const { combos: savedCombos, foods: savedFoods, setSnacks } = useBooking();
+  const {
+    combos: savedCombos,
+    foods: savedFoods,
+    setSnacks,
+  } = useBooking();
 
+  // Initialize comboQty with saved combos and default values
   const [comboQty, setComboQty] = useState<Record<string, number>>(() => {
     const base = Object.fromEntries(combos.map((combo) => [combo.id, 0]));
     savedCombos.forEach((savedCombo) => {
@@ -39,6 +44,7 @@ export function SnackSelectionProvider({
     return base;
   });
 
+  // Initialize foodQty with saved foods and default values
   const [foodQty, setFoodQty] = useState<Record<string, number>>(() => {
     const base = Object.fromEntries(foodItems.map((food) => [food.id, 0]));
     savedFoods.forEach((savedFood) => {
@@ -47,40 +53,44 @@ export function SnackSelectionProvider({
     return base;
   });
 
+  // Update comboQty state when a combo is changed
   const changeCombo = (id: string, delta: number) =>
     setComboQty((previous) => ({
       ...previous,
       [id]: Math.max(0, Math.min(10, (previous[id] ?? 0) + delta)),
     }));
 
+  // Update foodQty state when a food is changed
   const changeFood = (id: string, delta: number) =>
     setFoodQty((previous) => ({
       ...previous,
       [id]: Math.max(0, Math.min(10, (previous[id] ?? 0) + delta)),
     }));
 
+  // Update snacks state when comboQty or foodQty changes
   useEffect(() => {
     const totalItems =
-      Object.values(comboQty).reduce((s, q) => s + q, 0) +
-      Object.values(foodQty).reduce((s, q) => s + q, 0);
+      Object.values(comboQty).reduce((sum, quantity) => sum + quantity, 0) +
+      Object.values(foodQty).reduce((sum, quantity) => sum + quantity, 0);
     if (totalItems === 0) return;
 
     const selectedCombos: SelectedCombo[] = combos
-      .filter((c) => (comboQty[c.id] ?? 0) > 0)
-      .map((c) => ({
-        id: c.id,
-        name: c.name,
-        qty: comboQty[c.id] ?? 0,
-        price: c.price,
+      .filter((combo) => (comboQty[combo.id] ?? 0) > 0)
+      .map((combo) => ({
+        id: combo.id,
+        name: combo.name,
+        qty: comboQty[combo.id] ?? 0,
+        price: combo.price,
       }));
 
+    // Map selected combos and foods to their respective types
     const selectedFoods: SelectedFood[] = foodItems
-      .filter((f) => (foodQty[f.id] ?? 0) > 0)
-      .map((f) => ({
-        id: f.id,
-        name: f.name,
-        qty: foodQty[f.id] ?? 0,
-        price: f.price,
+      .filter((food) => (foodQty[food.id] ?? 0) > 0)
+      .map((food) => ({
+        id: food.id,
+        name: food.name,
+        qty: foodQty[food.id] ?? 0,
+        price: food.price,
       }));
 
     setSnacks(selectedCombos, selectedFoods);

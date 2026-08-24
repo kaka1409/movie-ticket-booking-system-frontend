@@ -20,11 +20,16 @@ interface BookingState {
   time: string;
   date: string;
   room: string;
+  location: string;
   selectedSeats: SelectedSeat[];
   seatType: string;
   combos: SelectedCombo[];
   foods: SelectedFood[];
   paymentMethod: string;
+  contactName: string;
+  contactEmail: string;
+  contactPhone: string;
+  contactCountryCode: string;
   ticketCount: number;
   ticketPrice: number;
   snackTotal: number;
@@ -40,11 +45,18 @@ interface BookingContextType extends BookingState {
     cinemaName: string,
     time: string,
     date: string,
-    room: string
+    room: string,
+    location: string
   ) => void;
   setSeats: (seats: SelectedSeat[]) => void;
   setSnacks: (combos: SelectedCombo[], foods: SelectedFood[]) => void;
   setPaymentMethod: (method: string) => void;
+  setCredentials: (
+    name: string,
+    email: string,
+    phone: string,
+    countryCode: string
+  ) => void;
   startCountdown: () => void;
   resetBooking: () => void;
 }
@@ -52,16 +64,21 @@ interface BookingContextType extends BookingState {
 /* ─── Default state ─────────────────────────────────────── */
 
 const DEFAULT_STATE: BookingState = {
-  cinemaId: null,
-  cinemaName: "",
-  time: "",
-  date: "",
-  room: "",
-  selectedSeats: [],
+    cinemaId: null,
+    cinemaName: "",
+    time: "",
+    date: "",
+    room: "",
+    location: "",
+    selectedSeats: [],
   seatType: "Standard",
   combos: [],
   foods: [],
   paymentMethod: "",
+  contactName: "",
+  contactEmail: "",
+  contactPhone: "",
+  contactCountryCode: "+84",
   ticketCount: 0,
   ticketPrice: 0,
   snackTotal: 0,
@@ -86,10 +103,15 @@ export function BookingProvider({
   const [time, setTime] = useState("");
   const [date, setDate] = useState("");
   const [room, setRoom] = useState("");
+  const [location, setLocation] = useState("");
   const [selectedSeats, setSelectedSeats] = useState<SelectedSeat[]>([]);
   const [combos, setCombos] = useState<SelectedCombo[]>([]);
   const [foods, setFoods] = useState<SelectedFood[]>([]);
   const [paymentMethod, setPaymentMethod] = useState("");
+  const [contactName, setContactName] = useState("");
+  const [contactEmail, setContactEmail] = useState("");
+  const [contactPhone, setContactPhone] = useState("");
+  const [contactCountryCode, setContactCountryCode] = useState("+84");
   const [countdownStarted, setCountdownStarted] = useState(false);
   const [countdownStartTime, setCountdownStartTime] = useState(0);
   const { translate } = useLocale();
@@ -100,13 +122,15 @@ export function BookingProvider({
       name: string,
       t: string,
       d: string,
-      r: string
+      r: string,
+      loc: string
     ) => {
       setCinemaId(id);
       setCinemaName(name);
       setTime(t);
       setDate(d);
       setRoom(r);
+      setLocation(loc);
     },
     []
   );
@@ -119,6 +143,16 @@ export function BookingProvider({
     (c: SelectedCombo[], f: SelectedFood[]) => {
       setCombos(c);
       setFoods(f);
+    },
+    []
+  );
+
+  const setCredentials = useCallback(
+    (name: string, email: string, phone: string, countryCode: string) => {
+      setContactName(name);
+      setContactEmail(email);
+      setContactPhone(phone);
+      setContactCountryCode(countryCode);
     },
     []
   );
@@ -136,10 +170,15 @@ export function BookingProvider({
     setTime("");
     setDate("");
     setRoom("");
+    setLocation("");
     setSelectedSeats([]);
     setCombos([]);
     setFoods([]);
     setPaymentMethod("");
+    setContactName("");
+    setContactEmail("");
+    setContactPhone("");
+    setContactCountryCode("+84");
     setCountdownStarted(false);
     setCountdownStartTime(0);
   }, []);
@@ -159,11 +198,16 @@ export function BookingProvider({
       time,
       date,
       room,
+      location,
       selectedSeats,
       seatType,
       combos,
       foods,
       paymentMethod,
+      contactName,
+      contactEmail,
+      contactPhone,
+      contactCountryCode,
       ticketCount,
       ticketPrice,
       snackTotal,
@@ -175,6 +219,7 @@ export function BookingProvider({
       setSeats,
       setSnacks,
       setPaymentMethod,
+      setCredentials,
       startCountdown,
       resetBooking,
     };
@@ -184,16 +229,22 @@ export function BookingProvider({
     time,
     date,
     room,
+    location,
     selectedSeats,
     combos,
     foods,
     paymentMethod,
+    contactName,
+    contactEmail,
+    contactPhone,
+    contactCountryCode,
     countdownStarted,
     countdownStartTime,
     setCinema,
     setSeats,
     setSnacks,
     setPaymentMethod,
+    setCredentials,
     startCountdown,
     resetBooking,
   ]);

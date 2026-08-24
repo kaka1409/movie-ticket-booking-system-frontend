@@ -1,8 +1,14 @@
 import type { TicketStatus } from "./constants";
 
+export interface SeatTicket {
+  label: string;
+  type: string;
+  price: number;
+}
+
 export interface FoodDrinkItem {
   name: string;
-  price: string;
+  price: number;
   qty: number;
 }
 
@@ -14,11 +20,9 @@ export interface UpcomingTicket {
   cinema: string;
   location?: string;
   format: string;
-  seats: string;
-  seatPrice: string;
+  seatItems: SeatTicket[];
   poster: string;
-  screen?: string;
-  seatClass?: string;
+  room?: string;
   ageRating?: string;
   totalPrice?: string;
   paymentMethod?: string;
@@ -35,10 +39,8 @@ export interface PastTicket {
   poster: string;
   cinema: string;
   location?: string;
-  seats: string;
-  seatPrice: string;
-  screen?: string;
-  seatClass?: string;
+  seatItems: SeatTicket[];
+  room?: string;
   ageRating?: string;
   totalPrice?: string;
   paymentMethod?: string;

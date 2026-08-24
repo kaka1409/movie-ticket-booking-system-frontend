@@ -53,7 +53,17 @@ export function CinemaSelectionProvider({
 
   useEffect(() => {
     if (selectedCinema && selectedTime) {
-      setCinema(selectedCinema.id, selectedCinema.name, selectedTime, selectedDate, selectedCinema.badge);
+      const matchedShowtime = selectedCinema.showtimes.find(
+        (s) => s.time === selectedTime
+      );
+      setCinema(
+        selectedCinema.id,
+        selectedCinema.name,
+        selectedTime,
+        selectedDate,
+        matchedShowtime?.room ?? "",
+        selectedCinema.address
+      );
     }
   }, [selectedCinemaId, selectedTime, selectedDate, selectedCinema, setCinema]);
 
@@ -72,14 +82,11 @@ export function CinemaSelectionProvider({
     setSelectedTime("");
   };
 
-  const filteredCinemas = useMemo(
-    () =>
-      cinemas.filter(
-        (cinema) =>
-          cinema.name.toLowerCase().includes(query.toLowerCase()) ||
-          cinema.address.toLowerCase().includes(query.toLowerCase())
-      ),
-    [cinemas, query]
+  const filteredCinemas = useMemo(() =>
+    cinemas.filter((cinema) =>
+      cinema.name.toLowerCase().includes(query.toLowerCase()) ||
+      cinema.address.toLowerCase().includes(query.toLowerCase())
+    ), [cinemas, query]
   );
 
   const hasSelection = !!selectedCinema && !!selectedTime;

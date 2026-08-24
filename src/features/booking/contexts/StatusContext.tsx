@@ -21,10 +21,10 @@ interface StatusContextType {
 const StatusContext = createContext<StatusContextType | null>(null);
 
 export function StatusProvider({
-  allMovies,
+  movie,
   children,
 }: {
-  allMovies: Movie[];
+  movie: Movie | undefined;
   children: ReactNode;
 }) {
   const params = useParams();
@@ -32,7 +32,6 @@ export function StatusProvider({
   const slug = params.slug as string;
   const transactionId = searchParams.get("transactionId") ?? "N/A";
   const reason = searchParams.get("reason");
-  const movie = allMovies.find((m) => m.slug === slug);
 
   const [mounted, setMounted] = useState(false);
 
