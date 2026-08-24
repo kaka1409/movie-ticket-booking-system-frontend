@@ -20,7 +20,7 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "flagcdn.com" },
     ],
   },
-  allowedDevOrigins: ['10.25.34.39', '192.168.88.165'], // Test ip origins
+  allowedDevOrigins: ['10.25.35.15', '192.168.88.165'], // Test ip origins
 };
 
 export default nextConfig;

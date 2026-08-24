@@ -21,14 +21,15 @@ No test runner. `tests/{e2e,integration,unit}/` are empty dirs. `pnpm test` unde
 - **`(main)/page.tsx`** re-exports `./home/page.tsx`.
 - **Layout chain**: root layout (`LocaleProvider`) → each group wraps `LayoutProvider(layout="main"|"auth"|"sub"|"blank")`. Each layout type has its own `index.tsx` that uses `useDevice()` hook (`matchMedia`) to switch between mobile/desktop variants.
 - **Layout structure** (`src/layouts/`):
+  - `components/` — `Logo.tsx`, `LanguageToggle.tsx` (shared across layouts)
   - `main/` — `index.tsx` (device switch), `mobile/` (MainLayout, Header, BottomNav), `desktop/` (MainLayout, Header, Footer), `types.ts`
   - `sub/` — `index.tsx`, `utils.ts` (getSubTitle), `mobile/` (SubLayout, Header), `desktop/` (SubLayout, Header)
   - `auth/` — `index.tsx`, `mobile/AuthLayout.tsx`, `desktop/AuthLayout.tsx`
   - `blank/` — `index.tsx`, `mobile/BlankLayout.tsx`, `desktop/BlankLayout.tsx`
   - `hooks/useDevice.ts` — shared matchMedia hook
   - `constants.ts` — LayoutType, Device types
-- **Shared layout components** (`src/components/layout/`): `Logo.tsx` (size="sm"|"lg", tagline), `LanguageToggle.tsx` (variant="flag"|"text")
-- **Shared common components** (`src/components/common/`): `MovieCard.tsx` (reusable movie card), `Skeleton.tsx` (Skeleton, SkeletonCircle, SkeletonText, SkeletonCard loaders)
+- **Shared layout components** (`src/layouts/components/`): `Logo.tsx` (size="sm"|"lg", tagline), `LanguageToggle.tsx` (variant="flag"|"text")
+- **Shared UI components** (`src/components/ui/`): `MovieCard.tsx` (reusable movie card), `Skeleton.tsx` (Skeleton, SkeletonCircle, SkeletonText, SkeletonCard loaders), `TearLine.tsx` (ticket-style dashed separator with circular cutouts), `FormActions.tsx` (primary + cancel button pair), `Tabs.tsx` (generic tab bar), `Button.tsx` (primary/outline/loadMore variants, loading state), `FormField.tsx` (icon + input + focus/error border), `Badge.tsx` (neutral/dark/gold/success/error pills), `Card.tsx` (card wrapper with selected/error states), `SectionHeader.tsx` (borderLeft/goldBar/uppercase variants), `SearchBar.tsx` (icon + input + clear button), `EmptyState.tsx` (icon + title + description + CTA)
 - **Shared hooks** (`src/hooks/`): `useDevice.ts` — returns `"mobile" | "desktop"` via `matchMedia`
 - **Redux Toolkit**: store wired at `src/store/index.ts` — `reducer: {}` (unused, available for future features).
 - **i18n**: `useLocale()` from `LocaleContext` via `useSyncExternalStore`. Returns `{ locale, setLocale, translate }`. Persists to `localStorage("locale")`. Translations at `src/locales/{en,vn}.json`. Throws if used outside `LocaleProvider`.
@@ -63,7 +64,7 @@ No test runner. `tests/{e2e,integration,unit}/` are empty dirs. `pnpm test` unde
 - `src/features/wishlist/` — `mock.ts` (INITIAL_WISHLIST IDs), `api.ts` (getInitialWishlist, re-exports INITIAL_WISHLIST), `context.tsx` (WishlistProvider, useWishlist).
 - `src/features/booking/` — `types.ts` (Cinema, Showtime, DateOption, BookingSelection, BOOKING_STEPS [5 steps], Seat, SeatRow, SeatKind, SeatStatus, SeatPrice, ComboItem, FoodItem, FoodCategory), `mock.ts` (CINEMAS with PrimeSeat data, DATES, SEAT_ROWS with 10 rows A–J, SEAT_PRICES, COMBOS [4 combos], FOOD_ITEMS [8 items], FOOD_CATEGORIES, COUNTDOWN_SECONDS, MAX_SEATS_PER_BOOKING=8, SEAT_MAP_COLS=10), `api.ts` (getCinemas, getDates, getSeatRows, getSeatPrices, getCombos, getFoodItems, getFoodCategories, getCountdownSeconds, getMaxSeatsPerBooking), `context.tsx` (BookingProvider, useBooking), `contexts/` (CinemaSelectionContext, SeatSelectionContext, SnackSelectionContext, CredentialsContext, PaymentContext, StatusContext).
 - `src/hooks/` — `useDevice.ts` (returns `"mobile" | "desktop"` via `matchMedia`)
-- `src/libs/constants.ts` has generic constants; `src/libs/utils.ts` has a `slugify` helper; `src/types/index.ts` has shared types (`Device`, `Movie`, `CastMember`, `FeaturedMovie`). Feature-specific types live in `features/*/types.ts`.
+- `src/libs/constants.ts` has generic constants; `src/libs/utils.ts` has `slugify`, `formatVND`, `formatDate` helpers; `src/libs/zod.ts` has shared Zod validators (`isValidPhone`, password regex patterns); `src/types/index.ts` has shared types (`Device`, `Movie`, `CastMember`, `FeaturedMovie`). Feature-specific types live in `features/*/types.ts`. Feature-specific Zod schemas live in `features/*/schema.ts`.
 
 ## Ticket Detail Page
 
@@ -277,3 +278,14 @@ Home page "See All" / "Explore All" buttons link to movies page with appropriate
 - Inline `style={}` props are used for dynamic/computed values (gradients, animation delays, computed widths, aspect ratios). Static styling always uses Tailwind utility classes with CSS custom property syntax.
 - Payment method logos use `next/image` (`public/images/VNPay.png`, `public/images/momo.png`).
 - Pages using `useSearchParams()` must wrap content in `<Suspense>` to avoid 404 during SSR.
+
+## Form Validation
+
+- **Zod** (`zod` v4) for all form validation schemas.
+- Shared validators in `src/libs/zod.ts` (`isValidPhone`, password regex patterns).
+- Feature-specific schemas in `features/*/schema.ts` as factory functions that accept `translate` for i18n error messages.
+- Pattern: `createSchema(t: (key: string) => string)` → returns `z.object(...)`.
+- Forms use `schema.safeParse(data)` → `result.error.flatten().fieldErrors` for error display.
+- `touched` state + `showErrors = touched && !isValid` pattern is consistent across all forms.
+- Schemas wrapped in `useMemo(() => createSchema(translate), [translate])` to avoid re-creation on every render.
+- Existing schemas: `features/booking/schema.ts` (`createContactSchema`), `features/profile/schema.ts` (`createProfileSchema`, `createPasswordSchema`).
