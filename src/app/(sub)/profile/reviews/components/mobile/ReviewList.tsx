@@ -30,6 +30,7 @@ export default function ReviewList({
 
   const listRef = useRef<HTMLDivElement>(null);
   const prevCountRef = useRef(visibleCount);
+  const [animThreshold, setAnimThreshold] = useState(visibleCount);
 
   useEffect(() => {
     if (visibleCount > prevCountRef.current) {
@@ -41,6 +42,7 @@ export default function ReviewList({
           firstNew.scrollIntoView({ behavior: "smooth", block: "start" });
         }
       }
+      setAnimThreshold(prevCountRef.current);
     }
     prevCountRef.current = visibleCount;
   }, [visibleCount]);
@@ -58,7 +60,7 @@ export default function ReviewList({
         {visible.map((movie, index) => (
           <div
             key={movie.id}
-            className={index >= prevCountRef.current ? "animate-fade-in" : ""}
+            className={index >= animThreshold ? "animate-fade-in" : ""}
           >
             <ReviewCard movie={movie} />
           </div>

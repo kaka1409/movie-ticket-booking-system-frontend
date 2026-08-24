@@ -4,6 +4,7 @@ import Image from "next/image";
 import type { ComboItem } from "@/features/booking/types";
 import Stepper from "./Stepper";
 import { useSnackSelection } from "@/features/booking/contexts/SnackSelectionContext";
+import { formatVND } from "@/libs/utils";
 
 export default function ComboCard({ item }: { item: ComboItem }) {
   const { comboQty, changeCombo } = useSnackSelection();
@@ -52,7 +53,7 @@ export default function ComboCard({ item }: { item: ComboItem }) {
 
           <div className="flex items-center justify-between">
             <span className="font-extrabold text-lg text-(--color-gold-light) tracking-tight">
-              {item.price.toLocaleString("vi-VN")}₫
+              {formatVND(item.price)}
             </span>
             <Stepper
               value={qty}

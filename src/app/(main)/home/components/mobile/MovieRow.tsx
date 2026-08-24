@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useLocale } from "@/contexts/LocaleContext";
-import MovieCard from "@/components/common/MovieCard";
+import MovieCard from "@/components/ui/MovieCard";
+import SectionHeader from "@/components/ui/SectionHeader";
 import type { Movie } from "@/features/movies/types";
 
 interface MovieRowProps {
@@ -19,20 +20,18 @@ export default function MovieRow({ titleKey, movies, status }: MovieRowProps) {
       className="px-(--space-md)"
       aria-labelledby={`${title.replace(/\s/g, "-").toLowerCase()}-heading`}
     >
-      <div className="mb-3 pl-1 flex items-center justify-between border-l-4 border-(--color-gold) rounded-(--radius-xs)">
-        <h2
-          id={`${title.replace(/\s/g, "-").toLowerCase()}-heading`}
-          className="text-lg font-bold text-white"
-        >
-          {title}
-        </h2>
-        <Link
-          href={`/movies?status=${status}`}
-          className="text-xs font-semibold tracking-wide text-(--color-gold)"
-        >
-          {translate("home.see_all")}
-        </Link>
-      </div>
+      <SectionHeader
+        action={
+          <Link
+            href={`/movies?status=${status}`}
+            className="text-xs font-semibold tracking-wide text-(--color-gold)"
+          >
+            {translate("home.see_all")}
+          </Link>
+        }
+      >
+        {title}
+      </SectionHeader>
 
       <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-(--space-sm)" role="list">
         {movies.map((movie) => (

@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowRight, Loader2 } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useBooking } from "@/features/booking/context";
 import { usePayment } from "@/features/booking/contexts/PaymentContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import { PAYMENT_METHODS } from "@/features/booking/mock";
+import Button from "@/components/ui/Button";
 
 export default function BottomBar() {
   const params = useParams();
@@ -44,27 +45,16 @@ export default function BottomBar() {
     <div className="sticky bottom-0 z-50 bg-(--color-bg) border-t border-(--color-border) px-4 pb-6 pt-3">
 
 
-      <button
+      <Button
         onClick={handleClick}
-        disabled={!canPay || isLoading}
-        className={`flex items-center justify-center gap-2.5 w-full py-4 rounded-2xl font-extrabold text-sm tracking-widest uppercase transition-all duration-150 active:scale-[0.98] ${
-          canPay && !isLoading
-            ? "bg-(--color-gold) text-[#0F0F0F] shadow-[0_0_20px_rgba(255,204,77,0.25)]"
-            : "bg-(--color-surface) text-(--color-text-muted) border border-(--color-border) cursor-not-allowed"
-        }`}
+        disabled={!canPay}
+        loading={isLoading}
+        icon={isLoading ? undefined : ArrowRight}
       >
-        {isLoading ? (
-          <>
-            <Loader2 size={17} className="animate-spin" />
-            {translate("booking.payment.processing")}
-          </>
-        ) : (
-          <>
-            {translate("booking.payment.confirm")}
-            <ArrowRight size={17} />
-          </>
-        )}
-      </button>
+        {isLoading
+          ? translate("booking.payment.processing")
+          : translate("booking.payment.confirm")}
+      </Button>
     </div>
   );
 }

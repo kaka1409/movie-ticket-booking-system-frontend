@@ -1,10 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import { CreditCard, MapPin, UtensilsCrossed, Calendar, Armchair } from "lucide-react";
+import { MonitorPlay, CalendarDays, Armchair, Popcorn, CreditCard } from "lucide-react";
 import type { UpcomingTicket, PastTicket } from "@/features/tickets/types";
 import { useLocale } from "@/contexts/LocaleContext";
+import { formatVND } from "@/libs/utils";
+import DetailRow from "@/app/(sub)/booking/components/mobile/DetailRow";
 import QRCode from "./QRCode";
+import TearLine from "@/components/ui/TearLine";
 
 interface TicketInfoProps {
   ticket: UpcomingTicket | PastTicket;
@@ -13,12 +16,16 @@ interface TicketInfoProps {
 
 export default function TicketInfo({ ticket, detail }: TicketInfoProps) {
   const { translate } = useLocale();
+
+  const seatItems = detail?.seatItems ?? [];
+  const hasSnacks = !!detail?.foodDrink && detail.foodDrink.length > 0;
+
   return (
     <main className="flex-1 overflow-y-auto pb-8 p-4">
       {/* Hero ticket card */}
-      <div className="rounded-3xl overflow-hidden bg-(--color-surface) border border-(--color-gold)/20 shadow-(--shadow-card)">
+      <div className="rounded-3xl overflow-visible bg-(--color-surface) border border-(--color-border) shadow-(--shadow-card)">
         {/* Poster */}
-        <div className="relative w-full h-80 bg-(--color-surface)">
+        <div className="relative w-full h-80 bg-(--color-surface) rounded-t-3xl overflow-hidden">
           <Image
             src={ticket.poster}
             alt={ticket.movie}
@@ -44,122 +51,106 @@ export default function TicketInfo({ ticket, detail }: TicketInfoProps) {
           </div>
         </div>
 
-        {/* Ticket body */}
-        <div className="px-4 pt-5 pb-2 space-y-5">
-          {/* Theater + Date grid */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <p className="text-[9px] font-bold tracking-[0.15em] uppercase mb-1 text-(--color-text-muted)">
-                <MapPin size={11} className="inline mr-1.5" />
-                {translate("tickets.detail.theater")}
-              </p>
-              <p className="text-white font-bold text-sm">{detail?.cinema}</p>
-              {detail?.location && (
-                <p className="text-xs mt-0.5 text-(--color-text-muted)">
-                  {detail.location}{detail?.screen && ` • ${detail.screen}`}
-                </p>
-              )}
-            </div>
-            <div>
-              <p className="text-[9px] font-bold tracking-[0.15em] uppercase mb-1 text-(--color-text-muted)">
-                <Calendar size={11} className="inline mr-1.5" />
-                {translate("tickets.detail.date_time")}
-              </p>
-              <p className="text-white font-bold text-sm">{ticket.datetime}</p>
-            </div>
+        {/* Tear line */}
+        <TearLine className="px-0 my-0" lineClassName="mx-3" />
+
+        {/* Booking details */}
+        <div className="px-4 py-4 space-y-4">
+          <div className="flex justify-between gap-4">
+            <DetailRow
+              icon={MonitorPlay}
+              label={translate("booking.common.theater")}
+              value={
+                <>
+                  {detail?.cinema ?? "—"}
+                  {detail?.room && <>, {detail.room}</>}
+                  {detail?.location && <>, {detail.location}</>}
+                </>
+              }
+            />
+            <DetailRow
+              icon={CalendarDays}
+              label={translate("booking.common.date_time")}
+              value={ticket.datetime}
+              valueClass="text-white font-bold text-sm text-right"
+              labelClass="justify-end"
+            />
           </div>
 
-          {/* Seat */}
-          <div>
-            <p className="text-[9px] font-bold tracking-[0.15em] uppercase mb-1 text-(--color-text-muted)">
-              <Armchair size={11} className="inline mr-1.5" />
-              {translate("tickets.detail.seat")}
+          {/* Seats grouped by type */}
+          <div className="space-y-3">
+            <p className="flex items-center gap-1.5 text-[9px] font-black tracking-[0.16em] uppercase text-white/60">
+              <Armchair size={10} />
+              {translate("booking.common.seats")} ({seatItems.length})
             </p>
-            <p className="text-white font-extrabold text-xl tracking-wide mb-1">
-              {detail?.seats}
-            </p>
-            <div className="flex items-center justify-between">
-              <p className="text-white font-bold text-sm">
-                {detail?.seatClass ?? translate("tickets.detail.standard")} {translate("tickets.detail.ticket")}
-              </p>
-              <p className="text-white font-bold text-sm">
-                {detail?.seatPrice} × {detail?.seats.split(",").length}
-              </p>
-            </div>
+            {Object.entries(
+              seatItems.reduce<Record<string, typeof seatItems>>((acc, seat) => {
+                (acc[seat.type] ??= []).push(seat);
+                return acc;
+              }, {})
+            ).map(([type, seats]) => (
+              <div key={type} className="space-y-1">
+                <p className="text-sm font-bold text-white">
+                  {seats.map((s) => s.label).join(", ")}
+                </p>
+                <div className="flex justify-between text-sm">
+                  <span className="text-white">{type} {translate("booking.common.ticket")}</span>
+                  <span className="font-medium text-white">
+                    {seats.length}× {formatVND(seats[0].price)}
+                  </span>
+                </div>
+              </div>
+            ))}
           </div>
 
           {/* Food & Drink */}
-          {detail?.foodDrink && detail.foodDrink.length > 0 && (
-            <div>
-              <p className="text-[9px] font-bold tracking-[0.15em] uppercase mb-1 text-(--color-text-muted)">
-                <UtensilsCrossed size={11} className="inline mr-1.5" />
-                {translate("tickets.detail.food_drink")}
+          {hasSnacks && (
+            <div className="space-y-2">
+              <p className="flex items-center gap-1.5 text-[9px] font-black tracking-[0.16em] uppercase text-white/60">
+                <Popcorn size={10} />
+                {translate("booking.common.snacks_combos")}
               </p>
-              <div className="space-y-1.5">
-                {detail.foodDrink.map((item, i) => (
-                  <div key={i} className="flex items-center justify-between">
-                    <p className="text-white font-bold text-sm">{item.name}</p>
-                    <p className="text-white font-bold text-sm">
-                      {item.price} × {item.qty}
-                    </p>
+              <div className="space-y-1">
+                {detail!.foodDrink!.map((item, i) => (
+                  <div key={i} className="flex justify-between text-sm">
+                    <span className="text-white">{item.name}</span>
+                    <span className="font-medium text-white">
+                      {item.qty}× {formatVND(item.qty * item.price)}
+                    </span>
                   </div>
                 ))}
               </div>
             </div>
           )}
 
-          {/* Tear line */}
-          <div className="relative flex items-center -mx-4">
-            <div className="absolute -left-3 w-6 h-6 rounded-full z-10 bg-(--color-bg)" />
-            <div className="flex-1 border-t-2 border-dashed border-(--color-border)" />
-            <div className="absolute -right-3 w-6 h-6 rounded-full z-10 bg-(--color-bg)" />
-          </div>
-
-          {/* QR Code */}
-          <QRCode value={ticket.id} />
-
-          {/* Booking ID row */}
-          <div className="flex items-center justify-between py-1">
-            <p className="text-sm text-(--color-text-muted)">{translate("tickets.detail.booking_id")}</p>
-            <p className="font-bold text-sm text-(--color-text-secondary)">
-              #{ticket.id}
-            </p>
-          </div>
-
-          {/* Tear line */}
-          <div className="relative flex items-center -mx-4">
-            <div className="absolute -left-3 w-6 h-6 rounded-full z-10 bg-(--color-bg)" />
-            <div className="flex-1 border-t-2 border-dashed border-(--color-border)" />
-            <div className="absolute -right-3 w-6 h-6 rounded-full z-10 bg-(--color-bg)" />
-          </div>
-
-          {/* Payment summary */}
-          <div className="space-y-3 pb-2">
-            <p className="text-[9px] font-bold tracking-[0.18em] uppercase text-(--color-text-muted)">
-              {translate("tickets.detail.payment_summary")}
-            </p>
-
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-(--color-text-secondary)">
-                {translate("tickets.detail.total_price")}
+          {/* Payment + Total */}
+          <div className="flex justify-between items-end gap-4">
+            <DetailRow
+              icon={CreditCard}
+              label={translate("booking.common.payment_method")}
+              value={detail?.paymentMethod || "N/A"}
+            />
+            <div className="text-right">
+              <p className="flex items-center justify-end gap-1.5 text-[9px] font-black tracking-[0.16em] uppercase text-white/60">
+                {translate("booking.common.total_price")}
               </p>
-              <p className="font-extrabold text-base text-(--color-gold)">
-                {detail?.totalPrice}
+              <p className="font-bold text-base text-(--color-gold)">
+                {detail?.totalPrice ?? "—"}
               </p>
             </div>
-
-            {detail?.paymentMethod && (
-              <div className="flex items-center justify-between">
-                <p className="text-sm text-(--color-text-secondary)">
-                  {translate("tickets.detail.payment_method")}
-                </p>
-                <p className="flex items-center gap-1.5 font-semibold text-sm text-(--color-text-secondary)">
-                  <CreditCard size={14} className="text-(--color-gold)" />
-                  {detail.paymentMethod}
-                </p>
-              </div>
-            )}
           </div>
+        </div>
+
+        {/* Tear line */}
+        <TearLine className="px-0 my-0" lineClassName="mx-3" />
+
+        {/* QR Code */}
+        <div className="px-4 pb-5 pt-4 flex flex-col items-center gap-3">
+          <QRCode value={ticket.id} />
+          <p className="text-xs text-white/60 tracking-wide">
+            {translate("tickets.detail.booking_id")}
+            <span className="font-bold text-white">#{ticket.id}</span>
+          </p>
         </div>
       </div>
     </main>

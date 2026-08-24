@@ -1,7 +1,7 @@
 "use client";
 
-import Logo from "@/components/layout/Logo";
-import LanguageToggle from "@/components/layout/LanguageToggle";
+import Logo from "@/layouts/components/Logo";
+import LanguageToggle from "@/layouts/components/LanguageToggle";
 
 export default function AuthLayout({
   children,

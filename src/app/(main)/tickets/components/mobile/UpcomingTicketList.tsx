@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useTickets } from "@/features/tickets/context";
 import type { UpcomingTicket } from "@/features/tickets/types";
@@ -19,6 +19,7 @@ export default function UpcomingTicketList({
 
   const listRef = useRef<HTMLDivElement>(null);
   const prevCountRef = useRef(visibleCount);
+  const [animThreshold, setAnimThreshold] = useState(visibleCount);
 
   useEffect(() => {
     if (visibleCount > prevCountRef.current) {
@@ -30,6 +31,7 @@ export default function UpcomingTicketList({
           firstNew.scrollIntoView({ behavior: "smooth", block: "start" });
         }
       }
+      setAnimThreshold(prevCountRef.current);
     }
     prevCountRef.current = visibleCount;
   }, [visibleCount]);
@@ -46,7 +48,7 @@ export default function UpcomingTicketList({
         <div
           key={ticket.id}
           data-ticket-card
-          className={index >= prevCountRef.current ? "animate-fade-in" : ""}
+          className={index >= animThreshold ? "animate-fade-in" : ""}
         >
           <UpcomingCard ticket={ticket} />
         </div>

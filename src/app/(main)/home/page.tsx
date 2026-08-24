@@ -19,6 +19,8 @@ import SearchBar from "@/app/(main)/home/components/mobile/SearchBar";
 import MovieRow from "@/app/(main)/home/components/mobile/MovieRow";
 
 export default async function HomePage() {
+  // throw new Error("asd");
+  
   const [nowShowing, comingSoon, featuredMovies, cinemas, dates] =
     await Promise.all([
       getNowShowingMovies(),
@@ -34,7 +36,11 @@ export default async function HomePage() {
       <div className="block md:hidden">
         <div className="flex flex-col gap-(--space-lg)">
           <HeroBanner movies={featuredMovies} />
-          <QuickBooking movies={nowShowing} cinemas={cinemas} dates={dates} />
+          <QuickBooking
+            movies={nowShowing}
+            cinemas={cinemas}
+            dates={dates}
+          />
           <SearchBar />
 
           {/* Now Showing */}

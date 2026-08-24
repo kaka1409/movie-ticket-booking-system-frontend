@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useLocale } from "@/contexts/LocaleContext";
 import type { PastTicket } from "@/features/tickets/types";
+import Badge from "@/components/ui/Badge";
 
 export default function PastCard({ ticket }: { ticket: PastTicket }) {
   const { translate } = useLocale();
@@ -41,15 +42,15 @@ export default function PastCard({ ticket }: { ticket: PastTicket }) {
           >
             {ticket.movie}
           </h3>
-          <span
-            className={`ml-2 shrink-0 px-3 py-1 rounded-full text-[10px] font-bold tracking-wide uppercase bg-(--color-surface-2) border border-(--color-border) ${
-              expired
-                ? "text-(--color-text-muted)"
-                : "text-(--color-text-secondary)"
+          <Badge
+            variant="neutral"
+            size="xs"
+            className={`ml-2 uppercase ${
+              expired ? "text-(--color-text-muted)" : "text-(--color-text-secondary)"
             }`}
           >
             {ticket.status === "used" ? translate("tickets.used") : translate("tickets.expired")}
-          </span>
+          </Badge>
         </div>
 
         <div className="">

@@ -6,6 +6,7 @@ import { ArrowRight } from "lucide-react";
 import { useBooking } from "@/features/booking/context";
 import { useCredentials } from "@/features/booking/contexts/CredentialsContext";
 import { useLocale } from "@/contexts/LocaleContext";
+import { formatVND } from "@/libs/utils";
 
 export default function BottomBar() {
   const params = useParams();
@@ -21,7 +22,7 @@ export default function BottomBar() {
           {translate("booking.common.total")}
         </p>
         <p className="font-extrabold text-xl text-(--color-gold) tabular-nums">
-          {total.toLocaleString("vi-VN")}₫
+          {formatVND(total)}
         </p>
       </div>
 

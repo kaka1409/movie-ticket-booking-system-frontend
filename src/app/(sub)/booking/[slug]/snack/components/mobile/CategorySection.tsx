@@ -1,6 +1,7 @@
 "use client";
 
 import { useSnackSelection } from "@/features/booking/contexts/SnackSelectionContext";
+import SectionHeader from "@/components/ui/SectionHeader";
 import FoodItemCard from "./FoodItemCard";
 import type { FoodItem } from "@/features/booking/types";
 
@@ -15,9 +16,7 @@ export default function CategorySection({
 
   return (
     <div className="space-y-2">
-      <h3 className="px-4 text-xs font-bold tracking-widest uppercase text-(--color-gold-dark)">
-        {label}
-      </h3>
+      <SectionHeader variant="uppercase">{label}</SectionHeader>
       <div className="space-y-1">
         {items.map((item) => (
           <FoodItemCard

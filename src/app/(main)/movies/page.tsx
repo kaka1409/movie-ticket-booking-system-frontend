@@ -10,7 +10,6 @@ import Tabs from "./components/mobile/Tabs";
 import SearchBar from "./components/mobile/SearchBar";
 import FilterPanel from "./components/mobile/FilterPanel";
 import MovieGrid from "./components/mobile/MovieGrid";
-import MoviesSkeleton from "./components/mobile/MoviesSkeleton";
 
 // Desktop
 import DesktopMovieGrid from "./components/desktop/MovieGrid";

@@ -1,4 +1,4 @@
-import { Skeleton, SkeletonCard } from "@/components/common/Skeleton";
+import { Skeleton, SkeletonCard } from "@/components/ui/Skeleton";
 
 export default function FailedLoading() {
   return (

@@ -6,6 +6,8 @@ import { useBooking } from "@/features/booking/context";
 import { useStatus } from "@/features/booking/contexts/StatusContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import DetailRow from "@/app/(sub)/booking/components/mobile/DetailRow";
+import TearLine from "@/components/ui/TearLine";
+import { formatVND } from "@/libs/utils";
 import {
   MonitorPlay,
   CalendarDays,
@@ -18,10 +20,10 @@ export default function TicketCard() {
   const {
     cinemaName,
     room,
+    location,
     date,
     time,
     selectedSeats,
-    seatType,
     paymentMethod,
     combos,
     foods,
@@ -41,7 +43,7 @@ export default function TicketCard() {
       {/* Top: movie info */}
       <div className="flex gap-3 p-4">
         {movie?.src && (
-          <div className="w-20 flex-shrink-0 rounded-xl overflow-hidden relative">
+          <div className="w-20 h-30 flex-shrink-0 rounded-sm overflow-hidden relative">
             <Image
               src={movie.src}
               alt={movie.title}
@@ -60,11 +62,7 @@ export default function TicketCard() {
       </div>
 
       {/* Tear line */}
-      <div className="relative flex items-center px-0 my-0">
-        <div className="absolute -left-3 w-6 h-6 rounded-full z-10 bg-(--color-bg)" />
-        <div className="flex-1 border-t-2 border-dashed border-(--color-border) mx-3" />
-        <div className="absolute -right-3 w-6 h-6 rounded-full z-10 bg-(--color-bg)" />
-      </div>
+      <TearLine className="px-0 my-0" lineClassName="mx-3" />
 
       {/* Booking details */}
       <div className="px-4 py-4 space-y-4">
@@ -76,33 +74,42 @@ export default function TicketCard() {
               <>
                 {cinemaName}
                 {room && <>, {room}</>}
+                {location && <>, {location}</>}
               </>
             }
           />
           <DetailRow
             icon={CalendarDays}
             label={translate("booking.common.date_time")}
-            value={`${date} • ${time}`}
+            value={`${date}  ${time}`}
             valueClass="text-white font-bold text-sm text-right"
             labelClass="justify-end"
           />
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-3">
           <p className="flex items-center gap-1.5 text-[9px] font-black tracking-[0.16em] uppercase text-white/60">
             <Armchair size={10} />
             {translate("booking.common.seats")} ({selectedSeats.length})
           </p>
-          <p className="text-lg font-extrabold text-white">
-            {selectedSeats.map((s) => s.label).join(", ")}
-          </p>
-          <div className="flex justify-between text-sm">
-            <span className="text-white">{seatType} {translate("booking.common.ticket")}</span>
-            <span className="font-medium text-white">
-              {selectedSeats.length}×{" "}
-              {selectedSeats[0]?.price.toLocaleString("vi-VN")}₫
-            </span>
-          </div>
+          {Object.entries(
+            selectedSeats.reduce<Record<string, typeof selectedSeats>>((acc, seat) => {
+              (acc[seat.type] ??= []).push(seat);
+              return acc;
+            }, {})
+          ).map(([type, seats]) => (
+            <div key={type} className="space-y-1">
+              <p className="text-sm font-bold text-white">
+                {seats.map((s) => s.label).join(", ")}
+              </p>
+              <div className="flex justify-between text-sm">
+                <span className="text-white">{type} {translate("booking.common.ticket")}</span>
+                <span className="font-medium text-white">
+                  {seats.length}× {formatVND(seats[0].price)}
+                </span>
+              </div>
+            </div>
+          ))}
         </div>
 
         {hasSnacks && (
@@ -116,7 +123,7 @@ export default function TicketCard() {
                 <div key={c.id} className="flex justify-between text-sm">
                   <span className="text-white">{c.name}</span>
                   <span className="font-medium text-white">
-                    {c.qty}× {(c.qty * c.price).toLocaleString("vi-VN")}₫
+                    {c.qty}× {formatVND(c.qty * c.price)}
                   </span>
                 </div>
               ))}
@@ -124,7 +131,7 @@ export default function TicketCard() {
                 <div key={f.id} className="flex justify-between text-sm">
                   <span className="text-white">{f.name}</span>
                   <span className="font-medium text-white">
-                    {f.qty}× {(f.qty * f.price).toLocaleString("vi-VN")}₫
+                    {f.qty}× {formatVND(f.qty * f.price)}
                   </span>
                 </div>
               ))}
@@ -143,18 +150,14 @@ export default function TicketCard() {
               {translate("booking.common.total_price")}
             </p>
             <p className="font-bold text-base text-(--color-gold)">
-              {total.toLocaleString("vi-VN")}₫
+              {formatVND(total)}
             </p>
           </div>
         </div>
       </div>
 
       {/* Tear line */}
-      <div className="relative flex items-center px-0 my-0">
-        <div className="absolute -left-3 w-6 h-6 rounded-full z-10 bg-(--color-bg)" />
-        <div className="flex-1 border-t-2 border-dashed border-(--color-border) mx-3" />
-        <div className="absolute -right-3 w-6 h-6 rounded-full z-10 bg-(--color-bg)" />
-      </div>
+      <TearLine className="px-0 my-0" lineClassName="mx-3" />
 
       {/* QR code */}
       <div className="px-4 pb-5 pt-4 flex flex-col items-center gap-3">

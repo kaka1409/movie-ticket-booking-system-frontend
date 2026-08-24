@@ -1,16 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { Movie } from "@/features/movies/types";
+import { formatDate } from "@/libs/utils";
 import StarRating from "./StarRating";
-
-function formatDate(dateStr: string): string {
-  const d = new Date(dateStr);
-  return d.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-}
 
 export default function ReviewCard({
   movie,

@@ -1,4 +1,5 @@
-import { Skeleton, SkeletonCard } from "@/components/common/Skeleton";
+import { Skeleton, SkeletonCard } from "@/components/ui/Skeleton";
+import TearLine from "@/components/ui/TearLine";
 
 export default function TicketDetailLoading() {
   return (
@@ -35,11 +36,7 @@ export default function TicketDetailLoading() {
           </div>
 
           {/* Tear line 1 */}
-          <div className="relative flex items-center px-4">
-            <div className="absolute -left-3 w-6 h-6 rounded-full z-10 bg-(--color-bg)" />
-            <div className="flex-1 border-t-2 border-dashed border-(--color-border)" />
-            <div className="absolute -right-3 w-6 h-6 rounded-full z-10 bg-(--color-bg)" />
-          </div>
+          <TearLine className="px-4" />
 
           {/* QR Code */}
           <div className="flex justify-center py-6">
@@ -53,11 +50,7 @@ export default function TicketDetailLoading() {
           </div>
 
           {/* Tear line 2 */}
-          <div className="relative flex items-center px-4">
-            <div className="absolute -left-3 w-6 h-6 rounded-full z-10 bg-(--color-bg)" />
-            <div className="flex-1 border-t-2 border-dashed border-(--color-border)" />
-            <div className="absolute -right-3 w-6 h-6 rounded-full z-10 bg-(--color-bg)" />
-          </div>
+          <TearLine className="px-4" />
 
           {/* Payment summary */}
           <div className="p-4 space-y-3">

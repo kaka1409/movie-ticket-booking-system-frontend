@@ -1,10 +1,10 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { Search } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useMovies } from "@/features/movies/context";
-import MovieCard from "@/components/common/MovieCard";
+import MovieCard from "@/components/ui/MovieCard";
 import type { Movie } from "@/features/movies/types";
 
 export default function MovieGrid({
@@ -30,6 +30,7 @@ export default function MovieGrid({
   /* ── Hooks must run before any early return ── */
   const gridRef = useRef<HTMLDivElement>(null);
   const prevCountRef = useRef(visibleCount);
+  const [animThreshold, setAnimThreshold] = useState(visibleCount);
 
   useEffect(() => {
     if (visibleCount > prevCountRef.current) {
@@ -41,6 +42,7 @@ export default function MovieGrid({
           firstNew.scrollIntoView({ behavior: "smooth", block: "start" });
         }
       }
+      setAnimThreshold(prevCountRef.current);
     }
     prevCountRef.current = visibleCount;
   }, [visibleCount]);
@@ -105,7 +107,7 @@ export default function MovieGrid({
               key={movie.id}
               data-movie-card
               className={`w-full [&_a]:!w-full [&_a]:!block ${
-                index >= prevCountRef.current ? "animate-fade-in" : ""
+                index >= animThreshold ? "animate-fade-in" : ""
               }`}
             >
               <MovieCard movie={movie} minLabel={translate("common.min")} />

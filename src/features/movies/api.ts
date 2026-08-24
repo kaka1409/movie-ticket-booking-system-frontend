@@ -25,5 +25,11 @@ export async function getFeaturedMovies(): Promise<FeaturedMovie[]> {
 
 export async function getMovieBySlug(slug: string): Promise<Movie | undefined> {
   // return apiFetch<Movie>(`/api/v1/movies/${slug}`);
-  return ALL_MOVIES.find((movie) => movie.slug === slug);
+  // return new Promise((resolve) => {
+  //   setTimeout(() => {
+  //     resolve(ALL_MOVIES.find((movie) => movie.slug === slug))
+  //   }, 3000)
+  // });
+
+  return ALL_MOVIES.find((movie) => movie.slug === slug)
 }

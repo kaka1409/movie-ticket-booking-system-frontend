@@ -2,32 +2,16 @@
 
 import { useLocale } from "@/contexts/LocaleContext";
 import { useTickets } from "@/features/tickets/context";
+import Tabs from "@/components/ui/Tabs";
 
-export default function Tabs() {
+export default function TabsComponent() {
   const { translate } = useLocale();
   const { activeTab, setActiveTab } = useTickets();
 
-  return (
-    <div className="flex gap-0 border-b border-(--color-border) px-(--space-md)">
-      {(["upcoming", "past"] as const).map((tab) => {
-        const label = tab === "upcoming" ? translate("tickets.upcoming") : translate("tickets.past");
-        const active = activeTab === tab;
-        return (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`
-              relative mr-6 pb-3 px-1 text-sm font-bold tracking-wide transition-colors duration-150
-              ${active ? "text-(--color-gold)" : "text-(--color-text-muted) hover:text-(--color-gold-light)"}
-            `}
-          >
-            {label}
-            {active && (
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full bg-(--color-gold)" />
-            )}
-          </button>
-        );
-      })}
-    </div>
-  );
+  const tabs = [
+    { key: "upcoming", label: translate("tickets.upcoming") },
+    { key: "past", label: translate("tickets.past") },
+  ];
+
+  return <Tabs tabs={tabs} activeTab={activeTab} onTabChange={(tab) => setActiveTab(tab as "upcoming" | "past")} />;
 }

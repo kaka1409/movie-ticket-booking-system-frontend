@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { useSnackSelection } from "@/features/booking/contexts/SnackSelectionContext";
 import { useLocale } from "@/contexts/LocaleContext";
+import { formatVND } from "@/libs/utils";
 
 export default function BottomBar() {
   const params = useParams();
@@ -55,7 +56,7 @@ export default function BottomBar() {
               hasItems ? "text-(--color-gold)" : "text-(--color-text-muted)"
             }`}
           >
-            {hasItems ? `${total.toLocaleString("vi-VN")}₫` : "—"}
+            {hasItems ? formatVND(total) : "—"}
           </p>
         </div>
       </div>

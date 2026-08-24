@@ -1,12 +1,11 @@
 "use client";
 
 import { useLocale } from "@/contexts/LocaleContext";
+import SectionHeader from "@/components/ui/SectionHeader";
 
 export default function SnackSectionHeading({ sectionKey }: { sectionKey: string }) {
   const { translate } = useLocale();
   return (
-    <h3 className="px-4 text-xs font-bold tracking-widest uppercase text-(--color-gold-dark)">
-      {translate(sectionKey)}
-    </h3>
+    <SectionHeader variant="uppercase">{translate(sectionKey)}</SectionHeader>
   );
 }

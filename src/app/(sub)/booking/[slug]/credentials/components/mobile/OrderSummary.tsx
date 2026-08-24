@@ -1,9 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { CalendarDays, MapPin, Armchair, Ticket, Popcorn } from "lucide-react";
+import { MonitorPlay, CalendarDays, Armchair, Popcorn } from "lucide-react";
 import { useBooking } from "@/features/booking/context";
 import { useLocale } from "@/contexts/LocaleContext";
+import { formatVND } from "@/libs/utils";
+import DetailRow from "@/app/(sub)/booking/components/mobile/DetailRow";
+import TearLine from "@/components/ui/TearLine";
 import type { Movie } from "@/features/movies/types";
 
 export default function OrderSummary({ movie }: { movie: Movie }) {
@@ -11,28 +14,26 @@ export default function OrderSummary({ movie }: { movie: Movie }) {
   const {
     cinemaName,
     room,
+    location,
     date,
     time,
     selectedSeats,
-    seatType,
-    ticketCount,
-    ticketPrice,
     combos,
     foods,
     total,
   } = useBooking();
 
-  const seatLabels = selectedSeats.map((s) => s.label).join(", ");
+  const hasSnacks = combos.length > 0 || foods.length > 0;
 
   return (
     <div className="px-4 space-y-3">
       <h2 className="font-bold text-lg text-white">{translate("booking.common.order_summary")}</h2>
 
-      <div className="rounded-2xl bg-(--color-surface) border border-(--color-border) overflow-hidden">
+      <div className="rounded-2xl bg-(--color-surface) border border-(--color-border) overflow-visible">
         {/* Movie info */}
-        <div className="flex gap-3 p-4 border-b border-(--color-border)">
+        <div className="flex gap-3 p-4">
           {movie?.src && (
-            <div className="relative w-16 h-24 flex-shrink-0 rounded-lg overflow-hidden bg-(--color-surface-2)">
+            <div className="relative w-16 h-24 flex-shrink-0 rounded-sm overflow-hidden bg-(--color-surface-2)">
               <Image
                 src={movie.src}
                 alt={movie.title}
@@ -41,7 +42,7 @@ export default function OrderSummary({ movie }: { movie: Movie }) {
               />
             </div>
           )}
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-0 pt-1">
             <h3 className="font-bold text-base text-white leading-snug mb-1">
               {movie?.title ?? "—"}
             </h3>
@@ -51,71 +52,96 @@ export default function OrderSummary({ movie }: { movie: Movie }) {
           </div>
         </div>
 
-        {/* Screening details */}
-        <div className="p-4 border-b border-(--color-border) space-y-1.5">
-          <p className="flex items-center gap-2 text-sm text-white">
-            <CalendarDays size={13} className="text-(--color-text-muted) flex-shrink-0" />
-            {date && time ? `${date} • ${time}` : "—"}
-          </p>
-          <p className="flex items-center gap-2 text-sm text-white">
-            <MapPin size={13} className="text-(--color-text-muted) flex-shrink-0" />
-            {cinemaName || "—"}
-            {room && (
-              <>
-                <span className="text-(--color-border)">•</span>
-                {room}
-              </>
-            )}
-          </p>
-          <p className="flex items-center gap-2 text-sm text-white">
-            <Armchair size={13} className="text-(--color-text-muted) flex-shrink-0" />
-            {translate("booking.common.seats")}: {seatLabels || "—"}
-          </p>
-        </div>
+        {/* Tear line */}
+        <TearLine className="px-0 my-0" lineClassName="mx-3" />
 
-        {/* Line items */}
-        <div className="p-4 space-y-2.5">
-          <div className="flex items-center justify-between">
-            <span className="flex items-center gap-2 text-sm text-white">
-              <Ticket size={13} className="text-(--color-text-muted)" />
-              {ticketCount}× {seatType} {translate("booking.common.ticket")}
-            </span>
-            <span className="font-semibold text-sm text-white">
-              {ticketPrice.toLocaleString("vi-VN")}₫
-            </span>
+        {/* Booking details */}
+        <div className="px-4 py-4 space-y-4">
+          <div className="flex justify-between gap-4">
+            <DetailRow
+              icon={MonitorPlay}
+              label={translate("booking.common.theater")}
+              value={
+                <>
+                  {cinemaName || "—"}
+                  {room && <>, {room}</>}
+                  {location && <>, {location}</>}
+                </>
+              }
+            />
+            <DetailRow
+              icon={CalendarDays}
+              label={translate("booking.common.date_time")}
+              value={date && time ? `${date} • ${time}` : "—"}
+              valueClass="text-white font-bold text-sm text-right"
+              labelClass="justify-end"
+            />
           </div>
 
-          {combos.map((c) => (
-            <div key={c.id} className="flex items-center justify-between">
-              <span className="flex items-center gap-2 text-sm text-white">
-                <Popcorn size={13} className="text-(--color-text-muted)" />
-                {c.name} ×{c.qty}
-              </span>
-              <span className="font-semibold text-sm text-white">
-                {(c.price * c.qty).toLocaleString("vi-VN")}₫
-              </span>
+          {/* Seats grouped by type */}
+          <div className="space-y-3">
+            <p className="flex items-center gap-1.5 text-[9px] font-black tracking-[0.16em] uppercase text-white/60">
+              <Armchair size={10} />
+              {translate("booking.common.seats")} ({selectedSeats.length})
+            </p>
+            {Object.entries(
+              selectedSeats.reduce<Record<string, typeof selectedSeats>>((acc, seat) => {
+                (acc[seat.type] ??= []).push(seat);
+                return acc;
+              }, {})
+            ).map(([type, seats]) => (
+              <div key={type} className="space-y-1">
+                <p className="text-sm font-bold text-white">
+                  {seats.map((s) => s.label).join(", ")}
+                </p>
+                <div className="flex justify-between text-sm">
+                  <span className="text-white">{type} {translate("booking.common.ticket")}</span>
+                  <span className="font-medium text-white">
+                    {seats.length}× {formatVND(seats[0].price)}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Snacks */}
+          {hasSnacks && (
+            <div className="space-y-2">
+              <p className="flex items-center gap-1.5 text-[9px] font-black tracking-[0.16em] uppercase text-white/60">
+                <Popcorn size={10} />
+                {translate("booking.common.snacks_combos")}
+              </p>
+              <div className="space-y-1">
+                {combos.map((c) => (
+                  <div key={c.id} className="flex justify-between text-sm">
+                    <span className="text-white">{c.name}</span>
+                    <span className="font-medium text-white">
+                      {c.qty}× {formatVND(c.qty * c.price)}
+                    </span>
+                  </div>
+                ))}
+                {foods.map((f) => (
+                  <div key={f.id} className="flex justify-between text-sm">
+                    <span className="text-white">{f.name}</span>
+                    <span className="font-medium text-white">
+                      {f.qty}× {formatVND(f.qty * f.price)}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
-          ))}
+          )}
 
-          {foods.map((f) => (
-            <div key={f.id} className="flex items-center justify-between">
-              <span className="flex items-center gap-2 text-sm text-white">
-                <Popcorn size={13} className="text-(--color-text-muted)" />
-                {f.name} ×{f.qty}
-              </span>
-              <span className="font-semibold text-sm text-white">
-                {(f.price * f.qty).toLocaleString("vi-VN")}₫
-              </span>
+          {/* Total */}
+          <div className="flex justify-end">
+            <div className="text-right">
+              <p className="flex items-center justify-end gap-1.5 text-[9px] font-black tracking-[0.16em] uppercase text-white/60">
+                {translate("booking.common.total_price")}
+              </p>
+              <p className="font-bold text-base text-(--color-gold)">
+                {formatVND(total)}
+              </p>
             </div>
-          ))}
-
-          <div className="h-px bg-(--color-border) my-1" />
-
-          <div className="flex items-center justify-between">
-            <span className="font-bold text-sm text-white">{translate("booking.common.total")}</span>
-            <span className="font-extrabold text-lg text-(--color-gold)">
-              {total.toLocaleString("vi-VN")}₫
-            </span>
           </div>
         </div>
       </div>

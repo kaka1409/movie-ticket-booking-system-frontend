@@ -21,11 +21,15 @@ export default async function CinemaShowtimePage({
   searchParams,
 }: {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ cinema?: string; time?: string; date?: string }>;
+  searchParams: Promise<{
+    cinema?: string;
+    time?: string;
+    date?: string
+  }>;
 }) {
   const { slug } = await params;
-  const sp = await searchParams;
-  const [movie, cinemas, dates] = await Promise.all([
+  const { cinema, time, date } = await searchParams;
+  const [ movie, cinemas, dates] = await Promise.all([
     getMovieBySlug(slug),
     getCinemas(),
     getDates(),
@@ -39,9 +43,9 @@ export default async function CinemaShowtimePage({
     <CinemaSelectionProvider
       cinemas={cinemas}
       dates={dates}
-      initialCinemaId={sp.cinema ? Number(sp.cinema) : null}
-      initialTime={sp.time || ""}
-      initialDate={sp.date || dates[0]?.value || ""}
+      initialCinemaId={cinema ? Number(cinema) : null}
+      initialTime={time || ""}
+      initialDate={date || dates[0]?.value || ""}
     >
       {/* Mobile */}
       <div className="block md:hidden">

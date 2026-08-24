@@ -24,9 +24,7 @@ export default function QuickBooking({
   const [selectedTime, setSelectedTime] = useState("");
   const [isExpanded, setIsExpanded] = useState(true);
 
-  if (movies.length === 0) return null;
-
-  const effectiveMovieSlug = selectedMovieSlug || movies[0].slug;
+  const effectiveMovieSlug = selectedMovieSlug || (movies[0]?.slug ?? "");
 
   const selectedCinema = useMemo(
     () => cinemas.find((cinema) => cinema.id === selectedCinemaId),
@@ -37,6 +35,8 @@ export default function QuickBooking({
     () => selectedCinema?.showtimes ?? [],
     [selectedCinema]
   );
+
+  if (movies.length === 0) return null;
 
   const firstThreeDates = dates.slice(0, 3);
 

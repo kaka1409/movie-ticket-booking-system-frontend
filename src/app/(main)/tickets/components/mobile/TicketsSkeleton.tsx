@@ -1,5 +1,5 @@
-import { Skeleton } from "@/components/common/Skeleton";
-import { SkeletonCard } from "@/components/common/Skeleton";
+import { Skeleton } from "@/components/ui/Skeleton";
+import { SkeletonCard } from "@/components/ui/Skeleton";
 
 function UpcomingCardSkeleton() {
   return (

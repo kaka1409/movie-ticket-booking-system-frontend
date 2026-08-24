@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { Search, Bell, SlidersHorizontal, Settings } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
-import Logo from "@/components/layout/Logo";
-import LanguageToggle from "@/components/layout/LanguageToggle";
+import Logo from "@/layouts/components/Logo";
+import LanguageToggle from "@/layouts/components/LanguageToggle";
 
 const NAV_LINKS = [
   { labelKey: "nav.home", href: "/" },

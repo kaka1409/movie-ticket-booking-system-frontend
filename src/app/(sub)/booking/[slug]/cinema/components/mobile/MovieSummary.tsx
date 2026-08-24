@@ -10,7 +10,7 @@ export default function MovieSummary({ movie }: { movie: Movie }) {
     <div className="flex items-center gap-3 p-3 rounded-2xl bg-(--color-surface) border border-(--color-border)">
       {/* Mini poster */}
       <div
-        className="w-16 overflow-hidden flex-shrink-0 flex items-end bg-(--color-surface-2)"
+        className="w-16 overflow-hidden rounded-sm flex-shrink-0 flex items-end bg-(--color-surface-2)"
         style={{ aspectRatio: "2/3" }}
       >
         {movie.src ? (

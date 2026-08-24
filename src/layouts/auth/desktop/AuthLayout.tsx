@@ -2,7 +2,7 @@
 
 import { Search } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
-import Logo from "@/components/layout/Logo";
+import Logo from "@/layouts/components/Logo";
 
 export default function AuthLayout({
   children,

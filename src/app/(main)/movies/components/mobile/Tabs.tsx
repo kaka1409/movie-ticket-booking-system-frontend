@@ -2,35 +2,22 @@
 
 import { useLocale } from "@/contexts/LocaleContext";
 import { useMovies } from "@/features/movies/context";
+import Tabs from "@/components/ui/Tabs";
 
-export default function Tabs() {
+export default function TabsComponent() {
   const { translate } = useLocale();
   const { activeTab, setActiveTab } = useMovies();
 
-  return (
-    <div className="flex gap-0 border-b border-(--color-border) px-(--space-md)">
-      {(["now_showing", "coming_soon"] as const).map((tab) => {
-        const label =
-          tab === "now_showing"
-            ? translate("movies.now_showing")
-            : translate("movies.coming_soon");
-        const active = activeTab === tab;
-        return (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`
-              relative mr-6 pb-3 px-1 text-sm font-bold tracking-wide transition-colors duration-150
-              ${active ? "text-(--color-gold)" : "text-(--color-text-muted) hover:text-(--color-gold-light)"}
-            `}
-          >
-            {label}
-            {active && (
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full bg-(--color-gold)" />
-            )}
-          </button>
-        );
-      })}
-    </div>
-  );
+  const tabs = [
+    { key: "now_showing", label: translate("movies.now_showing") },
+    { key: "coming_soon", label: translate("movies.coming_soon") },
+  ];
+
+  return <Tabs
+    tabs={tabs}
+    activeTab={activeTab}
+    onTabChange={
+      (tab) => setActiveTab(tab as "now_showing" | "coming_soon")
+    }
+  />;
 }

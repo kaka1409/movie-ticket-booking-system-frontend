@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { getAllMovies } from "@/features/movies/api";
+import { getMovieBySlug } from "@/features/movies/api";
 import { StatusProvider } from "@/features/booking/contexts/StatusContext";
 
 // Mobile components
@@ -10,14 +10,19 @@ import FailActions from "./components/mobile/FailActions";
 // Desktop components
 import DesktopFailContent from "./components/desktop/FailContent";
 
-export default async function FailPage() {
-  const allMovies = await getAllMovies();
+export default async function FailPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const movie = await getMovieBySlug(slug);
 
   return (
     <Suspense>
       {/* Mobile */}
       <div className="block md:hidden">
-        <StatusProvider allMovies={allMovies}>
+        <StatusProvider movie={movie}>
           <FailPageMobile />
         </StatusProvider>
       </div>

@@ -6,6 +6,7 @@ import { ArrowRight } from "lucide-react";
 import type { SeatPrice, SeatRow } from "@/features/booking/types";
 import { useSeatSelection } from "@/features/booking/contexts/SeatSelectionContext";
 import { useLocale } from "@/contexts/LocaleContext";
+import { formatVND } from "@/libs/utils";
 
 interface Selection {
   label: string;
@@ -69,7 +70,7 @@ export default function BottomBar({ seatPrices }: { seatPrices: SeatPrice }) {
                 : "text-(--color-text-muted)"
             }`}
           >
-            {hasSeats ? `${total.toLocaleString("vi-VN")}₫` : "—"}
+            {hasSeats ? formatVND(total) : "—"}
           </p>
         </div>
       </div>

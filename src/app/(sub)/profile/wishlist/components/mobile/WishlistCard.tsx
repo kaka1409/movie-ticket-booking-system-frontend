@@ -6,6 +6,7 @@ import { Star, Heart, Ticket } from "lucide-react";
 import type { Movie } from "@/features/movies/types";
 import { useWishlist } from "@/features/wishlist/context";
 import { useLocale } from "@/contexts/LocaleContext";
+import Badge from "@/components/ui/Badge";
 
 export default function WishlistCard({ movie }: { movie: Movie }) {
   const { toggleWishlist, isWishlisted } = useWishlist();
@@ -28,12 +29,12 @@ export default function WishlistCard({ movie }: { movie: Movie }) {
 
           <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-(--color-surface) via-(--color-surface)/85 to-transparent px-4 pb-4 pt-16">
             <div className="mb-2 flex flex-wrap gap-2">
-              <span className="rounded-full bg-black/70 px-3 py-1 text-xs font-bold tracking-wide text-(--color-text-primary)">
+              <Badge variant="dark" size="sm">
                 {movie.genre}
-              </span>
-              <span className="rounded-full border border-(--color-gold)/60 px-3 py-1 text-xs font-bold tracking-wide text-(--color-gold-light)">
+              </Badge>
+              <Badge variant="gold" size="sm">
                 {movie.ageRating}
-              </span>
+              </Badge>
             </div>
 
             <h2 className="text-2xl font-bold text-(--color-text-secondary)">

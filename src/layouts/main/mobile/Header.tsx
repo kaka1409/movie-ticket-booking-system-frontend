@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { Bell } from "lucide-react";
-import Logo from "@/components/layout/Logo";
-import LanguageToggle from "@/components/layout/LanguageToggle";
+import Logo from "@/layouts/components/Logo";
+import LanguageToggle from "@/layouts/components/LanguageToggle";
 import { useLocale } from "@/contexts/LocaleContext";
 
 export default function Header({ unreadCount }: { unreadCount: number }) {

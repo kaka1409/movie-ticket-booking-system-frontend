@@ -3,7 +3,7 @@
 import { useRouter, usePathname } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
-import Logo from "@/components/layout/Logo";
+import Logo from "@/layouts/components/Logo";
 import { getSubTitle } from "../utils";
 
 export default function Header() {

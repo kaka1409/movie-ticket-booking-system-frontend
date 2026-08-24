@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { CalendarDays, MapPin, RefreshCw } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
+import TearLine from "@/components/ui/TearLine";
 import type { UpcomingTicket } from "@/features/tickets/types";
 
 export default function UpcomingCard({ ticket }: { ticket: UpcomingTicket }) {
@@ -63,18 +64,14 @@ export default function UpcomingCard({ ticket }: { ticket: UpcomingTicket }) {
               {ticket.format}
             </span>
             <span className="px-3 py-1 rounded-full text-[11px] font-bold bg-(--color-surface-2) text-(--color-text-secondary) border border-(--color-border)">
-              {translate("tickets.seats_label")}{ticket.seats}
+              {translate("tickets.seats_label")}{ticket.seatItems.map((seat) => seat.label).join(", ")}
             </span>
           </div>
         </div>
       </div>
 
       {/* Tear line */}
-      <div className="relative flex items-center px-4 my-0">
-        <div className="absolute -left-3 w-6 h-6 rounded-full z-10 bg-(--color-bg)" />
-        <div className="flex-1 border-t-2 border-dashed border-(--color-border)" />
-        <div className="absolute -right-3 w-6 h-6 rounded-full z-10 bg-(--color-bg)" />
-      </div>
+      <TearLine className="px-4 my-0" />
 
       {/* Bottom section: amount + CTA */}
       <div className="flex items-center justify-between px-4 py-4">

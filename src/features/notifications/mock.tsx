@@ -31,7 +31,7 @@ export const INITIAL_NOTIFS: Notification[] = [
     title: "Movie Reminder",
     message: (
       <strong>
-        The Batman: Echoes starts in 2 hours. Don't forget to order your snacks
+        The Batman: Echoes starts in 2 hours. Don{"'"}t forget to order your snacks
         ahead of time!
       </strong>
     ),
