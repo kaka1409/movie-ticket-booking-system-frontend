@@ -1,0 +1,188 @@
+"use client";
+
+import Image from "next/image";
+import {
+  MonitorPlay,
+  CalendarDays,
+  Armchair,
+  Popcorn,
+  CreditCard,
+  User,
+} from "lucide-react";
+import type { Recipient } from "@/features/tickets/types";
+import { useLocale } from "@/contexts/LocaleContext";
+import { formatVND } from "@/libs/utils";
+import DetailRow from "@/app/(sub)/booking/components/mobile/DetailRow";
+import TearLine from "@/components/ui/TearLine";
+import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext";
+
+interface ConfirmCardProps {
+  seatLabels: string[];
+  recipient: Recipient;
+  transferSnacks?: boolean;
+}
+
+export default function ConfirmCard({
+  seatLabels,
+  recipient,
+  transferSnacks = false,
+}: ConfirmCardProps) {
+  const { ticket } = useTicketDetail();
+  const { translate } = useLocale();
+
+  const selectedSeats = ticket.seatItems.filter((seat) =>
+    seatLabels.includes(seat.label)
+  );
+  const totalSeats = ticket.seatItems.length;
+  const showSnacks = transferSnacks && !!ticket.foodDrink && ticket.foodDrink.length > 0;
+
+  return (
+    <section className="px-4">
+      <div className="rounded-3xl overflow-visible bg-(--color-surface) border border-(--color-border) shadow-[--shadow-card]">
+        {/* Top: movie info */}
+        <div className="flex gap-3 p-4">
+          <div className="w-20 h-30 flex-shrink-0 rounded-sm overflow-hidden relative">
+            <Image
+              src={ticket.poster}
+              alt={ticket.movie}
+              width={80}
+              height={120}
+              className="object-cover w-full h-full"
+            />
+          </div>
+          <div className="flex-1 min-w-0 pt-1">
+            <h3 className="font-bold text-base text-white mb-1">{ticket.movie}</h3>
+            <p className="text-xs text-white/60">
+              {ticket.format}
+              {ticket.ageRating ? ` · ${ticket.ageRating}` : ""}
+            </p>
+          </div>
+        </div>
+
+        {/* Tear line */}
+        <TearLine className="px-0 my-0" lineClassName="mx-3" />
+
+        {/* Ticket details */}
+        <div className="px-4 py-4 space-y-4">
+          {/* Theater + DateTime */}
+          <div className="flex justify-between gap-4">
+            <DetailRow
+              icon={MonitorPlay}
+              label={translate("booking.common.theater")}
+              value={
+                <>
+                  {ticket.cinema}
+                  {ticket.room && <>, {ticket.room}</>}
+                  {ticket.location && <>, {ticket.location}</>}
+                </>
+              }
+            />
+            <DetailRow
+              icon={CalendarDays}
+              label={translate("booking.common.date_time")}
+              value={ticket.datetime}
+              valueClass="text-white font-bold text-sm text-right"
+              labelClass="justify-end"
+            />
+          </div>
+
+          {/* Seats being transferred, grouped by type */}
+          <div className="space-y-3">
+            <p className="flex items-center gap-1.5 text-[9px] font-black tracking-[0.16em] uppercase text-white/60">
+              <Armchair size={10} />
+              {translate("tickets.transfer.seats_label")} (
+              {selectedSeats.length}/{totalSeats})
+            </p>
+            {Object.entries(
+              selectedSeats.reduce<Record<string, typeof selectedSeats>>((acc, seat) => {
+                (acc[seat.type] ??= []).push(seat);
+                return acc;
+              }, {})
+            ).map(([type, seats]) => (
+              <div key={type} className="space-y-1">
+                <p className="text-sm font-bold text-white">
+                  {seats.map((seat) => seat.label).join(", ")}
+                </p>
+                <div className="flex justify-between text-sm">
+                  <span className="text-white">
+                    {type} {translate("booking.common.ticket")}
+                  </span>
+                  <span className="font-medium text-white">
+                    {seats.length}× {formatVND(seats[0].price)}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Food & Drink — only when transferring the whole order */}
+          {showSnacks && (
+            <>
+              <div className="space-y-2">
+                <p className="flex items-center gap-1.5 text-[9px] font-black tracking-[0.16em] uppercase text-white/60">
+                  <Popcorn size={10} />
+                  {translate("booking.common.snacks_combos")}
+                </p>
+                <div className="space-y-1">
+                  {ticket.foodDrink!.map((item, index) => (
+                    <div key={index} className="flex justify-between text-sm">
+                      <span className="text-white">{item.name}</span>
+                      <span className="font-medium text-white">
+                        {item.qty}× {formatVND(item.qty * item.price)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Payment + Total */}
+              <div className="flex justify-between items-end gap-4">
+                <DetailRow
+                  icon={CreditCard}
+                  label={translate("booking.common.payment_method")}
+                  value={ticket.paymentMethod || "N/A"}
+                />
+                <div className="text-right">
+                  <p className="flex items-center justify-end gap-1.5 text-[9px] font-black tracking-[0.16em] uppercase text-white/60">
+                    {translate("booking.common.total_price")}
+                  </p>
+                  <p className="font-bold text-base text-(--color-gold)">
+                    {ticket.totalPrice ?? "—"}
+                  </p>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Tear line */}
+        <TearLine className="px-0 my-0" lineClassName="mx-3" />
+
+        {/* Recipient */}
+        <div className="px-4 py-4 space-y-3">
+          <p className="flex items-center gap-1.5 text-[9px] font-black tracking-[0.16em] uppercase text-white/60">
+            <User size={10} />
+            {translate("tickets.transfer.confirm_recipient_label")}
+          </p>
+          <div className="flex items-center gap-3.5">
+            <Image
+              src={recipient.avatar}
+              alt={recipient.name}
+              width={44}
+              height={44}
+              className="shrink-0 w-11 h-11 rounded-full object-cover bg-(--color-surface-2)"
+            />
+            <span className="flex flex-col gap-0.5 min-w-0">
+              <span className="font-bold text-sm text-(--color-text-primary)">
+                {recipient.name}
+              </span>
+              <span className="text-xs text-(--color-text-muted)">
+                @{recipient.username}
+              </span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
