@@ -147,8 +147,87 @@
       "scan_enter": "Scan to Print Tickets",
       "download_ticket": "Download Ticket",
       "cancel_refund": "Cancel & Refund",
+      "more_actions": "More Actions",
+      "edit_ticket": "Edit Ticket",
+      "edit_ticket_desc": "Modify date, seats, or snacks",
+      "transfer_ticket": "Transfer Ticket",
+      "transfer_ticket_desc": "Send this ticket to someone",
+      "cancel_refund_desc": "Cancel booking and get a refund",
       "standard": "Standard",
       "ticket": "Ticket"
+    },
+    "transfer": {
+      "title": "Transfer Ticket",
+      "confirm_title": "Confirm Transfer",
+      "select_seats": "Select Seats to Transfer",
+      "select_all": "Select All",
+      "clear_all": "Clear All",
+      "seats_selected": "{count}/{total} seats selected",
+      "transfer_to": "Transfer to",
+      "email_placeholder": "Email or Username",
+      "find": "Find",
+      "recipient": "Recipient",
+      "recipient_not_found": "No account found for \"{query}\"",
+      "warning": "After the recipient accepts, this ticket will no longer belong to you.",
+      "continue": "Continue",
+      "recipient_label": "Recipient",
+      "seats_label": "Seats",
+      "movie_label": "Movie",
+      "showtime_label": "Showtime",
+      "transfer_snacks_label": "Transfer food & drinks too?",
+      "transfer_snacks_desc": "The entire order will be transferred along with the seats",
+      "confirm_recipient_label": "Transfer to",
+      "cancel": "Cancel",
+      "confirm_cta": "Confirm Transfer",
+      "pending_badge": "Transfer Pending",
+      "pending_waiting": "Waiting for {name} to accept this ticket.",
+      "cancel_transfer": "Cancel Transfer"
+    },
+    "modify": {
+      "title": "Modify Ticket",
+      "select_type": "What would you like to modify?",
+      "change_showtime": "Change Showtime",
+      "change_showtime_desc": "Switch to a different date, time, or cinema",
+      "change_seats": "Change Seats",
+      "change_seats_desc": "Pick different seats for the same showtime",
+      "change_both": "Change Both",
+      "change_both_desc": "Change showtime and seats at the same time",
+      "showtime": {
+        "title": "Select Showtime",
+        "current_showtime": "Current Showtime",
+        "available_showtimes": "Available Showtimes",
+        "no_showtimes": "No other showtimes available",
+        "no_results": "No cinemas found for your search",
+        "select_date": "Select Date"
+      },
+      "seats": {
+        "title": "Select Seats",
+        "seat_count": "Original: {count} seat(s)",
+        "selected": "{count} seats selected",
+        "select_prompt": "Select your seats"
+      },
+      "review": {
+        "title": "Review Changes",
+        "changes_summary": "Summary of Changes",
+        "current": "Current",
+        "new": "New",
+        "price_adjustment": "Price Adjustment",
+        "you_pay": "You need to pay",
+        "you_refund": "You will be refunded",
+        "no_change": "No additional payment needed",
+        "confirm_cta": "Confirm Modification"
+      },
+      "payment": {
+        "title": "Payment Adjustment",
+        "pay_difference": "Pay Difference",
+        "refund_notice": "Refund will be processed within 3-5 business days",
+        "confirm_cta": "Confirm Payment"
+      },
+      "success": {
+        "title": "Modification Successful",
+        "message": "Your ticket has been successfully modified.",
+        "view_ticket": "View Ticket"
+      }
     }
   },
   "notif": {
