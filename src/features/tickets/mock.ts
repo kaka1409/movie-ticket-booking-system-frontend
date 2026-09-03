@@ -1,4 +1,12 @@
-import type { UpcomingTicket, PastTicket } from "./types";
+import type { UpcomingTicket, PastTicket, Recipient, EligibleShowtime } from "./types";
+import { CINEMAS, DATES } from "@/features/shared/mock";
+
+export const MOCK_RECIPIENTS: Recipient[] = [
+  { name: "Nguyen Van A", username: "nguyena", email: "nguyena@email.com", avatar: "https://i.pravatar.cc/150?img=1" },
+  { name: "Nguyen Van B", username: "nguyenb", email: "nguyenb@email.com", avatar: "https://i.pravatar.cc/150?img=3" },
+  { name: "Tran Thi C", username: "tranc", email: "tranc@email.com", avatar: "https://i.pravatar.cc/150?img=5" },
+  { name: "Le Van D", username: "levand", email: "levand@email.com", avatar: "https://i.pravatar.cc/150?img=7" },
+];
 
 export const UPCOMING: UpcomingTicket[] = [
   {
@@ -15,7 +23,9 @@ export const UPCOMING: UpcomingTicket[] = [
       { label: "H13", type: "Standard", price: 90000 },
     ],
     poster: "https://m.media-amazon.com/images/I/71PcjyqrHBL.jpg",
-    totalPrice: "285,000₫",
+    totalSeatPrice: 180000,
+    totalSnackPrice: 105000,
+    totalPrice: 285000,
     paymentMethod: "Via VNPay",
     foodDrink: [
       { name: "Combo Popcorn", price: 45000, qty: 1 },
@@ -37,7 +47,9 @@ export const UPCOMING: UpcomingTicket[] = [
     ],
     poster: "https://upload.wikimedia.org/wikipedia/en/4/4a/Oppenheimer_%28film%29.jpg",
     ageRating: "PG-13",
-    totalPrice: "440,000₫",
+    totalSeatPrice: 280000,
+    totalSnackPrice: 160000,
+    totalPrice: 440000,
     paymentMethod: "Via VNPay",
     foodDrink: [
       { name: "Combo Popcorn", price: 45000, qty: 1 },
@@ -60,7 +72,9 @@ export const UPCOMING: UpcomingTicket[] = [
     ],
     poster: "https://upload.wikimedia.org/wikipedia/en/2/2e/Inception_%282010%29_theatrical_poster.jpg",
     ageRating: "PG-13",
-    totalPrice: "180,000₫",
+    totalSeatPrice: 180000,
+    totalSnackPrice: 0,
+    totalPrice: 180000,
     paymentMethod: "Via MoMo",
   },
   {
@@ -75,8 +89,10 @@ export const UPCOMING: UpcomingTicket[] = [
     seatItems: [{ label: "I-3-4", type: "SweetBox", price: 280000 }],
     poster: "https://m.media-amazon.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_FMjpg_UX1000_.jpg",
     ageRating: "PG-13",
-    totalPrice: "445,000₫",
-    paymentMethod: "Via ZaloPay",
+    totalSeatPrice: 280000,
+    totalSnackPrice: 165000,
+    totalPrice: 445000,
+    paymentMethod: "Via VNPay",
     foodDrink: [
       { name: "Combo Popcorn", price: 45000, qty: 1 },
       { name: "Red Wine", price: 120000, qty: 1 },
@@ -98,7 +114,9 @@ export const UPCOMING: UpcomingTicket[] = [
     ],
     poster: "https://cdn11.bigcommerce.com/s-ydriczk/images/stencil/1280w/products/89058/93685/Joker-2019-Final-Style-steps-Poster-buy-original-movie-posters-at-starstills__62518.1669120603.jpg?c=2",
     ageRating: "R",
-    totalPrice: "525,000₫",
+    totalSeatPrice: 420000,
+    totalSnackPrice: 105000,
+    totalPrice: 525000,
     paymentMethod: "Via VNPay",
     foodDrink: [
       { name: "Combo Popcorn", price: 45000, qty: 1 },
@@ -120,7 +138,9 @@ export const UPCOMING: UpcomingTicket[] = [
     ],
     poster: "https://cdn.dribbble.com/userupload/35223132/file/original-ef853765fc767c6f1d0648662220c2a3.jpg?resize=752x&vertical=center",
     ageRating: "PG-13",
-    totalPrice: "300,000₫",
+    totalSeatPrice: 180000,
+    totalSnackPrice: 120000,
+    totalPrice: 300000,
     paymentMethod: "Via VNPay",
     foodDrink: [
       { name: "Combo Popcorn", price: 45000, qty: 1 },
@@ -147,7 +167,9 @@ export const PAST: PastTicket[] = [
       { label: "D06", type: "VIP", price: 140000 },
     ],
     ageRating: "PG-13",
-    totalPrice: "385,000₫",
+    totalSeatPrice: 280000,
+    totalSnackPrice: 105000,
+    totalPrice: 385000,
     paymentMethod: "Via VNPay",
     foodDrink: [
       { name: "Combo Popcorn", price: 45000, qty: 1 },
@@ -167,7 +189,9 @@ export const PAST: PastTicket[] = [
     room: "Screen 4",
     seatItems: [{ label: "B10", type: "Standard", price: 90000 }],
     ageRating: "PG-13",
-    totalPrice: "90,000₫",
+    totalSeatPrice: 90000,
+    totalSnackPrice: 0,
+    totalPrice: 90000,
     paymentMethod: "Via Cash",
   },
   {
@@ -186,7 +210,9 @@ export const PAST: PastTicket[] = [
       { label: "C09", type: "VIP", price: 140000 },
     ],
     ageRating: "PG-13",
-    totalPrice: "355,000₫",
+    totalSeatPrice: 280000,
+    totalSnackPrice: 75000,
+    totalPrice: 355000,
     paymentMethod: "Via MoMo",
     foodDrink: [
       { name: "Combo Popcorn", price: 45000, qty: 1 },
@@ -210,7 +236,9 @@ export const PAST: PastTicket[] = [
       { label: "A03", type: "Standard", price: 90000 },
     ],
     ageRating: "PG-13",
-    totalPrice: "450,000₫",
+    totalSeatPrice: 270000,
+    totalSnackPrice: 180000,
+    totalPrice: 450000,
     paymentMethod: "Via VNPay",
     foodDrink: [
       { name: "Combo Popcorn", price: 45000, qty: 2 },
@@ -233,8 +261,10 @@ export const PAST: PastTicket[] = [
       { label: "J-5-6", type: "SweetBox", price: 280000 },
     ],
     ageRating: "PG-13",
-    totalPrice: "660,000₫",
-    paymentMethod: "Via ZaloPay",
+    totalSeatPrice: 560000,
+    totalSnackPrice: 100000,
+    totalPrice: 660000,
+    paymentMethod: "Via VNPay",
     foodDrink: [
       { name: "Combo Popcorn", price: 45000, qty: 1 },
       { name: "Nachos", price: 55000, qty: 1 },
@@ -253,7 +283,9 @@ export const PAST: PastTicket[] = [
     room: "Screen 3",
     seatItems: [{ label: "B07", type: "Standard", price: 90000 }],
     ageRating: "PG-13",
-    totalPrice: "90,000₫",
+    totalSeatPrice: 90000,
+    totalSnackPrice: 0,
+    totalPrice: 90000,
     paymentMethod: "Via Cash",
   },
   {
@@ -272,11 +304,80 @@ export const PAST: PastTicket[] = [
       { label: "C05", type: "VIP", price: 140000 },
     ],
     ageRating: "R",
-    totalPrice: "385,000₫",
+    totalSeatPrice: 280000,
+    totalSnackPrice: 105000,
+    totalPrice: 385000,
     paymentMethod: "Via VNPay",
     foodDrink: [
       { name: "Combo Popcorn", price: 45000, qty: 1 },
       { name: "Coca-Cola", price: 30000, qty: 2 },
     ],
   },
+  {
+    id: "DNP2-9K3-A1",
+    status: "refunded",
+    movie: "Dune: Part Two",
+    format: "IMAX",
+    datetime: "Aug 25, 2024 • 7:30 PM",
+    ticketCount: 2,
+    poster: "https://m.media-amazon.com/images/M/MV5BN2FjNmEyNWMtYzM0ZS00NjIyLTg5NzctMjM0MWMxYmFjNjM2XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg",
+    cinema: "PrimeSeat Quận 1",
+    location: "135 Nguyễn Huệ, Q.1, TP.HCM",
+    room: "Screen 4",
+    seatItems: [
+      { label: "A5", type: "Standard", price: 90000 },
+      { label: "A6", type: "Standard", price: 90000 },
+    ],
+    ageRating: "PG-13",
+    totalSeatPrice: 180000,
+    totalSnackPrice: 45000,
+    totalPrice: 225000,
+    paymentMethod: "Via VNPay",
+    foodDrink: [
+      { name: "Combo Popcorn", price: 45000, qty: 1 },
+    ],
+  },
+  {
+    id: "BT-4L8-M2",
+    status: "cancelled",
+    movie: "Inside Out 2",
+    format: "Standard",
+    datetime: "Jul 12, 2024 • 5:00 PM",
+    ticketCount: 1,
+    poster: "https://lumiere-a.akamaihd.net/v1/images/p_insideout2_24394_3f6bd89d.jpeg",
+    cinema: "PrimeSeat Gò Vấp",
+    location: "19 Quang Trung, Q. Gò Vấp, TP.HCM",
+    room: "Screen 1",
+    seatItems: [
+      { label: "F03", type: "Standard", price: 90000 },
+    ],
+    ageRating: "PG",
+    totalSeatPrice: 90000,
+    totalSnackPrice: 30000,
+    totalPrice: 120000,
+    paymentMethod: "Via MoMo",
+    foodDrink: [
+      { name: "Coca-Cola", price: 30000, qty: 1 },
+    ],
+  },
 ];
+
+/* ─── Mock Eligible Showtimes for Modification ──────────── */
+/* Generated from CINEMAS × DATES — single source of truth  */
+
+export const MOCK_ELIGIBLE_SHOWTIMES: EligibleShowtime[] = CINEMAS.flatMap(
+  (cinema) =>
+    cinema.showtimes
+      .filter((st) => st.available)
+      .flatMap((showtime) =>
+        DATES.slice(1, 4).map((date) => ({
+          cinemaId: cinema.id,
+          cinemaName: cinema.name,
+          address: cinema.address,
+          distance: cinema.distance,
+          time: showtime.time,
+          room: showtime.room,
+          date: date.value,
+        }))
+      )
+);

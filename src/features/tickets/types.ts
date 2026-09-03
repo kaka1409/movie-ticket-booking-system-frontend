@@ -12,6 +12,20 @@ export interface FoodDrinkItem {
   qty: number;
 }
 
+export interface Recipient {
+  name: string;
+  username: string;
+  email: string;
+  avatar: string;
+}
+
+export interface TicketTransfer {
+  status: "pending";
+  recipient: Recipient;
+  transferredSeats: string[];
+  transferSnacks: boolean;
+}
+
 export interface UpcomingTicket {
   id: string;
   status: Extract<TicketStatus, "success" | "failed" | "pending" | "confirmed">;
@@ -24,9 +38,12 @@ export interface UpcomingTicket {
   poster: string;
   room?: string;
   ageRating?: string;
-  totalPrice?: string;
+  totalSeatPrice?: number;
+  totalSnackPrice?: number;
+  totalPrice?: number;
   paymentMethod?: string;
   foodDrink?: FoodDrinkItem[];
+  transfer?: TicketTransfer;
 }
 
 export interface PastTicket {
@@ -42,7 +59,42 @@ export interface PastTicket {
   seatItems: SeatTicket[];
   room?: string;
   ageRating?: string;
-  totalPrice?: string;
+  totalSeatPrice?: number;
+  totalSnackPrice?: number;
+  totalPrice?: number;
   paymentMethod?: string;
   foodDrink?: FoodDrinkItem[];
+}
+
+/* ─── Booking Modification Types ────────────────────────── */
+
+export type ModificationType = "showtime" | "seats" | "both";
+
+export interface ModificationSeat {
+  label: string;
+  type: string;
+  price: number;
+}
+
+export interface EligibleShowtime {
+  cinemaId: number;
+  cinemaName: string;
+  address: string;
+  distance: string;
+  time: string;
+  room: string;
+  date: string;
+}
+
+export interface ModificationResult {
+  ticketId: string;
+  modificationType: ModificationType;
+  previousShowtime: { date: string; time: string; cinema: string; room: string } | null;
+  newShowtime: { date: string; time: string; cinema: string; room: string } | null;
+  previousSeats: ModificationSeat[];
+  newSeats: ModificationSeat[];
+  previousTotal: number;
+  newTotal: number;
+  difference: number;
+  differenceType: "pay" | "refund" | "same";
 }

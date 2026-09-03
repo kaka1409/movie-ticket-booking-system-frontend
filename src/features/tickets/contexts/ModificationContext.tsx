@@ -49,21 +49,21 @@ export function ModificationProvider({
   children: ReactNode;
   initialSeatCount?: number;
 }) {
-  const [modificationType, setModificationType] =
-    useState<ModificationType | null>(null);
-  const [selectedShowtime, setSelectedShowtime] =
-    useState<EligibleShowtime | null>(null);
-  const [selectedSeats, setSelectedSeats] = useState<ModificationSeat[]>([]);
-  const [originalSeatCount, setOriginalSeatCount] = useState(
-    initialSeatCount
-  );
-  const [showtimes, setShowtimes] = useState<EligibleShowtime[]>([]);
-  const [seatRows, setSeatRows] = useState<SeatRow[]>([]);
-  const [seatPrices, setSeatPrices] = useState<SeatPrice | null>(null);
+  const [modificationType, setModificationType] = useState<ModificationType | null>(null);
+
+  // showtime states
+  const [query, setQuery] = useState("");
   const [dates, setDates] = useState<DateOption[]>([]);
   const [selectedDate, setSelectedDate] = useState("");
-  const [query, setQuery] = useState("");
+  const [showtimes, setShowtimes] = useState<EligibleShowtime[]>([]);
+  const [selectedShowtime, setSelectedShowtime] = useState<EligibleShowtime | null>(null);
 
+  // Seat state
+  const [seatRows, setSeatRows] = useState<SeatRow[]>([]);
+  const [seatPrices, setSeatPrices] = useState<SeatPrice | null>(null);
+  const [selectedSeats, setSelectedSeats] = useState<ModificationSeat[]>([]);
+  const [originalSeatCount, setOriginalSeatCount] = useState(initialSeatCount);
+  
   const toggleSeat = useCallback((seat: ModificationSeat) => {
     setSelectedSeats((previous) => {
       const exists = previous.some(

@@ -21,19 +21,23 @@ const TicketsContext = createContext<TicketsContextType | null>(null);
 
 export function TicketsProvider({ children }: { children: ReactNode }) {
   const [activeTab, setActiveTabState] = useState<Tab>("upcoming");
-  const [visibleCount, setVisibleCount] = useState(3);
+  const [visibleCount, setVisibleCount] = useState(4);
 
   const setActiveTab = useCallback((tab: Tab) => {
     setActiveTabState(tab);
-    setVisibleCount(3);
+    setVisibleCount(4);
   }, []);
 
   const loadMore = useCallback(() => {
-    setVisibleCount((c) => c + 3);
+    setVisibleCount((count) => count + 8);
   }, []);
 
   return (
-    <TicketsContext.Provider value={{ activeTab, visibleCount, setActiveTab, loadMore }}>
+    <TicketsContext.Provider
+      value={{
+        activeTab, visibleCount, setActiveTab, loadMore
+      }}
+    >
       {children}
     </TicketsContext.Provider>
   );
