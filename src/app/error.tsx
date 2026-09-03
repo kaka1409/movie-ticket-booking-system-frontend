@@ -99,7 +99,7 @@ function GlitchText({
 }
 
 export default function Error({
-  error,
+  // error,
   reset,
 }: {
   error: Error;

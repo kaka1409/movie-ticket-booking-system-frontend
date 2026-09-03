@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { ReactNode } from "react";
+// import type { ReactNode } from "react";
 import { Eye, EyeOff, AlertCircle } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 

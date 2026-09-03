@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+// import { notFound } from "next/navigation";
 import { getMovieBySlug } from "@/features/movies/api";
 import { MovieProvider } from "./components/shared/MovieContext";
 import { MovieSelectionProvider } from "./components/shared/MovieSelectionContext";

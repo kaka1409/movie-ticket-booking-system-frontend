@@ -5,12 +5,14 @@ import { Search, X } from "lucide-react";
 export default function SearchBar({
   value,
   onChange,
+  onFocus,
   placeholder,
   showClearButton = true,
   className = "",
 }: {
   value: string;
   onChange: (value: string) => void;
+  onFocus?: () => void;
   placeholder?: string;
   showClearButton?: boolean;
   className?: string;
@@ -25,6 +27,7 @@ export default function SearchBar({
         placeholder={placeholder}
         value={value}
         onChange={(event) => onChange(event.target.value)}
+        onFocus={onFocus}
         className="
           flex-1 bg-transparent text-sm text-(--color-text-primary) outline-none 
           placeholder:text-(--color-text-muted) [&::-webkit-search-cancel-button]:appearance-none
