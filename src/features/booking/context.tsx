@@ -63,29 +63,29 @@ interface BookingContextType extends BookingState {
 
 /* ─── Default state ─────────────────────────────────────── */
 
-const DEFAULT_STATE: BookingState = {
-    cinemaId: null,
-    cinemaName: "",
-    time: "",
-    date: "",
-    room: "",
-    location: "",
-    selectedSeats: [],
-  seatType: "Standard",
-  combos: [],
-  foods: [],
-  paymentMethod: "",
-  contactName: "",
-  contactEmail: "",
-  contactPhone: "",
-  contactCountryCode: "+84",
-  ticketCount: 0,
-  ticketPrice: 0,
-  snackTotal: 0,
-  total: 0,
-  countdownStarted: false,
-  countdownStartTime: 0,
-};
+// const DEFAULT_STATE: BookingState = {
+//     cinemaId: null,
+//     cinemaName: "",
+//     time: "",
+//     date: "",
+//     room: "",
+//     location: "",
+//     selectedSeats: [],
+//   seatType: "Standard",
+//   combos: [],
+//   foods: [],
+//   paymentMethod: "",
+//   contactName: "",
+//   contactEmail: "",
+//   contactPhone: "",
+//   contactCountryCode: "+84",
+//   ticketCount: 0,
+//   ticketPrice: 0,
+//   snackTotal: 0,
+//   total: 0,
+//   countdownStarted: false,
+//   countdownStartTime: 0,
+// };
 
 /* ─── Context ───────────────────────────────────────────── */
 
@@ -97,40 +97,51 @@ export function BookingProvider({
 }: {
   children: ReactNode;
   initialCountdownSeconds?: number;
-}) {
+  }) {
+  
+  const { translate } = useLocale();
+
+  // Cinema & showtimes
   const [cinemaId, setCinemaId] = useState<number | null>(null);
   const [cinemaName, setCinemaName] = useState("");
   const [time, setTime] = useState("");
   const [date, setDate] = useState("");
   const [room, setRoom] = useState("");
   const [location, setLocation] = useState("");
+
+  // Seats
   const [selectedSeats, setSelectedSeats] = useState<SelectedSeat[]>([]);
+  const [countdownStarted, setCountdownStarted] = useState(false);
+  const [countdownStartTime, setCountdownStartTime] = useState(0);
+
+  // Snacks
   const [combos, setCombos] = useState<SelectedCombo[]>([]);
   const [foods, setFoods] = useState<SelectedFood[]>([]);
-  const [paymentMethod, setPaymentMethod] = useState("");
+
+  // Credentials
   const [contactName, setContactName] = useState("");
   const [contactEmail, setContactEmail] = useState("");
   const [contactPhone, setContactPhone] = useState("");
   const [contactCountryCode, setContactCountryCode] = useState("+84");
-  const [countdownStarted, setCountdownStarted] = useState(false);
-  const [countdownStartTime, setCountdownStartTime] = useState(0);
-  const { translate } = useLocale();
+
+  // Payment Method
+  const [paymentMethod, setPaymentMethod] = useState("");
 
   const setCinema = useCallback(
     (
       id: number,
       name: string,
-      t: string,
-      d: string,
-      r: string,
-      loc: string
+      showTime: string,
+      showDate: string,
+      screenRoom: string,
+      location: string
     ) => {
       setCinemaId(id);
       setCinemaName(name);
-      setTime(t);
-      setDate(d);
-      setRoom(r);
-      setLocation(loc);
+      setTime(showTime);
+      setDate(showDate);
+      setRoom(screenRoom);
+      setLocation(location);
     },
     []
   );
@@ -139,23 +150,25 @@ export function BookingProvider({
     setSelectedSeats(seats);
   }, []);
 
-  const setSnacks = useCallback(
-    (c: SelectedCombo[], f: SelectedFood[]) => {
-      setCombos(c);
-      setFoods(f);
-    },
-    []
-  );
+  const setSnacks = useCallback((
+    selectedCombos: SelectedCombo[],
+    selectedFoods: SelectedFood[]
+  ) => {
+    setCombos(selectedCombos);
+    setFoods(selectedFoods);
+  }, []);
 
-  const setCredentials = useCallback(
-    (name: string, email: string, phone: string, countryCode: string) => {
-      setContactName(name);
-      setContactEmail(email);
-      setContactPhone(phone);
-      setContactCountryCode(countryCode);
-    },
-    []
-  );
+  const setCredentials = useCallback((
+    name: string,
+    email: string,
+    phone: string,
+    countryCode: string
+  ) => {
+    setContactName(name);
+    setContactEmail(email);
+    setContactPhone(phone);
+    setContactCountryCode(countryCode);
+  }, []);
 
   const startCountdown = useCallback(() => {
     if (!countdownStarted) {
@@ -185,67 +198,87 @@ export function BookingProvider({
 
   const value = useMemo<BookingContextType>(() => {
     const ticketCount = selectedSeats.length;
-    const ticketPrice = selectedSeats.reduce((s, seat) => s + seat.price, 0);
+    const ticketPrice = selectedSeats.reduce((total, seat) => total + seat.price, 0);
     const seatType = selectedSeats[0]?.type ?? translate("booking.seats.standard");
     const snackTotal =
-      combos.reduce((s, c) => s + c.price * c.qty, 0) +
-      foods.reduce((s, f) => s + f.price * f.qty, 0);
+      combos.reduce((total, combo) => total + combo.price * combo.qty, 0) +
+      foods.reduce((total, food) => total + food.price * food.qty, 0);
     const total = ticketPrice + snackTotal;
 
     return {
+      // Cinema 
       cinemaId,
       cinemaName,
       time,
       date,
       room,
       location,
+      setCinema,
+
+      // Seats
       selectedSeats,
       seatType,
+      countdownSeconds: initialCountdownSeconds,
+      countdownStarted,
+      countdownStartTime,
+      setSeats,
+      startCountdown,
+
+      // Snacks
       combos,
       foods,
-      paymentMethod,
+      snackTotal,
+      setSnacks,
+
+      // Credentials
       contactName,
       contactEmail,
       contactPhone,
       contactCountryCode,
+      setCredentials,
+      
+      // Payment
+      paymentMethod,
+      setPaymentMethod,
+
+      total,
       ticketCount,
       ticketPrice,
-      snackTotal,
-      total,
-      countdownSeconds: initialCountdownSeconds,
-      countdownStarted,
-      countdownStartTime,
-      setCinema,
-      setSeats,
-      setSnacks,
-      setPaymentMethod,
-      setCredentials,
-      startCountdown,
       resetBooking,
     };
   }, [
+    // Cinema 
     cinemaId,
     cinemaName,
     time,
     date,
     room,
     location,
+    setCinema,
+
+    // Seats
     selectedSeats,
+    countdownStarted,
+    countdownStartTime,
+    setSeats,
+    startCountdown,
+
+    // Snacks
     combos,
     foods,
-    paymentMethod,
+    setSnacks,
+
+    // Credentials
     contactName,
     contactEmail,
     contactPhone,
     contactCountryCode,
-    countdownStarted,
-    countdownStartTime,
-    setCinema,
-    setSeats,
-    setSnacks,
-    setPaymentMethod,
     setCredentials,
-    startCountdown,
+    
+    // Payment
+    paymentMethod,
+    setPaymentMethod,
+
     resetBooking,
   ]);
 

@@ -6,7 +6,7 @@ import { useCinemaSelection } from "@/features/booking/contexts/CinemaSelectionC
 import { useLocale } from "@/contexts/LocaleContext";
 
 export default function BottomBar({ movieSlug }: { movieSlug: string }) {
-  const { selectedCinema, selectedTime, selectedDate, hasSelection, clearSelection } =
+  const { selectedCinema, selectedTime, /* selectedDate, */ hasSelection, clearSelection } =
     useCinemaSelection();
   const { translate } = useLocale();
 

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Clock, Star } from "lucide-react";
 import { Movie } from "@/features/movies/types";
 import { useLocale } from "@/contexts/LocaleContext";
@@ -10,14 +11,16 @@ export default function MovieSummary({ movie }: { movie: Movie }) {
     <div className="flex items-center gap-3 p-3 rounded-2xl bg-(--color-surface) border border-(--color-border)">
       {/* Mini poster */}
       <div
-        className="w-16 overflow-hidden rounded-sm flex-shrink-0 flex items-end bg-(--color-surface-2)"
+        className="w-16 relative overflow-hidden rounded-sm flex-shrink-0 flex items-end bg-(--color-surface-2)"
         style={{ aspectRatio: "2/3" }}
       >
         {movie.src ? (
-          <img
+          <Image
             src={movie.src}
             alt={movie.title}
-            className="w-full h-full object-cover"
+            fill
+            sizes="64px"
+            className="object-cover"
           />
         ) : (
           <span className="text-[8px] font-black uppercase tracking-tight leading-tight text-(--color-text-muted)">

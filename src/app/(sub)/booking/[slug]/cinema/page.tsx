@@ -8,7 +8,7 @@ import StepBar from "@/app/(sub)/booking/components/mobile/StepBar";
 
 // Local mobile
 import MovieSummary from "./components/mobile/MovieSummary";
-import DatePicker from "./components/mobile/DatePicker";
+import DatePickerWrapper from "./components/mobile/DatePickerWrapper";
 import SearchBar from "./components/mobile/SearchBar";
 import CinemaList from "./components/mobile/CinemaList";
 import BottomBar from "./components/mobile/BottomBar";
@@ -52,7 +52,7 @@ export default async function CinemaShowtimePage({
         <StepBar current={1} />
         <div className="flex flex-col gap-4 px-4 py-6 pb-12">
           <MovieSummary movie={movie} />
-          <DatePicker />
+          <DatePickerWrapper />
           <SearchBar />
           <CinemaList />
         </div>

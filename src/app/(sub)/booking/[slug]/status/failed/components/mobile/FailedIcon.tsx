@@ -43,7 +43,7 @@ export default function FailedIcon() {
 }
 
 function FailReason() {
-  const { reason, mounted } = useStatus();
+  const { reason /* , mounted */ } = useStatus();
   const { translate } = useLocale();
 
   const REASONS: Record<string, string> = {

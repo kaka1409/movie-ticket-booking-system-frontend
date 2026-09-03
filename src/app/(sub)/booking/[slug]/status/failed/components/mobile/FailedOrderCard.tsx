@@ -36,7 +36,7 @@ export default function FailedOrderCard() {
     foods,
     total,
   } = useBooking();
-  const { transactionId, reason, movie, mounted } = useStatus();
+  const { /* transactionId, */ reason, movie, mounted } = useStatus();
   const { translate } = useLocale();
 
   const errorCode = ERROR_CODES[reason ?? ""] ?? "ERR_UNKNOWN";

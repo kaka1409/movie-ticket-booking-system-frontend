@@ -8,8 +8,7 @@ import StepBar from "@/app/(sub)/booking/components/mobile/StepBar";
 import CountdownBanner from "@/app/(sub)/booking/components/mobile/CountdownBanner";
 
 // Local mobile
-import SeatMap from "./components/mobile/SeatMap";
-import Legend from "./components/mobile/Legend";
+import SeatMapWrapper from "./components/mobile/SeatMapWrapper";
 import BottomBar from "./components/mobile/BottomBar";
 
 // Desktop
@@ -39,8 +38,7 @@ export default async function SelectSeatPage({
         <StepBar current={2} />
         <main className="space-y-5 pt-1 pb-10">
           <CountdownBanner />
-          <SeatMap />
-          <Legend />
+          <SeatMapWrapper />
         </main>
         <BottomBar seatPrices={seatPrices} />
       </div>

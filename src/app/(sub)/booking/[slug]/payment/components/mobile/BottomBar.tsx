@@ -13,7 +13,7 @@ export default function BottomBar() {
   const params = useParams();
   const router = useRouter();
   const slug = params.slug as string;
-  const { ticketCount, cinemaName, total, setPaymentMethod } = useBooking();
+  const { /* ticketCount, cinemaName, total, */ setPaymentMethod } = useBooking();
   const { selectedMethod } = usePayment();
   const { translate } = useLocale();
   const [isLoading, setIsLoading] = useState(false);
