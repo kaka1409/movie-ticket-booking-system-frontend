@@ -1,6 +1,6 @@
 # PrimeSeat
 
-PrimeSeat is a responsive web-based movie ticket booking system designed to provide a seamless and optimized user experience for browsing movies, selecting showtimes, reserving seats, and completing ticket purchases online. The system supports both guest and registered users, while also providing administrative features for cinema management and operational monitoring:
+PrimeSeat is a responsive web-based movie ticket booking system designed to provide a seamless and optimized user experience for browsing movies, selecting showtimes, reserving seats, and completing ticket purchases online. The system supports registered users and admin roles, while also providing administrative features for cinema management and operational monitoring:
 
 This repository contains the frontend codebase for PrimeSeat which use Next.js 16.2 with App Router and React 19 + TypeScript.
 
@@ -52,7 +52,7 @@ src/
 ├── app/
 │   ├── (main)/       # Home, movies list, tickets, profile
 │   ├── (blank)/      # Movie detail [slug] (full-screen, no header/nav)
-│   ├── (sub)/        # Notifications, tickets/[id], booking/[slug] (cinema, seats, snack, credentials, payment, status/success, status/failed), profile/edit, profile/password, profile/reviews, profile/wishlist
+│   ├── (sub)/        # Notifications, tickets/[id], tickets/[id]/cancel, booking/[slug] (cinema, seats, snack, credentials, payment, status/success, status/failed), profile/edit, profile/password, profile/reviews, profile/wishlist
 │   └── (auth)/       # Login, register
 ├── components/
 │   ├── layout/       # Shared layout components (Logo, LanguageToggle)
@@ -87,3 +87,4 @@ src/
 - Change password page with 4 requirement checks (8+ chars, uppercase, number, special char), errors shown on submit
 - Wishlist page with persistent WishlistContext at root layout, heart toggle on movie detail
 - Review & Rating page using ALL_MOVIES mock, filter by rating, load more pattern
+- Cancel & refund flow: tickets/[id]/cancel — single page with 4-state machine (idle/processing/success/failed), two bottom sheets (cancellation policy + confirmation), animated result views matching booking status patterns, fixed ₫20,000 cancellation fee, refund to original payment method

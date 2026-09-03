@@ -16,7 +16,7 @@ No test runner. `tests/{e2e,integration,unit}/` are empty dirs. `pnpm test` unde
 - **Next.js 16.2.9 App Router** + **React 19.2.4** — four route groups under `src/app/`:
   - `(main)/` — home, movies list, tickets listing, profile
   - `(blank)/` — `movies/[slug]` (full-screen pages, no header/nav)
-  - `(sub)/` — notifications, `tickets/[id]` (detail page with back-arrow header), `booking/[slug]/cinema` (cinema & showtime selection), `booking/[slug]/seats` (seat selection), `booking/[slug]/snack` (food & drinks), `booking/[slug]/credentials` (contact information), `booking/[slug]/payment` (payment method selection), `booking/[slug]/status/success` (payment success), `booking/[slug]/status/failed` (payment failure), `profile/edit` (edit profile), `profile/reviews` (review & rating), `profile/wishlist` (wishlist)
+  - `(sub)/` — notifications, `tickets/[id]` (detail page with back-arrow header), `tickets/[id]/cancel` (cancel & refund flow), `tickets/[id]/transfer` (ticket transfer), `tickets/[id]/transfer/confirm` (transfer confirmation), `booking/[slug]/cinema` (cinema & showtime selection), `booking/[slug]/seats` (seat selection), `booking/[slug]/snack` (food & drinks), `booking/[slug]/credentials` (contact information), `booking/[slug]/payment` (payment method selection), `booking/[slug]/status/success` (payment success), `booking/[slug]/status/failed` (payment failure), `profile/edit` (edit profile), `profile/reviews` (review & rating), `profile/wishlist` (wishlist)
   - `(auth)/` — login, register
 - **`(main)/page.tsx`** re-exports `./home/page.tsx`.
 - **Layout chain**: root layout (`LocaleProvider`) → each group wraps `LayoutProvider(layout="main"|"auth"|"sub"|"blank")`. Each layout type has its own `index.tsx` that uses `useDevice()` hook (`matchMedia`) to switch between mobile/desktop variants.
@@ -56,13 +56,13 @@ No test runner. `tests/{e2e,integration,unit}/` are empty dirs. `pnpm test` unde
 ## Feature Scaffolding
 
 - `src/features/movies/` — `mock.tsx` (NOW_SHOWING, COMING_SOON, ALL_MOVIES, FEATURED_MOVIES), `constants.ts` (GENRES, AGE_RATINGS, RELEASE_OPTIONS, RATING_OPTIONS, LENGTH_OPTIONS, FORMAT_OPTIONS), `types.ts` (Movie, CastMember, FeaturedMovie), `api.ts` (getNowShowingMovies, getComingSoonMovies, getAllMovies, getFeaturedMovies, getMovieBySlug — mock with commented-out fetch). No hooks — `page.tsx` calls API directly via `await`.
-- `src/features/tickets/` — `constants.ts` (SEAT_TYPES: Standard/VIP/SweetBox), `mock.ts` (UPCOMING with full detail + PAST with full detail), `types.ts` (FoodDrinkItem, UpcomingTicket, PastTicket), `api.ts` (getUpcomingTickets, getPastTickets, getTicketById).
+- `src/features/tickets/` — `constants.ts` (SEAT_TYPES: Standard/VIP/SweetBox), `mock.ts` (UPCOMING with full detail + PAST with full detail including cancelled/refunded tickets, MOCK_RECIPIENTS, MOCK_ELIGIBLE_SHOWTIMES), `types.ts` (FoodDrinkItem, UpcomingTicket, PastTicket, Recipient, TicketTransfer, SeatTicket, ModificationType, ModificationSeat, EligibleShowtime, ModificationResult), `api.ts` (getUpcomingTickets, getPastTickets, getTicketById, createTransfer, cancelTransfer, findRecipient, searchRecipients, getEligibleShowtimes, modifyTicket, cancelTicket — `"use server"` directive), `context.tsx` (TicketsProvider), `contexts/` (TransferContext, TicketDetailContext, ModificationContext).
 - `src/features/notifications/` — `mock.tsx`, `constants.ts`, `types.ts`, `api.ts` (getNotifications).
 - `src/features/auth/` — `mock.ts`.
 - `src/features/profile/` — `mock.ts` (USER with avatarUrl from Contentful), `types.ts` (User interface), `api.ts` (getUser).
 - `src/features/reviews/` — `mock.ts` (FILTERS with FilterKey), `types.ts` (FilterKey), `api.ts` (getReviewFilters).
 - `src/features/wishlist/` — `mock.ts` (INITIAL_WISHLIST IDs), `api.ts` (getInitialWishlist, re-exports INITIAL_WISHLIST), `context.tsx` (WishlistProvider, useWishlist).
-- `src/features/booking/` — `types.ts` (Cinema, Showtime, DateOption, BookingSelection, BOOKING_STEPS [5 steps], Seat, SeatRow, SeatKind, SeatStatus, SeatPrice, ComboItem, FoodItem, FoodCategory), `mock.ts` (CINEMAS with PrimeSeat data, DATES, SEAT_ROWS with 10 rows A–J, SEAT_PRICES, COMBOS [4 combos], FOOD_ITEMS [8 items], FOOD_CATEGORIES, COUNTDOWN_SECONDS, MAX_SEATS_PER_BOOKING=8, SEAT_MAP_COLS=10), `api.ts` (getCinemas, getDates, getSeatRows, getSeatPrices, getCombos, getFoodItems, getFoodCategories, getCountdownSeconds, getMaxSeatsPerBooking), `context.tsx` (BookingProvider, useBooking), `contexts/` (CinemaSelectionContext, SeatSelectionContext, SnackSelectionContext, CredentialsContext, PaymentContext, StatusContext).
+- `src/features/booking/` — `types.ts` (SelectedSeat, SelectedCombo, SelectedFood, BookingSelection, BOOKING_STEPS [5 steps] — re-exports shared types from `features/shared/types`), `mock.ts` (re-exports shared mock data from `features/shared/mock`), `api.ts` (getCinemas, getDates, getSeatRows, getSeatPrices, getCombos, getFoodItems, getFoodCategories, getCountdownSeconds, getMaxSeatsPerBooking — all re-export from shared), `context.tsx` (BookingProvider, useBooking), `contexts/` (CinemaSelectionContext, SeatSelectionContext, SnackSelectionContext, CredentialsContext, PaymentContext, StatusContext).
 - `src/hooks/` — `useDevice.ts` (returns `"mobile" | "desktop"` via `matchMedia`)
 - `src/libs/constants.ts` has generic constants; `src/libs/utils.ts` has `slugify`, `formatVND`, `formatDate` helpers; `src/libs/zod.ts` has shared Zod validators (`isValidPhone`, password regex patterns); `src/types/index.ts` has shared types (`Device`, `Movie`, `CastMember`, `FeaturedMovie`). Feature-specific types live in `features/*/types.ts`. Feature-specific Zod schemas live in `features/*/schema.ts`.
 
@@ -70,16 +70,51 @@ No test runner. `tests/{e2e,integration,unit}/` are empty dirs. `pnpm test` unde
 
 Two-level routing:
 - **Listing**: `(main)/tickets/page.tsx` — inside main layout with BottomNav. Uses `TicketsProvider`.
-- **Detail**: `(sub)/tickets/[id]/page.tsx` — **server component** that calls `getTicketById(id)` and passes to `TicketDetailClient`. Inside sub layout (back-arrow header, title "Ticket Details").
+- **Detail**: `(sub)/tickets/[id]/page.tsx` — renders components directly (no props). **Layout** (`layout.tsx`) is the server component that calls `getTicketById(id)`, wraps children in `<TicketDetailProvider>`. Components read ticket from `useTicketDetail()` context.
 
 Detail page components under `(sub)/tickets/[id]/components/`:
-- `TicketDetailClient.tsx` — client wrapper (receives ticket prop, renders mobile + desktop)
 - `mobile/TicketInfo.tsx` — hero poster, theater/location, seat, food & drink, QR code, payment summary
-- `mobile/TicketActions.tsx` — Download Ticket (always) + Cancel & Refund (only for success/confirmed/pending)
+- `mobile/TicketActions.tsx` — Download Ticket (always) + Cancel & Refund (only for success/confirmed/pending) + Transfer Ticket (upcoming only)
 - `mobile/QRCode.tsx` — `qrcode.react` with full URL encoding (`https://primseat.com/tickets/{id}`), error correction level H
 - `desktop/TicketDetail.tsx` — stub (returns null)
 
 Past tickets show the same detail layout but without action buttons.
+
+## Ticket Transfer
+
+Two sub-routes under `(sub)/tickets/[id]/transfer/`:
+- `transfer/page.tsx` — wraps with `TransferProvider`, renders `SeatSelector`, `RecipientInput`, `TransferBottomBar`. Mobile/desktop split via `block md:hidden`.
+- `transfer/confirm/page.tsx` — **server component** that reads `searchParams` (`seats`, `recipient`, `transferSnacks`), calls `findRecipient()`, redirects to transfer page if invalid. Renders `ConfirmCard`, `ConfirmBottomBar`.
+
+Both have `loading.tsx`. Desktop stubs return null.
+
+Components under `transfer/components/`:
+- `mobile/SeatSelector.tsx` — seat toggle for transferable seats
+- `mobile/RecipientInput.tsx` — recipient search (uses `searchRecipients()` API)
+- `mobile/TransferBottomBar.tsx` — sticky bottom bar with transfer CTA → links to confirm page
+- `desktop/TransferContent.tsx` — stub
+
+Components under `transfer/confirm/components/`:
+- `mobile/ConfirmCard.tsx` — transfer summary (seats, recipient, snacks toggle)
+- `mobile/ConfirmBottomBar.tsx` — calls `createTransfer()` API, redirects to ticket detail on success
+- `desktop/ConfirmContent.tsx` — stub
+
+`TransferContext.tsx` (`features/tickets/contexts/`) manages `selectedSeats`, `recipient`, `transferSnacks` state. `TicketDetailContext.tsx` provides `{ ticket, transfer }` from layout.
+
+## Ticket Cancel & Refund
+
+Single route under `(sub)/tickets/[id]/cancel/` — no separate routes for success/failed:
+- `cancel/page.tsx` — **client component** state machine with 4 views: `idle` (summary), `processing` (loading overlay), `success`, `failed`. Reads ticket from `useTicketDetail()` context (parent layout). Computes cancellation fee (fixed ₫20,000), total paid, and refund amount locally.
+- `cancel/loading.tsx` — skeleton matching summary layout
+- `cancel/components/mobile/CancelSummary.tsx` — movie info card (poster, title, cinema, datetime), seats, price breakdown (ticket + combo), total paid, cancellation fee, refund amount, refund-to section (payment method from ticket), cancellation policy link, Continue button
+- `cancel/components/mobile/CancellationPolicySheet.tsx` — bottom sheet with 4 policy rules, Done button. Uses `ActionSheet` wrapper.
+- `cancel/components/mobile/ConfirmationSheet.tsx` — bottom sheet with refund amount, "Cancel Booking" (red) + "Keep My Ticket" buttons. Uses `ActionSheet` wrapper.
+- `cancel/components/mobile/CancelResult.tsx` — success state: animated green checkmark (same pattern as booking status success), refund info card with "Processing" badge, View Ticket + Back to Home buttons. Failed state: animated red alert with shake keyframe (same pattern as booking status failed), refund info card with "Refund Failed" badge, Try Again + Contact Support buttons.
+- `cancel/components/desktop/CancelContent.tsx` — stub (returns null)
+
+Entry point: `TicketActions.tsx` Cancel & Refund row → `router.push(/tickets/${id}/cancel)`. Currently shown only when `canCancel` is true (status success/confirmed/pending) and no pending transfer.
+
+Cancellation fee is fixed ₫20,000 (policy time from backend in future). `cancelTicket()` API simulates 2s delay with 70% success / 30% refund-failure. After success, "View Ticket" calls `router.replace()` + `router.refresh()` to re-fetch server-side ticket data.
 
 ## Profile Page
 
@@ -143,23 +178,19 @@ Uses `WishlistProvider` from `features/wishlist/context.tsx` at root layout. `lo
 `(sub)/booking/[slug]/cinema/page.tsx` resolves movie by slug from `ALL_MOVIES`, composes mobile components directly:
 - `components/mobile/StepBar.tsx` — 5-step booking progress bar (SELECT CINEMA → SELECT SEATS → FOOD & DRINKS → CONTACT INFO → PAYMENT)
 - `components/mobile/MovieSummary.tsx` — mini poster + movie info (duration, genre, ageRating, rating)
-- `components/mobile/DatePicker.tsx` — horizontal scroll date picker
 - `components/mobile/SearchBar.tsx` — cinema/location search input
-- `components/mobile/CinemaCard.tsx` — cinema card with name, address, distance, badge, showtime chips (active/sold-out states)
-- `components/mobile/CinemaList.tsx` — list wrapper + empty state
+- `components/mobile/CinemaList.tsx` — list wrapper + empty state (cinema cards rendered inline)
 - `components/mobile/BottomBar.tsx` — sticky bottom bar with selection summary + "SELECT SEATS" CTA → links to `/booking/[slug]/seats`
 - `components/desktop/CinemaContent.tsx` — stub (returns null)
 
-Sub layout provides back button (→ movie detail) + "Cinema & Showtime" title. State managed via local `useState`.
+Sub layout provides back button (→ movie detail) + "Cinema & Showtime" title. State managed via `CinemaSelectionContext`.
 
 ## Seat Selection Page
 
 `(sub)/booking/[slug]/seats/page.tsx` resolves movie by slug, composes mobile components:
 - `components/mobile/StepBar.tsx` — step=2
 - `components/mobile/CountdownBanner.tsx` — 5m59s countdown timer
-- `components/mobile/SeatMap.tsx` — seat map with zoom-to-fit (ResizeObserver measures natural width, CSS `zoom` scales to viewport). Screen rendered as curved SVG arc. Max 8 seats enforced via `MAX_SEATS_PER_BOOKING`.
-- `components/mobile/SeatCell.tsx` — regular (`w-6.5 h-6.5`), VIP (amber), sweetbox (`w-18.5 h-8`, pink). Occupied shows "×".
-- `components/mobile/Legend.tsx` — color legend with × for occupied
+- Seat map rendered inline in page (zoom-to-fit via ResizeObserver + CSS `zoom`). Screen rendered as curved SVG arc. Max 8 seats enforced via `MAX_SEATS_PER_BOOKING`.
 - `components/mobile/BottomBar.tsx` — sticky bottom bar, selected seats + total price, "Continue to Snacks" CTA → `/booking/[slug]/snack`
 - `components/desktop/SeatContent.tsx` — stub (returns null)
 
@@ -245,7 +276,8 @@ Both pages use `<Suspense>` wrapper (required for `useSearchParams()`). White te
 - **Home page** (`(main)/home/page.tsx`) is a **server component** that fetches all data via API layer (`features/movies/api.ts`, `features/booking/api.ts`) and passes as props to mobile/desktop components. Sub-components under `home/components/{mobile,desktop}/`. MovieRow has `status` prop for "See All" navigation to movies page. API functions return mock data with commented-out `apiFetch()` calls — uncomment when backend is ready.
 - **Movies page** (`(main)/movies/page.tsx`) — **server component** that fetches `getNowShowingMovies()` + `getComingSoonMovies()` via API layer, renders `<MoviesProvider>` + `<Suspense>` + individual components (Tabs, SearchBar, FilterPanel, MovieGrid). MovieGrid receives `nowShowing`/`comingSoon` as props. Desktop stub in `components/desktop/MovieGrid` (returns null).
 - **Component split pattern**: Pages that render both mobile & desktop content in the same file use `block md:hidden` / `hidden md:block` (e.g. home, movies). Layout-level switching is handled by `LayoutProvider` via `matchMedia`. Each page has `components/{mobile,desktop}/` dirs. Shared components go in `components/shared/`. See `(main)/home/` as canonical example.
-- **Sub layout `getSubTitle()`**: Handles `/notifications` (i18n), `/tickets` (returns "Ticket Details"), `/booking/[slug]/cinema` (returns "Cinema & Showtime"), `/booking/[slug]/seats` (returns "Select Seat"), `/booking/[slug]/snack` (returns "Food & Drinks"), `/booking/[slug]/credentials` (returns "Contact Information"), `/booking/[slug]/payment` (returns "Payment"), `/booking/[slug]/status/success` (returns "Payment Success"), `/booking/[slug]/status/failed` (returns "Payment Failed"), `/profile/edit` (returns "Edit Profile"), `/profile/password` (returns "Change Password"), `/profile/reviews` (returns "Review & Rating"), `/profile/wishlist` (returns "Wishlist"). Back button uses `router.back()` (browser history navigation). Utility function `getSubTitle()` extracted to `src/layouts/sub/utils.ts`.
+- **Sub layout `getSubTitle()`**: Uses i18n keys via `translate()` — `t("notif.title")`, `t("tickets.detail_title")`, `t("tickets.transfer.title")`, `t("tickets.transfer.confirm_title")`, `t("tickets.cancel.title")`, `t("booking.cinema.title")`, `t("booking.seats.title")`, `t("booking.snack.title")`, `t("booking.credentials.title")`, `t("booking.payment.title")`, `t("booking.status.success.title")`, `t("booking.status.failed.title")`, `t("profile.edit_profile")`, `t("profile.change_password")`, `t("profile.review_rating")`, `t("profile.wishlist_label")`. Routing prefix `/profile` → back to `/profile`. Extracted to `src/layouts/sub/utils.ts`.
+- **Sub layout `getBackHref()`**: Determines back-button target — `transfer/confirm` → `transfer`, `transfer` → ticket detail, `/tickets/[id]/cancel` → `/tickets/[id]`, `/tickets/[id]` → `/tickets`, otherwise `null` (uses `router.back()`). Also in `src/layouts/sub/utils.ts`.
 - `postcss.config.mjs` only has `@tailwindcss/postcss` plugin.
 - No Prettier config, no CI/CD workflows.
 
