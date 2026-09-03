@@ -20,6 +20,9 @@ export function getBackHref(pathname: string): string | null {
   if (pathname.endsWith("/modify/seats")) {
     return pathname.slice(0, -"/seats".length);
   }
+  if (pathname.endsWith("/cancel")) {
+    return pathname.slice(0, -"/cancel".length);
+  }
   if (/^\/tickets\/[^/]+\/modify$/.test(pathname)) {
     return pathname.slice(0, -"/modify".length);
   }
@@ -56,6 +59,8 @@ export function getSubTitle(
       return t("tickets.modify.showtime.title");
     case pathname.includes("/modify/seats"):
       return t("tickets.modify.seats.title");
+    case pathname.includes("/cancel"):
+      return t("tickets.cancel.title");
     case pathname.includes("/modify"):
       return t("tickets.modify.title");
     case pathname.includes("/transfer/confirm"):
