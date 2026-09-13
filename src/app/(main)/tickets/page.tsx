@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { TicketsProvider } from "@/features/tickets/context";
 import { getUpcomingTickets, getPastTickets } from "@/features/tickets/api";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
 
 // Mobile components
 import Tabs from "@/app/(main)/tickets/components/mobile/Tabs";
@@ -18,22 +19,24 @@ export default async function TicketsPage() {
   ]);
 
   return (
-    <Suspense fallback={<TicketsSkeleton />}>
-      <TicketsProvider>
-        {/* Mobile */}
-        <div className="block md:hidden">
-          <div className="space-y-4 py-(--space-md)">
-            <Tabs />
-            <UpcomingTicketList tickets={upcoming} />
-            <PastTicketList tickets={past} />
+    <ProtectedRoute>
+      <Suspense fallback={<TicketsSkeleton />}>
+        <TicketsProvider>
+          {/* Mobile */}
+          <div className="block md:hidden">
+            <div className="space-y-4 py-(--space-md)">
+              <Tabs />
+              <UpcomingTicketList tickets={upcoming} />
+              <PastTicketList tickets={past} />
+            </div>
           </div>
-        </div>
 
-        {/* Desktop */}
-        <div className="hidden md:block">
-          <TicketsContent />
-        </div>
-      </TicketsProvider>
-    </Suspense>
+          {/* Desktop */}
+          <div className="hidden md:block">
+            <TicketsContent />
+          </div>
+        </TicketsProvider>
+      </Suspense>
+    </ProtectedRoute>
   );
 }

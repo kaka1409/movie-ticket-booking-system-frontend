@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
-import { Star, Pencil, Trash2, Check, X } from "lucide-react";
+import { Star, Pencil, Trash2, Check, X, LogIn } from "lucide-react";
+import { useRouter } from "next/navigation";
 import SectionHeading from "../shared/SectionHeading";
 import Stars from "../shared/Stars";
 import Avatar from "../shared/Avatar";
@@ -12,6 +13,7 @@ import {
   REVIEWS_LOAD_MORE,
 } from "../shared/mock";
 import { useLocale } from "@/contexts/LocaleContext";
+import { useAuth } from "@/contexts/AuthContext";
 
 type Review = (typeof REVIEWS)[number];
 
@@ -229,6 +231,8 @@ export default function Reviews() {
   const [maxH, setMaxH] = useState<string>("none");
   const containerRef = useRef<HTMLDivElement>(null);
   const { translate } = useLocale();
+  const { isAuthenticated } = useAuth();
+  const router = useRouter();
 
   const visibleReviews = reviews.slice(0, showCount);
   const hasMore = showCount < reviews.length;
@@ -294,7 +298,24 @@ export default function Reviews() {
         </div>
       </div>
 
-      <WriteReview onSubmit={handlePost} />
+      {isAuthenticated ? (
+        <WriteReview onSubmit={handlePost} />
+      ) : (
+        <div className="rounded-2xl bg-(--color-surface) border border-(--color-border) p-4 flex flex-col items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-(--color-bg)">
+            <LogIn size={18} className="text-(--color-text-muted)" />
+          </div>
+          <p className="text-sm text-(--color-text-muted) text-center">
+            {translate("movies.detail.login_to_review")}
+          </p>
+          <button
+            onClick={() => router.push("/login")}
+            className="w-full py-3 rounded-xl font-bold text-sm tracking-widest uppercase bg-(--color-gold) text-(--color-bg) hover:bg-(--color-gold-dark) active:scale-[0.98] transition-all duration-150"
+          >
+            {translate("auth.protected.login_btn")}
+          </button>
+        </div>
+      )}
 
       <div
         ref={containerRef}
