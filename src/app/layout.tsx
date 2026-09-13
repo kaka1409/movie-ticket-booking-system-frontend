@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "@/styles/global.css";
 import { LocaleProvider } from "@/contexts/LocaleContext";
+import { AuthProvider } from "@/contexts/AuthContext";
 import { WishlistProvider } from "@/features/wishlist/context";
 
 export const metadata: Metadata = {
@@ -23,7 +24,11 @@ export default function RootLayout({
     <html lang="en" data-scroll-behavior="smooth">
       <body className="min-h-dvh flex flex-col">
         <LocaleProvider>
-          <WishlistProvider>{children}</WishlistProvider>
+          <AuthProvider>
+            <WishlistProvider>
+              {children}
+            </WishlistProvider>
+          </AuthProvider>
         </LocaleProvider>
       </body>
     </html>
