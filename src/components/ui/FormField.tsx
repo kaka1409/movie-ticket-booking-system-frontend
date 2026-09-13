@@ -9,21 +9,25 @@ export default function FormField({
   icon: Icon,
   disabled = false,
   error,
+  rightSlot,
   children,
 }: {
-  label: string;
+  label?: string;
   icon: React.ElementType;
   disabled?: boolean;
   error?: string;
+  rightSlot?: ReactNode;
   children: ReactNode;
 }) {
   const [focused, setFocused] = useState(false);
 
   return (
     <label className="flex flex-col gap-2">
-      <span className="px-1 text-xs font-bold tracking-widest text-(--color-gold-light)">
-        {label.toUpperCase()}
-      </span>
+      {label && (
+        <span className="px-1 text-xs font-bold tracking-widest text-(--color-gold-light)">
+          {label.toUpperCase()}
+        </span>
+      )}
       <div
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
@@ -31,10 +35,10 @@ export default function FormField({
           disabled
             ? "opacity-80 border-(--color-border)"
             : error
-            ? "border-red-500/70"
-            : focused
-            ? "border-(--color-gold)/60"
-            : "border-(--color-border)"
+              ? "border-red-500/70"
+              : focused
+                ? "border-(--color-gold)/60"
+                : "border-(--color-border)"
         }`}
       >
         <Icon
@@ -42,13 +46,14 @@ export default function FormField({
             disabled
               ? "text-(--color-text-muted)"
               : error
-              ? "text-red-400"
-              : focused
-              ? "text-(--color-gold)"
-              : "text-(--color-text-muted)"
+                ? "text-red-400"
+                : focused
+                  ? "text-(--color-gold)"
+                  : "text-(--color-text-muted)"
           }`}
         />
         {children}
+        {rightSlot}
       </div>
       {error && (
         <p className="flex items-center gap-1.5 px-1 text-xs text-red-400">
