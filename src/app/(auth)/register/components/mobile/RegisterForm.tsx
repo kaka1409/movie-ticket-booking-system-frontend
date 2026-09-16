@@ -58,7 +58,8 @@ export default function RegisterForm() {
   const passwordError = touched ? fieldErrors.password?.[0] : undefined;
   const confirmError = touched ? fieldErrors.confirmPassword?.[0] : undefined;
 
-  const handleSubmit = useCallback(async () => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
+    e.preventDefault();
     setTouched(true);
     setServerError("");
     if (!isValid) return;
@@ -114,7 +115,7 @@ export default function RegisterForm() {
         onTabChange={(tab) => router.push(`/${tab}`)}
       />
 
-      <div className="mt-6 space-y-4">
+      <form onSubmit={handleSubmit} className="mt-6 space-y-4">
         <InputField
           value={name}
           onChange={setName}
@@ -167,14 +168,14 @@ export default function RegisterForm() {
         )}
 
         <Button
+          type="submit"
           variant="primary"
           size="lg"
           loading={isSubmitting}
-          onClick={handleSubmit}
         >
           {translate("auth.register.register_btn")}
         </Button>
-      </div>
+      </form>
 
       <p className="text-center text-xs text-(--color-text-muted) mt-6">
         {translate("auth.register.has_account")}{" "}

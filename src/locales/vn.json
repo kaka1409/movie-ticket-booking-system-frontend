@@ -3,6 +3,9 @@
     "sub": {
       "back": "Quay lại"
     },
+    "auth": {
+      "home": "Trang Chủ"
+    },
     "header": {
       "search": "Tìm phim, rạp chiếu...",
       "notifications": "Thông Báo",

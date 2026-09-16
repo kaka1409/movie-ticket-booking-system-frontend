@@ -3,6 +3,9 @@
     "sub": {
       "back": "Go back"
     },
+    "auth": {
+      "home": "Home"
+    },
     "header": {
       "search": "Search movies, cinemas...",
       "notifications": "Notifications",

@@ -49,7 +49,7 @@ export default function NotFound() {
 
       {/* CTAs */}
       <div
-        className="mt-8 w-full max-w-xs space-y-3 opacity-0 animate-fade-in"
+        className="flex flex-col gap-2 mt-8 w-full max-w-xs space-y-3 opacity-0 animate-fade-in"
         style={{ animationDelay: "850ms" }}
       >
         <Link href="/">

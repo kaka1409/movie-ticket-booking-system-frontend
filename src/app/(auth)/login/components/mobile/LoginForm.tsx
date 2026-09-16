@@ -47,7 +47,8 @@ export default function LoginForm() {
       : result.error.flatten().fieldErrors.password?.[0]
     : undefined;
 
-  const handleSubmit = useCallback(async () => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
+    e.preventDefault();
     setTouched(true);
     setServerError("");
     if (!isValid) return;
@@ -91,7 +92,7 @@ export default function LoginForm() {
         onTabChange={(tab) => router.push(`/${tab}`)}
       />
 
-      <div className="mt-6 space-y-4">
+      <form onSubmit={handleSubmit} className="mt-6 space-y-4">
         <InputField
           type="email"
           value={email}
@@ -129,14 +130,14 @@ export default function LoginForm() {
         )}
 
         <Button
+          type="submit"
           variant="primary"
           size="lg"
           loading={isSubmitting}
-          onClick={handleSubmit}
         >
           {translate("auth.login.login_btn")}
         </Button>
-      </div>
+      </form>
 
       <p className="text-center text-xs text-(--color-text-muted) mt-6">
         {translate("auth.login.no_account")}{" "}
