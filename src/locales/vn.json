@@ -299,6 +299,8 @@
       "error_phone_required": "Số điện thoại là bắt buộc.",
       "error_phone_invalid": "Vui lòng nhập số điện thoại hợp lệ.",
       "error_dob_required": "Ngày sinh là bắt buộc.",
+      "error_server": "Đã có lỗi xảy ra. Vui lòng thử lại.",
+      "error_conflict": "Thông tin này đã được sử dụng.",
       "change_photo": "Thay đổi ảnh"
     },
     "password": {

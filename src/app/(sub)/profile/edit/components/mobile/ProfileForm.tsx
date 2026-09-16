@@ -1,28 +1,33 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { User, Mail, Lock, Smartphone, Calendar } from "lucide-react";
+import { User, Mail, Lock, Smartphone, Calendar, AlertCircle } from "lucide-react";
 import AvatarEditor from "./AvatarEditor";
 import FormField from "@/components/ui/FormField";
 import FormActions from "@/components/ui/FormActions";
 import { useLocale } from "@/contexts/LocaleContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { createProfileSchema } from "@/features/profile/schema";
-import type { User as UserType } from "@/features/profile/types";
+import { updateProfile } from "@/features/profile/api";
 
-export default function ProfileForm({ user }: { user: UserType }) {
+export default function ProfileForm() {
   const router = useRouter();
   const { translate } = useLocale();
-  const [fullName, setFullName] = useState(user.name);
-  const [phone, setPhone] = useState(user.phone);
-  const [dob, setDob] = useState(user.dob);
+  const { user, updateUser } = useAuth();
+
+  const [fullName, setFullName] = useState(user?.name ?? "");
+  const [phone, setPhone] = useState(user?.phone ?? "");
+  const [dob, setDob] = useState(user?.dob ?? "");
   const [touched, setTouched] = useState(false);
   const [avatarChanged, setAvatarChanged] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [serverError, setServerError] = useState("");
 
   const hasChanges =
-    fullName !== user.name ||
-    phone !== user.phone ||
-    dob !== user.dob ||
+    fullName !== (user?.name ?? "") ||
+    phone !== (user?.phone ?? "") ||
+    dob !== (user?.dob ?? "") ||
     avatarChanged;
 
   const schema = useMemo(() => createProfileSchema(translate), [translate]);
@@ -31,22 +36,57 @@ export default function ProfileForm({ user }: { user: UserType }) {
   const isValid = result.success;
   const showErrors = touched && !isValid;
 
-  const handleSave = () => {
+  const handleSave = useCallback(async () => {
     if (!hasChanges) return;
     if (!isValid) {
       setTouched(true);
       return;
     }
-    router.back();
-  };
+
+    setIsSubmitting(true);
+    setServerError("");
+    try {
+      const updated = await updateProfile({
+        fullname: fullName,
+        phone,
+        dob,
+      });
+      updateUser({
+        name: updated.name,
+        phone: updated.phone,
+        dob: updated.dob,
+      });
+      router.back();
+    } catch (error: unknown) {
+      const status = (error as { status?: number }).status;
+      if (status === 409) {
+        setServerError(translate("profile.edit.error_conflict"));
+      } else {
+        setServerError(translate("profile.edit.error_server"));
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [
+    hasChanges,
+    isValid,
+    fullName,
+    phone,
+    dob,
+    updateUser,
+    router,
+    translate,
+  ]);
 
   const handleCancel = () => {
     router.back();
   };
 
+  if (!user) return null;
+
   return (
     <main className="flex-1 overflow-y-auto px-4 pb-24">
-      <AvatarEditor user={user} onAvatarChange={setAvatarChanged} />
+      <AvatarEditor onAvatarChange={setAvatarChanged} />
 
       <div className="flex flex-col gap-5">
         <FormField
@@ -104,12 +144,20 @@ export default function ProfileForm({ user }: { user: UserType }) {
         </FormField>
       </div>
 
+      {serverError && (
+        <div className="flex items-center gap-2 px-4 py-3 mt-4 rounded-xl bg-red-500/10 border border-red-500/20">
+          <AlertCircle size={15} className="text-red-400 shrink-0" />
+          <p className="text-xs text-red-400 font-semibold">{serverError}</p>
+        </div>
+      )}
+
       <FormActions
         primaryLabel={translate("profile.edit.save")}
         cancelLabel={translate("profile.edit.cancel")}
         onPrimary={handleSave}
         onCancel={handleCancel}
-        disabled={!hasChanges}
+        disabled={!hasChanges || isSubmitting}
+        loading={isSubmitting}
       />
     </main>
   );

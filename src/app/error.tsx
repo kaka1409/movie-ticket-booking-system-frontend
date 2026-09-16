@@ -113,7 +113,7 @@ export default function Error({
 
       {/* Error icon */}
       <div className="mt-14 flex h-20 w-20 items-center justify-center rounded-full bg-red-500/10">
-        <AlertTriangle size={36} className="text-red-500/60" />
+        <AlertTriangle size={36} className="text-red-600" />
       </div>
 
       {/* Glitch decode title */}

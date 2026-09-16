@@ -8,12 +8,14 @@ export default function FormActions({
   onPrimary,
   onCancel,
   disabled = false,
+  loading = false,
 }: {
   primaryLabel: string;
   cancelLabel: string;
   onPrimary: () => void;
   onCancel: () => void;
   disabled?: boolean;
+  loading?: boolean;
 }) {
   return (
     <div className="mt-8 flex flex-col gap-4">
@@ -21,6 +23,7 @@ export default function FormActions({
         variant="primary"
         size="lg"
         disabled={disabled}
+        loading={loading}
         onClick={onPrimary}
       >
         {primaryLabel}

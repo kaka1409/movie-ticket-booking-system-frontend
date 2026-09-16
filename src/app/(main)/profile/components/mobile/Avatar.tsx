@@ -1,9 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import type { User } from "@/features/profile/types";
+import { useAuth } from "@/contexts/AuthContext";
 
-export default function Avatar({ user }: { user: User }) {
+export default function Avatar() {
+  const { user } = useAuth();
+  if (!user) return null;
+
   return (
     <div className="relative w-28 h-28">
       {/* Conic gradient ring */}
@@ -20,7 +23,7 @@ export default function Avatar({ user }: { user: User }) {
       {/* Avatar circle */}
       <div className="absolute inset-[3px] rounded-full overflow-hidden bg-(--color-surface-2)">
         <Image
-          src={user.avatarUrl}
+          src={user.avatarUrl ?? "/images/default-avatar.jpg"}
           alt={user.name}
           fill
           sizes="112px"

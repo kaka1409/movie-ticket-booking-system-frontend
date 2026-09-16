@@ -4,18 +4,17 @@ import { useRef, useState } from "react";
 import Image from "next/image";
 import { Camera } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
-import type { User } from "@/features/profile/types";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function AvatarEditor({
-  user,
   onAvatarChange,
 }: {
-  user: User;
   onAvatarChange?: (changed: boolean) => void;
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const { translate } = useLocale();
+  const { user } = useAuth();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -24,6 +23,8 @@ export default function AvatarEditor({
       onAvatarChange?.(true);
     }
   };
+
+  if (!user) return null;
 
   return (
     <div className="flex flex-col items-center py-8">
@@ -42,8 +43,8 @@ export default function AvatarEditor({
         {/* Avatar image */}
         <div className="absolute inset-[4px] rounded-full overflow-hidden bg-(--color-surface-2)">
           <Image
-            src={preview || user?.avatarUrl || "/images/default-avatar.jpg"}
-            alt={user?.name || ""}
+            src={preview || user.avatarUrl || "/images/default-avatar.jpg"}
+            alt={user.name || ""}
             fill
             sizes="128px"
             className="object-cover"
@@ -70,9 +71,9 @@ export default function AvatarEditor({
       />
 
       <p className="mt-4 text-xl font-bold text-(--color-text-primary)">
-        {user?.name}
+        {user.name}
       </p>
-      <p className="text-sm text-(--color-text-secondary)">{user?.tier}</p>
+      <p className="text-sm text-(--color-text-secondary)">Member</p>
     </div>
   );
 }

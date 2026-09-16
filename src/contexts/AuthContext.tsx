@@ -24,6 +24,7 @@ interface AuthContextType {
   login: (data: LoginRequest) => Promise<void>;
   register: (data: RegisterRequest) => Promise<void>;
   logout: () => void;
+  updateUser: (patch: Partial<User>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -60,6 +61,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     authApi.logout();
   }, []);
 
+  const updateUser = useCallback((patch: Partial<User>) => {
+    setUser((prev) => (prev ? { ...prev, ...patch } : prev));
+  }, []);
+
   const isAuthenticated = Boolean(token && user);
 
   const value = useMemo(
@@ -71,8 +76,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       login,
       register,
       logout,
+      updateUser,
     }),
-    [user, token, isAuthenticated, isLoading, login, register, logout],
+    [user, token, isAuthenticated, isLoading, login, register, logout, updateUser],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

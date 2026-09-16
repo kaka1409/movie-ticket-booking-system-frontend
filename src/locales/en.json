@@ -299,6 +299,8 @@
       "error_phone_required": "Phone number is required.",
       "error_phone_invalid": "Enter a valid phone number.",
       "error_dob_required": "Date of birth is required.",
+      "error_server": "Something went wrong. Please try again.",
+      "error_conflict": "This information is already in use.",
       "change_photo": "Change photo"
     },
     "password": {
