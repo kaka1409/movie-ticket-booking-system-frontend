@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { Mail, AlertCircle } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useAuth } from "@/contexts/AuthContext";
-import { useLoginForm } from "@/features/auth/context";
+import { loginAction } from "@/features/auth/action";
 import { createLoginSchema } from "@/features/auth/schema";
 
 import Logo from "@/components/ui/Logo";
@@ -17,16 +17,11 @@ import Tabs from "@/components/ui/Tabs";
 
 export default function LoginForm() {
   const { translate } = useLocale();
-  const { login } = useAuth();
-  const {
-    loginEmail: email,
-    setLoginEmail: setEmail,
-    loginPassword: password,
-    setLoginPassword: setPassword,
-    resetLoginForm,
-  } = useLoginForm();
+  const { setAuth } = useAuth();
   const router = useRouter();
 
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [touched, setTouched] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [serverError, setServerError] = useState("");
@@ -55,20 +50,26 @@ export default function LoginForm() {
 
     setIsSubmitting(true);
     try {
-      await login({ email, password });
-      resetLoginForm();
-      router.push("/");
-    } catch (error: unknown) {
-      const status = (error as { status?: number }).status;
-      if (status === 401) {
-        setServerError(translate("auth.login.error_invalid_credentials"));
+      const result = await loginAction(
+        { success: false, error: "" },
+        { email, password },
+      );
+      if (result.success) {
+        setAuth(result.data.user, result.data.accessToken);
+        router.push("/");
       } else {
-        setServerError(translate("auth.login.error_server"));
+        if (result.status === 401) {
+          setServerError(translate("auth.login.error_invalid_credentials"));
+        } else {
+          setServerError(translate("auth.login.error_server"));
+        }
       }
+    } catch {
+      setServerError(translate("auth.login.error_server"));
     } finally {
       setIsSubmitting(false);
     }
-  }, [isValid, login, email, password, router, translate]);
+  }, [isValid, setAuth, email, password, router, translate]);
 
   return (
     <div className="w-full max-w-md mx-auto animate-fade-in">

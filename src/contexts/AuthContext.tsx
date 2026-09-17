@@ -9,21 +9,16 @@ import {
   useMemo,
   type ReactNode,
 } from "react";
-import * as authApi from "@/features/auth/api";
-import type {
-  User,
-  LoginRequest,
-  RegisterRequest,
-} from "@/features/auth/types";
+import { refreshAction } from "@/features/auth/action";
+import type { User } from "@/features/auth/types";
 
 interface AuthContextType {
   user: User | null;
   token: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (data: LoginRequest) => Promise<void>;
-  register: (data: RegisterRequest) => Promise<void>;
-  logout: () => void;
+  setAuth: (user: User, token: string) => void;
+  clearAuth: () => void;
   updateUser: (patch: Partial<User>) => void;
 }
 
@@ -35,30 +30,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    authApi
-      .refresh()
-      .then(({ accessToken, user }) => {
-        setToken(accessToken);
-        setUser(user);
+    refreshAction()
+      .then((result) => {
+        if (result.success) {
+          setToken(result.data.accessToken);
+          setUser(result.data.user);
+        }
       })
       .catch(() => {})
       .finally(() => setIsLoading(false));
   }, []);
 
-  const login = useCallback(async (data: LoginRequest) => {
-    const result = await authApi.login(data);
-    setToken(result.accessToken);
-    setUser(result.user);
+  const setAuth = useCallback((user: User, token: string) => {
+    setToken(token);
+    setUser(user);
   }, []);
 
-  const register = useCallback(async (data: RegisterRequest) => {
-    await authApi.register(data);
-  }, []);
-
-  const logout = useCallback(() => {
+  const clearAuth = useCallback(() => {
     setToken(null);
     setUser(null);
-    authApi.logout();
   }, []);
 
   const updateUser = useCallback((patch: Partial<User>) => {
@@ -73,12 +63,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       token,
       isAuthenticated,
       isLoading,
-      login,
-      register,
-      logout,
+      setAuth,
+      clearAuth,
       updateUser,
     }),
-    [user, token, isAuthenticated, isLoading, login, register, logout, updateUser],
+    [user, token, isAuthenticated, isLoading, setAuth, clearAuth, updateUser],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

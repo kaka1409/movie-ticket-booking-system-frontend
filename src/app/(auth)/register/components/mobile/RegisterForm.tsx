@@ -4,8 +4,7 @@ import { useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Mail, User, AlertCircle } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
-import { useAuth } from "@/contexts/AuthContext";
-import { useRegisterForm } from "@/features/auth/context";
+import { registerAction } from "@/features/auth/action";
 import { createRegisterSchema } from "@/features/auth/schema";
 
 import Logo from "@/components/ui/Logo";
@@ -17,22 +16,13 @@ import Tabs from "@/components/ui/Tabs";
 
 export default function RegisterForm() {
   const { translate } = useLocale();
-  const { register } = useAuth();
-  const {
-    registerName: name,
-    setRegisterName: setName,
-    registerEmail: email,
-    setRegisterEmail: setEmail,
-    registerPassword: password,
-    setRegisterPassword: setPassword,
-    registerConfirmPassword: confirmPassword,
-    setRegisterConfirmPassword: setConfirmPassword,
-    registerTerms: terms,
-    setRegisterTerms: setTerms,
-    resetRegisterForm,
-  } = useRegisterForm();
   const router = useRouter();
 
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [terms, setTerms] = useState(false);
   const [touched, setTouched] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [serverError, setServerError] = useState("");
@@ -66,26 +56,26 @@ export default function RegisterForm() {
 
     setIsSubmitting(true);
     try {
-      await register({
-        fullname: name,
-        email,
-        password,
-      });
-      resetRegisterForm();
-      router.push("/login");
-    } catch (error: unknown) {
-      const status = (error as { status?: number }).status;
-      if (status === 409) {
-        setServerError(translate("auth.register.error_email_exists"));
+      const result = await registerAction(
+        { success: false, error: "" },
+        { fullname: name, email, password },
+      );
+      if (result.success) {
+        router.push("/login");
       } else {
-        setServerError(translate("auth.register.error_server"));
+        if (result.status === 409) {
+          setServerError(translate("auth.register.error_email_exists"));
+        } else {
+          setServerError(translate("auth.register.error_server"));
+        }
       }
+    } catch {
+      setServerError(translate("auth.register.error_server"));
     } finally {
       setIsSubmitting(false);
     }
   }, [
     isValid,
-    register,
     name,
     email,
     password,
