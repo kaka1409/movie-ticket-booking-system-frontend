@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { User, Mail, Lock, Smartphone, Calendar, AlertCircle } from "lucide-react";
 import AvatarEditor from "./AvatarEditor";
@@ -9,19 +9,19 @@ import FormActions from "@/components/ui/FormActions";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { createProfileSchema } from "@/features/profile/schema";
-import { updateProfile } from "@/features/profile/api";
+import { updateProfile } from "@/features/profile/action";
 
 export default function ProfileForm() {
   const router = useRouter();
   const { translate } = useLocale();
-  const { user, updateUser } = useAuth();
+  const { user, token, updateUser } = useAuth();
+  const [isPending, startTransition] = useTransition();
 
   const [fullName, setFullName] = useState(user?.name ?? "");
   const [phone, setPhone] = useState(user?.phone ?? "");
   const [dob, setDob] = useState(user?.dob ?? "");
   const [touched, setTouched] = useState(false);
   const [avatarChanged, setAvatarChanged] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [serverError, setServerError] = useState("");
 
   const hasChanges =
@@ -36,43 +36,42 @@ export default function ProfileForm() {
   const isValid = result.success;
   const showErrors = touched && !isValid;
 
-  const handleSave = useCallback(async () => {
+  const handleSave = useCallback(() => {
     if (!hasChanges) return;
     if (!isValid) {
       setTouched(true);
       return;
     }
 
-    setIsSubmitting(true);
     setServerError("");
-    try {
-      const updated = await updateProfile({
-        fullname: fullName,
-        phone,
-        dob,
-      });
-      updateUser({
-        name: updated.name,
-        phone: updated.phone,
-        dob: updated.dob,
-      });
-      router.back();
-    } catch (error: unknown) {
-      const status = (error as { status?: number }).status;
-      if (status === 409) {
-        setServerError(translate("profile.edit.error_conflict"));
+    startTransition(async () => {
+      const state = await updateProfile(
+        { success: false, error: "" },
+        { fullname: fullName, phone, dob, token: token ?? "" },
+      );
+
+      if (state.success) {
+        updateUser({
+          name: state.data.name,
+          phone: state.data.phone,
+          dob: state.data.dob,
+        });
+        router.back();
       } else {
-        setServerError(translate("profile.edit.error_server"));
+        if (state.status === 409) {
+          setServerError(translate("profile.edit.error_conflict"));
+        } else {
+          setServerError(translate("profile.edit.error_server"));
+        }
       }
-    } finally {
-      setIsSubmitting(false);
-    }
+    });
   }, [
     hasChanges,
     isValid,
     fullName,
     phone,
     dob,
+    token,
     updateUser,
     router,
     translate,
@@ -156,8 +155,8 @@ export default function ProfileForm() {
         cancelLabel={translate("profile.edit.cancel")}
         onPrimary={handleSave}
         onCancel={handleCancel}
-        disabled={!hasChanges || isSubmitting}
-        loading={isSubmitting}
+        disabled={!hasChanges || isPending}
+        loading={isPending}
       />
     </main>
   );

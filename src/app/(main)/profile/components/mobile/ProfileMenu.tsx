@@ -4,16 +4,18 @@ import { LogOut, Star, Heart, UserCog, LockKeyhole } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { logoutAction } from "@/features/auth/action";
 import MenuSection from "./MenuSection";
 import Button from "@/components/ui/Button";
 
 export default function ProfileMenu() {
   const { translate } = useLocale();
-  const { logout } = useAuth();
+  const { clearAuth } = useAuth();
   const router = useRouter();
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    clearAuth();
+    await logoutAction();
     router.push("/");
   };
 

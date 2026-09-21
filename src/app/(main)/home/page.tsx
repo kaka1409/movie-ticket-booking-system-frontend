@@ -30,6 +30,8 @@ export default async function HomePage() {
       getDates(),
     ]);
 
+  // console.log(nowShowing, comingSoon)
+  
   return (
     <>
       {/* Mobile */}
