@@ -5,11 +5,19 @@ import Image from "next/image";
 import Link from "next/link";
 import { Star } from "lucide-react";
 import type { FeaturedMovie } from "@/features/movies/types";
+import type { ApiError } from "@/libs/api";
 import { useLocale } from "@/contexts/LocaleContext";
+import SectionFallback from "@/components/ui/SectionFallback";
 
 const SWIPE_THRESHOLD = 50;
 
-export default function HeroBanner({ movies }: { movies: FeaturedMovie[] }) {
+export default function HeroBanner({
+  movies,
+  error,
+}: {
+  movies: FeaturedMovie[];
+  error?: ApiError | null;
+}) {
   const { translate } = useLocale();
   const [index, setIndex] = useState(0);
   const [fading, setFading] = useState(false);
@@ -44,6 +52,8 @@ export default function HeroBanner({ movies }: { movies: FeaturedMovie[] }) {
     if (deltaX > 0) goToPreviousSlide();
     else goToNextSlide();
   };
+
+  if (error) return <SectionFallback error={error} />;
 
   if (movies.length === 0) return null;
 

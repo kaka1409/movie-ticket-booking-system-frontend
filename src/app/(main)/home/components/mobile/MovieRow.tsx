@@ -4,17 +4,23 @@ import Link from "next/link";
 import { useLocale } from "@/contexts/LocaleContext";
 import MovieCard from "@/components/ui/MovieCard";
 import SectionHeader from "@/components/ui/SectionHeader";
+import SectionFallback from "@/components/ui/SectionFallback";
 import type { Movie } from "@/features/movies/types";
+import type { ApiError } from "@/libs/api";
 
 interface MovieRowProps {
   titleKey: string;
   movies: Movie[];
   status: "now_showing" | "coming_soon";
+  error?: ApiError | null;
 }
 
-export default function MovieRow({ titleKey, movies, status }: MovieRowProps) {
+export default function MovieRow({ titleKey, movies, status, error }: MovieRowProps) {
   const { translate } = useLocale();
   const title = translate(titleKey);
+
+  if (error) return <SectionFallback error={error} />;
+
   return (
     <section
       className="px-(--space-md)"

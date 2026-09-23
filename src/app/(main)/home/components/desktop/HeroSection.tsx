@@ -6,11 +6,21 @@ import Link from "next/link";
 import { Star, Play, ChevronLeft, ChevronRight } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import type { FeaturedMovie } from "@/features/movies/types";
+import type { ApiError } from "@/libs/api";
+import SectionFallback from "@/components/ui/SectionFallback";
 
-export default function HeroSection({ movies }: { movies: FeaturedMovie[] }) {
+export default function HeroSection({
+  movies,
+  error,
+}: {
+  movies: FeaturedMovie[];
+  error?: ApiError | null;
+}) {
   const [index, setIndex] = useState(0);
   const [fading, setFading] = useState(false);
   const { translate } = useLocale();
+
+  if (error) return <SectionFallback error={error} />;
 
   if (movies.length === 0) return null;
 

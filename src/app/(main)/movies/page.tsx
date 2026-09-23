@@ -4,6 +4,7 @@ import {
   getNowShowingMovies,
   getComingSoonMovies,
 } from "@/features/movies/api";
+import { toApiResult } from "@/libs/api";
 
 // Mobile
 import Tabs from "./components/mobile/Tabs";
@@ -15,10 +16,13 @@ import MovieGrid from "./components/mobile/MovieGrid";
 import DesktopMovieGrid from "./components/desktop/MovieGrid";
 
 export default async function MoviesPage() {
-  const [nowShowing, comingSoon] = await Promise.all([
+  const [nowShowingSettled, comingSoonSettled] = await Promise.allSettled([
     getNowShowingMovies(),
     getComingSoonMovies(),
   ]);
+
+  const nowShowing = toApiResult(nowShowingSettled);
+  const comingSoon = toApiResult(comingSoonSettled);
 
   return (
     <>
@@ -29,7 +33,10 @@ export default async function MoviesPage() {
             <Tabs />
             <SearchBar />
             <FilterPanel />
-            <MovieGrid nowShowing={nowShowing} comingSoon={comingSoon} />
+            <MovieGrid
+              nowShowing={nowShowing.data ?? []}
+              comingSoon={comingSoon.data ?? []}
+            />
           </div>
         </div>
 

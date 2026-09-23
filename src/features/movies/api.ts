@@ -1,26 +1,38 @@
 import type { Movie, FeaturedMovie } from "./types";
-// import { apiFetch } from "@/libs/api";
-import { NOW_SHOWING, COMING_SOON, ALL_MOVIES, FEATURED_MOVIES } from "./mock";
+import { apiFetch, type ApiResult } from "@/libs/api";
+import { ALL_MOVIES } from "./mock";
 
-export async function getNowShowingMovies(): Promise<Movie[]> {
-  // TODO: replace with real fetch when backend is ready
-  // return apiFetch<Movie[]>("/movies/now-showing");
-  return NOW_SHOWING;
+type FeaturedMovieResponse = Movie & {
+  featuredLabel?: string;
+  featuredDescription?: string;
+};
+
+export async function getNowShowingMovies(): Promise<ApiResult<Movie[]>> {
+  return apiFetch<Movie[]>("/movies?status=now_showing&page=1&limit=6");
 }
 
-export async function getComingSoonMovies(): Promise<Movie[]> {
-  // return apiFetch<Movie[]>("/movies/coming-soon");
-  return COMING_SOON;
+export async function getComingSoonMovies(): Promise<ApiResult<Movie[]>> {
+  return apiFetch<Movie[]>("/movies?status=coming_soon&page=1&limit=6");
 }
 
-export async function getAllMovies(): Promise<Movie[]> {
-  // return apiFetch<Movie[]>("/movies");
-  return ALL_MOVIES;
-}
+export async function getFeaturedMovies(): Promise<ApiResult<FeaturedMovie[]>> {
+  const result = await apiFetch<FeaturedMovieResponse[]>("/movies?featured=true");
 
-export async function getFeaturedMovies(): Promise<FeaturedMovie[]> {
-  // return apiFetch<FeaturedMovie[]>("/movies/featured");
-  return FEATURED_MOVIES;
+  if (result.error) {
+    return { data: null, error: result.error };
+  }
+
+  return {
+    data: result.data.map(
+      ({ featuredLabel, featuredDescription, ...movie }) => ({
+        ...movie,
+        label: featuredLabel ?? "",
+        description: featuredDescription ?? "",
+      }),
+    ),
+    meta: result.meta,
+    error: null,
+  };
 }
 
 export async function getMovieBySlug(slug: string): Promise<Movie | undefined> {
