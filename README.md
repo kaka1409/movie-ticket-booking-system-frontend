@@ -13,6 +13,7 @@ This repository contains the frontend codebase for PrimeSeat which use Next.js 1
 - **lucide-react** (icons)
 - **qrcode.react** (QR code generation)
 - **next/image** (optimized images for payment brand logos)
+- **Zod** (form validation schemas)
 - **i18n** (English / Vietnamese)
 
 <!--## Screenshots-->
@@ -50,13 +51,14 @@ pnpm lint     # ESLint
 ```
 src/
 ├── app/
-│   ├── (main)/       # Home, movies list, tickets, profile
+│   ├── (main)/       # Home, movies list, tickets (protected), profile (protected)
 │   ├── (blank)/      # Movie detail [slug] (full-screen, no header/nav)
-│   ├── (sub)/        # Notifications, tickets/[id], tickets/[id]/cancel, booking/[slug] (cinema, seats, snack, credentials, payment, status/success, status/failed), profile/edit, profile/password, profile/reviews, profile/wishlist
+│   ├── (sub)/        # ALL routes protected: notifications, tickets/[id], booking/[slug]/*, profile/*
 │   └── (auth)/       # Login, register
 ├── components/
-│   ├── layout/       # Shared layout components (Logo, LanguageToggle)
-│   └── common/       # MovieCard (reusable)
+│   ├── auth/         # ProtectedRoute (auth guard)
+│   ├── ui/           # Button, Badge, Card, Skeleton, InputField, PasswordField, Logo, TermsCheckbox, etc.
+│   └── shared/       # MovieCard, CinemaCard, etc.
 ├── layouts/          # Layout system
 │   ├── LayoutProvider.tsx
 │   ├── constants.ts
@@ -64,10 +66,15 @@ src/
 │   ├── sub/          # Detail pages (back button + title)
 │   ├── auth/         # Login, register
 │   └── blank/        # Full-screen pages (no chrome)
-├── contexts/         # LocaleContext (cross-cutting only)
-├── features/         # Feature modules (mock data, constants, types)
+├── contexts/         # LocaleContext, AuthContext (cross-cutting)
+├── features/         # Feature modules
+│   ├── auth/         # Types, API, schema, context for authentication
+│   ├── movies/       # Movie data, constants, types
+│   ├── tickets/      # Ticket data, constants, types
+│   ├── booking/      # Booking data, context, step contexts
+│   └── ...
 ├── hooks/            # Shared custom hooks (useDevice)
-├── libs/             # Constants, utilities
+├── libs/             # Constants, utilities (apiFetch, formatVND, etc.)
 ├── locales/          # en.json, vn.json
 ├── store/            # Redux store
 ├── styles/           # global.css (Tailwind + custom utilities)
@@ -79,8 +86,11 @@ src/
 - Responsive layout: `LayoutProvider` selects layout type (main/auth/sub/blank), each layout's `index.tsx` uses `useDevice()` hook to switch between mobile/desktop variants via `matchMedia`
 - Brand theme uses CSS variables (gold/black palette) in `global.css`
 - Movie poster images configured in `next.config.ts` `images.remotePatterns`
-- API layer (`features/*/api.ts`): all data fetching goes through API functions that return mock data with commented-out `fetch()` calls — uncomment when backend is ready
-- Server components: all `page.tsx` files are server components that fetch data via API layer (`await`) and pass props to client components. No API calls in client components.
+- API layer (`features/*/api.ts`): movie/booking/notification APIs return mock data (commented-out fetch ready for backend). Auth API (`features/auth/api.ts`) connects to real backend via `apiFetch()` with `credentials: "include"`.
+- Server components: all `page.tsx` files are server components that fetch data via API layer (`await`) and pass props to client components. Protected pages (`/tickets`, `/profile`, `(sub)/*`) are wrapped with `<ProtectedRoute>` client component.
+- Auth system: RAM-only access token, HttpOnly cookie refresh token, automatic session restore on mount via `/api/v1/auth/refresh`
+- Protected routes: `/tickets`, `/profile`, and all `(sub)/*` routes require authentication. Unauthenticated users see a login prompt with CTA.
+- Movie detail review form is gated by auth — unauthenticated users see "Sign in to write a review" prompt, but review list remains public.
 - Complete booking flow: cinema → seats → snack → credentials → payment → status/success or status/failed (6 pages, BookingContext persists state across steps)
 - Payment step simulates external gateway: 2s loading → random 50/50 redirect to success or fail
 - Edit profile page with field validation (full name, phone, DOB as date picker) — SAVE CHANGES button only active when changes detected

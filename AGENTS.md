@@ -14,12 +14,12 @@ No test runner. `tests/{e2e,integration,unit}/` are empty dirs. `pnpm test` unde
 ## Architecture
 
 - **Next.js 16.2.9 App Router** + **React 19.2.4** — four route groups under `src/app/`:
-  - `(main)/` — home, movies list, tickets listing, profile
-  - `(blank)/` — `movies/[slug]` (full-screen pages, no header/nav)
-  - `(sub)/` — notifications, `tickets/[id]` (detail page with back-arrow header), `tickets/[id]/cancel` (cancel & refund flow), `tickets/[id]/transfer` (ticket transfer), `tickets/[id]/transfer/confirm` (transfer confirmation), `booking/[slug]/cinema` (cinema & showtime selection), `booking/[slug]/seats` (seat selection), `booking/[slug]/snack` (food & drinks), `booking/[slug]/credentials` (contact information), `booking/[slug]/payment` (payment method selection), `booking/[slug]/status/success` (payment success), `booking/[slug]/status/failed` (payment failure), `profile/edit` (edit profile), `profile/reviews` (review & rating), `profile/wishlist` (wishlist)
+  - `(main)/` — home, movies list, tickets listing (protected), profile (protected)
+  - `(blank)/` — `movies/[slug]` (full-screen pages, no header/nav, public)
+  - `(sub)/` — ALL routes are protected (requires authentication): notifications, `tickets/[id]`, `tickets/[id]/cancel`, `tickets/[id]/transfer`, `booking/[slug]/*`, `profile/edit`, `profile/password`, `profile/reviews`, `profile/wishlist`
   - `(auth)/` — login, register
 - **`(main)/page.tsx`** re-exports `./home/page.tsx`.
-- **Layout chain**: root layout (`LocaleProvider`) → each group wraps `LayoutProvider(layout="main"|"auth"|"sub"|"blank")`. Each layout type has its own `index.tsx` that uses `useDevice()` hook (`matchMedia`) to switch between mobile/desktop variants.
+- **Layout chain**: root layout (`AuthProvider` → `WishlistProvider`) → each group wraps `LayoutProvider(layout="main"|"auth"|"sub"|"blank")`. Each layout type has its own `index.tsx` that uses `useDevice()` hook (`matchMedia`) to switch between mobile/desktop variants. Protected routes use `ProtectedRoute` wrapper (page-level for `(main)/tickets` and `(main)/profile`, layout-level for `(sub)/`).
 - **Layout structure** (`src/layouts/`):
   - `components/` — `Logo.tsx`, `LanguageToggle.tsx` (shared across layouts)
   - `main/` — `index.tsx` (device switch), `mobile/` (MainLayout, Header, BottomNav), `desktop/` (MainLayout, Header, Footer), `types.ts`
@@ -29,17 +29,17 @@ No test runner. `tests/{e2e,integration,unit}/` are empty dirs. `pnpm test` unde
   - `hooks/useDevice.ts` — shared matchMedia hook
   - `constants.ts` — LayoutType, Device types
 - **Shared layout components** (`src/layouts/components/`): `Logo.tsx` (size="sm"|"lg", tagline), `LanguageToggle.tsx` (variant="flag"|"text")
-- **Shared UI components** (`src/components/ui/`): `MovieCard.tsx` (reusable movie card), `Skeleton.tsx` (Skeleton, SkeletonCircle, SkeletonText, SkeletonCard loaders), `TearLine.tsx` (ticket-style dashed separator with circular cutouts), `FormActions.tsx` (primary + cancel button pair), `Tabs.tsx` (generic tab bar), `Button.tsx` (primary/outline/loadMore variants, loading state), `FormField.tsx` (icon + input + focus/error border), `Badge.tsx` (neutral/dark/gold/success/error pills), `Card.tsx` (card wrapper with selected/error states), `SectionHeader.tsx` (borderLeft/goldBar/uppercase variants), `SearchBar.tsx` (icon + input + clear button), `EmptyState.tsx` (icon + title + description + CTA)
+- **Shared UI components** (`src/components/ui/`): `MovieCard.tsx` (reusable movie card), `Skeleton.tsx` (Skeleton, SkeletonCircle, SkeletonText, SkeletonCard loaders), `TearLine.tsx` (ticket-style dashed separator with circular cutouts), `FormActions.tsx` (primary + cancel button pair), `Tabs.tsx` (generic tab bar), `Button.tsx` (primary/outline/loadMore variants, loading state), `FormField.tsx` (icon + input + focus/error border), `Badge.tsx` (neutral/dark/gold/success/error pills), `Card.tsx` (card wrapper with selected/error states), `SectionHeader.tsx` (borderLeft/goldBar/uppercase variants), `SearchBar.tsx` (icon + input + clear button), `EmptyState.tsx` (icon + title + description + CTA), `InputField.tsx` (text input with icon), `PasswordField.tsx` (password input with Eye/EyeOff toggle), `Logo.tsx` (brand logo), `TermsCheckbox.tsx` (checkbox with terms/privacy links)
 - **Shared hooks** (`src/hooks/`): `useDevice.ts` — returns `"mobile" | "desktop"` via `matchMedia`
 - **Redux Toolkit**: store wired at `src/store/index.ts` — `reducer: {}` (unused, available for future features).
 - **i18n**: `useLocale()` from `LocaleContext` via `useSyncExternalStore`. Returns `{ locale, setLocale, translate }`. Persists to `localStorage("locale")`. Translations at `src/locales/{en,vn}.json`. Throws if used outside `LocaleProvider`.
 - **`@/`** alias → `src/` in `tsconfig.json`.
 - Error & not-found pages at `src/app/errors.tsx` / `not-found.tsx`.
-- **All API calls on server**: Every `page.tsx` is a server component that fetches data via `await`. Client components (`"use client"`) receive data via props only — no `useEffect` + API call pattern.
+- **All API calls on server**: Every `page.tsx` is a server component that fetches data via `await`. Client components (`"use client"`) receive data via props only — no `useEffect` + API call pattern. Protected pages are wrapped with `<ProtectedRoute>` client component for auth gating.
 
 ## State Management
 
-- **`src/contexts/`** only holds cross-cutting contexts: `LocaleContext.tsx`. Feature-specific contexts live in `src/features/*/context.tsx`.
+- **`src/contexts/`** holds cross-cutting contexts: `LocaleContext.tsx`, `AuthContext.tsx`. AuthContext provides `{ user, token, isAuthenticated, isLoading, setAuth, clearAuth, updateUser }` — state only, no API actions. Feature-specific contexts live in `src/features/*/context.tsx`.
 - **Movies page**: React Context (`src/features/movies/context.tsx`) with URL sync via `useSearchParams` + `router.replace`. State: `activeTab`, `query`, `filtersOpen`, `filters`, `appliedFilters`, `visibleCount`. URL-synced params: `status`, `genres`, `rating`, `format`, `ageRating`. Non-URL state: `query`, `filtersOpen`, `visibleCount`, `filters.releaseDate`, `filters.length`.
 - **Tickets listing**: React Context (`src/features/tickets/context.tsx`) — `TicketsProvider` + `useTickets()` hook. Manages `activeTab` ("upcoming"|"past") and `visibleCount`. Tab switching resets `visibleCount` to 3; `loadMore` increments by 3.
 - **Booking flow**: React Context (`src/features/booking/context.tsx`) — `BookingProvider` wraps all booking steps at `booking/[slug]/layout.tsx`. Manages cinema, seats, combos, foods, countdown, paymentMethod. Saves state on each step's CTA click. Local state initialized from context on back-navigation via `useState(contextValue)`. `paymentMethod` is included in `useMemo` dependency array.
@@ -56,20 +56,57 @@ No test runner. `tests/{e2e,integration,unit}/` are empty dirs. `pnpm test` unde
 ## Feature Scaffolding
 
 - `src/features/movies/` — `mock.tsx` (NOW_SHOWING, COMING_SOON, ALL_MOVIES, FEATURED_MOVIES), `constants.ts` (GENRES, AGE_RATINGS, RELEASE_OPTIONS, RATING_OPTIONS, LENGTH_OPTIONS, FORMAT_OPTIONS), `types.ts` (Movie, CastMember, FeaturedMovie), `api.ts` (getNowShowingMovies, getComingSoonMovies, getAllMovies, getFeaturedMovies, getMovieBySlug — mock with commented-out fetch). No hooks — `page.tsx` calls API directly via `await`.
-- `src/features/tickets/` — `constants.ts` (SEAT_TYPES: Standard/VIP/SweetBox), `mock.ts` (UPCOMING with full detail + PAST with full detail including cancelled/refunded tickets, MOCK_RECIPIENTS, MOCK_ELIGIBLE_SHOWTIMES), `types.ts` (FoodDrinkItem, UpcomingTicket, PastTicket, Recipient, TicketTransfer, SeatTicket, ModificationType, ModificationSeat, EligibleShowtime, ModificationResult), `api.ts` (getUpcomingTickets, getPastTickets, getTicketById, createTransfer, cancelTransfer, findRecipient, searchRecipients, getEligibleShowtimes, modifyTicket, cancelTicket — `"use server"` directive), `context.tsx` (TicketsProvider), `contexts/` (TransferContext, TicketDetailContext, ModificationContext).
+- `src/features/tickets/` — `constants.ts` (SEAT_TYPES: Standard/VIP/SweetBox), `mock.ts` (UPCOMING with full detail + PAST with full detail including cancelled/refunded tickets, MOCK_RECIPIENTS, MOCK_ELIGIBLE_SHOWTIMES), `types.ts` (FoodDrinkItem, UpcomingTicket, PastTicket, Recipient, TicketTransfer, SeatTicket, ModificationType, ModificationSeat, EligibleShowtime, ModificationResult), `api.ts` (queries only: getUpcomingTickets, getPastTickets, getTicketById, findRecipient, searchRecipients, getEligibleShowtimes), `action.ts` (server actions: createTransfer, cancelTransfer, modifyTicket, cancelTicket — `"use server"`), `context.tsx` (TicketsProvider), `contexts/` (TransferContext, TicketDetailContext, ModificationContext).
 - `src/features/notifications/` — `mock.tsx`, `constants.ts`, `types.ts`, `api.ts` (getNotifications).
-- `src/features/auth/` — `mock.ts`.
-- `src/features/profile/` — `mock.ts` (USER with avatarUrl from Contentful), `types.ts` (User interface), `api.ts` (getUser).
+- `src/features/auth/` — `types.ts` (User, LoginRequest, LoginResponse, RegisterRequest, RegisterResponse, RefreshResponse, LogoutResponse), `action.ts` (server actions: loginAction, registerAction, refreshAction, logoutAction — `"use server"`), `api.ts` (empty, deprecated), `schema.ts` (createLoginSchema, createRegisterSchema — Zod factory functions with i18n).
+- `src/features/profile/` — `types.ts` (User interface, UpdateProfileRequest), `action.ts` (updateProfile server action), `api.ts` (empty, deprecated).
 - `src/features/reviews/` — `mock.ts` (FILTERS with FilterKey), `types.ts` (FilterKey), `api.ts` (getReviewFilters).
 - `src/features/wishlist/` — `mock.ts` (INITIAL_WISHLIST IDs), `api.ts` (getInitialWishlist, re-exports INITIAL_WISHLIST), `context.tsx` (WishlistProvider, useWishlist).
 - `src/features/booking/` — `types.ts` (SelectedSeat, SelectedCombo, SelectedFood, BookingSelection, BOOKING_STEPS [5 steps] — re-exports shared types from `features/shared/types`), `mock.ts` (re-exports shared mock data from `features/shared/mock`), `api.ts` (getCinemas, getDates, getSeatRows, getSeatPrices, getCombos, getFoodItems, getFoodCategories, getCountdownSeconds, getMaxSeatsPerBooking — all re-export from shared), `context.tsx` (BookingProvider, useBooking), `contexts/` (CinemaSelectionContext, SeatSelectionContext, SnackSelectionContext, CredentialsContext, PaymentContext, StatusContext).
 - `src/hooks/` — `useDevice.ts` (returns `"mobile" | "desktop"` via `matchMedia`)
 - `src/libs/constants.ts` has generic constants; `src/libs/utils.ts` has `slugify`, `formatVND`, `formatDate` helpers; `src/libs/zod.ts` has shared Zod validators (`isValidPhone`, password regex patterns); `src/types/index.ts` has shared types (`Device`, `Movie`, `CastMember`, `FeaturedMovie`). Feature-specific types live in `features/*/types.ts`. Feature-specific Zod schemas live in `features/*/schema.ts`.
 
+## Auth Pages (Login & Register)
+
+Tab-switching auth page — both login and register in a single `AuthPage` component.
+
+- **Login route**: `(auth)/login/page.tsx` — thin compose, renders `AuthPage` for both mobile/desktop
+- **Register route**: `(auth)/register/page.tsx` — redirects to `/login`
+- **AuthPage**: `(auth)/login/components/mobile/AuthPage.tsx` — `"use client"`, tab-switching between login and register forms
+- **Auth layout**: `(auth)/layout.tsx` → `LayoutProvider(layout="auth")` → `AuthLayout` (Logo + LanguageToggle header, centered content). Auth pages do NOT render their own Logo.
+- **Components inside AuthPage**: `InputField` (text input with icon, focus/error borders), `PasswordField` (password + Eye/EyeOff toggle), `StrengthMeter` (3-bar password strength indicator), `TermsCheckbox` (custom checkbox with terms/privacy links), `LoginSection`, `RegisterSection`
+- **Validation**: Zod schemas from `features/auth/schema.ts` — `createLoginSchema(translate)` and `createRegisterSchema(translate)` (factory functions). Pattern: `schema.safeParse()` → `result.error.flatten().fieldErrors` → `touched` + show errors.
+- **API calls**: Server actions in `features/auth/action.ts` — `loginAction()`, `registerAction()`, `refreshAction()`, `logoutAction()` (all `"use server"`). `features/auth/api.ts` is empty (deprecated).
+- **Auth context**: `contexts/AuthContext.tsx` — `AuthProvider` wraps root layout, `useAuth()` hook provides `{ user, token, isAuthenticated, isLoading, setAuth, clearAuth, updateUser }`. AuthContext is **state-only** — consumer components (LoginForm, RegisterForm, ProfileMenu) call server actions directly, then update state via `setAuth()`/`clearAuth()`. Access token stored in RAM only (React state). Refresh token in HttpOnly cookie (managed by server actions via `cookies()` API). On mount, calls `refreshAction()` to restore session.
+- **Error handling**: 401 → "Invalid email or password", 409 → "Email already exists", other → generic server error. Displayed as red alert box below form.
+- **CSS conventions**: Uses `bg-(--color-gold)`, `text-(--color-text-muted)`, `border-(--color-border)` parenthesized syntax (NOT `bg-[--color-gold]` bracket syntax).
+- **Backend endpoints**:
+  - `POST /api/v1/auth/login` — body `{ email, password }` → `{ data: { accessToken, user } }` + Set-Cookie: refreshToken (HttpOnly, Secure, SameSite=Strict, path=/)
+  - `POST /api/v1/auth/register` — body `{ fullname, email, password }` → `{ data: { message } }`
+  - `POST /api/v1/auth/refresh` — forwards refreshToken cookie → new accessToken + new refreshToken cookie (rotation)
+  - `POST /api/v1/auth/logout` — forwards refreshToken cookie → clears refresh token cookie + revokes token in DB
+
+## Protected Route Guards
+
+- `src/components/auth/ProtectedRoute.tsx` — client component, checks `useAuth().isAuthenticated`
+  - `isLoading` → skeleton spinner
+  - `!isAuthenticated` → login prompt with icon + "Login Required" + CTA button → `/login?returnUrl={pathname}`
+  - `isAuthenticated` → render children
+
+- **Page-level protection**: `tickets/page.tsx` and `profile/page.tsx` wrap content with `<ProtectedRoute>`
+- **Layout-level protection**: `(sub)/layout.tsx` wraps all children with `<ProtectedRoute>` (all sub-routes need auth)
+- **Component-level protection**: Movie detail `Reviews.tsx` conditionally renders `WriteReview` — shows login CTA for unauthenticated users, review list remains public
+
+| Route | Protected? |
+|-------|-----------|
+| `/`, `/home`, `/movies`, `/movies/:slug` | Public |
+| `/tickets`, `/profile` | Protected (page-level) |
+| `/profile/*`, `/tickets/:id/*`, `/booking/:slug/*`, `/notifications` | Protected (layout-level) |
+
 ## Ticket Detail Page
 
 Two-level routing:
-- **Listing**: `(main)/tickets/page.tsx` — inside main layout with BottomNav. Uses `TicketsProvider`.
+- **Listing**: `(main)/tickets/page.tsx` — inside main layout with BottomNav. Wrapped with `<ProtectedRoute>`. Uses `TicketsProvider`.
 - **Detail**: `(sub)/tickets/[id]/page.tsx` — renders components directly (no props). **Layout** (`layout.tsx`) is the server component that calls `getTicketById(id)`, wraps children in `<TicketDetailProvider>`. Components read ticket from `useTicketDetail()` context.
 
 Detail page components under `(sub)/tickets/[id]/components/`:
@@ -118,10 +155,9 @@ Cancellation fee is fixed ₫20,000 (policy time from backend in future). `cance
 
 ## Profile Page
 
-`page.tsx` is a **server component** that calls `getUser()` and passes `user` prop to `MobileProfile.tsx` (client component):
-- `MobileProfile.tsx` — client wrapper with `useLocale()` for menu labels
-- `components/mobile/Avatar.tsx` — conic-gradient ring + `<Image>` (receives `user` prop, external URL from Contentful via `images.ctfassets.net` in `remotePatterns`)
-- `components/mobile/UserInfo.tsx` — name + tier badge (Star icon, receives `user` prop)
+`page.tsx` is a **server component** wrapped with `<ProtectedRoute>`, renders `Avatar`, `UserInfo`, `ProfileMenu` directly (no props). All client components read user from `useAuth().user` context.
+- `components/mobile/Avatar.tsx` — conic-gradient ring + `<Image>` (reads `user.avatarUrl` from auth context, external URL from Contentful via `images.ctfassets.net` in `remotePatterns`)
+- `components/mobile/UserInfo.tsx` — name + tier badge (Star icon, reads `user.name` from auth context)
 - `components/mobile/MenuSection.tsx` — reusable menu card with icon rows, hover via Tailwind `hover:bg-(--color-surface-2)`
 - `components/desktop/ProfileContent.tsx` — stub (returns null)
 
@@ -143,7 +179,7 @@ Sub layout routing: `getSubTitle()` returns "Change Password". Back button goes 
 ## Edit Profile Page
 
 `(sub)/profile/edit/page.tsx` — thin compose (mobile + desktop stub):
-- `components/mobile/ProfileForm.tsx` — profile form with fields
+- `components/mobile/ProfileForm.tsx` — profile form with fields, uses `updateProfile` server action via `useTransition`
 - `components/mobile/AvatarEditor.tsx` — avatar editor with image upload
 - `components/mobile/Field.tsx` — reusable text input with label
 - `components/mobile/SaveActions.tsx` — SAVE CHANGES button (active only when changes detected) + CANCEL
@@ -273,7 +309,7 @@ Both pages use `<Suspense>` wrapper (required for `useSearchParams()`). White te
 - **Navigation**: `<Link>` (not `<a>`); active route via `usePathname()`. URL search params via `useSearchParams()` from `next/navigation`.
 - **`"use client"`** required at top of every file using hooks or browser APIs.
 - **Loading states**: Every route has a `loading.tsx` file for streaming Suspense loading states.
-- **Home page** (`(main)/home/page.tsx`) is a **server component** that fetches all data via API layer (`features/movies/api.ts`, `features/booking/api.ts`) and passes as props to mobile/desktop components. Sub-components under `home/components/{mobile,desktop}/`. MovieRow has `status` prop for "See All" navigation to movies page. API functions return mock data with commented-out `apiFetch()` calls — uncomment when backend is ready.
+- **Home page** (`(main)/home/page.tsx`) is a **server component** that fetches all data via API layer (`features/movies/api.ts`, `features/booking/api.ts`) and passes as props to mobile/desktop components. Sub-components under `home/components/{mobile,desktop}/`. MovieRow has `status` prop for "See All" navigation to movies page.
 - **Movies page** (`(main)/movies/page.tsx`) — **server component** that fetches `getNowShowingMovies()` + `getComingSoonMovies()` via API layer, renders `<MoviesProvider>` + `<Suspense>` + individual components (Tabs, SearchBar, FilterPanel, MovieGrid). MovieGrid receives `nowShowing`/`comingSoon` as props. Desktop stub in `components/desktop/MovieGrid` (returns null).
 - **Component split pattern**: Pages that render both mobile & desktop content in the same file use `block md:hidden` / `hidden md:block` (e.g. home, movies). Layout-level switching is handled by `LayoutProvider` via `matchMedia`. Each page has `components/{mobile,desktop}/` dirs. Shared components go in `components/shared/`. See `(main)/home/` as canonical example.
 - **Sub layout `getSubTitle()`**: Uses i18n keys via `translate()` — `t("notif.title")`, `t("tickets.detail_title")`, `t("tickets.transfer.title")`, `t("tickets.transfer.confirm_title")`, `t("tickets.cancel.title")`, `t("booking.cinema.title")`, `t("booking.seats.title")`, `t("booking.snack.title")`, `t("booking.credentials.title")`, `t("booking.payment.title")`, `t("booking.status.success.title")`, `t("booking.status.failed.title")`, `t("profile.edit_profile")`, `t("profile.change_password")`, `t("profile.review_rating")`, `t("profile.wishlist_label")`. Routing prefix `/profile` → back to `/profile`. Extracted to `src/layouts/sub/utils.ts`.
@@ -311,6 +347,21 @@ Home page "See All" / "Explore All" buttons link to movies page with appropriate
 - Payment method logos use `next/image` (`public/images/VNPay.png`, `public/images/momo.png`).
 - Pages using `useSearchParams()` must wrap content in `<Suspense>` to avoid 404 during SSR.
 
+## Server Actions Convention
+
+- **`api.ts`** = queries only (GET requests via `apiFetch`). No `"use server"` directive.
+- **`action.ts`** = mutations (POST/PATCH/DELETE via `apiMutation`) as `"use server"` server actions.
+- Actions return discriminated unions: `{ success: true, data } | { success: false, error, status? }`.
+- Actions accept `(prevState, data)` as params — compatible with `useActionState` pattern.
+- Auth actions (`features/auth/action.ts`) read/write cookies via `cookies()` from `next/headers` and `apiMutation`'s `cookie`/`raw` params.
+- Consumer components (LoginForm, RegisterForm, ProfileMenu) call server actions directly, then update auth state via `useAuth().setAuth()` or `useAuth().clearAuth()`.
+
+## API Layer
+
+`src/libs/api.ts` exports two functions:
+- **`apiFetch<T>(path, options?, token?)`** — GET queries. Sends `credentials: "include"` by default (for cookie forwarding).
+- **`apiMutation<T>(path, options, token?, cookie?, raw?)`** — POST/PATCH/DELETE mutations. `method` required. `cookie` param forwards Cookie header. `raw: true` returns `Response` (for reading `Set-Cookie` headers in auth actions). No credentials by default.
+
 ## Form Validation
 
 - **Zod** (`zod` v4) for all form validation schemas.
@@ -320,4 +371,4 @@ Home page "See All" / "Explore All" buttons link to movies page with appropriate
 - Forms use `schema.safeParse(data)` → `result.error.flatten().fieldErrors` for error display.
 - `touched` state + `showErrors = touched && !isValid` pattern is consistent across all forms.
 - Schemas wrapped in `useMemo(() => createSchema(translate), [translate])` to avoid re-creation on every render.
-- Existing schemas: `features/booking/schema.ts` (`createContactSchema`), `features/profile/schema.ts` (`createProfileSchema`, `createPasswordSchema`).
+- Existing schemas: `features/auth/schema.ts` (`createLoginSchema`, `createRegisterSchema`), `features/booking/schema.ts` (`createContactSchema`), `features/profile/schema.ts` (`createProfileSchema`, `createPasswordSchema`).
