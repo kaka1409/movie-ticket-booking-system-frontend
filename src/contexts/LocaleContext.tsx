@@ -3,14 +3,15 @@
 import {
   createContext,
   useContext,
+  useState,
   useCallback,
-  useSyncExternalStore,
+  useMemo,
   type ReactNode,
 } from "react";
 import en from "@/locales/en.json";
 import vn from "@/locales/vn.json";
 
-type Locale = "en" | "vn";
+export type Locale = "en" | "vn";
 type Messages = Record<string, unknown>;
 
 const messages: Record<Locale, Messages> = { en, vn };
@@ -23,29 +24,23 @@ interface LocaleContextType {
 
 const LocaleContext = createContext<LocaleContextType | null>(null);
 
-const LOCALE_EVENT = "locale-change";
-
-function getSnapshot(): Locale {
-  const saved = localStorage.getItem("locale");
-  return saved === "vn" ? "vn" : "en";
-}
-
-function getServerSnapshot(): Locale {
-  return "en";
-}
-
-function subscribe(callback: () => void): () => void {
-  const handler = () => callback();
-  window.addEventListener(LOCALE_EVENT, handler);
-  return () => window.removeEventListener(LOCALE_EVENT, handler);
-}
-
-export function LocaleProvider({ children }: { children: ReactNode }) {
-  const locale = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+export function LocaleProvider({
+  initialLocale = "en",
+  children,
+}: {
+  initialLocale?: Locale;
+  children: ReactNode;
+}) {
+  const [locale, setLocaleState] = useState<Locale>(initialLocale);
 
   const setLocale = useCallback((newLocale: Locale) => {
-    localStorage.setItem("locale", newLocale);
-    window.dispatchEvent(new Event(LOCALE_EVENT));
+    setLocaleState(newLocale);
+    document.cookie = `locale=${newLocale}; path=/; max-age=${365 * 24 * 60 * 60}; SameSite=Lax`;
+    try {
+      localStorage.setItem("locale", newLocale);
+    } catch {
+      // Ignore if localStorage is disabled
+    }
   }, []);
 
   const translate = useCallback(
@@ -61,8 +56,13 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
     [locale],
   );
 
+  const value = useMemo(
+    () => ({ locale, setLocale, translate }),
+    [locale, setLocale, translate],
+  );
+
   return (
-    <LocaleContext.Provider value={{ locale, setLocale, translate }}>
+    <LocaleContext.Provider value={value}>
       {children}
     </LocaleContext.Provider>
   );
@@ -73,3 +73,4 @@ export function useLocale(): LocaleContextType {
   if (!ctx) throw new Error("useLocale must be used within LocaleProvider");
   return ctx;
 }
+
