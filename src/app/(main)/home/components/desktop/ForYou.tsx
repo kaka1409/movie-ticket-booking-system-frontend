@@ -1,50 +1,93 @@
 "use client";
 
+import Image from "next/image";
+import Link from "next/link";
+import { Star, Sparkles } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
+import { useAuth } from "@/contexts/AuthContext";
+import type { Movie } from "@/features/movies/types";
 
-const FOR_YOU = [
-  { id: 1, title: "Gravity Wells",     reason: "Because you watched Interstellar",  gradient: "linear-gradient(160deg,#1a1000 0%,#3d2800 50%,#0d0800 100%)" },
-  { id: 2, title: "City of Shadows",   reason: "Similar to The Batman",             gradient: "linear-gradient(160deg,#100808 0%,#2a0a0a 50%,#0a0404 100%)" },
-  { id: 3, title: "Lunar Base 9",      reason: "New release in Sci-Fi",             gradient: "linear-gradient(160deg,#000a1a 0%,#001833 50%,#000508 100%)" },
-  { id: 4, title: "Midnight Protocol",  reason: "Popular among Gold Members",        gradient: "linear-gradient(160deg,#080010 0%,#150025 50%,#040008 100%)" },
-  { id: 5, title: "Digital Souls",      reason: "Recommended for you",              gradient: "linear-gradient(160deg,#001010 0%,#002a2a 50%,#000808 100%)" },
+const REASONS = [
+  "Top Rated by Critics",
+  "Trending in Theatres",
+  "Because you liked Sci-Fi",
+  "Popular among Members",
+  "Must Watch This Week",
 ];
 
-export default function ForYou() {
+export default function ForYou({ movies }: { movies: Movie[] }) {
   const { translate } = useLocale();
+  const { user, isAuthenticated } = useAuth();
+
+  if (movies.length === 0) return null;
+
+  const recommendedMovies = movies.slice(0, 5);
+
+  const greetingName = isAuthenticated && user?.name
+    ? user.name.split(" ")[0].toUpperCase()
+    : null;
 
   return (
     <section
-      className="mt-12 py-14"
+      className="mt-10 py-14"
       style={{
-        background: "linear-gradient(180deg,transparent 0%,rgba(255,204,77,0.03) 50%,transparent 100%)",
+        background:
+          "linear-gradient(180deg, transparent 0%, rgba(255,204,77,0.04) 50%, transparent 100%)",
       }}
+      aria-label="Personalized Recommendations"
     >
       <div className="mx-auto max-w-7xl px-8">
-        <div className="mb-8 text-center">
-          <h2 className="mb-1.5 text-[28px] font-black tracking-tight text-white">{translate("home.desktop.for_you")}, ALEX</h2>
-          <p className="text-[13px] text-(--color-text-muted)">
-            Based on your love for Space Adventures &amp; Thrillers
+        <div className="mb-9 text-center">
+          <div className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-(--color-gold)/30 bg-(--color-gold)/10 px-3 py-1 text-[11px] font-bold tracking-wider text-(--color-gold) uppercase">
+            <Sparkles size={12} />
+            Personalized Picks
+          </div>
+          <h2 className="text-[28px] font-black tracking-tight text-white">
+            {translate("home.desktop.for_you")}
+            {greetingName ? `, ${greetingName}` : ""}
+          </h2>
+          <p className="mt-1 text-xs text-(--color-text-muted)">
+            {isAuthenticated
+              ? "Based on your watch history and favorite genres"
+              : "Discover handpicked movies trending this week"}
           </p>
         </div>
-        <div className="grid grid-cols-5 gap-3.5">
-          {FOR_YOU.map((item) => (
-            <article key={item.id} className="cursor-pointer">
-              <div
-                className="mb-2.5 flex aspect-[2/3] w-full items-end overflow-hidden rounded-(--radius-md) border border-white/5 p-2.5 transition-transform"
-                style={{ background: item.gradient }}
-                onMouseEnter={(e) => { e.currentTarget.style.transform = "scale(1.02)"; }}
-                onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; }}
-              >
-                <span className="text-sm font-extrabold uppercase tracking-tight text-white/20">
-                  {item.title.split(" ")[0]}
-                </span>
-              </div>
-              <h3 className="mb-0.5 text-[13px] font-bold text-white">{item.title}</h3>
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-(--color-text-muted)">
-                {item.reason}
-              </p>
-            </article>
+
+        <div className="grid grid-cols-5 gap-4">
+          {recommendedMovies.map((movie, index) => (
+            <Link
+              key={movie.id}
+              href={`/movies/${movie.slug}`}
+              className="group block"
+            >
+              <article className="cursor-pointer">
+                {/* Poster */}
+                <div className="relative mb-2.5 aspect-[2/3] w-full overflow-hidden rounded-(--radius-md) border border-(--color-border) bg-(--color-surface-2) transition-all duration-300 group-hover:-translate-y-1 group-hover:border-(--color-gold)/50 group-hover:shadow-lg">
+                  <Image
+                    src={movie.src || "/images/movie-poster-placholder.jpg"}
+                    alt={movie.title}
+                    fill
+                    sizes="(max-width: 1200px) 20vw, 220px"
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 transition-opacity group-hover:opacity-80" />
+
+                  {movie.rating > 0 && (
+                    <div className="absolute bottom-2 left-2 flex items-center gap-1 rounded-(--radius-sm) bg-black/70 px-1.5 py-0.5 text-[10px] font-bold text-(--color-gold) backdrop-blur-xs">
+                      <Star size={10} fill="currentColor" /> {movie.rating}
+                    </div>
+                  )}
+                </div>
+
+                {/* Details */}
+                <h3 className="truncate text-xs font-bold text-white transition-colors group-hover:text-(--color-gold)">
+                  {movie.title}
+                </h3>
+                <p className="mt-0.5 truncate text-[10px] font-semibold uppercase tracking-wider text-(--color-text-muted)">
+                  {REASONS[index % REASONS.length]}
+                </p>
+              </article>
+            </Link>
           ))}
         </div>
       </div>

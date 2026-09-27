@@ -1,12 +1,12 @@
 "use client";
 
 import { useLocale } from "@/contexts/LocaleContext";
-import { useMovies } from "@/features/movies/context";
+import { useMovieList } from "@/features/movies/context";
 import SearchBar from "@/components/ui/SearchBar";
 
 export default function SearchBarWrapper() {
   const { translate } = useLocale();
-  const { query, setQuery } = useMovies();
+  const { query, setQuery } = useMovieList();
 
   return (
     <div className="px-(--space-md)">

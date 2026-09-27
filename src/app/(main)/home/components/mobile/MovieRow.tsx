@@ -6,13 +6,13 @@ import MovieCard from "@/components/ui/MovieCard";
 import SectionHeader from "@/components/ui/SectionHeader";
 import SectionFallback from "@/components/ui/SectionFallback";
 import type { Movie } from "@/features/movies/types";
-import type { ApiError } from "@/libs/api";
+import type { ErrorResponse } from "@/libs/api";
 
 interface MovieRowProps {
   titleKey: string;
   movies: Movie[];
   status: "now_showing" | "coming_soon";
-  error?: ApiError | null;
+  error?: ErrorResponse["error"] | null;
 }
 
 export default function MovieRow({ titleKey, movies, status, error }: MovieRowProps) {

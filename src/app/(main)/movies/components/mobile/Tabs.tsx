@@ -1,12 +1,12 @@
 "use client";
 
 import { useLocale } from "@/contexts/LocaleContext";
-import { useMovies } from "@/features/movies/context";
+import { useMovieList } from "@/features/movies/context";
 import Tabs from "@/components/ui/Tabs";
 
 export default function TabsComponent() {
   const { translate } = useLocale();
-  const { activeTab, setActiveTab } = useMovies();
+  const { activeTab, setActiveTab } = useMovieList();
 
   const tabs = [
     { key: "now_showing", label: translate("movies.now_showing") },

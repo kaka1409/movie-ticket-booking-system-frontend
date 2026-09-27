@@ -1,5 +1,6 @@
-import type { Movie, FeaturedMovie } from "./types";
-import { apiFetch, type ApiResult } from "@/libs/api";
+import type { Movie, FeaturedMovie, MoviesMeta } from "./types";
+import { apiFetch, type ApiResponse } from "@/libs/api";
+import { MOVIES_PAGE_SIZE } from "./constants";
 import { ALL_MOVIES } from "./mock";
 
 type FeaturedMovieResponse = Movie & {
@@ -7,19 +8,11 @@ type FeaturedMovieResponse = Movie & {
   featuredDescription?: string;
 };
 
-export async function getNowShowingMovies(): Promise<ApiResult<Movie[]>> {
-  return apiFetch<Movie[]>("/movies?status=now_showing&page=1&limit=6");
-}
-
-export async function getComingSoonMovies(): Promise<ApiResult<Movie[]>> {
-  return apiFetch<Movie[]>("/movies?status=coming_soon&page=1&limit=6");
-}
-
-export async function getFeaturedMovies(): Promise<ApiResult<FeaturedMovie[]>> {
+export async function getFeaturedMovies(): Promise<ApiResponse<FeaturedMovie[]>> {
   const result = await apiFetch<FeaturedMovieResponse[]>("/movies?featured=true");
 
-  if (result.error) {
-    return { data: null, error: result.error };
+  if ("error" in result) {
+    return { error: result.error };
   }
 
   return {
@@ -30,18 +23,28 @@ export async function getFeaturedMovies(): Promise<ApiResult<FeaturedMovie[]>> {
         description: featuredDescription ?? "",
       }),
     ),
-    meta: result.meta,
-    error: null,
   };
 }
 
-export async function getMovieBySlug(slug: string): Promise<Movie | undefined> {
-  // return apiFetch<Movie>(`/movies/${slug}`);
-  // return new Promise((resolve) => {
-  //   setTimeout(() => {
-  //     resolve(ALL_MOVIES.find((movie) => movie.slug === slug))
-  //   }, 3000)
-  // });
+export async function getMovies(
+  status: string = "now_showing",
+  page: number = 1,
+  limit: number = MOVIES_PAGE_SIZE,
+): Promise<ApiResponse<Movie[], MoviesMeta>> {
+  // Fetch paginated movies — shared by home rows and /movies grid
+  return apiFetch<Movie[], MoviesMeta>(
+    `/movies?status=${status}&page=${page}&limit=${limit}`,
+  );
+}
 
-  return ALL_MOVIES.find((movie) => movie.slug === slug)
+export async function getAllMovies(): Promise<Movie[]> {
+  return ALL_MOVIES;
+}
+
+export async function getMovieBySlug(slug: string): Promise<Movie | undefined> {
+  return ALL_MOVIES.find((movie) => movie.slug === slug);
+}
+
+export function getMovieDetail(slug: string): Promise<ApiResponse<Movie>> {
+  return apiFetch<Movie>(`/movies/${encodeURIComponent(slug)}`);
 }

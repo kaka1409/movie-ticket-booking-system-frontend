@@ -1,10 +1,7 @@
-import {
-  getNowShowingMovies,
-  getComingSoonMovies,
-  getFeaturedMovies,
-} from "@/features/movies/api";
+import { getMovies, getFeaturedMovies } from "@/features/movies/api";
+import { MOVIES_PAGE_SIZE } from "@/features/movies/constants";
 import { getCinemas, getDates } from "@/features/booking/api";
-import { toApiResult } from "@/libs/api";
+import { toApiResponse } from "@/libs/api";
 
 // Desktop
 import HeroSection from "@/app/(main)/home/components/desktop/HeroSection";
@@ -27,18 +24,27 @@ export default async function HomePage() {
     cinemasSettled,
     datesSettled,
   ] = await Promise.allSettled([
-    getNowShowingMovies(),
-    getComingSoonMovies(),
+    getMovies("now_showing", 1, MOVIES_PAGE_SIZE),
+    getMovies("coming_soon", 1, MOVIES_PAGE_SIZE),
     getFeaturedMovies(),
     getCinemas(),
     getDates(),
   ]);
 
-  const nowShowing = toApiResult(nowShowingSettled);
-  const comingSoon = toApiResult(comingSoonSettled);
-  const featuredMovies = toApiResult(featuredSettled);
+  const nowShowing = toApiResponse(nowShowingSettled);
+  const comingSoon = toApiResponse(comingSoonSettled);
+  const featuredMovies = toApiResponse(featuredSettled);
+
+  // Currently are mocked data
   const cinemas = cinemasSettled.status === "fulfilled" ? cinemasSettled.value : [];
   const dates = datesSettled.status === "fulfilled" ? datesSettled.value : [];
+
+  const featuredError = "error" in featuredMovies ? featuredMovies.error : null;
+  const featured = "error" in featuredMovies ? [] : featuredMovies.data;
+  const nowShowingError = "error" in nowShowing ? nowShowing.error : null;
+  const nowShowingList = "error" in nowShowing ? [] : nowShowing.data;
+  const comingSoonError = "error" in comingSoon ? comingSoon.error : null;
+  const comingSoonList = "error" in comingSoon ? [] : comingSoon.data;
 
   return (
     <>
@@ -46,30 +52,30 @@ export default async function HomePage() {
       <div className="block md:hidden">
         <div className="flex flex-col gap-(--space-lg)">
           <HeroBanner
-            movies={featuredMovies.data ?? []}
-            error={featuredMovies.error}
+            movies={featured}
+            error={featuredError}
           />
           <QuickBooking
-            movies={nowShowing.data ?? []}
+            movies={nowShowingList}
             cinemas={cinemas}
             dates={dates}
-            error={nowShowing.error}
+            error={nowShowingError}
           />
           <SearchBar />
 
           {/* Now Showing */}
           <MovieRow
             titleKey="home.movie_row.now_showing"
-            movies={nowShowing.data ?? []}
-            error={nowShowing.error}
+            movies={nowShowingList}
+            error={nowShowingError}
             status="now_showing"
           />
 
           {/* Coming Soon */}
           <MovieRow
             titleKey="home.movie_row.coming_soon"
-            movies={comingSoon.data ?? []}
-            error={comingSoon.error}
+            movies={comingSoonList}
+            error={comingSoonError}
             status="coming_soon"
           />
         </div>
@@ -78,13 +84,18 @@ export default async function HomePage() {
       {/* Desktop */}
       <div className="hidden md:block">
         <HeroSection
-          movies={featuredMovies.data ?? []}
-          error={featuredMovies.error}
+          movies={featured}
+          error={featuredError}
         />
-        <QuickBookingBar />
-        <NowShowing />
-        <ComingSoon />
-        <ForYou />
+        <QuickBookingBar
+          movies={nowShowingList}
+          cinemas={cinemas}
+          dates={dates}
+          error={nowShowingError}
+        />
+        <NowShowing movies={nowShowingList} error={nowShowingError} />
+        <ComingSoon movies={comingSoonList} error={comingSoonError} />
+        <ForYou movies={nowShowingList} />
       </div>
     </>
   );

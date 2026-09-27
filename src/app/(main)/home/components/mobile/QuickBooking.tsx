@@ -6,7 +6,7 @@ import { ChevronDown } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import type { Movie } from "@/features/movies/types";
 import type { Cinema, DateOption } from "@/features/booking/types";
-import type { ApiError } from "@/libs/api";
+import type { ErrorResponse } from "@/libs/api";
 import SectionFallback from "@/components/ui/SectionFallback";
 
 export default function QuickBooking({
@@ -18,7 +18,7 @@ export default function QuickBooking({
   movies: Movie[];
   cinemas: Cinema[];
   dates: DateOption[];
-  error?: ApiError | null;
+  error?: ErrorResponse["error"] | null;
 }) {
   const { translate } = useLocale();
 

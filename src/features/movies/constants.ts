@@ -18,6 +18,8 @@ export const RATING_OPTIONS = ["4.5+", "4.0+", "3.5+"] as const;
 export const LENGTH_OPTIONS = ["< 90 min", "90-120 min", "> 120 min"] as const;
 export const FORMAT_OPTIONS = ["2D", "IMAX", "4DX"] as const;
 
+export const MOVIES_PAGE_SIZE = 8;
+
 export const DEFAULT_FILTERS: Filters = {
   releaseDate: "Any Time",
   genres: [],

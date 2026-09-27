@@ -3,51 +3,24 @@
 import { useRef, useEffect, useState } from "react";
 import { Search } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
-import { useMovies } from "@/features/movies/context";
+import { useMovieList } from "@/features/movies/context";
 import MovieCard from "@/components/ui/MovieCard";
-import type { Movie } from "@/features/movies/types";
 
-export default function MovieGrid({
-  nowShowing,
-  comingSoon,
-}: {
-  nowShowing: Movie[];
-  comingSoon: Movie[];
-}) {
+export default function MovieGrid() {
   const { translate } = useLocale();
   const {
     activeTab,
     query,
     appliedFilters,
-    visibleCount,
+    movies,
+    hasMore,
+    isLoadingMore,
     activeFilterCount,
     loadMore,
     clearFilters,
-  } = useMovies();
+  } = useMovieList();
 
-  const sourceMovies = activeTab === "now_showing" ? nowShowing : comingSoon;
-
-  /* ── Hooks must run before any early return ── */
-  const gridRef = useRef<HTMLDivElement>(null);
-  const prevCountRef = useRef(visibleCount);
-  const [animThreshold, setAnimThreshold] = useState(visibleCount);
-
-  useEffect(() => {
-    if (visibleCount > prevCountRef.current) {
-      const grid = gridRef.current;
-      if (grid) {
-        const cards = grid.querySelectorAll<HTMLElement>("[data-movie-card]");
-        const firstNew = cards[prevCountRef.current];
-        if (firstNew) {
-          firstNew.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
-      }
-      setAnimThreshold(prevCountRef.current);
-    }
-    prevCountRef.current = visibleCount;
-  }, [visibleCount]);
-
-  const filtered = sourceMovies.filter((movie) => {
+  const filtered = movies.filter((movie) => {
     const searchQuery = query.toLowerCase();
     const matchesSearch =
       !searchQuery ||
@@ -82,8 +55,34 @@ export default function MovieGrid({
     );
   });
 
-  const visible = filtered.slice(0, visibleCount);
-  const hasMore = filtered.length > visibleCount;
+  /* ── Hooks must run before any early return ── */
+  const gridRef = useRef<HTMLDivElement>(null);
+  const prevLoadedCountRef = useRef(movies.length);
+  const prevRenderedCountRef = useRef(filtered.length);
+  const prevTabRef = useRef(activeTab);
+  const [animThreshold, setAnimThreshold] = useState(filtered.length);
+
+  useEffect(() => {
+    const tabChanged = activeTab !== prevTabRef.current;
+    const loadedGrew = movies.length > prevLoadedCountRef.current;
+    const renderedGrew = filtered.length > prevRenderedCountRef.current;
+
+    if (!tabChanged && loadedGrew && renderedGrew) {
+      const grid = gridRef.current;
+      if (grid) {
+        const cards = grid.querySelectorAll<HTMLElement>("[data-movie-card]");
+        const firstNew = cards[prevRenderedCountRef.current];
+        if (firstNew) {
+          firstNew.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }
+      setAnimThreshold(prevRenderedCountRef.current);
+    }
+
+    prevLoadedCountRef.current = movies.length;
+    prevRenderedCountRef.current = filtered.length;
+    prevTabRef.current = activeTab;
+  }, [activeTab, movies.length, filtered.length]);
 
   return (
     <>
@@ -100,9 +99,9 @@ export default function MovieGrid({
       )}
 
       {/* Grid */}
-      {visible.length > 0 ? (
+      {filtered.length > 0 ? (
         <div ref={gridRef} className="grid grid-cols-2 gap-x-3 gap-y-6 px-(--space-md)">
-          {visible.map((movie, index) => (
+          {filtered.map((movie, index) => (
             <div
               key={movie.id}
               data-movie-card
@@ -131,11 +130,12 @@ export default function MovieGrid({
         </div>
       )}
 
-      {/* Load More */}
+      {/* Load More — fetches the next page from the backend */}
       {hasMore && (
         <div className="px-(--space-md)">
           <button
             onClick={loadMore}
+            disabled={isLoadingMore}
             className="
               w-full rounded-(--radius-lg) border border-(--color-border)
               bg-(--color-surface) py-3.5 text-sm font-bold uppercase
@@ -143,9 +143,12 @@ export default function MovieGrid({
               transition-all duration-150
               hover:border-(--color-gold)/40 hover:text-(--color-gold)
               active:scale-[0.98]
+              disabled:opacity-60 disabled:cursor-not-allowed
             "
           >
-            {translate("movies.load_more")}
+            {isLoadingMore
+              ? translate("common.loading")
+              : translate("movies.load_more")}
           </button>
         </div>
       )}

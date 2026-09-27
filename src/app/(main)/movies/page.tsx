@@ -1,10 +1,8 @@
 // import { Suspense } from "react";
-import { MoviesProvider } from "@/features/movies/context";
-import {
-  getNowShowingMovies,
-  getComingSoonMovies,
-} from "@/features/movies/api";
-import { toApiResult } from "@/libs/api";
+import { MovieListProvider } from "@/features/movies/context";
+import { getMovies } from "@/features/movies/api";
+import { MOVIES_PAGE_SIZE } from "@/features/movies/constants";
+import { toApiResponse } from "@/libs/api";
 
 // Mobile
 import Tabs from "./components/mobile/Tabs";
@@ -17,26 +15,32 @@ import DesktopMovieGrid from "./components/desktop/MovieGrid";
 
 export default async function MoviesPage() {
   const [nowShowingSettled, comingSoonSettled] = await Promise.allSettled([
-    getNowShowingMovies(),
-    getComingSoonMovies(),
+    getMovies("now_showing", 1, MOVIES_PAGE_SIZE),
+    getMovies("coming_soon", 1, MOVIES_PAGE_SIZE),
   ]);
 
-  const nowShowing = toApiResult(nowShowingSettled);
-  const comingSoon = toApiResult(comingSoonSettled);
+  const nowShowing = toApiResponse(nowShowingSettled);
+  const comingSoon = toApiResponse(comingSoonSettled);
+
+  const nowShowingList = "error" in nowShowing ? [] : nowShowing.data;
+  const comingSoonList = "error" in comingSoon ? [] : comingSoon.data;
+  const nowShowingMeta = "error" in nowShowing ? undefined : nowShowing.meta;
+  const comingSoonMeta = "error" in comingSoon ? undefined : comingSoon.meta;
 
   return (
     <>
-      <MoviesProvider>
+      <MovieListProvider
+        initialNowShowing={nowShowingList}
+        initialComingSoon={comingSoonList}
+        initialMeta={{ nowShowing: nowShowingMeta, comingSoon: comingSoonMeta }}
+      >
         {/* Mobile */}
         <div className="block md:hidden">
           <div className="space-y-4 py-(--space-md)">
             <Tabs />
             <SearchBar />
             <FilterPanel />
-            <MovieGrid
-              nowShowing={nowShowing.data ?? []}
-              comingSoon={comingSoon.data ?? []}
-            />
+            <MovieGrid />
           </div>
         </div>
 
@@ -44,7 +48,7 @@ export default async function MoviesPage() {
         <div className="hidden md:block">
           <DesktopMovieGrid />
         </div>
-      </MoviesProvider>
+      </MovieListProvider>
     </>
   );
 }

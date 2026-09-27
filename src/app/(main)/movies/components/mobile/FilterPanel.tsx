@@ -2,7 +2,7 @@
 
 import { ChevronDown, SlidersHorizontal } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
-import { useMovies } from "@/features/movies/context";
+import { useMovieList } from "@/features/movies/context";
 import {
   GENRES,
   AGE_RATINGS,
@@ -26,7 +26,7 @@ export default function FilterPanel() {
     filters,
     setFilters,
     applyFilters,
-  } = useMovies();
+  } = useMovieList();
 
   const toggleGenre = (genre: string) =>
     setFilters({

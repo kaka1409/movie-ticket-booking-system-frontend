@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Star } from "lucide-react";
 import type { FeaturedMovie } from "@/features/movies/types";
-import type { ApiError } from "@/libs/api";
+import type { ErrorResponse } from "@/libs/api";
 import { useLocale } from "@/contexts/LocaleContext";
 import SectionFallback from "@/components/ui/SectionFallback";
 
@@ -16,7 +16,7 @@ export default function HeroBanner({
   error,
 }: {
   movies: FeaturedMovie[];
-  error?: ApiError | null;
+  error?: ErrorResponse["error"] | null;
 }) {
   const { translate } = useLocale();
   const [index, setIndex] = useState(0);

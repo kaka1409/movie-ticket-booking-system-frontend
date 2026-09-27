@@ -8,23 +8,21 @@ import {
   type ReactNode,
 } from "react";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
-import {
-  DEFAULT_FILTERS,
-} from "./constants";
-import type {
-  Tab,
-  Filters,
-} from "./types";
+import { DEFAULT_FILTERS, MOVIES_PAGE_SIZE } from "./constants";
+import { getMovies } from "./api";
+import type { Tab, Filters, Movie, MoviesMeta } from "./types";
 
-/* ─── Context Type ──────────────────────────────────────────── */
+/* ─── Movie list — trang /movies ────────────────────────────── */
 
-interface MoviesContextType {
+interface MovieListContextType {
   activeTab: Tab;
   query: string;
   filtersOpen: boolean;
   filters: Filters;
   appliedFilters: Filters;
-  visibleCount: number;
+  movies: Movie[];
+  hasMore: boolean;
+  isLoadingMore: boolean;
   activeFilterCount: number;
   setActiveTab: (tab: Tab) => void;
   setQuery: (query: string) => void;
@@ -32,10 +30,10 @@ interface MoviesContextType {
   setFilters: (filters: Filters) => void;
   applyFilters: () => void;
   clearFilters: () => void;
-  loadMore: () => void;
+  loadMore: () => Promise<void>;
 }
 
-const MoviesContext = createContext<MoviesContextType | null>(null);
+const MovieListContext = createContext<MovieListContextType | null>(null);
 
 /* ─── URL Helpers ───────────────────────────────────────────── */
 
@@ -66,7 +64,22 @@ function writeParamsFromState(
 
 /* ─── Provider ──────────────────────────────────────────────── */
 
-export function MoviesProvider({ children }: { children: ReactNode }) {
+interface MovieListState {
+  movies: Movie[];
+  meta?: MoviesMeta;
+}
+
+export function MovieListProvider({
+  initialNowShowing,
+  initialComingSoon,
+  initialMeta,
+  children,
+}: {
+  initialNowShowing: Movie[];
+  initialComingSoon: Movie[];
+  initialMeta: { nowShowing?: MoviesMeta; comingSoon?: MoviesMeta };
+  children: ReactNode;
+}) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
@@ -86,7 +99,11 @@ export function MoviesProvider({ children }: { children: ReactNode }) {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [filters, setFiltersState] = useState<Filters>(initialFilters);
   const [appliedFilters, setAppliedFilters] = useState<Filters>(initialFilters);
-  const [visibleCount, setVisibleCount] = useState(4);
+  const [lists, setLists] = useState<Record<Tab, MovieListState>>({
+    now_showing: { movies: initialNowShowing, meta: initialMeta.nowShowing },
+    coming_soon: { movies: initialComingSoon, meta: initialMeta.comingSoon },
+  });
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   /* ── URL sync helper ── */
   const updateURL = useCallback(
@@ -101,7 +118,6 @@ export function MoviesProvider({ children }: { children: ReactNode }) {
   const setActiveTab = useCallback(
     (tab: Tab) => {
       setActiveTabState(tab);
-      setVisibleCount(4);
       updateURL(tab, filters);
     },
     [filters, updateURL],
@@ -109,7 +125,6 @@ export function MoviesProvider({ children }: { children: ReactNode }) {
 
   const setQuery = useCallback((q: string) => {
     setQueryState(q);
-    setVisibleCount(4);
   }, []);
 
   const toggleFiltersOpen = useCallback(() => setFiltersOpen((v) => !v), []);
@@ -119,20 +134,55 @@ export function MoviesProvider({ children }: { children: ReactNode }) {
   const applyFilters = useCallback(() => {
     setAppliedFilters(filters);
     setFiltersOpen(false);
-    setVisibleCount(4);
     updateURL(activeTab, filters);
   }, [activeTab, filters, updateURL]);
 
   const clearFilters = useCallback(() => {
     setFiltersState(DEFAULT_FILTERS);
     setAppliedFilters(DEFAULT_FILTERS);
-    setVisibleCount(4);
     updateURL(activeTab, DEFAULT_FILTERS);
   }, [activeTab, updateURL]);
 
-  const loadMore = useCallback(() => setVisibleCount((c) => c + 4), []);
+  const loadMore = useCallback(async () => {
+    if (isLoadingMore) return;
+    const tab = activeTab;
+    const current = lists[tab];
+    if (!current.meta?.hasNextPage) return;
+
+    setIsLoadingMore(true);
+    try {
+      const result = await getMovies(
+        tab,
+        current.meta.page + 1,
+        MOVIES_PAGE_SIZE,
+      );
+      if ("error" in result) {
+        console.warn("loadMore failed:", result.error);
+        return;
+      }
+
+      const fetched = result.data;
+      setLists((prev) => {
+        const entry = prev[tab];
+        const existingIds = new Set(entry.movies.map((movie) => movie.id));
+        return {
+          ...prev,
+          [tab]: {
+            movies: [
+              ...entry.movies,
+              ...fetched.filter((movie) => !existingIds.has(movie.id)),
+            ],
+            meta: result.meta ?? entry.meta,
+          },
+        };
+      });
+    } finally {
+      setIsLoadingMore(false);
+    }
+  }, [isLoadingMore, activeTab, lists]);
 
   /* ── Derived ── */
+  const activeList = lists[activeTab];
   const activeFilterCount = [
     appliedFilters.genres.length > 0,
     !!appliedFilters.rating,
@@ -142,14 +192,16 @@ export function MoviesProvider({ children }: { children: ReactNode }) {
   ].filter(Boolean).length;
 
   return (
-    <MoviesContext.Provider
+    <MovieListContext.Provider
       value={{
         activeTab,
         query,
         filtersOpen,
         filters,
         appliedFilters,
-        visibleCount,
+        movies: activeList.movies,
+        hasMore: activeList.meta?.hasNextPage ?? false,
+        isLoadingMore,
         activeFilterCount,
         setActiveTab,
         setQuery,
@@ -161,14 +213,78 @@ export function MoviesProvider({ children }: { children: ReactNode }) {
       }}
     >
       {children}
-    </MoviesContext.Provider>
+    </MovieListContext.Provider>
   );
 }
 
 /* ─── Hook ──────────────────────────────────────────────────── */
 
-export function useMovies(): MoviesContextType {
-  const ctx = useContext(MoviesContext);
-  if (!ctx) throw new Error("useMovies must be used within MoviesProvider");
+export function useMovieList(): MovieListContextType {
+  const ctx = useContext(MovieListContext);
+  if (!ctx) throw new Error("useMovieList must be used within MovieListProvider");
+  return ctx;
+}
+
+/* ─── Movie detail — trang /movies/[slug] ───────────────────── */
+
+const MovieDetailContext = createContext<Movie | null>(null);
+
+export function MovieDetailProvider({
+  movie,
+  children,
+}: {
+  movie: Movie;
+  children: ReactNode;
+}) {
+  return (
+    <MovieDetailContext.Provider value={movie}>
+      {children}
+    </MovieDetailContext.Provider>
+  );
+}
+
+export function useMovieDetail(): Movie {
+  const ctx = useContext(MovieDetailContext);
+  if (!ctx)
+    throw new Error("useMovieDetail must be used within MovieDetailProvider");
+  return ctx;
+}
+
+/* ─── Showtime selection — booking preselection ─────────────── */
+
+interface ShowtimeSelection {
+  cinemaId: string;
+  time: string;
+  date: string;
+}
+
+interface MovieSelectionContextType {
+  selectedShowtime: ShowtimeSelection | null;
+  setSelectedShowtime: (selection: ShowtimeSelection | null) => void;
+}
+
+const MovieSelectionContext = createContext<MovieSelectionContextType | null>(
+  null,
+);
+
+export function MovieSelectionProvider({ children }: { children: ReactNode }) {
+  const [selectedShowtime, setSelectedShowtime] =
+    useState<ShowtimeSelection | null>(null);
+
+  return (
+    <MovieSelectionContext.Provider
+      value={{ selectedShowtime, setSelectedShowtime }}
+    >
+      {children}
+    </MovieSelectionContext.Provider>
+  );
+}
+
+export function useMovieSelection(): MovieSelectionContextType {
+  const ctx = useContext(MovieSelectionContext);
+  if (!ctx)
+    throw new Error(
+      "useMovieSelection must be used within MovieSelectionProvider",
+    );
   return ctx;
 }
