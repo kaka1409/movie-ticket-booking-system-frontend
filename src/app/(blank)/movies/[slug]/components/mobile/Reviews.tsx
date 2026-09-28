@@ -1,21 +1,19 @@
-"use client";
+﻿"use client";
 
-import { useState, useCallback, useRef, useEffect } from "react";
-import { Star, Pencil, Trash2, Check, X, LogIn } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { X, LogIn, RotateCcw, ChevronLeft, ChevronRight } from "lucide-react";
 import { useRouter } from "next/navigation";
-import SectionHeading from "../shared/SectionHeading";
-import Stars from "../shared/Stars";
-import Avatar from "../shared/Avatar";
-import {
-  RATING_BREAKDOWN,
-  REVIEWS,
-  INITIAL_REVIEWS_VISIBLE,
-  REVIEWS_LOAD_MORE,
-} from "../shared/mock";
+import SectionHeader from "@/components/ui/SectionHeader";
+import Stars from "@/components/ui/Stars";
 import { useLocale } from "@/contexts/LocaleContext";
-import { useAuth } from "@/contexts/AuthContext";
-
-type Review = (typeof REVIEWS)[number];
+import { useMovieDetail } from "@/features/movies/context";
+import {
+  useMovieReviews,
+  formatReviewCount,
+} from "@/features/reviews/useMovieReviews";
+import type { ReviewsResponse } from "@/features/reviews/types";
+import WriteReview from "@/components/shared/WriteReview";
+import ReviewCard from "@/components/shared/ReviewCard";
 
 function RatingBar({ stars, pct }: { stars: number; pct: number }) {
   return (
@@ -33,273 +31,80 @@ function RatingBar({ stars, pct }: { stars: number; pct: number }) {
   );
 }
 
-function WriteReview({
-  onSubmit,
-}: {
-  onSubmit: (rating: number, text: string) => void;
-}) {
-  const [userRating, setUserRating] = useState(0);
-  const [hovered, setHovered] = useState(0);
-  const [text, setText] = useState("");
-  const { translate } = useLocale();
-
-  const handleSubmit = () => {
-    if (!userRating || !text.trim()) return;
-    onSubmit(userRating, text.trim());
-    setUserRating(0);
-    setText("");
-  };
-
-  return (
-    <div className="rounded-2xl bg-(--color-surface) border border-(--color-border) p-4 space-y-3">
-      <p className="text-(--color-text-primary) font-bold text-sm">
-        {translate("movies.detail.write_review")}
-      </p>
-
-      <div className="flex gap-1">
-        {[1, 2, 3, 4, 5].map((s) => (
-          <button
-            key={s}
-            onMouseEnter={() => setHovered(s)}
-            onMouseLeave={() => setHovered(0)}
-            onClick={() => setUserRating(s)}
-            aria-label={translate("movies.detail.rate_star")}
-          >
-            <Star
-              size={22}
-              className={
-                s <= (hovered || userRating)
-                  ? "text-(--color-gold) fill-(--color-gold)"
-                  : "text-(--color-border) fill-(--color-border)"
-              }
-            />
-          </button>
-        ))}
-      </div>
-
-      <textarea
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        placeholder={translate("movies.detail.review_placeholder")}
-        rows={3}
-        className="w-full bg-(--color-bg) border border-(--color-border) rounded-xl px-3 py-3 text-base text-(--color-text-secondary) placeholder-(--color-text-muted) resize-none outline-none focus:border-(--color-gold)/50 transition-colors font-[inherit]"
-      />
-
-      <button
-        disabled={!userRating || !text.trim()}
-        onClick={handleSubmit}
-        className="w-full py-3 rounded-xl font-bold text-sm tracking-widest uppercase bg-(--color-gold) text-(--color-bg) hover:bg-(--color-gold-dark) active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-150"
-      >
-        {translate("movies.detail.post_review")}
-      </button>
-    </div>
-  );
+interface ReviewsProps {
+  initialData: ReviewsResponse | null;
+  initialError: string | null;
 }
 
-function ReviewCard({
-  review,
-  isOwner,
-  onSave,
-  onDelete,
-}: {
-  review: Review;
-  isOwner: boolean;
-  onSave: (rating: number, text: string) => void;
-  onDelete: () => void;
-}) {
-  const [editing, setEditing] = useState(false);
-  const [editRating, setEditRating] = useState(review.rating);
-  const [editHovered, setEditHovered] = useState(0);
-  const [editText, setEditText] = useState(review.text);
+export default function Reviews({ initialData, initialError }: ReviewsProps) {
   const { translate } = useLocale();
-
-  const handleSave = () => {
-    if (!editRating || !editText.trim()) return;
-    onSave(editRating, editText.trim());
-    setEditing(false);
-  };
-
-  const handleCancel = () => {
-    setEditRating(review.rating);
-    setEditText(review.text);
-    setEditing(false);
-  };
-
-  if (editing) {
-    return (
-      <div className="py-4 border-b border-(--color-border) last:border-0 space-y-3">
-        <div className="flex items-center gap-2">
-          <Avatar src={review.src} name={review.user} size="w-9 h-9" />
-          <div>
-            <p className="text-(--color-text-primary) text-sm font-bold leading-tight">
-              {review.user}
-            </p>
-            <div className="flex gap-1 mt-1">
-              {[1, 2, 3, 4, 5].map((s) => (
-                <button
-                  key={s}
-                  onMouseEnter={() => setEditHovered(s)}
-                  onMouseLeave={() => setEditHovered(0)}
-                  onClick={() => setEditRating(s)}
-                  aria-label={translate("movies.detail.rate_star")}
-                >
-                  <Star
-                    size={16}
-                    className={
-                      s <= (editHovered || editRating)
-                        ? "text-(--color-gold) fill-(--color-gold)"
-                        : "text-(--color-border) fill-(--color-border)"
-                    }
-                  />
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <textarea
-          value={editText}
-          onChange={(e) => setEditText(e.target.value)}
-          rows={3}
-          className="w-full bg-(--color-bg) border border-(--color-border) rounded-xl px-3 py-3 text-base text-(--color-text-secondary) resize-none outline-none focus:border-(--color-gold)/50 transition-colors font-[inherit]"
-        />
-
-        <div className="flex gap-2 pl-11">
-          <button
-            onClick={handleSave}
-            disabled={!editRating || !editText.trim()}
-            className="flex items-center gap-1 px-4 py-2 rounded-lg text-xs font-bold bg-(--color-gold) text-(--color-bg) hover:bg-(--color-gold-dark) disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-          >
-            <Check size={14} /> {translate("movies.detail.save")}
-          </button>
-          <button
-            onClick={handleCancel}
-            className="flex items-center gap-1 px-4 py-2 rounded-lg text-xs font-bold border border-(--color-border) text-(--color-text-secondary) hover:bg-(--color-surface) transition-colors"
-          >
-            <X size={14} /> {translate("movies.detail.cancel")}
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="py-4 border-b border-(--color-border) last:border-0">
-      <div className="flex items-start justify-between mb-2">
-        <div className="flex items-center gap-2">
-          <Avatar src={review.src} name={review.user} size="w-9 h-9" />
-          <div>
-            <p className="text-(--color-text-primary) text-sm font-bold leading-tight">
-              {review.user}
-            </p>
-            <div className="flex items-center gap-2 mt-0.5">
-              <Stars rating={review.rating} size={11} />
-              <span className="text-(--color-text-muted) text-[10px]">
-                {review.time}
-              </span>
-            </div>
-          </div>
-        </div>
-        {isOwner && (
-          <div className="flex items-center gap-2">
-            <button onClick={() => setEditing(true)} aria-label={translate("movies.detail.edit_review")}>
-              <Pencil
-                size={14}
-                className="text-(--color-text-muted) hover:text-(--color-gold) transition-colors"
-              />
-            </button>
-            <button onClick={onDelete} aria-label={translate("movies.detail.delete_review")}>
-              <Trash2
-                size={14}
-                className="text-(--color-text-muted) hover:text-red-400 transition-colors"
-              />
-            </button>
-          </div>
-        )}
-      </div>
-
-      <p className="text-(--color-text-secondary) text-sm leading-relaxed pl-11">
-        {review.text}
-      </p>
-    </div>
-  );
-}
-
-export default function Reviews() {
-  const [reviews, setReviews] = useState<Review[]>(REVIEWS);
-  const [showCount, setShowCount] = useState(INITIAL_REVIEWS_VISIBLE);
-  const [maxH, setMaxH] = useState<string>("none");
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { translate } = useLocale();
-  const { isAuthenticated } = useAuth();
+  const { slug } = useMovieDetail();
   const router = useRouter();
 
-  const visibleReviews = reviews.slice(0, showCount);
-  const hasMore = showCount < reviews.length;
+  const [maxH, setMaxH] = useState<string>("none");
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const {
+    reviews,
+    average,
+    ratingCount,
+    breakdown,
+    hasReviews,
+    page,
+    totalPages,
+    loadingPage,
+    mutating,
+    retrying,
+    error,
+    actionError,
+    isAuthenticated,
+    currentUserId,
+    clearActionError,
+    goToPage,
+    retry,
+    create,
+    save,
+    remove,
+  } = useMovieReviews({
+    movieSlug: slug,
+    initialData,
+    initialError,
+    anchorRef: containerRef,
+  });
 
   useEffect(() => {
     if (containerRef.current) {
       setMaxH(containerRef.current.scrollHeight + "px");
     }
-  }, [showCount]);
-
-  const handlePost = useCallback((rating: number, text: string) => {
-    const newReview: Review = {
-      id: Date.now(),
-      user: translate("movies.detail.you"),
-      src: `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * 70) + 1}`,
-      rating,
-      time: translate("movies.detail.just_now"),
-      text,
-    };
-    setReviews((prev) => [newReview, ...prev]);
-    setShowCount((prev) => prev + 1);
-  }, [translate]);
-
-  const handleLoadMore = useCallback(() => {
-    setShowCount((prev) => prev + REVIEWS_LOAD_MORE);
-  }, []);
-
-  const handleSave = useCallback(
-    (id: number, rating: number, text: string) => {
-      setReviews((prev) =>
-        prev.map((r) => (r.id === id ? { ...r, rating, text } : r))
-      );
-    },
-    []
-  );
-
-  const handleDelete = useCallback((id: number) => {
-    if (window.confirm(translate("movies.detail.delete_confirm"))) {
-      setReviews((prev) => prev.filter((r) => r.id !== id));
-      setShowCount((prev) => Math.max(prev - 1, INITIAL_REVIEWS_VISIBLE));
-    }
-  }, [translate]);
+  }, [reviews.length, page]);
 
   return (
     <section className="px-4 space-y-4">
-      <SectionHeading>{translate("movies.detail.reviews")}</SectionHeading>
+      <SectionHeader variant="goldBar">
+        {translate("movies.detail.reviews")}
+      </SectionHeader>
 
       <div className="flex items-center gap-5 py-1">
         <div className="flex flex-col items-center gap-1 shrink-0">
           <span className="text-5xl font-extrabold text-(--color-gold) leading-none">
-            4.8
+            {average.toFixed(1)}
           </span>
-          <Stars rating={4.8} size={13} />
+          <Stars rating={average} size={13} />
           <span className="text-(--color-text-muted) text-[10px] mt-0.5">
-            2.4k {translate("movies.detail.ratings")}
+            {formatReviewCount(ratingCount)} {translate("movies.detail.ratings")}
           </span>
         </div>
 
+        
         <div className="flex-1 space-y-1.5">
-          {RATING_BREAKDOWN.map((r) => (
-            <RatingBar key={r.stars} stars={r.stars} pct={r.pct} />
+          {breakdown.map((bar) => (
+            <RatingBar key={bar.stars} stars={bar.stars} pct={bar.pct} />
           ))}
         </div>
       </div>
 
       {isAuthenticated ? (
-        <WriteReview onSubmit={handlePost} />
+        <WriteReview onSubmit={create} disabled={mutating} />
       ) : (
         <div className="rounded-2xl bg-(--color-surface) border border-(--color-border) p-4 flex flex-col items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-(--color-bg)">
@@ -317,29 +122,101 @@ export default function Reviews() {
         </div>
       )}
 
-      <div
-        ref={containerRef}
-        style={{ maxHeight: maxH }}
-        className="animate-expand rounded-2xl bg-(--color-surface) border border-(--color-border) px-4 divide-y divide-(--color-border)"
-      >
-        {visibleReviews.map((r) => (
-          <ReviewCard
-            key={r.id}
-            review={r}
-            isOwner={r.user === translate("movies.detail.you")}
-            onSave={(rating, text) => handleSave(r.id, rating, text)}
-            onDelete={() => handleDelete(r.id)}
-          />
-        ))}
-      </div>
+      {actionError && (
+        <div className="rounded-xl border border-red-500/40 bg-red-500/10 px-4 py-3 flex items-start justify-between gap-3">
+          <p className="text-xs text-red-400 leading-relaxed">{actionError}</p>
+          <button
+            onClick={clearActionError}
+            aria-label={translate("movies.detail.cancel")}
+            className="shrink-0 text-red-400 hover:text-red-300 transition-colors"
+          >
+            <X size={14} />
+          </button>
+        </div>
+      )}
 
-      {hasMore && (
-        <button
-          onClick={handleLoadMore}
-          className="w-full py-3 rounded-2xl border border-(--color-border) text-(--color-gold) font-bold text-sm tracking-widest uppercase hover:bg-(--color-surface) transition-colors"
+      {error && (
+        <div className="rounded-2xl bg-(--color-surface) border border-(--color-border) px-4 py-6 flex flex-col items-center gap-3 text-center">
+          <p className="text-sm text-(--color-text-muted)">
+            {error || translate("common.error")}
+          </p>
+          <button
+            onClick={() => void retry()}
+            disabled={retrying}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold border border-(--color-gold) text-(--color-gold) hover:bg-(--color-gold) hover:text-(--color-bg) transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <RotateCcw size={14} /> {translate("common.try_again")}
+          </button>
+        </div>
+      )}
+
+      {!error && !hasReviews && (
+        <div className="rounded-2xl bg-(--color-surface) border border-(--color-border) px-4 py-8 text-center">
+          <p className="text-sm text-(--color-text-muted)">
+            {translate("movies.detail.no_reviews")}
+          </p>
+        </div>
+      )}
+
+      {!error && hasReviews && (
+        <div
+          ref={containerRef}
+          style={{ maxHeight: maxH }}
+          className="animate-expand rounded-2xl bg-(--color-surface) border border-(--color-border) px-4 divide-y divide-(--color-border)"
         >
-          {translate("movies.detail.load_more_reviews")}
-        </button>
+          {reviews.map((review) => (
+            <ReviewCard
+              key={review.id}
+              review={review}
+              isOwner={currentUserId === review.userId}
+              onSave={(rating, text) => save(review.id, rating, text)}
+              onDelete={() => remove(review.id)}
+            />
+          ))}
+        </div>
+      )}
+
+      {!error && hasReviews && totalPages > 1 && (
+        <nav
+          aria-label={translate("movies.detail.reviews")}
+          className="flex items-center justify-center gap-2"
+        >
+          <button
+            onClick={() => void goToPage(page - 1)}
+            disabled={page === 1 || loadingPage}
+            aria-label={translate("movies.detail.prev_page")}
+            className="flex h-9 w-9 items-center justify-center rounded-xl border border-(--color-border) text-(--color-gold) transition-colors hover:bg-(--color-surface) disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            <ChevronLeft size={16} />
+          </button>
+
+          {Array.from({ length: totalPages }, (_, index) => index + 1).map(
+            (pageNumber) => (
+              <button
+                key={pageNumber}
+                onClick={() => void goToPage(pageNumber)}
+                disabled={loadingPage}
+                aria-current={pageNumber === page ? "page" : undefined}
+                className={`flex h-9 min-w-9 items-center justify-center rounded-xl border px-2 text-sm font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
+                  pageNumber === page
+                    ? "border-(--color-gold) bg-(--color-gold) text-(--color-bg)"
+                    : "border-(--color-border) text-(--color-gold) hover:bg-(--color-surface)"
+                }`}
+              >
+                {pageNumber}
+              </button>
+            ),
+          )}
+
+          <button
+            onClick={() => void goToPage(page + 1)}
+            disabled={page === totalPages || loadingPage}
+            aria-label={translate("movies.detail.next_page")}
+            className="flex h-9 w-9 items-center justify-center rounded-xl border border-(--color-border) text-(--color-gold) transition-colors hover:bg-(--color-surface) disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            <ChevronRight size={16} />
+          </button>
+        </nav>
       )}
     </section>
   );

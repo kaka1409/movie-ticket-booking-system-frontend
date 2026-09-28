@@ -1,4 +1,4 @@
-import { Skeleton, SkeletonCard } from "@/components/ui/Skeleton";
+﻿import { Skeleton, SkeletonCard } from "@/components/ui/Skeleton";
 
 function CastMemberSkeleton() {
   return (
@@ -9,7 +9,63 @@ function CastMemberSkeleton() {
   );
 }
 
+function DesktopLoading() {
+  return (
+    <div className="hidden min-h-dvh bg-(--color-bg) md:block">
+      <div className="mx-auto w-full max-w-screen-xl px-8 pt-6">
+        {/* Hero card */}
+        <Skeleton className="h-[480px] w-full rounded-(--radius-lg)" />
+
+        <div className="py-10">
+          <div className="flex items-start gap-10">
+            <div className="min-w-0 flex-1 space-y-10">
+              <div className="space-y-3">
+                <Skeleton className="h-6 w-32 rounded-full" />
+                <div className="space-y-2">
+                  <Skeleton className="h-3 w-full rounded-full" />
+                  <Skeleton className="h-3 w-full rounded-full" />
+                  <Skeleton className="h-3 w-2/3 rounded-full" />
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <Skeleton className="h-6 w-28 rounded-full" />
+                <div className="flex flex-wrap gap-4">
+                  {Array.from({ length: 6 }).map((_, index) => (
+                    <Skeleton
+                      key={index}
+                      className="h-20 w-20 rounded-(--radius-lg)"
+                    />
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-5">
+                <Skeleton className="h-6 w-24 rounded-full" />
+                <SkeletonCard className="h-40 p-5">{null}</SkeletonCard>
+                <SkeletonCard className="h-52 p-5">{null}</SkeletonCard>
+              </div>
+            </div>
+
+            <div className="w-80 shrink-0">
+              <SkeletonCard className="h-[420px] p-5">{null}</SkeletonCard>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 export default function MovieDetailLoading() {
+  return (
+    <>
+      <MobileLoading />
+      <DesktopLoading />
+    </>
+  );
+}
+
+function MobileLoading() {
   return (
     <div className="min-h-dvh bg-(--color-bg) block md:hidden">
       <main className="pb-10">

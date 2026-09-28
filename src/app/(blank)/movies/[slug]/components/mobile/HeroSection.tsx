@@ -3,13 +3,13 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Heart, Play, Star, Clock } from "lucide-react";
-import { useMovie } from "../shared/MovieContext";
+import { useMovieDetail } from "@/features/movies/context";
 import { useWishlist } from "@/features/wishlist/context";
 import { useLocale } from "@/contexts/LocaleContext";
 
 export default function HeroSection() {
   const router = useRouter();
-  const movie = useMovie();
+  const movie = useMovieDetail();
   const { toggleWishlist, isWishlisted } = useWishlist();
   const { translate } = useLocale();
   const liked = isWishlisted(movie.id);

@@ -1,17 +1,19 @@
 'use client';
 
 import Image from "next/image";
-import SectionHeading from "../shared/SectionHeading";
-import { useMovie } from "../shared/MovieContext";
+import SectionHeader from "@/components/ui/SectionHeader";
+import { useMovieDetail } from "@/features/movies/context";
 import { useLocale } from "@/contexts/LocaleContext";
 
 export default function TopCast() {
-  const movie = useMovie();
+  const movie = useMovieDetail();
   const { translate } = useLocale();
 
   return (
     <section className="px-4">
-      <SectionHeading>{translate("movies.detail.top_cast")}</SectionHeading>
+      <SectionHeader variant="goldBar">
+        {translate("movies.detail.top_cast")}
+      </SectionHeader>
 
       <div className="flex flex-nowrap gap-4 overflow-x-auto scrollbar-hide pb-1">
         {movie.cast.map((actor) => (

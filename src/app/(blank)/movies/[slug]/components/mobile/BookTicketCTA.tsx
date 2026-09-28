@@ -1,19 +1,19 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useMovie } from "../shared/MovieContext";
-import { useMovieSelection } from "../shared/MovieSelectionContext";
+import { useMovieDetail, useMovieSelection } from "@/features/movies/context";
 import { useLocale } from "@/contexts/LocaleContext";
 import Button from "@/components/ui/Button";
 
 export default function BookTicketCTA() {
-  const movie = useMovie();
+  const movie = useMovieDetail();
   const router = useRouter();
   const { selectedShowtime } = useMovieSelection();
   const { translate } = useLocale();
 
   const handleClick = () => {
     const params = new URLSearchParams();
+    if (selectedShowtime?.showtimeId) params.set("showtimeId", selectedShowtime.showtimeId);
     if (selectedShowtime?.cinemaId) params.set("cinema", String(selectedShowtime.cinemaId));
     if (selectedShowtime?.time) params.set("time", selectedShowtime.time);
     if (selectedShowtime?.date) params.set("date", selectedShowtime.date);

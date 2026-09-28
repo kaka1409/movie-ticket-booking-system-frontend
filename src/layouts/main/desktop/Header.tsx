@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Search, Bell, SlidersHorizontal, Settings } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import Logo from "@/layouts/components/Logo";
@@ -12,8 +13,16 @@ const NAV_LINKS = [
   { labelKey: "nav.tickets", href: "/tickets" },
 ] as const;
 
+/* "/" only matches exactly, every other link also matches its sub-routes
+   so a movie detail page still highlights "Movies". */
+function isActiveLink(href: string, pathname: string): boolean {
+  if (href === "/") return pathname === "/";
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
 export default function Header() {
   const { translate } = useLocale();
+  const pathname = usePathname();
 
   return (
     <nav className="sticky top-0 z-50 border-b border-(--color-border) bg-black/92 backdrop-blur-md">
@@ -26,7 +35,7 @@ export default function Header() {
               key={href}
               href={href}
               className={`rounded-(--radius-sm) px-3.5 py-1.5 text-[13px] no-underline ${
-                href === "/"
+                isActiveLink(href, pathname)
                   ? "border-b-2 border-(--color-gold) font-bold text-(--color-gold)"
                   : "border-b-2 border-transparent font-medium text-(--color-text-secondary)"
               }`}
@@ -36,19 +45,22 @@ export default function Header() {
           ))}
         </div>
 
-        <div className="ml-auto flex max-w-[280px] flex-1 items-center gap-2 rounded-(--radius-pill) border border-(--color-border) bg-(--color-surface) px-3.5 py-2 text-[13px] text-(--color-text-muted)">
+        <div className="
+          ml-auto flex max-w-[280px] h-fit flex-1 items-center gap-2 rounded-(--radius-pill) border border-(--color-border) 
+          bg-(--color-surface) px-3.5 py-2 text-[13px] text-(--color-text-muted)"
+        >
           <Search size={16} />
           <span>{translate("layout.header.search")}</span>
         </div>
 
         <div className="flex items-center gap-3.5 text-(--color-text-muted)">
           <LanguageToggle variant="text" />
-          <button className="cursor-pointer border-none bg-transparent p-1 text-inherit">
+          {/*<button className="cursor-pointer border-none bg-transparent p-1 text-inherit">
             <SlidersHorizontal size={18} />
           </button>
           <button className="cursor-pointer border-none bg-transparent p-1 text-inherit">
             <Settings size={18} />
-          </button>
+          </button>*/}
           <button className="relative cursor-pointer border-none bg-transparent p-1 text-inherit">
             <Bell size={18} />
             <span className="absolute right-1 top-1 h-1.5 w-1.5 rounded-full bg-(--color-gold)" />
