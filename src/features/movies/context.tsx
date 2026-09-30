@@ -252,7 +252,8 @@ export function useMovieDetail(): Movie {
 
 /* ─── Showtime selection — booking preselection ─────────────── */
 
-interface ShowtimeSelection {
+export interface ShowtimeSelection {
+  showtimeId?: string;
   cinemaId: string;
   time: string;
   date: string;

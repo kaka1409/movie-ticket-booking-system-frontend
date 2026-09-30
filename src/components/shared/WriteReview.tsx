@@ -33,7 +33,7 @@ export default function WriteReview({
 
       <div className="flex gap-1">
         {[1, 2, 3, 4, 5].map((star) => (
-          <button
+          <button type="button"
             key={star}
             onMouseEnter={() => setHovered(star)}
             onMouseLeave={() => setHovered(0)}
@@ -60,7 +60,7 @@ export default function WriteReview({
         className="w-full bg-(--color-bg) border border-(--color-border) rounded-xl px-3 py-3 text-base text-(--color-text-secondary) placeholder-(--color-text-muted) resize-none outline-none focus:border-(--color-gold)/50 transition-colors font-[inherit]"
       />
 
-      <button
+      <button type="button"
         disabled={disabled || !userRating || !text.trim()}
         onClick={() => void handleSubmit()}
         className="w-full py-3 rounded-xl font-bold text-sm tracking-widest uppercase bg-(--color-gold) text-(--color-bg) hover:bg-(--color-gold-dark) active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-150"

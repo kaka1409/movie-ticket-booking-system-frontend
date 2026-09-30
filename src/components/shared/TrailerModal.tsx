@@ -39,7 +39,7 @@ export default function TrailerModal({ isOpen, onClose, title }: TrailerModalPro
       >
         <div className="flex items-center justify-between border-b border-(--color-border) px-6 py-4">
           <h3 className="text-base font-bold text-white">Trailer: {title}</h3>
-          <button
+          <button type="button"
             onClick={onClose}
             className="rounded-full p-1.5 text-(--color-text-muted) transition-colors hover:bg-(--color-surface-2) hover:text-white"
             aria-label="Close"

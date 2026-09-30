@@ -28,7 +28,7 @@ export default function HeroSection() {
       <div className="absolute inset-0 bg-black/25" />
       <div className="absolute inset-0 bg-linear-to-b from-transparent via-transparent to-(--color-bg)" />
 
-      <button
+      <button type="button"
         className="absolute inset-0 flex items-center justify-center group"
         aria-label={translate("movies.detail.watch_trailer")}
       >
@@ -38,7 +38,7 @@ export default function HeroSection() {
       </button>
 
       <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-4 pt-5">
-        <button
+        <button type="button"
           onClick={() => router.back()}
           className="w-9 h-9 rounded-full bg-black/40 flex items-center justify-center"
           aria-label={translate("movies.detail.back")}

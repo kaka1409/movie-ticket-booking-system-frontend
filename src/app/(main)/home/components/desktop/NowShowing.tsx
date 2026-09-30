@@ -109,13 +109,13 @@ export default function NowShowing({
                 >
                   {translate("home.desktop.book_now")}
                 </Link>
-                <Link
+                {/*<Link
                   href={`/movies/${movie.slug}`}
                   className="flex items-center justify-center rounded-(--radius-sm) border border-(--color-border) bg-(--color-surface-2) px-3 py-2 text-xs font-semibold text-white no-underline transition-colors hover:border-(--color-gold)/50 hover:text-(--color-gold)"
                   aria-label={`View details for ${movie.title}`}
                 >
                   <ChevronRight size={14} />
-                </Link>
+                </Link>*/}
               </div>
             </div>
           </article>

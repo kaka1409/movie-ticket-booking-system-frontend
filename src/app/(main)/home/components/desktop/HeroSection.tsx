@@ -8,7 +8,7 @@ import { useLocale } from "@/contexts/LocaleContext";
 import type { FeaturedMovie } from "@/features/movies/types";
 import type { ErrorResponse } from "@/libs/api";
 import SectionFallback from "@/components/ui/SectionFallback";
-import TrailerModal from "./TrailerModal";
+import TrailerModal from "@/components/shared/TrailerModal";
 
 export default function HeroSection({
   movies,
@@ -85,7 +85,7 @@ export default function HeroSection({
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
 
           {/* Navigation Arrows */}
-          <button
+          <button type="button"
             onClick={prev}
             className="
               absolute left-4 top-1/2 z-20 -translate-y-1/2 cursor-pointer rounded-full border border-white/15 
@@ -96,7 +96,7 @@ export default function HeroSection({
           >
             <ChevronLeft size={22} />
           </button>
-          <button
+          <button type="button"
             onClick={next}
             className="
               absolute right-4 top-1/2 z-20 -translate-y-1/2 cursor-pointer rounded-full border border-white/15 

@@ -23,7 +23,7 @@ export default function QuickBooking({
   const { translate } = useLocale();
 
   const [selectedMovieSlug, setSelectedMovieSlug] = useState("");
-  const [selectedCinemaId, setSelectedCinemaId] = useState(cinemas[0]?.id ?? 0);
+  const [selectedCinemaId, setSelectedCinemaId] = useState(cinemas[0]?.id ?? "");
   const [selectedDate, setSelectedDate] = useState(dates[0]?.value ?? "");
   const [selectedTime, setSelectedTime] = useState("");
   const [isExpanded, setIsExpanded] = useState(true);
@@ -53,7 +53,7 @@ export default function QuickBooking({
       className="mx-(--space-md) rounded-(--radius-sm) p-(--space-md) bg-(--color-surface)"
       aria-labelledby="qb-heading"
     >
-      <button
+      <button type="button"
         className="flex w-full items-center justify-between"
         onClick={() => setIsExpanded((previousValue) => !previousValue)}
         aria-expanded={isExpanded}
@@ -102,7 +102,7 @@ export default function QuickBooking({
               </span>
               <div className="flex gap-(--space-sm)">
                 {firstThreeDates.map((dateOption) => (
-                  <button
+                  <button type="button"
                     key={dateOption.value}
                     className={`rounded-(--radius-sm) px-(--space-md) py-1.5 text-xs font-semibold transition-colors ${
                       selectedDate === dateOption.value
@@ -131,8 +131,7 @@ export default function QuickBooking({
                 className="w-full rounded-(--radius-sm) bg-(--color-surface) px-3 py-2.5 text-sm text-white outline-none border border-(--color-border)"
                 value={selectedCinemaId}
                 onChange={(event) => {
-                  const cinemaId = Number(event.target.value);
-                  setSelectedCinemaId(cinemaId);
+                  setSelectedCinemaId(event.target.value);
                   setSelectedTime("");
                 }}
               >
@@ -151,7 +150,7 @@ export default function QuickBooking({
               </span>
               <div className="flex flex-wrap gap-(--space-sm)">
                 {availableShowtimes.map((showtime) => (
-                  <button
+                  <button type="button"
                     key={showtime.time}
                     disabled={!showtime.available}
                     className={`rounded-(--radius-sm) px-(--space-md) py-1.5 text-xs font-semibold transition-colors ${
@@ -179,7 +178,7 @@ export default function QuickBooking({
                 {translate("home.quick_booking.book")}
               </Link>
             ) : (
-              <button
+              <button type="button"
                 disabled
                 className="w-full rounded-(--radius-sm) bg-(--color-surface) py-3 text-center text-sm font-bold tracking-widest text-(--color-text-muted) border border-(--color-border) cursor-not-allowed"
               >

@@ -144,7 +144,7 @@ export default function Showtimes({
         {dateOptions.map((option) => {
           const active = option.value === date;
           return (
-            <button
+            <button type="button"
               key={option.value}
               onClick={() => selectDate(option.value)}
               disabled={option.disabled}
@@ -193,7 +193,7 @@ export default function Showtimes({
           <p className="text-sm text-(--color-text-muted)">
             {error || translate("common.error")}
           </p>
-          <button
+          <button type="button"
             onClick={retry}
             disabled={isPending}
             className="flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold border border-(--color-gold) text-(--color-gold) hover:bg-(--color-gold) hover:text-(--color-bg) transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -248,7 +248,7 @@ export default function Showtimes({
                 {cinema.showtimes.map((slot) => {
                   const active = selectedShowtime?.showtimeId === slot.id;
                   return (
-                    <button
+                    <button type="button"
                       key={slot.id}
                       onClick={() =>
                         slot.isAvailable &&
@@ -278,7 +278,7 @@ export default function Showtimes({
       )}
 
       {hasMore && (
-        <button
+        <button type="button"
           onClick={toggleShowAll}
           className="w-full mt-4 py-3 rounded-2xl border border-(--color-border) text-(--color-gold) font-bold text-sm tracking-widest uppercase flex items-center justify-center gap-1 hover:bg-(--color-surface) transition-colors"
         >

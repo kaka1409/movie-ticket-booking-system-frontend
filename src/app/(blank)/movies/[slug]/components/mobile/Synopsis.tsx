@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import SectionHeading from "../shared/SectionHeading";
-import { useMovie } from "../shared/MovieContext";
+import SectionHeader from "@/components/ui/SectionHeader";
+import { useMovieDetail } from "@/features/movies/context";
 import { useLocale } from "@/contexts/LocaleContext";
 
 export default function Synopsis() {
-  const movie = useMovie();
+  const movie = useMovieDetail();
   const { translate } = useLocale();
   const [expanded, setExpanded] = useState(false);
   const SHORT_LIMIT = 160;
@@ -18,11 +18,13 @@ export default function Synopsis() {
 
   return (
     <section className="px-4">
-      <SectionHeading>{translate("movies.detail.synopsis")}</SectionHeading>
+      <SectionHeader variant="goldBar">
+        {translate("movies.detail.synopsis")}
+      </SectionHeader>
       <p className="text-(--color-text-secondary) text-sm leading-relaxed">
         {displayText}
         {isLong && (
-          <button
+          <button type="button"
             className="text-(--color-gold) font-bold ml-1 hover:underline"
             onClick={() => setExpanded((v) => !v)}
           >
