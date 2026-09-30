@@ -1,58 +1,29 @@
-"use server";
-
-import type { UpcomingTicket, PastTicket, Recipient, TicketTransfer, EligibleShowtime, ModificationType, ModificationSeat } from "./types";
+import type {
+  UpcomingTicket, PastTicket, Recipient, EligibleShowtime,
+} from "./types";
 // import { apiFetch } from "@/libs/api";
+
 import { UPCOMING, PAST, MOCK_RECIPIENTS, MOCK_ELIGIBLE_SHOWTIMES } from "./mock";
 
 export async function getUpcomingTickets(): Promise<UpcomingTicket[]> {
   // TODO: replace with real fetch when backend is ready
-  // return apiFetch<UpcomingTicket[]>("/api/v1/tickets/upcoming");
+  // const response = await apiFetch<{ data: UpcomingTicket[] }>("/tickets/upcoming");
+  // return response.data;
   return UPCOMING;
 }
 
 export async function getPastTickets(): Promise<PastTicket[]> {
-  // return apiFetch<PastTicket[]>("/api/v1/tickets/past");
+  // const response = await apiFetch<{ data: PastTicket[] }>("/tickets/past");
+  // return response.data;
   return PAST;
 }
 
 export async function getTicketById(id: string): Promise<UpcomingTicket | PastTicket | undefined> {
-  // return apiFetch<UpcomingTicket | PastTicket>(`/api/v1/tickets/${id}`);
   const allTickets = [...UPCOMING, ...PAST];
   return allTickets.find((ticket) => ticket.id === id);
-}
 
-export async function createTransfer(
-  ticketId: string,
-  recipient: Recipient,
-  seats: string[],
-  transferSnacks: boolean
-): Promise<UpcomingTicket> {
-  // TODO: replace with real fetch when backend is ready
-  // return apiFetch<UpcomingTicket>(`/api/v1/tickets/${ticketId}/transfer`, {
-  //   method: "POST",
-  //   body: JSON.stringify({ recipient, seats, transferSnacks }),
-  // });
-  const ticket = UPCOMING.find((t) => t.id === ticketId);
-  if (!ticket) throw new Error(`Ticket ${ticketId} not found`);
-  const transfer: TicketTransfer = {
-    status: "pending",
-    recipient,
-    transferredSeats: seats,
-    transferSnacks,
-  };
-  ticket.transfer = transfer;
-  return ticket;
-}
-
-export async function cancelTransfer(ticketId: string): Promise<UpcomingTicket> {
-  // TODO: replace with real fetch when backend is ready
-  // return apiFetch<UpcomingTicket>(`/api/v1/tickets/${ticketId}/transfer`, {
-  //   method: "DELETE",
-  // });
-  const ticket = UPCOMING.find((t) => t.id === ticketId);
-  if (!ticket) throw new Error(`Ticket ${ticketId} not found`);
-  delete ticket.transfer;
-  return ticket;
+  // const response = await apiFetch<{ data: UpcomingTicket | PastTicket }>(`/tickets/${id}`);
+  // return response.data;
 }
 
 export async function findRecipient(query: string): Promise<Recipient | null> {
@@ -65,6 +36,11 @@ export async function findRecipient(query: string): Promise<Recipient | null> {
         recipient.email.toLowerCase() === normalized
     ) ?? null
   );
+
+  // const response = await apiFetch<{ data: Recipient | null }>(
+  //   `/tickets/recipients/find?q=${encodeURIComponent(query)}`,
+  // );
+  // return response.data;
 }
 
 export async function searchRecipients(query: string): Promise<Recipient[]> {
@@ -76,52 +52,18 @@ export async function searchRecipients(query: string): Promise<Recipient[]> {
       recipient.username.toLowerCase().includes(normalized) ||
       recipient.email.toLowerCase().includes(normalized)
   );
+  
+  // const response = await apiFetch<{ data: Recipient[] }>(
+  //   `/tickets/recipients/search?q=${encodeURIComponent(query)}`,
+  // );
+  // return response.data;
 }
 
-/* ─── Modification API ─────────────────────────────────────── */
+/* ─── Modification Queries ──────────────────────────────── */
 
-export async function getEligibleShowtimes(
-  ticketId: string
-): Promise<EligibleShowtime[]> {
-  // TODO: replace with real fetch when backend is ready
-  // return apiFetch<EligibleShowtime[]>(`/api/v1/tickets/${ticketId}/eligible-showtimes`);
-  const ticket = UPCOMING.find((t) => t.id === ticketId);
-  if (!ticket) return [];
-
-  return MOCK_ELIGIBLE_SHOWTIMES.filter(
-    (showtime) => showtime.cinemaName !== ticket.cinema
-  );
-}
-
-export async function modifyTicket(
-  ticketId: string,
-  modificationType: ModificationType,
-  newShowtime?: { date: string; time: string; cinema: string; room: string },
-  newSeats?: ModificationSeat[]
-): Promise<UpcomingTicket> {
-  // TODO: replace with real fetch when backend is ready
-  // return apiFetch<UpcomingTicket>(`/api/v1/tickets/${ticketId}/modify`, {
-  //   method: "PATCH",
-  //   body: JSON.stringify({ modificationType, newShowtime, newSeats }),
-  // });
-  const ticket = UPCOMING.find((t) => t.id === ticketId);
-  if (!ticket) throw new Error(`Ticket ${ticketId} not found`);
-
-  if (newShowtime && (modificationType === "showtime" || modificationType === "both")) {
-    ticket.cinema = newShowtime.cinema;
-    ticket.room = newShowtime.room;
-    ticket.datetime = `${newShowtime.date} ${newShowtime.time}`;
-  }
-
-  if (newSeats && (modificationType === "seats" || modificationType === "both")) {
-    ticket.seatItems = newSeats.map((s) => ({
-      label: s.label,
-      type: s.type,
-      price: s.price,
-    }));
-  }
-
-  return ticket;
+/* eslint-disable-next-line @typescript-eslint/no-unused-vars -- ticketId is reserved for the real API call (currently mocked) */
+export async function getEligibleShowtimes(ticketId?: string): Promise<EligibleShowtime[]> {
+  return MOCK_ELIGIBLE_SHOWTIMES;
 }
 
 /* ─── Cancel & Refund API ────────────────────────────────── */

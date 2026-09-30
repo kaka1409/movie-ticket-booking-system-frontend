@@ -374,7 +374,7 @@ export const MOCK_ELIGIBLE_SHOWTIMES: EligibleShowtime[] = CINEMAS.flatMap(
           cinemaId: cinema.id,
           cinemaName: cinema.name,
           address: cinema.address,
-          distance: cinema.distance,
+          distance: cinema.distance ?? "",
           time: showtime.time,
           room: showtime.room,
           date: date.value,

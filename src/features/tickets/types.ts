@@ -77,13 +77,14 @@ export interface ModificationSeat {
 }
 
 export interface EligibleShowtime {
-  cinemaId: number;
+  cinemaId: string;
   cinemaName: string;
   address: string;
   distance: string;
   time: string;
   room: string;
   date: string;
+  showtimeId?: string;
 }
 
 export interface ModificationResult {
