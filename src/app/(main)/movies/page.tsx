@@ -1,7 +1,7 @@
-// import { Suspense } from "react";
 import { MovieListProvider } from "@/features/movies/context";
 import { getMovies } from "@/features/movies/api";
 import { MOVIES_PAGE_SIZE } from "@/features/movies/constants";
+import { readTabFromParams, readFiltersFromParams } from "@/features/movies/url";
 import { toApiResponse } from "@/libs/api";
 
 // Mobile
@@ -13,7 +13,19 @@ import MovieGrid from "./components/mobile/MovieGrid";
 // Desktop
 import DesktopMovieGrid from "./components/desktop/MovieGrid";
 
-export default async function MoviesPage() {
+export default async function MoviesPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const rawSearchParams = await searchParams;
+  const normalizedSearchParams = new URLSearchParams();
+  for (const [key, value] of Object.entries(rawSearchParams)) {
+    if (typeof value === "string") normalizedSearchParams.set(key, value);
+  }
+  const initialTab = readTabFromParams(normalizedSearchParams);
+  const initialFilters = readFiltersFromParams(normalizedSearchParams);
+
   const [nowShowingSettled, comingSoonSettled] = await Promise.allSettled([
     getMovies("now_showing", 1, MOVIES_PAGE_SIZE),
     getMovies("coming_soon", 1, MOVIES_PAGE_SIZE),
@@ -33,6 +45,8 @@ export default async function MoviesPage() {
         initialNowShowing={nowShowingList}
         initialComingSoon={comingSoonList}
         initialMeta={{ nowShowing: nowShowingMeta, comingSoon: comingSoonMeta }}
+        initialTab={initialTab}
+        initialFilters={initialFilters}
       >
         {/* Mobile */}
         <div className="block md:hidden">

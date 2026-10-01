@@ -7,9 +7,10 @@ import {
   useCallback,
   type ReactNode,
 } from "react";
-import { useSearchParams, usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { DEFAULT_FILTERS, MOVIES_PAGE_SIZE } from "./constants";
 import { getMovies } from "./api";
+import { writeParamsFromState } from "./url";
 import type { Tab, Filters, Movie, MoviesMeta } from "./types";
 
 /* ─── Movie list — trang /movies ────────────────────────────── */
@@ -35,33 +36,6 @@ interface MovieListContextType {
 
 const MovieListContext = createContext<MovieListContextType | null>(null);
 
-/* ─── URL Helpers ───────────────────────────────────────────── */
-
-function readFiltersFromParams(sp: URLSearchParams): Filters {
-  const genres = sp.get("genres")?.split(",").filter(Boolean) ?? [];
-  return {
-    releaseDate: "Any Time",
-    genres,
-    rating: sp.get("rating") ?? "",
-    length: "",
-    format: sp.get("format") ?? "",
-    ageRating: sp.get("ageRating") ?? "",
-  };
-}
-
-function writeParamsFromState(
-  tab: Tab,
-  filters: Filters,
-): URLSearchParams {
-  const params = new URLSearchParams();
-  params.set("status", tab);
-  if (filters.genres.length > 0) params.set("genres", filters.genres.join(","));
-  if (filters.rating) params.set("rating", filters.rating);
-  if (filters.format) params.set("format", filters.format);
-  if (filters.ageRating) params.set("ageRating", filters.ageRating);
-  return params;
-}
-
 /* ─── Provider ──────────────────────────────────────────────── */
 
 interface MovieListState {
@@ -73,25 +47,19 @@ export function MovieListProvider({
   initialNowShowing,
   initialComingSoon,
   initialMeta,
+  initialTab,
+  initialFilters,
   children,
 }: {
   initialNowShowing: Movie[];
   initialComingSoon: Movie[];
   initialMeta: { nowShowing?: MoviesMeta; comingSoon?: MoviesMeta };
+  initialTab: Tab;
+  initialFilters: Filters;
   children: ReactNode;
 }) {
-  const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
-
-  /* ── Initialize from URL ── */
-  const initialTab = (
-    ["now_showing", "coming_soon"].includes(searchParams.get("status") ?? "")
-      ? searchParams.get("status")
-      : "now_showing"
-  ) as Tab;
-
-  const initialFilters = readFiltersFromParams(searchParams);
 
   /* ── State ── */
   const [activeTab, setActiveTabState] = useState<Tab>(initialTab);

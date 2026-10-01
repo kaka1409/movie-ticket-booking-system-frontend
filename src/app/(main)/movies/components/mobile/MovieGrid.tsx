@@ -4,6 +4,7 @@ import { useRef, useEffect, useState } from "react";
 import { Search } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useMovieList } from "@/features/movies/context";
+import { useMovieFilters } from "@/hooks/useMovieFilters";
 import MovieCard from "@/components/ui/MovieCard";
 
 export default function MovieGrid() {
@@ -20,40 +21,7 @@ export default function MovieGrid() {
     clearFilters,
   } = useMovieList();
 
-  const filtered = movies.filter((movie) => {
-    const searchQuery = query.toLowerCase();
-    const matchesSearch =
-      !searchQuery ||
-      movie.title.toLowerCase().includes(searchQuery) ||
-      movie.genre.toLowerCase().includes(searchQuery);
-
-    const matchesGenre =
-      appliedFilters.genres.length === 0 ||
-      appliedFilters.genres.some((genre) =>
-        movie.genre.toLowerCase().includes(genre.toLowerCase()),
-      );
-
-    const matchesRating =
-      !appliedFilters.rating ||
-      (appliedFilters.rating === "4.5+" && movie.rating >= 4.5) ||
-      (appliedFilters.rating === "4.0+" && movie.rating >= 4.0) ||
-      (appliedFilters.rating === "3.5+" && movie.rating >= 3.5);
-
-    const matchesLength =
-      !appliedFilters.length ||
-      (appliedFilters.length === "< 90 min" && movie.duration < 90) ||
-      (appliedFilters.length === "90-120 min" &&
-        movie.duration >= 90 &&
-        movie.duration <= 120) ||
-      (appliedFilters.length === "> 120 min" && movie.duration > 120);
-
-    const matchesAge =
-      !appliedFilters.ageRating || movie.ageRating === appliedFilters.ageRating;
-
-    return (
-      matchesSearch && matchesGenre && matchesRating && matchesLength && matchesAge
-    );
-  });
+  const filtered = useMovieFilters(movies, query, appliedFilters);
 
   /* ── Hooks must run before any early return ── */
   const gridRef = useRef<HTMLDivElement>(null);
@@ -121,7 +89,7 @@ export default function MovieGrid() {
             <br />
             {translate("movies.no_results_hint")}
           </p>
-          <button
+          <button type="button"
             onClick={clearFilters}
             className="text-sm font-bold text-(--color-gold) underline underline-offset-2"
           >
@@ -133,7 +101,7 @@ export default function MovieGrid() {
       {/* Load More — fetches the next page from the backend */}
       {hasMore && (
         <div className="px-(--space-md)">
-          <button
+          <button type="button"
             onClick={loadMore}
             disabled={isLoadingMore}
             className="
