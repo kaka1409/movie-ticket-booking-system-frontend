@@ -21,7 +21,7 @@ export default function SeatCell({
   if (seat.kind === "sweetbox") {
     const pairLabel = seat.pairId?.split("-").slice(1).join("-") ?? "";
     return (
-      <button
+      <button type="button"
         disabled={disabled || occupied}
         onClick={() => {
           if (!occupied && !disabled) onToggle(seat);
@@ -56,7 +56,7 @@ export default function SeatCell({
   else cls = baseAvail;
 
   return (
-    <button
+    <button type="button"
       disabled={disabled || occupied}
       onClick={() => {
         if (!occupied && !disabled) onToggle(seat);

@@ -34,7 +34,7 @@ export default function SearchBar({
         "
       />
       {showClearButton && value && (
-        <button
+        <button type="button"
           onClick={() => onChange("")}
           aria-label="Clear search"
           className="shrink-0 text-(--color-text-muted) transition-colors hover:text-(--color-text-primary)"

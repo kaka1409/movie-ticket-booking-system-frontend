@@ -169,7 +169,7 @@ export default function RegisterForm() {
 
       <p className="text-center text-xs text-(--color-text-muted) mt-6">
         {translate("auth.register.has_account")}{" "}
-        <button
+        <button type="button"
           onClick={() => router.push("/login")}
           className="text-(--color-gold) font-semibold underline underline-offset-2 hover:text-(--color-gold-light) transition-colors"
         >

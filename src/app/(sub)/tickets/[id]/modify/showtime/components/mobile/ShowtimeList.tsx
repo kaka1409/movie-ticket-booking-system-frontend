@@ -10,7 +10,7 @@ function groupToCinemas(
   showtimes: EligibleShowtime[],
   stripDate?: boolean
 ): Cinema[] {
-  const grouped = showtimes.reduce<Record<number, EligibleShowtime[]>>(
+  const grouped = showtimes.reduce<Record<string, EligibleShowtime[]>>(
     (acc, showtime) => {
       (acc[showtime.cinemaId] ??= []).push(showtime);
       return acc;
@@ -19,7 +19,7 @@ function groupToCinemas(
   );
 
   return Object.entries(grouped).map(([id, items]) => ({
-    id: Number(id),
+    id,
     name: items[0].cinemaName,
     address: items[0].address,
     distance: items[0].distance,
@@ -87,9 +87,9 @@ export default function ShowtimeList() {
   const selectedTime = selectedShowtime?.time ?? "";
 
   const handleSelect = (
-    cinemaId: number,
+    cinemaId: string,
     time: string,
-    meta?: { room?: string; date?: string }
+    meta?: { room?: string; date?: string; showtimeId?: string }
   ) => {
     const matched = filtered.find(
       (showtime) =>

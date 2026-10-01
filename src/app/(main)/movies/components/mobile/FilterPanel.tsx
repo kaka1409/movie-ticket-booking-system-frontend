@@ -46,7 +46,7 @@ export default function FilterPanel() {
   return (
     <section className="mx-(--space-md) rounded-(--radius-lg) border border-(--color-border) bg-(--color-surface)">
       {/* ── Header (toggle) ── */}
-      <button
+      <button type="button"
         onClick={toggleFiltersOpen}
         className="flex w-full items-center justify-between p-(--space-md)"
         aria-expanded={filtersOpen}
@@ -180,7 +180,7 @@ export default function FilterPanel() {
             </div>
 
             {/* Apply */}
-            <button
+            <button type="button"
               onClick={applyFilters}
               className="
                 w-full rounded-(--radius-md) bg-(--color-gold) py-3.5

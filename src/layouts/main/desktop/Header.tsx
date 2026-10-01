@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Search, Bell, SlidersHorizontal, Settings } from "lucide-react";
+import { Search, Bell } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import Logo from "@/layouts/components/Logo";
 import LanguageToggle from "@/layouts/components/LanguageToggle";
@@ -61,7 +61,7 @@ export default function Header() {
           <button className="cursor-pointer border-none bg-transparent p-1 text-inherit">
             <Settings size={18} />
           </button>*/}
-          <button className="relative cursor-pointer border-none bg-transparent p-1 text-inherit">
+          <button type="button" className="relative cursor-pointer border-none bg-transparent p-1 text-inherit">
             <Bell size={18} />
             <span className="absolute right-1 top-1 h-1.5 w-1.5 rounded-full bg-(--color-gold)" />
           </button>

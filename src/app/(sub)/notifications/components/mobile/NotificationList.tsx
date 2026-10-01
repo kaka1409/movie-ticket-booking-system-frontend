@@ -37,7 +37,7 @@ export default function NotificationList({
     <div className="flex flex-col">
       {unreadCount > 0 && (
         <div className="px-4 pt-3 pb-1 flex justify-end">
-          <button
+          <button type="button"
             onClick={markAllRead}
             className="text-[11px] font-semibold text-(--color-gold) underline underline-offset-2"
           >

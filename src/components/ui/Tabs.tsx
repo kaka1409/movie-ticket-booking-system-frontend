@@ -14,7 +14,7 @@ export default function Tabs({
       {tabs.map((tab) => {
         const active = activeTab === tab.key;
         return (
-          <button
+          <button type="button"
             key={tab.key}
             onClick={() => onTabChange(tab.key)}
             className={`

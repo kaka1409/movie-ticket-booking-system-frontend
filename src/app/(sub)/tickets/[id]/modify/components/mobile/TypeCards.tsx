@@ -30,7 +30,7 @@ export default function TypeCards() {
       {TYPES.map(({ type, icon: Icon, labelKey, descKey }) => {
         const selected = modificationType === type;
         return (
-          <button
+          <button type="button"
             key={type}
             onClick={() => setModificationType(type)}
             className={`w-full flex items-center gap-4 px-4 py-4 rounded-2xl border transition-all duration-150 active:scale-[0.99] text-left ${

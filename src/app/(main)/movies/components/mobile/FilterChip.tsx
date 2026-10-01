@@ -10,7 +10,7 @@ export default function Chip({
   onClick: () => void;
 }) {
   return (
-    <button
+    <button type="button"
       onClick={onClick}
       aria-pressed={active}
       className={`

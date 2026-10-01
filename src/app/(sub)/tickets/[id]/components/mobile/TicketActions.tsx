@@ -20,7 +20,7 @@ export default function TicketActions() {
   return (
     <div className="px-4 pb-8 space-y-3">
       {!isTransferPending && (
-        <button className="w-full flex items-center justify-center gap-2.5 py-4 rounded-xl font-extrabold text-sm tracking-wide transition-all duration-150 active:scale-[0.98] bg-(--color-gold) text-[#0F0F0F] shadow-(--shadow-glow)">
+        <button type="button" className="w-full flex items-center justify-center gap-2.5 py-4 rounded-xl font-extrabold text-sm tracking-wide transition-all duration-150 active:scale-[0.98] bg-(--color-gold) text-[#0F0F0F] shadow-(--shadow-glow)">
           <Download size={18} />
           {translate("tickets.detail.download_ticket")}
         </button>
@@ -28,7 +28,7 @@ export default function TicketActions() {
 
       {!isTransferPending && canCancel && (
         <>
-          <button
+          <button type="button"
             onClick={() => setActionsOpen(true)}
             className="w-full flex items-center justify-center gap-2.5 py-4 rounded-xl font-extrabold text-sm tracking-wide transition-all duration-150 active:scale-[0.98] border border-(--color-border) text-(--color-text-secondary) bg-transparent"
           >

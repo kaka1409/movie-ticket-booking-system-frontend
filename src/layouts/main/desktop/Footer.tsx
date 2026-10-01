@@ -46,7 +46,7 @@ export default function Footer() {
             </p>
             <div className="flex gap-2.5">
               {[X, Play, Camera, BookOpen].map((Icon, i) => (
-                <button
+                <button type="button"
                   key={i}
                   className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border border-(--color-border) bg-transparent text-(--color-text-muted)"
                 >
@@ -104,7 +104,7 @@ export default function Footer() {
                 onChange={(e) => setEmail(e.target.value)}
                 className="flex-1 border border-r-0 border-(--color-border) bg-(--color-surface) px-3.5 py-2.5 text-xs text-white outline-none font-sans rounded-l-(--radius-sm)"
               />
-              <button className="cursor-pointer rounded-r-(--radius-sm) border-none bg-(--color-gold) px-4 py-2.5 text-xs font-extrabold text-black">
+              <button type="button" className="cursor-pointer rounded-r-(--radius-sm) border-none bg-(--color-gold) px-4 py-2.5 text-xs font-extrabold text-black">
                 {translate("layout.footer.join")}
               </button>
             </div>

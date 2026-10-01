@@ -55,7 +55,7 @@ export default function UpcomingTicketList({
       ))}
 
       {hasMore && (
-        <button
+        <button type="button"
           onClick={loadMore}
           className="w-full py-3.5 rounded-2xl text-sm font-bold tracking-widest uppercase transition-colors bg-transparent border border-(--color-border) text-(--color-text-secondary)"
         >

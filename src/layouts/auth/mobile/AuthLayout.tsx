@@ -2,7 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
-import Logo from "@/layouts/components/Logo";
 import LanguageToggle from "@/layouts/components/LanguageToggle";
 import { useLocale } from "@/contexts/LocaleContext";
 
@@ -17,7 +16,7 @@ export default function AuthLayout({
   return (
     <div className="min-h-dvh bg-(--color-bg) flex flex-col">
       <header className="flex items-center justify-between px-4 py-3">
-        <button
+        <button type="button"
           onClick={() => router.push("/")}
           className="h-9 flex items-center gap-2 rounded-full hover:bg-(--color-surface)"
           aria-label={translate("layout.sub.back")}

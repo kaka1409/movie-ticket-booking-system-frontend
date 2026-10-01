@@ -10,7 +10,7 @@ export default function CheckRow({
   onChange: () => void;
 }) {
   return (
-    <button
+    <button type="button"
       onClick={onChange}
       className="flex items-center gap-2.5 py-0.5 group"
       aria-pressed={checked}

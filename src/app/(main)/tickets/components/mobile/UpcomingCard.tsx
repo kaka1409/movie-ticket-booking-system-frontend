@@ -89,7 +89,7 @@ export default function UpcomingCard({ ticket }: { ticket: UpcomingTicket }) {
         </div>
 
         {failed ? (
-          <button className="flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all duration-150 active:scale-[0.97] bg-(--color-gold) text-[#0F0F0F] shadow-(--shadow-glow)">
+          <button type="button" className="flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all duration-150 active:scale-[0.97] bg-(--color-gold) text-[#0F0F0F] shadow-(--shadow-glow)">
             <RefreshCw size={15} />
             {translate("tickets.pay_now")}
           </button>

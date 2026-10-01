@@ -11,7 +11,7 @@ export default function PaymentOption({ method }: { method: PaymentMethod }) {
   const { imageSrc } = method;
 
   return (
-    <button
+    <button type="button"
       onClick={() => setSelectedMethod(method.id)}
       aria-pressed={selected}
       className={`w-full flex items-center gap-4 px-4 py-4 rounded-2xl border transition-all duration-150 active:scale-[0.99] text-left ${
