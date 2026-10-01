@@ -15,7 +15,8 @@ import type { SelectedSeat, SelectedCombo, SelectedFood } from "./types";
 import { useLocale } from "@/contexts/LocaleContext";
 
 interface BookingState {
-  cinemaId: number | null;
+  cinemaId: string | null;
+  showtimeId: string;
   cinemaName: string;
   time: string;
   date: string;
@@ -41,12 +42,13 @@ interface BookingState {
 interface BookingContextType extends BookingState {
   countdownSeconds: number;
   setCinema: (
-    cinemaId: number,
+    cinemaId: string,
     cinemaName: string,
     time: string,
     date: string,
     room: string,
-    location: string
+    location: string,
+    showtimeId?: string
   ) => void;
   setSeats: (seats: SelectedSeat[]) => void;
   setSnacks: (combos: SelectedCombo[], foods: SelectedFood[]) => void;
@@ -102,7 +104,8 @@ export function BookingProvider({
   const { translate } = useLocale();
 
   // Cinema & showtimes
-  const [cinemaId, setCinemaId] = useState<number | null>(null);
+  const [cinemaId, setCinemaId] = useState<string | null>(null);
+  const [showtimeId, setShowtimeId] = useState("");
   const [cinemaName, setCinemaName] = useState("");
   const [time, setTime] = useState("");
   const [date, setDate] = useState("");
@@ -129,12 +132,13 @@ export function BookingProvider({
 
   const setCinema = useCallback(
     (
-      id: number,
+      id: string,
       name: string,
       showTime: string,
       showDate: string,
       screenRoom: string,
-      location: string
+      location: string,
+      showtimeId?: string
     ) => {
       setCinemaId(id);
       setCinemaName(name);
@@ -142,6 +146,7 @@ export function BookingProvider({
       setDate(showDate);
       setRoom(screenRoom);
       setLocation(location);
+      setShowtimeId(showtimeId ?? "");
     },
     []
   );
@@ -179,6 +184,7 @@ export function BookingProvider({
 
   const resetBooking = useCallback(() => {
     setCinemaId(null);
+    setShowtimeId("");
     setCinemaName("");
     setTime("");
     setDate("");
@@ -196,10 +202,16 @@ export function BookingProvider({
     setCountdownStartTime(0);
   }, []);
 
+  /* Translated label — kept in its own memo so it refreshes on locale change
+     without dragging `translate` into the whole context value memo. */
+  const seatType = useMemo(
+    () => selectedSeats[0]?.type ?? translate("booking.seats.standard"),
+    [selectedSeats, translate],
+  );
+
   const value = useMemo<BookingContextType>(() => {
     const ticketCount = selectedSeats.length;
     const ticketPrice = selectedSeats.reduce((total, seat) => total + seat.price, 0);
-    const seatType = selectedSeats[0]?.type ?? translate("booking.seats.standard");
     const snackTotal =
       combos.reduce((total, combo) => total + combo.price * combo.qty, 0) +
       foods.reduce((total, food) => total + food.price * food.qty, 0);
@@ -208,6 +220,7 @@ export function BookingProvider({
     return {
       // Cinema 
       cinemaId,
+      showtimeId,
       cinemaName,
       time,
       date,
@@ -249,6 +262,7 @@ export function BookingProvider({
   }, [
     // Cinema 
     cinemaId,
+    showtimeId,
     cinemaName,
     time,
     date,
@@ -280,6 +294,10 @@ export function BookingProvider({
     setPaymentMethod,
 
     resetBooking,
+
+    // Derived values (must invalidate the memo when they change)
+    seatType,
+    initialCountdownSeconds,
   ]);
 
   return (

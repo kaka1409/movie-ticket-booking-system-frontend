@@ -123,7 +123,9 @@
       "delete_review": "Xóa đánh giá",
       "no_showtimes": "Không có suất chiếu trong ngày này",
       "no_reviews": "Chưa có đánh giá nào",
-      "action_failed": "Đã có lỗi xảy ra"
+      "action_failed": "Đã có lỗi xảy ra",
+      "book_showtime": "Đặt vé {time}",
+      "select_showtime": "Chọn suất chiếu"
     }
   },
   "tickets": {
@@ -530,6 +532,7 @@
     "not_found": "Không Tìm Thấy",
     "not_found_desc": "Trang bạn tìm kiếm không tồn tại.",
     "cinematic_excellence": "Xuất Sắc Điện Ảnh",
-    "change_language": "Thay đổi ngôn ngữ"
+    "change_language": "Thay đổi ngôn ngữ",
+    "more_info": "Thông tin"
   }
 }

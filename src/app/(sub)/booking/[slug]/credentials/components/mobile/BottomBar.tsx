@@ -1,12 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { useParams } from "next/navigation";
-import { ArrowRight } from "lucide-react";
 import { useBooking } from "@/features/booking/context";
 import { useCredentials } from "@/features/booking/contexts/CredentialsContext";
 import { useLocale } from "@/contexts/LocaleContext";
-import { formatVND } from "@/libs/utils";
+import BookingBottomBar from "@/components/booking/BookingBottomBar";
 
 export default function BottomBar() {
   const params = useParams();
@@ -16,29 +14,14 @@ export default function BottomBar() {
   const { translate } = useLocale();
 
   return (
-    <div className="sticky bottom-0 z-50 bg-(--color-bg) border-t border-(--color-border) px-4 pb-6 pt-3">
-      <div className="flex items-end justify-between mb-3">
-        <p className="text-[9px] font-bold tracking-widest uppercase text-(--color-text-muted)">
-          {translate("booking.common.total")}
-        </p>
-        <p className="font-extrabold text-xl text-(--color-gold) tabular-nums">
-          {formatVND(total)}
-        </p>
-      </div>
-
-      <Link
-        href={isValid ? `/booking/${slug}/payment` : "#"}
-        aria-disabled={!isValid}
-        onClick={(e) => !isValid && e.preventDefault()}
-        className={`flex items-center justify-center gap-2.5 w-full py-4 rounded-2xl font-extrabold text-sm tracking-widest uppercase transition-all duration-150 active:scale-[0.98] ${
-          isValid
-            ? "bg-(--color-gold) text-[#0F0F0F] shadow-[0_0_20px_rgba(255,204,77,0.25)]"
-            : "bg-(--color-surface) text-(--color-text-muted) border border-(--color-border) cursor-not-allowed"
-        }`}
-      >
-        {translate("booking.credentials.continue_payment")}
-        <ArrowRight size={17} />
-      </Link>
-    </div>
+    <BookingBottomBar
+      totalInfo={{
+        label: translate("booking.common.total"),
+        amount: total,
+      }}
+      canProceed={isValid}
+      ctaText={translate("booking.credentials.continue_payment")}
+      ctaHref={`/booking/${slug}/payment`}
+    />
   );
 }

@@ -1,12 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { useParams } from "next/navigation";
-import { ArrowRight } from "lucide-react";
 import type { SeatPrice, SeatRow } from "@/features/booking/types";
 import { useSeatSelection } from "@/features/booking/contexts/SeatSelectionContext";
 import { useLocale } from "@/contexts/LocaleContext";
-import { formatVND } from "@/libs/utils";
+import BookingBottomBar from "@/components/booking/BookingBottomBar";
 
 interface Selection {
   label: string;
@@ -43,55 +41,18 @@ export default function BottomBar({ seatPrices }: { seatPrices: SeatPrice }) {
   const hasSeats = items.length > 0;
 
   return (
-    <div className="sticky bottom-0 z-50 bg-(--color-bg) border-t border-(--color-border) px-4 pb-6 pt-3">
-      <div className="flex items-end justify-between mb-3 min-h-[40px]">
-        <div>
-          <p className="text-[9px] font-bold tracking-widest uppercase text-(--color-text-muted) mb-0.5">
-            {translate("booking.seats.selected_seats")}
-          </p>
-          <p
-            className={`font-bold text-base ${
-              hasSeats
-                ? "text-(--color-text-primary)"
-                : "text-(--color-text-muted)"
-            }`}
-          >
-            {hasSeats ? labels : "—"}
-          </p>
-        </div>
-        <div className="text-right">
-          <p className="text-[9px] font-bold tracking-widest uppercase text-(--color-text-muted) mb-0.5">
-            {translate("booking.common.total_price")}
-          </p>
-          <p
-            className={`font-extrabold text-xl tabular-nums ${
-              hasSeats
-                ? "text-(--color-gold)"
-                : "text-(--color-text-muted)"
-            }`}
-          >
-            {hasSeats ? formatVND(total) : "—"}
-          </p>
-        </div>
-      </div>
-
-      <Link
-        href={hasSeats ? `/booking/${slug}/snack` : "#"}
-        aria-disabled={!hasSeats}
-        onClick={(e) => {
-          if (!hasSeats) {
-            e.preventDefault();
-          }
-        }}
-        className={`flex items-center justify-center gap-2.5 w-full py-4 rounded-2xl font-extrabold text-sm tracking-widest uppercase transition-all duration-150 ${
-          hasSeats
-            ? "bg-(--color-gold) text-[#0F0F0F] shadow-[0_0_20px_rgba(255,204,77,0.25)] active:scale-[0.98]"
-            : "bg-(--color-surface) text-(--color-text-muted) cursor-not-allowed border border-(--color-border)"
-        }`}
-      >
-        {translate("booking.seats.continue_snacks")}
-        <ArrowRight size={17} />
-      </Link>
-    </div>
+    <BookingBottomBar
+      selectionInfo={{
+        subLabel: labels,
+      }}
+      totalInfo={{
+        label: translate("booking.common.total_price"),
+        amount: total,
+        showEmptyState: true,
+      }}
+      canProceed={hasSeats}
+      ctaText={translate("booking.seats.continue_snacks")}
+      ctaHref={`/booking/${slug}/snack`}
+    />
   );
 }

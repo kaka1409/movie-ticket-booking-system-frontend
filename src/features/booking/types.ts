@@ -39,7 +39,8 @@ export interface SelectedFood {
 /* ─── Booking Selection ─────────────────────────────────── */
 
 export interface BookingSelection {
-  cinemaId: number | null;
+  cinemaId: string | null;
+  showtimeId?: string | null;
   time: string;
   date: string;
 }

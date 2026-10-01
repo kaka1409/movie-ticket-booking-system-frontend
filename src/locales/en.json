@@ -123,7 +123,9 @@
       "delete_review": "Delete review",
       "no_showtimes": "No showtimes for this date",
       "no_reviews": "No reviews yet",
-      "action_failed": "Something went wrong"
+      "action_failed": "Something went wrong",
+      "book_showtime": "Book {time}",
+      "select_showtime": "Select a showtime"
     }
   },
   "tickets": {
@@ -530,6 +532,7 @@
     "not_found": "Not Found",
     "not_found_desc": "The page you are looking for does not exist.",
     "cinematic_excellence": "Cinematic Excellence",
-    "change_language": "Change language"
+    "change_language": "Change language",
+    "more_info": "More Info"
   }
 }

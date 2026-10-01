@@ -15,7 +15,7 @@ export default function Stepper({
   const { translate } = useLocale();
   return (
     <div className="flex items-center gap-3 bg-(--color-surface-2) rounded-xl px-1 py-1">
-      <button
+      <button type="button"
         onClick={onDecrement}
         disabled={value === 0}
         aria-label={translate("booking.snack.decrease_qty")}
@@ -28,7 +28,7 @@ export default function Stepper({
         {value}
       </span>
 
-      <button
+      <button type="button"
         onClick={onIncrement}
         aria-label={translate("booking.snack.increase_qty")}
         className="w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-150 active:scale-90 bg-(--color-border) text-(--color-text-secondary) hover:bg-(--color-gold)/20 hover:text-(--color-gold)"

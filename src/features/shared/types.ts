@@ -1,6 +1,7 @@
 /* ─── Cinema & Showtime ──────────────────────────────────── */
 
 export interface Showtime {
+  id?: string;
   time: string;
   room: string;
   available: boolean;
@@ -8,10 +9,10 @@ export interface Showtime {
 }
 
 export interface Cinema {
-  id: number;
+  id: string;
   name: string;
   address: string;
-  distance: string;
+  distance?: string;
   badge: string;
   badgeColor: string;
   showtimes: Showtime[];

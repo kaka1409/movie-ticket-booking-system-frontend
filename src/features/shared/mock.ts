@@ -30,7 +30,7 @@ export const DATES: DateOption[] = Array.from({ length: 10 }, (_, i) => {
 
 export const CINEMAS: Cinema[] = [
   {
-    id: 1,
+    id: "1",
     name: "PrimeSeat Cinema Thủ Đức",
     address: "216 Võ Văn Ngân, TP. Thủ Đức, TP.HCM",
     distance: "2.1 km",
@@ -44,7 +44,7 @@ export const CINEMAS: Cinema[] = [
     ],
   },
   {
-    id: 2,
+    id: "2",
     name: "PrimeSeat Cinema Gò Vấp",
     address: "19 Quang Trung, Q. Gò Vấp, TP.HCM",
     distance: "3.4 km",
@@ -58,7 +58,7 @@ export const CINEMAS: Cinema[] = [
     ],
   },
   {
-    id: 3,
+    id: "3",
     name: "PrimeSeat Cinema Quận 1",
     address: "135 Nguyễn Huệ, Q.1, TP.HCM",
     distance: "4.0 km",
@@ -73,7 +73,7 @@ export const CINEMAS: Cinema[] = [
     ],
   },
   {
-    id: 4,
+    id: "4",
     name: "PrimeSeat Cinema Tân Bình",
     address: "11 Cửu Long, Q. Tân Bình, TP.HCM",
     distance: "5.2 km",
@@ -87,7 +87,7 @@ export const CINEMAS: Cinema[] = [
     ],
   },
   {
-    id: 5,
+    id: "5",
     name: "PrimeSeat Cinema Bình Tân",
     address: "158 Bùi Tư Toàn, Q. Bình Tân, TP.HCM",
     distance: "6.8 km",
@@ -101,7 +101,7 @@ export const CINEMAS: Cinema[] = [
     ],
   },
   {
-    id: 6,
+    id: "6",
     name: "PrimeSeat Cinema Hà Nội",
     address: "282 Đào Tấn, Q. Ba Đình, Hà Nội",
     distance: "8.1 km",

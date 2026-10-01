@@ -10,12 +10,12 @@ export default function CinemaCard({
   onSelect,
 }: {
   cinema: Cinema;
-  selectedCinemaId: number | null;
+  selectedCinemaId: string | null;
   selectedTime: string;
   onSelect: (
-    cinemaId: number,
+    cinemaId: string,
     time: string,
-    meta?: { room?: string; date?: string }
+    meta?: { room?: string; date?: string; showtimeId?: string }
   ) => void;
 }) {
   const isActive = selectedCinemaId === cinema.id;
@@ -37,10 +37,12 @@ export default function CinemaCard({
           >
             {cinema.name}
           </h3>
-          <span className="flex items-center gap-1 shrink-0 ml-3 px-2.5 py-1 rounded-full text-[10px] font-bold bg-(--color-surface-2) text-(--color-text-muted)">
-            <MapPin size={10} />
-            {cinema.distance}
-          </span>
+          {cinema.distance && (
+            <span className="flex items-center gap-1 shrink-0 ml-3 px-2.5 py-1 rounded-full text-[10px] font-bold bg-(--color-surface-2) text-(--color-text-muted)">
+              <MapPin size={10} />
+              {cinema.distance}
+            </span>
+          )}
         </div>
 
         <p className="text-xs mb-4 text-(--color-text-muted)">
@@ -48,14 +50,14 @@ export default function CinemaCard({
         </p>
 
         <div className="flex flex-wrap gap-2">
-          {cinema.showtimes.map(({ time, available, room, date }) => {
+          {cinema.showtimes.map(({ id, time, available, room, date }) => {
             const isTimeActive = isActive && selectedTime === time;
             return (
-              <button
-                key={`${time}-${date ?? ""}`}
+              <button type="button"
+                key={`${id ?? time}-${date ?? ""}`}
                 onClick={() => {
                   if (available)
-                    onSelect(cinema.id, time, { room, date });
+                    onSelect(cinema.id, time, { room, date, showtimeId: id });
                 }}
                 disabled={!available}
                 aria-pressed={isTimeActive}

@@ -3,6 +3,7 @@
 import { createContext, useContext, useState, useCallback, useEffect } from "react";
 import type { ReactNode } from "react";
 import type { Seat, SeatRow, SeatPrice, SelectedSeat } from "../types";
+import type { ShowtimeDetail } from "@/features/showtimes/types";
 import { useBooking } from "../context";
 
 interface SeatSelectionContextType {
@@ -34,15 +35,38 @@ export function SeatSelectionProvider({
   initialRows,
   maxSeats,
   seatPrices,
+  initialShowtime,
   children,
 }: {
   initialRows: SeatRow[];
   maxSeats: number;
   seatPrices: SeatPrice;
+  initialShowtime?: ShowtimeDetail | null;
   children: ReactNode;
 }) {
-  const { selectedSeats: savedSeats, setSeats, startCountdown } = useBooking();
+  const {
+    selectedSeats: savedSeats,
+    setSeats,
+    startCountdown,
+    showtimeId: bookingShowtimeId,
+    setCinema,
+  } = useBooking();
   const [rows, setRows] = useState<SeatRow[]>(() => restoreSelectedSeats(initialRows, savedSeats));
+
+  // Keep the booking summary in sync when the step is opened directly with ?showtimeId=…
+  useEffect(() => {
+    if (!initialShowtime || bookingShowtimeId === initialShowtime.id) return;
+
+    setCinema(
+      initialShowtime.cinema.id,
+      initialShowtime.cinema.name,
+      initialShowtime.startTime,
+      initialShowtime.date,
+      initialShowtime.room.name,
+      initialShowtime.cinema.address,
+      initialShowtime.id,
+    );
+  }, [initialShowtime, bookingShowtimeId, setCinema]);
 
   const handleToggle = useCallback((rowLabel: string, clickedSeat: Seat) => {
     setRows((previousRows) => {
