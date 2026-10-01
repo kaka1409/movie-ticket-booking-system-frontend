@@ -13,6 +13,14 @@ export function formatVND(amount: number): string {
   return `${amount.toLocaleString("vi-VN")}₫`;
 }
 
+export function getSafeReturnUrl(rawReturnUrl: string | null | undefined): string {
+  if (!rawReturnUrl) return "/";
+  if (!rawReturnUrl.startsWith("/")) return "/";
+  if (rawReturnUrl.startsWith("//") || rawReturnUrl.startsWith("/\\")) return "/";
+  if (rawReturnUrl === "/login" || rawReturnUrl.startsWith("/login?")) return "/";
+  return rawReturnUrl;
+}
+
 export function formatDate(dateStr: string): string {
   const d = new Date(dateStr);
   return d.toLocaleDateString("en-US", {

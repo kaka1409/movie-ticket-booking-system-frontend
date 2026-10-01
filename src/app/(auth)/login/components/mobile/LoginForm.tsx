@@ -15,7 +15,7 @@ import PasswordField from "@/components/ui/PasswordField";
 import Button from "@/components/ui/Button";
 import Tabs from "@/components/ui/Tabs";
 
-export default function LoginForm() {
+export default function LoginForm({ returnUrl }: { returnUrl?: string }) {
   const { translate } = useLocale();
   const { setAuth } = useAuth();
   const router = useRouter();
@@ -56,7 +56,7 @@ export default function LoginForm() {
       );
       if (result.success) {
         setAuth(result.data.user, result.data.accessToken);
-        router.push("/");
+        router.push(returnUrl ?? "/");
       } else {
         if (result.status === 401) {
           setServerError(translate("auth.login.error_invalid_credentials"));
@@ -69,7 +69,7 @@ export default function LoginForm() {
     } finally {
       setIsSubmitting(false);
     }
-  }, [isValid, setAuth, email, password, router, translate]);
+  }, [isValid, setAuth, email, password, router, translate, returnUrl]);
 
   return (
     <div className="w-full max-w-md mx-auto animate-fade-in">
@@ -142,7 +142,7 @@ export default function LoginForm() {
 
       <p className="text-center text-xs text-(--color-text-muted) mt-6">
         {translate("auth.login.no_account")}{" "}
-        <button
+        <button type="button"
           onClick={() => router.push("/register")}
           className="text-(--color-gold) font-semibold underline underline-offset-2 hover:text-(--color-gold-light) transition-colors"
         >

@@ -1,10 +1,13 @@
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import { requireAuth } from "@/libs/session";
 import Avatar from "./components/mobile/Avatar";
 import UserInfo from "./components/mobile/UserInfo";
 import ProfileMenu from "./components/mobile/ProfileMenu";
 import DesktopProfileContent from "./components/desktop/ProfileContent";
 
-export default function ProfilePage() {
+export default async function ProfilePage() {
+  await requireAuth("/profile");
+
   return (
     <ProtectedRoute>
       <>

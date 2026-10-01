@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { TicketsProvider } from "@/features/tickets/context";
 import { getUpcomingTickets, getPastTickets } from "@/features/tickets/api";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import { getRequestCookie, requireAuth } from "@/libs/session";
 
 // Mobile components
 import Tabs from "@/app/(main)/tickets/components/mobile/Tabs";
@@ -13,9 +14,12 @@ import TicketsSkeleton from "@/app/(main)/tickets/components/mobile/TicketsSkele
 import TicketsContent from "@/app/(main)/tickets/components/desktop/TicketsContent";
 
 export default async function TicketsPage() {
+  await requireAuth("/tickets");
+  const requestCookie = await getRequestCookie();
+
   const [upcoming, past] = await Promise.all([
-    getUpcomingTickets(),
-    getPastTickets(),
+    getUpcomingTickets(requestCookie),
+    getPastTickets(requestCookie),
   ]);
 
   return (
