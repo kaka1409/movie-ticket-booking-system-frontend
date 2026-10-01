@@ -2,14 +2,12 @@ import type { Notification } from "./types";
 // import { apiFetch } from "@/libs/api";
 import { INITIAL_NOTIFS } from "./mock";
 
-export async function getNotifications(): Promise<Notification[]> {
+/* eslint-disable-next-line @typescript-eslint/no-unused-vars -- cookie is reserved for the real API call (currently mocked) */
+export async function getNotifications(cookie?: string): Promise<Notification[]> {
   // TODO: replace with real fetch when backend is ready
-  // return apiFetch<Notification[]>("/notifications");
-  // return new Promise((resolve) => {
-  //   setTimeout(() => {
-  //     resolve(INITIAL_NOTIFS);
-  //   }, 5000);
-  // });
+  // const response = await apiFetch<Notification[]>("/notifications", undefined, undefined, cookie);
+  // if ("error" in response) return [];
+  // return response.data;
 
   return INITIAL_NOTIFS;
 }

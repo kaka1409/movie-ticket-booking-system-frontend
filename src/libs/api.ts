@@ -65,10 +65,12 @@ export async function apiFetch<T, M = Record<string, unknown>>(
   path: string,
   options?: RequestInit,
   token?: string,
+  cookie?: string,
 ): Promise<ApiResponse<T, M>> {
   const headers = {
     "Content-Type": "application/json",
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...(cookie ? { Cookie: cookie } : {}),
     ...options?.headers,
   }
 

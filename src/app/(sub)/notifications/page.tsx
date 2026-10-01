@@ -1,10 +1,10 @@
-// import { Suspense } from "react";
 import { getNotifications } from "@/features/notifications/api";
+import { getRequestCookie } from "@/libs/session";
 import MobileNotificationList from "./components/mobile/NotificationList";
 import DesktopNotificationList from "./components/desktop/NotificationList";
 
 export default async function NotificationsPage() {
-  const notifications = await getNotifications();
+  const notifications = await getNotifications(await getRequestCookie());
 
   return (
     <>

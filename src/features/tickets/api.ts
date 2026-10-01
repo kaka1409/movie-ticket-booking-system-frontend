@@ -5,28 +5,35 @@ import type {
 
 import { UPCOMING, PAST, MOCK_RECIPIENTS, MOCK_ELIGIBLE_SHOWTIMES } from "./mock";
 
-export async function getUpcomingTickets(): Promise<UpcomingTicket[]> {
+/* eslint-disable-next-line @typescript-eslint/no-unused-vars -- cookie is reserved for the real API call (currently mocked) */
+export async function getUpcomingTickets(cookie?: string): Promise<UpcomingTicket[]> {
   // TODO: replace with real fetch when backend is ready
-  // const response = await apiFetch<{ data: UpcomingTicket[] }>("/tickets/upcoming");
+  // const response = await apiFetch<UpcomingTicket[]>("/tickets/upcoming", undefined, undefined, cookie);
+  // if ("error" in response) return [];
   // return response.data;
   return UPCOMING;
 }
 
-export async function getPastTickets(): Promise<PastTicket[]> {
-  // const response = await apiFetch<{ data: PastTicket[] }>("/tickets/past");
+/* eslint-disable-next-line @typescript-eslint/no-unused-vars -- cookie is reserved for the real API call (currently mocked) */
+export async function getPastTickets(cookie?: string): Promise<PastTicket[]> {
+  // const response = await apiFetch<PastTicket[]>("/tickets/past", undefined, undefined, cookie);
+  // if ("error" in response) return [];
   // return response.data;
   return PAST;
 }
 
-export async function getTicketById(id: string): Promise<UpcomingTicket | PastTicket | undefined> {
+/* eslint-disable-next-line @typescript-eslint/no-unused-vars -- cookie is reserved for the real API call (currently mocked) */
+export async function getTicketById(id: string, cookie?: string): Promise<UpcomingTicket | PastTicket | undefined> {
   const allTickets = [...UPCOMING, ...PAST];
   return allTickets.find((ticket) => ticket.id === id);
 
-  // const response = await apiFetch<{ data: UpcomingTicket | PastTicket }>(`/tickets/${id}`);
+  // const response = await apiFetch<UpcomingTicket | PastTicket>(`/tickets/${id}`, undefined, undefined, cookie);
+  // if ("error" in response) return undefined;
   // return response.data;
 }
 
-export async function findRecipient(query: string): Promise<Recipient | null> {
+/* eslint-disable-next-line @typescript-eslint/no-unused-vars -- cookie is reserved for the real API call (currently mocked) */
+export async function findRecipient(query: string, cookie?: string): Promise<Recipient | null> {
   const normalized = query.trim().toLowerCase().replace(/^@/, "");
   if (!normalized) return null;
   return (
@@ -37,9 +44,13 @@ export async function findRecipient(query: string): Promise<Recipient | null> {
     ) ?? null
   );
 
-  // const response = await apiFetch<{ data: Recipient | null }>(
+  // const response = await apiFetch<Recipient | null>(
   //   `/tickets/recipients/find?q=${encodeURIComponent(query)}`,
+  //   undefined,
+  //   undefined,
+  //   cookie,
   // );
+  // if ("error" in response) return null;
   // return response.data;
 }
 
