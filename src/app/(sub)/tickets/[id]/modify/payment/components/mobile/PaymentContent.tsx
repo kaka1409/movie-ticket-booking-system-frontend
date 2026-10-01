@@ -1,14 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowRight, Clock } from "lucide-react";
+import { ArrowRight, Clock, Loader2 } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext";
 import { useModification } from "@/features/tickets/contexts/ModificationContext";
 import { PAYMENT_METHODS } from "@/features/booking/mock";
 import { formatVND } from "@/libs/utils";
-import { modifyTicket } from "@/features/tickets/api";
+import { modifyTicket } from "@/features/tickets/action";
 import Image from "next/image";
 
 export default function PaymentContent() {
@@ -17,9 +18,10 @@ export default function PaymentContent() {
   const id = params.id as string;
   const { translate } = useLocale();
   const { ticket } = useTicketDetail();
+  const { token } = useAuth();
   const { modificationType, selectedShowtime, selectedSeats } = useModification();
   const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   const showtimeFee = 15000;
   const seatsFee = selectedSeats.length > 0 ? 10000 : 0;
@@ -36,35 +38,40 @@ export default function PaymentContent() {
   }
   difference += seatsFee;
 
-  const canPay = !!selectedMethod;
+  const canPay = !!selectedMethod && !isPending;
 
-  const handleConfirm = async () => {
-    if (!canPay || isLoading) return;
-    setIsLoading(true);
+  const handleConfirm = () => {
+    if (!canPay) return;
 
-    await new Promise((r) => setTimeout(r, 2000));
+    startTransition(async () => {
+      await new Promise((r) => setTimeout(r, 2000));
 
-    const newShowtime = selectedShowtime
-      ? {
-          date: selectedShowtime.date,
-          time: selectedShowtime.time,
-          cinema: selectedShowtime.cinemaName,
-          room: selectedShowtime.room,
-        }
-      : undefined;
+      const newShowtime = selectedShowtime
+        ? {
+            date: selectedShowtime.date,
+            time: selectedShowtime.time,
+            cinema: selectedShowtime.cinemaName,
+            room: selectedShowtime.room,
+          }
+        : undefined;
 
-    const newSeats =
-      selectedSeats.length > 0 ? selectedSeats : undefined;
+      const newSeats =
+        selectedSeats.length > 0 ? selectedSeats : undefined;
 
-    await modifyTicket(
-      id,
-      modificationType ?? "showtime",
-      newShowtime,
-      newSeats
-    );
+      await modifyTicket(
+        { success: false, error: "" },
+        {
+          ticketId: id,
+          modificationType: modificationType ?? "showtime",
+          newShowtime,
+          newSeats,
+          token: token ?? "",
+        },
+      );
 
-    const txnId = `TXN${Date.now()}`;
-    router.push(`/tickets/${id}/modify/success?transactionId=${txnId}`);
+      const txnId = `TXN${Date.now()}`;
+      router.push(`/tickets/${id}/modify/success?transactionId=${txnId}`);
+    });
   };
 
   return (
@@ -93,7 +100,7 @@ export default function PaymentContent() {
               {PAYMENT_METHODS.map((method) => {
                 const selected = selectedMethod === method.id;
                 return (
-                  <button
+                  <button type="button"
                     key={method.id}
                     onClick={() => setSelectedMethod(method.id)}
                     className={`w-full flex items-center gap-4 px-4 py-4 rounded-2xl border transition-all duration-150 active:scale-[0.99] text-left ${
@@ -146,7 +153,7 @@ export default function PaymentContent() {
 
           {/* Bottom bar */}
           <div className="sticky bottom-0 z-50 bg-(--color-bg) border-t border-(--color-border) px-4 pb-6 pt-3">
-            <button
+            <button type="button"
               onClick={handleConfirm}
               disabled={!canPay}
               className={`flex items-center justify-center gap-2.5 w-full py-4 rounded-2xl font-extrabold text-sm tracking-widest uppercase transition-all duration-150 ${
@@ -155,10 +162,10 @@ export default function PaymentContent() {
                   : "bg-(--color-surface) text-(--color-text-muted) cursor-not-allowed border border-(--color-border)"
               }`}
             >
-              {isLoading
+              {isPending
                 ? translate("booking.payment.processing")
                 : translate("tickets.modify.payment.confirm_cta")}
-              {!isLoading && <ArrowRight size={17} />}
+              {isPending ? <Loader2 size={17} className="animate-spin" /> : <ArrowRight size={17} />}
             </button>
           </div>
         </div>

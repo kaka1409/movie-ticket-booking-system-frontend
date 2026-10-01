@@ -1,29 +1,43 @@
 "use client";
 
 import Image from "next/image";
+import { useActionState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { MonitorPlay, CalendarDays, Armchair, Popcorn, CreditCard, Clock } from "lucide-react";
+import { MonitorPlay, CalendarDays, Armchair, Popcorn, CreditCard, Clock, Loader2 } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { formatVND } from "@/libs/utils";
 import DetailRow from "@/app/(sub)/booking/components/mobile/DetailRow";
 import QRCode from "./QRCode";
 import TearLine from "@/components/ui/TearLine";
 import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext";
-import { cancelTransfer } from "@/features/tickets/api";
+import { cancelTransfer } from "@/features/tickets/action";
+import type { TransferActionResult } from "@/features/tickets/action";
+
+const initialTransferState: TransferActionResult = { success: false, error: "" };
 
 export default function TicketInfo() {
   const { ticket, transfer } = useTicketDetail();
   const { translate } = useLocale();
   const router = useRouter();
+  const { token } = useAuth();
+
+  const [cancelState, cancelFormAction, isCancelPending] = useActionState(cancelTransfer, initialTransferState);
 
   const seatItems = ticket?.seatItems ?? [];
   const hasSnacks = !!ticket?.foodDrink && ticket.foodDrink.length > 0;
   const isTransferPending = transfer?.status === "pending";
 
-  const handleCancelTransfer = async () => {
-    await cancelTransfer(ticket.id);
-    router.refresh();
+  const handleCancelTransfer = () => {
+    if (isCancelPending) return;
+    cancelFormAction({ ticketId: ticket.id, token: token ?? "" });
   };
+
+  useEffect(() => {
+    if (cancelState.success) {
+      router.refresh();
+    }
+  }, [cancelState, router]);
 
   return (
     <main className="flex-1 overflow-y-auto pb-8 p-4">
@@ -172,9 +186,14 @@ export default function TicketInfo() {
             <button
               type="button"
               onClick={handleCancelTransfer}
-              className="mt-1 px-5 py-2.5 rounded-xl font-extrabold text-xs tracking-widest uppercase transition-all duration-150 active:scale-[0.98] border border-red-500/60 text-red-400 bg-transparent"
+              disabled={isCancelPending}
+              className="mt-1 px-5 py-2.5 rounded-xl font-extrabold text-xs tracking-widest uppercase transition-all duration-150 active:scale-[0.98] border border-red-500/60 text-red-400 bg-transparent disabled:opacity-40"
             >
-              {translate("tickets.transfer.cancel_transfer")}
+              {isCancelPending ? (
+                <Loader2 size={14} className="animate-spin" />
+              ) : (
+                translate("tickets.transfer.cancel_transfer")
+              )}
             </button>
           </div>
         ) : (
