@@ -6,6 +6,7 @@ import { useLocale } from "@/contexts/LocaleContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext";
 import { cancelTicket } from "@/features/tickets/action";
+import { CANCELLATION_FEE } from "@/features/tickets/constants";
 import type { UpcomingTicket } from "@/features/tickets/types";
 
 // Components
@@ -15,8 +16,6 @@ import ConfirmationSheet from "./ConfirmationSheet";
 import CancelResult from "./CancelResult";
 
 type CancelView = "idle" | "processing" | "success" | "failed";
-
-const CANCELLATION_FEE = 20000;
 
 export default function CancelView() {
   const { translate } = useLocale();

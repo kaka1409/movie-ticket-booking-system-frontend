@@ -1,11 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import { MonitorPlay, CalendarDays, Armchair, Popcorn, CreditCard, User } from "lucide-react";
+import { MonitorPlay, CalendarDays, User } from "lucide-react";
 import type { Recipient } from "@/features/tickets/types";
 import { useLocale } from "@/contexts/LocaleContext";
-import { formatVND } from "@/libs/utils";
 import DetailRow from "@/app/(sub)/booking/components/mobile/DetailRow";
+import PriceBreakdown from "@/app/(sub)/booking/components/mobile/PriceBreakdown";
 import TearLine from "@/components/ui/TearLine";
 import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext";
 
@@ -77,72 +77,19 @@ export default function ConfirmCard({
             />
           </div>
 
-          {/* Seats being transferred, grouped by type */}
-          <div className="space-y-3">
-            <p className="flex items-center gap-1.5 text-[9px] font-black tracking-[0.16em] uppercase text-white/60">
-              <Armchair size={10} />
-              {translate("tickets.transfer.seats_label")} ({selectedSeats.length}/{totalSeats})
-            </p>
-            {Object.entries(
-              selectedSeats.reduce<Record<string, typeof selectedSeats>>((acc, seat) => {
-                (acc[seat.type] ??= []).push(seat);
-                return acc;
-              }, {}),
-            ).map(([type, seats]) => (
-              <div key={type} className="space-y-1">
-                <p className="text-sm font-bold text-white">
-                  {seats.map((seat) => seat.label).join(", ")}
-                </p>
-                <div className="flex justify-between text-sm">
-                  <span className="text-white">
-                    {type} {translate("booking.common.ticket")}
-                  </span>
-                  <span className="font-medium text-white">
-                    {seats.length}× {formatVND(seats[0].price)}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Food & Drink — only when transferring the whole order */}
-          {showSnacks && (
-            <>
-              <div className="space-y-2">
-                <p className="flex items-center gap-1.5 text-[9px] font-black tracking-[0.16em] uppercase text-white/60">
-                  <Popcorn size={10} />
-                  {translate("booking.common.snacks_combos")}
-                </p>
-                <div className="space-y-1">
-                  {ticket.foodDrink!.map((item, index) => (
-                    <div key={index} className="flex justify-between text-sm">
-                      <span className="text-white">{item.name}</span>
-                      <span className="font-medium text-white">
-                        {item.qty}× {formatVND(item.qty * item.price)}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Payment + Total */}
-              <div className="flex justify-between items-end gap-4">
-                <DetailRow
-                  icon={CreditCard}
-                  label={translate("booking.common.payment_method")}
-                  value={ticket.paymentMethod || "N/A"}
-                />
-                <div className="text-right">
-                  <p className="flex items-center justify-end gap-1.5 text-[9px] font-black tracking-[0.16em] uppercase text-white/60">
-                    {translate("booking.common.total_price")}
-                  </p>
-                  <p className="font-bold text-base text-(--color-gold)">
-                    {ticket.totalPrice ?? "—"}
-                  </p>
-                </div>
-              </div>
-            </>
-          )}
+          {/* Seats being transferred + optional snacks + payment/total */}
+          <PriceBreakdown
+            seats={selectedSeats}
+            seatsHeaderText={
+              <>
+                {translate("tickets.transfer.seats_label")} ({selectedSeats.length}/{totalSeats})
+              </>
+            }
+            snacks={showSnacks ? (ticket.foodDrink ?? []) : []}
+            paymentMethod={ticket.paymentMethod}
+            total={ticket.totalPrice ?? null}
+            hideTotal={!showSnacks}
+          />
         </div>
 
         {/* Tear line */}

@@ -21,7 +21,7 @@ export default function BottomBar() {
     setIsLoading(true);
 
     // Brief loading animation
-    await new Promise((r) => setTimeout(r, 300));
+    await new Promise((resolve) => setTimeout(resolve, 300));
 
     if (modificationType === "both") {
       router.push(`/tickets/${id}/modify/seats`);

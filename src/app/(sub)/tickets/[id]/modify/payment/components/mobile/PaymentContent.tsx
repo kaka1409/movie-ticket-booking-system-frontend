@@ -44,7 +44,7 @@ export default function PaymentContent() {
     if (!canPay) return;
 
     startTransition(async () => {
-      await new Promise((r) => setTimeout(r, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
 
       const newShowtime = selectedShowtime
         ? {

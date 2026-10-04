@@ -86,16 +86,3 @@ export interface EligibleShowtime {
   date: string;
   showtimeId?: string;
 }
-
-export interface ModificationResult {
-  ticketId: string;
-  modificationType: ModificationType;
-  previousShowtime: { date: string; time: string; cinema: string; room: string } | null;
-  newShowtime: { date: string; time: string; cinema: string; room: string } | null;
-  previousSeats: ModificationSeat[];
-  newSeats: ModificationSeat[];
-  previousTotal: number;
-  newTotal: number;
-  difference: number;
-  differenceType: "pay" | "refund" | "same";
-}

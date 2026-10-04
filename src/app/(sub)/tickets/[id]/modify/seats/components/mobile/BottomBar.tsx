@@ -19,7 +19,7 @@ export default function BottomBar() {
   const handleContinue = async () => {
     if (!canContinue || isLoading) return;
     setIsLoading(true);
-    await new Promise((r) => setTimeout(r, 300));
+    await new Promise((resolve) => setTimeout(resolve, 300));
     router.push(`/tickets/${id}/modify/review`);
   };
 

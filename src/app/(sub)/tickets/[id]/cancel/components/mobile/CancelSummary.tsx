@@ -5,9 +5,8 @@ import { ChevronRight, CreditCard } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { formatVND } from "@/libs/utils";
 import TearLine from "@/components/ui/TearLine";
+import { CANCELLATION_FEE } from "@/features/tickets/constants";
 import type { UpcomingTicket } from "@/features/tickets/types";
-
-const CANCELLATION_FEE = 20000;
 
 export default function CancelSummary({
   ticket,

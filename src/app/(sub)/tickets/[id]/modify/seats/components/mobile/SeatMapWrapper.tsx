@@ -6,14 +6,8 @@ import { useModification } from "@/features/tickets/contexts/ModificationContext
 import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext";
 import { getSeatRows, getSeatPrices } from "@/features/booking/api";
 import type { Seat, SeatPrice } from "@/features/booking/types";
+import { getSeatLabel } from "@/features/booking/utils";
 import SeatGrid from "@/components/ui/SeatGrid";
-
-function getSeatLabel(rowLabel: string, seat: Seat): string {
-  if (seat.kind === "sweetbox" && seat.pairId) {
-    return `${rowLabel}(${seat.pairId.split("-").slice(1).join("-")})`;
-  }
-  return `${rowLabel}${seat.col}`;
-}
 
 export default function SeatMapWrapper() {
   const { translate } = useLocale();
@@ -53,7 +47,9 @@ export default function SeatMapWrapper() {
 
   if (!seatPrices || seatRows.length === 0) {
     return (
-      <div className="px-4 py-8 text-center text-(--color-text-muted)">Loading seat map...</div>
+      <div className="px-4 py-8 text-center text-(--color-text-muted)">
+        {translate("tickets.modify.loading_seat_map")}
+      </div>
     );
   }
 
