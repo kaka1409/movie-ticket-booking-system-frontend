@@ -28,5 +28,4 @@ export interface RegisterResponse {
   message: string;
 }
 
-export type LogoutResponse = RegisterResponse;
 export type RefreshResponse = LoginResponse;

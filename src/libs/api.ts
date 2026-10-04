@@ -34,6 +34,10 @@ export type ErrorResponse = {
   };
 };
 
+/**
+ * Discriminated result of every query: `{ data, meta? }` on success or
+ * `{ error }` on failure. Narrow with `"error" in result`.
+ */
 export type ApiResponse<T, M = Record<string, unknown>> = SuccessResponse<T, M> | ErrorResponse;
 
 function parseApiError(status: number, body: unknown): ErrorResponse["error"] {
@@ -60,6 +64,10 @@ function parseApiError(status: number, body: unknown): ErrorResponse["error"] {
   };
 }
 
+/**
+ * Normalize a `Promise.allSettled` slot into an `ApiResponse`, turning a
+ * rejection into `{ error: { status: 0, code: "UNKNOWN_ERROR" } }`.
+ */
 export function toApiResponse<T, M = Record<string, unknown>>(
   result: PromiseSettledResult<ApiResponse<T, M>>,
 ): ApiResponse<T, M> {
@@ -75,6 +83,16 @@ export function toApiResponse<T, M = Record<string, unknown>>(
   };
 }
 
+/**
+ * GET a backend endpoint. Never rejects: network failures, HTTP errors and
+ * empty bodies all come back as `{ error }`, so server components can render
+ * an error state instead of crashing the RSC tree.
+ *
+ * - A 401 (except on `/auth/*`) additionally dispatches `UNAUTHORIZED_EVENT`
+ *   so the client clears the session and redirects to login.
+ * - On the server pass the incoming cookies via the `cookie` arg —
+ *   `credentials: "include"` only forwards cookies in the browser.
+ */
 export async function apiFetch<T, M = Record<string, unknown>>(
   path: string,
   options?: RequestInit,
@@ -130,6 +148,17 @@ export async function apiFetch<T, M = Record<string, unknown>>(
   return { data: body as T };
 }
 
+/**
+ * POST/PATCH/DELETE a backend endpoint. Unlike {@link apiFetch} this THROWS
+ * an `Error` (with `status`, `code` and `body` attached) on network or HTTP
+ * failure — server actions wrap it in try/catch and convert the throw into a
+ * `{ success: false }` union.
+ *
+ * - `raw: true` returns the `Response` itself so auth actions can read the
+ *   `Set-Cookie` header; otherwise the parsed JSON body is returned.
+ * - A 401 (except on `/auth/*`) dispatches `UNAUTHORIZED_EVENT`, same as
+ *   {@link apiFetch}.
+ */
 export async function apiMutation<T>(
   path: string,
   options: RequestInit & { method: "POST" | "PATCH" | "DELETE" },

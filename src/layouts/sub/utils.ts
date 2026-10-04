@@ -1,3 +1,8 @@
+/**
+ * Back-button target for the sub layout: nested detail/confirm/review routes
+ * walk one level up, plain ticket detail goes to the list, and `null` means
+ * "use `router.back()`" (no known parent inside the app).
+ */
 export function getBackHref(pathname: string): string | null {
   if (pathname.endsWith("/transfer/confirm")) {
     return pathname.slice(0, -"/confirm".length);
@@ -32,56 +37,61 @@ export function getBackHref(pathname: string): string | null {
   return null;
 }
 
+/**
+ * Sub-layout header title for a route. The first matching prefix wins;
+ * `translate` is optional so the helper also works without a locale provider
+ * (falls back to echoing the i18n key).
+ */
 export function getSubTitle(pathname: string, translate?: (key: string) => string): string {
-  const t = translate ?? ((k: string) => k);
+  const resolve = translate ?? ((key: string) => key);
 
   switch (true) {
     case pathname.startsWith("/notifications"):
-      return t("notif.title");
+      return resolve("notif.title");
     case pathname.startsWith("/profile/reviews"):
-      return t("profile.review_rating");
+      return resolve("profile.review_rating");
     case pathname.startsWith("/profile/wishlist"):
-      return t("profile.wishlist_label");
+      return resolve("profile.wishlist_label");
     case pathname.startsWith("/profile/edit"):
-      return t("profile.edit_profile");
+      return resolve("profile.edit_profile");
     case pathname.startsWith("/profile/password"):
-      return t("profile.change_password");
+      return resolve("profile.change_password");
     case pathname.includes("/modify/review"):
-      return t("tickets.modify.review.title");
+      return resolve("tickets.modify.review.title");
     case pathname.includes("/modify/payment"):
-      return t("tickets.modify.payment.title");
+      return resolve("tickets.modify.payment.title");
     case pathname.includes("/modify/success"):
-      return t("tickets.modify.success.title");
+      return resolve("tickets.modify.success.title");
     case pathname.includes("/modify/showtime"):
-      return t("tickets.modify.showtime.title");
+      return resolve("tickets.modify.showtime.title");
     case pathname.includes("/modify/seats"):
-      return t("tickets.modify.seats.title");
+      return resolve("tickets.modify.seats.title");
     case pathname.includes("/cancel"):
-      return t("tickets.cancel.title");
+      return resolve("tickets.cancel.title");
     case pathname.includes("/modify"):
-      return t("tickets.modify.title");
+      return resolve("tickets.modify.title");
     case pathname.includes("/transfer/confirm"):
-      return t("tickets.transfer.confirm_title");
+      return resolve("tickets.transfer.confirm_title");
     case pathname.includes("/transfer"):
-      return t("tickets.transfer.title");
+      return resolve("tickets.transfer.title");
     case pathname.startsWith("/tickets"):
-      return t("tickets.detail_title");
+      return resolve("tickets.detail_title");
     case pathname.startsWith("/booking/"): {
       switch (true) {
         case pathname.includes("/cinema"):
-          return t("booking.cinema.title");
+          return resolve("booking.cinema.title");
         case pathname.includes("/seats"):
-          return t("booking.seats.title");
+          return resolve("booking.seats.title");
         case pathname.includes("/snack"):
-          return t("booking.snack.title");
+          return resolve("booking.snack.title");
         case pathname.includes("/credentials"):
-          return t("booking.credentials.title");
+          return resolve("booking.credentials.title");
         case pathname.includes("/payment"):
-          return t("booking.payment.title");
+          return resolve("booking.payment.title");
         case pathname.includes("/status/success"):
-          return t("booking.status.success.title");
+          return resolve("booking.status.success.title");
         case pathname.includes("/status/failed"):
-          return t("booking.status.failed.title");
+          return resolve("booking.status.failed.title");
         default:
           return "";
       }

@@ -1,3 +1,4 @@
+/** Lowercase, strip Vietnamese diacritics and punctuation, collapse spaces to hyphens. */
 export function slugify(text: string): string {
   return text
     .toLowerCase()
@@ -9,10 +10,28 @@ export function slugify(text: string): string {
     .replace(/^-|-$/g, "");
 }
 
+/** Vietnamese-formatted amount with the ₫ suffix (e.g. `120,000₫`). */
 export function formatVND(amount: number): string {
   return `${amount.toLocaleString("vi-VN")}₫`;
 }
 
+/**
+ * Canonical login redirect URL: `/login?returnUrl=<encoded>` when a target is
+ * known, plain `/login` otherwise. All four redirect sites (proxy, session,
+ * AuthContext 401 handler, ProtectedRoute) build their URL through here so the
+ * query shape stays consistent — callers sanitize `returnUrl` with
+ * {@link getSafeReturnUrl} first when the value comes from outside the app.
+ */
+export function buildLoginUrl(returnUrl?: string | null): string {
+  return returnUrl ? `/login?returnUrl=${encodeURIComponent(returnUrl)}` : "/login";
+}
+
+/**
+ * Sanitize a post-login redirect target (open-redirect guard). Only
+ * same-origin paths survive: the value must start with a single `/`
+ * (`//host` and `/\host` would be treated as scheme-relative URLs by the
+ * browser) and `/login` loops are rejected. Everything else falls back to `/`.
+ */
 export function getSafeReturnUrl(rawReturnUrl: string | null | undefined): string {
   if (!rawReturnUrl) return "/";
   if (!rawReturnUrl.startsWith("/")) return "/";
@@ -21,6 +40,7 @@ export function getSafeReturnUrl(rawReturnUrl: string | null | undefined): strin
   return rawReturnUrl;
 }
 
+/** Short absolute date, e.g. `Oct 4, 2026`. */
 export function formatDate(dateStr: string): string {
   const d = new Date(dateStr);
   return d.toLocaleDateString("en-US", {
@@ -30,6 +50,10 @@ export function formatDate(dateStr: string): string {
   });
 }
 
+/**
+ * Locale-aware relative label ("3 days ago") via `Intl.RelativeTimeFormat`;
+ * returns `""` for unparseable input.
+ */
 export function formatRelativeTime(isoDate: string, locale: "en" | "vn"): string {
   const timestamp = Date.parse(isoDate);
   if (Number.isNaN(timestamp)) return "";

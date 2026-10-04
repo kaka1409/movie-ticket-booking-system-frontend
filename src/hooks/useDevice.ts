@@ -8,8 +8,8 @@ export function useDevice(): Device {
 
   useEffect(() => {
     const mql = window.matchMedia("(min-width: 768px)");
-    const update = (e: MediaQueryListEvent | MediaQueryList) => {
-      setDevice(e.matches ? "desktop" : "mobile");
+    const update = (event: MediaQueryListEvent | MediaQueryList) => {
+      setDevice(event.matches ? "desktop" : "mobile");
     };
     update(mql);
     mql.addEventListener("change", update);

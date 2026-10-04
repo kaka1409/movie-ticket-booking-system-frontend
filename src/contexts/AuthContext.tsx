@@ -12,6 +12,7 @@ import {
 import { useRouter } from "next/navigation";
 import { refreshAction } from "@/features/auth/action";
 import { UNAUTHORIZED_EVENT } from "@/libs/api";
+import { buildLoginUrl } from "@/libs/utils";
 import type { User } from "@/features/auth/types";
 
 interface AuthContextType {
@@ -65,7 +66,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (currentPath === "/login" || currentPath === "/register") return;
       const returnUrl = currentPath + window.location.search;
       clearAuth();
-      router.replace(`/login?returnUrl=${encodeURIComponent(returnUrl)}`);
+      router.replace(buildLoginUrl(returnUrl));
     };
     window.addEventListener(UNAUTHORIZED_EVENT, handleUnauthorized);
     return () => window.removeEventListener(UNAUTHORIZED_EVENT, handleUnauthorized);
