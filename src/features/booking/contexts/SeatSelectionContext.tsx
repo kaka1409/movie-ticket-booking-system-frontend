@@ -3,6 +3,7 @@
 import { createContext, useContext, useState, useCallback, useEffect } from "react";
 import type { ReactNode } from "react";
 import type { Seat, SeatRow, SeatPrice, SelectedSeat } from "../types";
+import { getSeatLabel } from "../utils";
 import type { ShowtimeDetail } from "@/features/showtimes/types";
 import { useBooking } from "../context";
 
@@ -14,17 +15,20 @@ interface SeatSelectionContextType {
 
 const SeatSelectionContext = createContext<SeatSelectionContextType | null>(null);
 
+/**
+ * After back-navigation, re-mark the seats saved in BookingContext as
+ * `selected`. Labels are built with the same format as the sync effect below
+ * (`A1` for regular/VIP, `A(1)` for sweetbox pairs).
+ */
 function restoreSelectedSeats(base: SeatRow[], savedSeats: { label: string }[]): SeatRow[] {
   if (savedSeats.length === 0) return base;
   return base.map((row) => ({
     ...row,
     segments: row.segments.map((segment) =>
       segment.map((seat) => {
-        const label =
-          seat.kind === "sweetbox"
-            ? `${row.label}(${seat.pairId?.split("-").slice(1).join("-")})`
-            : `${row.label}${seat.col}`;
-        const found = savedSeats.some((savedSeat) => savedSeat.label === label);
+        const found = savedSeats.some(
+          (savedSeat) => savedSeat.label === getSeatLabel(row.label, seat),
+        );
         return found ? { ...seat, status: "selected" as const } : seat;
       }),
     ),
@@ -68,6 +72,12 @@ export function SeatSelectionProvider({
     );
   }, [initialShowtime, bookingShowtimeId, setCinema]);
 
+  /**
+   * Sweetbox seats are sold as a fixed pair: toggling one member toggles the
+   * whole pair (matched by `pairId`), while regular/VIP seats toggle
+   * individually by column. Re-selecting past `maxSeats` is blocked;
+   * deselecting is always allowed.
+   */
   const handleToggle = useCallback(
     (rowLabel: string, clickedSeat: Seat) => {
       setRows((previousRows) => {
@@ -111,6 +121,8 @@ export function SeatSelectionProvider({
     [maxSeats],
   );
 
+  // The booking countdown starts on the FIRST selection; later toggles must
+  // not reset the deadline, so startCountdown() is a no-op once running.
   useEffect(() => {
     const hasSelected = rows.some((row) =>
       row.segments.some((segment) => segment.some((seat) => seat.status === "selected")),
@@ -126,10 +138,7 @@ export function SeatSelectionProvider({
         segment
           .filter((seat) => seat.status === "selected")
           .map((seat) => ({
-            label:
-              seat.kind === "sweetbox"
-                ? `${row.label}(${seat.pairId?.split("-").slice(1).join("-")})`
-                : `${row.label}${seat.col}`,
+            label: getSeatLabel(row.label, seat),
             type: seat.kind === "available" ? "Standard" : seat.kind === "vip" ? "VIP" : "SweetBox",
             price: seatPrices[seat.kind as keyof SeatPrice],
           })),

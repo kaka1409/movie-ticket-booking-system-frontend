@@ -2,15 +2,9 @@
 
 import { useLocale } from "@/contexts/LocaleContext";
 import type { SeatRow, Seat } from "@/features/booking/types";
+import { getSeatLabel } from "@/features/booking/utils";
 import SeatCell from "./SeatCell";
 import SeatLegend from "./SeatLegend";
-
-function getSeatLabel(rowLabel: string, seat: Seat): string {
-  if (seat.kind === "sweetbox" && seat.pairId) {
-    return `${rowLabel}(${seat.pairId.split("-").slice(1).join("-")})`;
-  }
-  return `${rowLabel}${seat.col}`;
-}
 
 export default function SeatGrid({
   rows,

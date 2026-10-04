@@ -3,6 +3,7 @@
 import { useParams } from "next/navigation";
 import type { SeatPrice, SeatRow } from "@/features/booking/types";
 import { useSeatSelection } from "@/features/booking/contexts/SeatSelectionContext";
+import { getSeatLabel } from "@/features/booking/utils";
 import { useLocale } from "@/contexts/LocaleContext";
 import BookingBottomBar from "@/components/shared/BookingBottomBar";
 
@@ -22,10 +23,7 @@ function collectSelections(
       seg
         .filter((s) => s.status === "selected")
         .map((s) => ({
-          label:
-            s.kind === "sweetbox"
-              ? `${row.label}(${s.pairId?.split("-").slice(1).join("-")})`
-              : `${row.label}${s.col}`,
+          label: getSeatLabel(row.label, s),
           type:
             s.kind === "available"
               ? translate("booking.seats.standard")

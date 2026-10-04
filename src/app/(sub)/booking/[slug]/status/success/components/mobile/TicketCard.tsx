@@ -6,9 +6,9 @@ import { useBooking } from "@/features/booking/context";
 import { useStatus } from "@/features/booking/contexts/StatusContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import DetailRow from "@/app/(sub)/booking/components/mobile/DetailRow";
+import PriceBreakdown from "@/app/(sub)/booking/components/mobile/PriceBreakdown";
 import TearLine from "@/components/ui/TearLine";
-import { formatVND } from "@/libs/utils";
-import { MonitorPlay, CalendarDays, Armchair, Popcorn, CreditCard } from "lucide-react";
+import { MonitorPlay, CalendarDays } from "lucide-react";
 
 export default function TicketCard() {
   const {
@@ -25,8 +25,6 @@ export default function TicketCard() {
   } = useBooking();
   const { transactionId, movie, mounted } = useStatus();
   const { translate } = useLocale();
-
-  const hasSnacks = combos.length > 0 || foods.length > 0;
 
   return (
     <div
@@ -79,71 +77,12 @@ export default function TicketCard() {
           />
         </div>
 
-        <div className="space-y-3">
-          <p className="flex items-center gap-1.5 text-[9px] font-black tracking-[0.16em] uppercase text-white/60">
-            <Armchair size={10} />
-            {translate("booking.common.seats")} ({selectedSeats.length})
-          </p>
-          {Object.entries(
-            selectedSeats.reduce<Record<string, typeof selectedSeats>>((acc, seat) => {
-              (acc[seat.type] ??= []).push(seat);
-              return acc;
-            }, {}),
-          ).map(([type, seats]) => (
-            <div key={type} className="space-y-1">
-              <p className="text-sm font-bold text-white">{seats.map((s) => s.label).join(", ")}</p>
-              <div className="flex justify-between text-sm">
-                <span className="text-white">
-                  {type} {translate("booking.common.ticket")}
-                </span>
-                <span className="font-medium text-white">
-                  {seats.length}× {formatVND(seats[0].price)}
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {hasSnacks && (
-          <div className="space-y-2">
-            <p className="flex items-center gap-1.5 text-[9px] font-black tracking-[0.16em] uppercase text-white/60">
-              <Popcorn size={10} />
-              {translate("booking.common.snacks_combos")}
-            </p>
-            <div className="space-y-1">
-              {combos.map((c) => (
-                <div key={c.id} className="flex justify-between text-sm">
-                  <span className="text-white">{c.name}</span>
-                  <span className="font-medium text-white">
-                    {c.qty}× {formatVND(c.qty * c.price)}
-                  </span>
-                </div>
-              ))}
-              {foods.map((f) => (
-                <div key={f.id} className="flex justify-between text-sm">
-                  <span className="text-white">{f.name}</span>
-                  <span className="font-medium text-white">
-                    {f.qty}× {formatVND(f.qty * f.price)}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        <div className="flex justify-between items-end gap-4">
-          <DetailRow
-            icon={CreditCard}
-            label={translate("booking.common.payment_method")}
-            value={paymentMethod || "N/A"}
-          />
-          <div className="text-right">
-            <p className="flex items-center justify-end gap-1.5 text-[9px] font-black tracking-[0.16em] uppercase text-white/60">
-              {translate("booking.common.total_price")}
-            </p>
-            <p className="font-bold text-base text-(--color-gold)">{formatVND(total)}</p>
-          </div>
-        </div>
+        <PriceBreakdown
+          seats={selectedSeats}
+          snacks={[...combos, ...foods]}
+          paymentMethod={paymentMethod}
+          total={total}
+        />
       </div>
 
       {/* Tear line */}

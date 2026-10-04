@@ -51,32 +51,6 @@ interface BookingContextType extends BookingState {
   resetBooking: () => void;
 }
 
-/* ─── Default state ─────────────────────────────────────── */
-
-// const DEFAULT_STATE: BookingState = {
-//     cinemaId: null,
-//     cinemaName: "",
-//     time: "",
-//     date: "",
-//     room: "",
-//     location: "",
-//     selectedSeats: [],
-//   seatType: "Standard",
-//   combos: [],
-//   foods: [],
-//   paymentMethod: "",
-//   contactName: "",
-//   contactEmail: "",
-//   contactPhone: "",
-//   contactCountryCode: "+84",
-//   ticketCount: 0,
-//   ticketPrice: 0,
-//   snackTotal: 0,
-//   total: 0,
-//   countdownStarted: false,
-//   countdownStartTime: 0,
-// };
-
 /* ─── Context ───────────────────────────────────────────── */
 
 const BookingContext = createContext<BookingContextType | null>(null);

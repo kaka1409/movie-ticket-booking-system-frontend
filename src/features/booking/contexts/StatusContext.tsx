@@ -30,8 +30,8 @@ export function StatusProvider({
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const t = setTimeout(() => setMounted(true), 80);
-    return () => clearTimeout(t);
+    const mountTimer = setTimeout(() => setMounted(true), 80);
+    return () => clearTimeout(mountTimer);
   }, []);
 
   return (

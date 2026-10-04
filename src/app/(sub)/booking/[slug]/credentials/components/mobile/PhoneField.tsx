@@ -41,7 +41,7 @@ export default function PhoneField({
         >
           <select
             value={countryCode}
-            onChange={(e) => onCountryChange(e.target.value)}
+            onChange={(event) => onCountryChange(event.target.value)}
             aria-label={translate("booking.credentials.country_code")}
             className="absolute inset-0 opacity-0 w-full text-black text-center cursor-pointer"
           >
@@ -87,7 +87,7 @@ export default function PhoneField({
             value={phone}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
-            onChange={(e) => onPhoneChange(e.target.value)}
+            onChange={(event) => onPhoneChange(event.target.value)}
             className="flex-1 bg-transparent text-sm text-(--color-text-primary) placeholder-(--color-text-muted) outline-none font-[inherit]"
           />
         </div>

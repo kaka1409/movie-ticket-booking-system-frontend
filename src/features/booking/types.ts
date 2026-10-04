@@ -36,14 +36,7 @@ export interface SelectedFood {
   price: number;
 }
 
-/* ─── Booking Selection ─────────────────────────────────── */
-
-export interface BookingSelection {
-  cinemaId: string | null;
-  showtimeId?: string | null;
-  time: string;
-  date: string;
-}
+/* ─── Booking steps ─────────────────────────────────────── */
 
 export const BOOKING_STEP_KEYS = [
   "booking.steps.select_cinema",
@@ -51,12 +44,4 @@ export const BOOKING_STEP_KEYS = [
   "booking.steps.food_drinks",
   "booking.steps.contact_info",
   "booking.steps.payment",
-] as const;
-
-export const BOOKING_STEPS = [
-  "SELECT CINEMA",
-  "SELECT SEATS",
-  "FOOD & DRINKS",
-  "CONTACT INFO",
-  "PAYMENT",
 ] as const;

@@ -9,6 +9,8 @@ export default function CountdownBanner() {
   const { countdownStarted, countdownStartTime, countdownSeconds } = useBooking();
   const { translate } = useLocale();
 
+  // Seed from wall-clock time rather than tick counts: background tabs
+  // throttle setInterval, and an absolute deadline stays correct there.
   const [remaining, setRemaining] = useState(() => {
     if (!countdownStarted) return countdownSeconds;
     const elapsed = Math.floor((Date.now() - countdownStartTime) / 1000);
@@ -27,8 +29,8 @@ export default function CountdownBanner() {
     return () => clearInterval(id);
   }, [countdownStarted, countdownStartTime, countdownSeconds]);
 
-  const mm = String(Math.floor(remaining / 60)).padStart(2, "0");
-  const ss = String(remaining % 60).padStart(2, "0");
+  const minutes = String(Math.floor(remaining / 60)).padStart(2, "0");
+  const seconds = String(remaining % 60).padStart(2, "0");
   const urgent = remaining <= 60 && remaining > 0;
   const expired = remaining <= 0;
 
@@ -45,7 +47,7 @@ export default function CountdownBanner() {
           expired ? "text-red-500" : urgent ? "text-red-400" : "text-red-300"
         }`}
       >
-        {expired ? "00:00" : `${mm}:${ss}`}
+        {expired ? "00:00" : `${minutes}:${seconds}`}
       </span>
     </div>
   );

@@ -28,7 +28,7 @@ export default function BottomBar() {
     setIsLoading(true);
 
     // Simulate external payment gateway processing
-    await new Promise((r) => setTimeout(r, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
 
     const success = Math.random() > 0.5;
     const txnId = `TXN${Date.now()}`;

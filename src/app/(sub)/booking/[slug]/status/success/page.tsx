@@ -3,7 +3,6 @@ import { getMovieBySlug } from "@/features/movies/api";
 import { StatusProvider } from "@/features/booking/contexts/StatusContext";
 
 // Mobile components
-// import SuccessPageMobile from "./components/mobile/SuccessPageMobile";
 import SuccessIcon from "./components/mobile/SuccessIcon";
 import TicketCard from "./components/mobile/TicketCard";
 import SuccessActions from "./components/mobile/SuccessActions";
