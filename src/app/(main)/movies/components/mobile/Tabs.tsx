@@ -13,11 +13,11 @@ export default function TabsComponent() {
     { key: "coming_soon", label: translate("movies.coming_soon") },
   ];
 
-  return <Tabs
-    tabs={tabs}
-    activeTab={activeTab}
-    onTabChange={
-      (tab) => setActiveTab(tab as "now_showing" | "coming_soon")
-    }
-  />;
+  return (
+    <Tabs
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={(tab) => setActiveTab(tab as "now_showing" | "coming_soon")}
+    />
+  );
 }

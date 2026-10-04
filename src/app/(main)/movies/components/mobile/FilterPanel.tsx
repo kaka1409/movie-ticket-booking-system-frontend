@@ -4,12 +4,11 @@ import { ChevronDown, SlidersHorizontal } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useMovieList } from "@/features/movies/context";
 import {
-  GENRES,
-  AGE_RATINGS,
   RELEASE_OPTIONS,
-  RATING_OPTIONS,
   LENGTH_OPTIONS,
-  FORMAT_OPTIONS,
+  RATING_MIN,
+  RATING_MAX,
+  RATING_STEP,
 } from "@/features/movies/constants";
 import FilterChip from "./FilterChip";
 import FilterCheckRow from "./FilterCheckRow";
@@ -26,6 +25,7 @@ export default function FilterPanel() {
     filters,
     setFilters,
     applyFilters,
+    filterOptions,
   } = useMovieList();
 
   const toggleGenre = (genre: string) =>
@@ -46,16 +46,15 @@ export default function FilterPanel() {
   return (
     <section className="mx-(--space-md) rounded-(--radius-lg) border border-(--color-border) bg-(--color-surface)">
       {/* ── Header (toggle) ── */}
-      <button type="button"
+      <button
+        type="button"
         onClick={toggleFiltersOpen}
         className="flex w-full items-center justify-between p-(--space-md)"
         aria-expanded={filtersOpen}
       >
         <div className="flex items-center gap-2">
           <SlidersHorizontal size={16} className="text-(--color-gold)" />
-          <span className="text-sm font-bold text-white">
-            {translate("movies.filters")}
-          </span>
+          <span className="text-sm font-bold text-white">{translate("movies.filters")}</span>
           {activeFilterCount > 0 && (
             <span className="flex h-5 w-5 items-center justify-center rounded-full bg-(--color-gold) text-[10px] font-black text-black">
               {activeFilterCount}
@@ -95,10 +94,15 @@ export default function FilterPanel() {
               <div className="flex flex-wrap gap-2">
                 {RELEASE_OPTIONS.map((option) => (
                   <FilterChip
-                    key={option}
-                    label={option}
-                    active={filters.releaseDate === option}
-                    onClick={() => setFilters({ ...filters, releaseDate: option })}
+                    key={option.token}
+                    label={option.label}
+                    active={filters.releaseDate === option.token}
+                    onClick={() =>
+                      setFilters({
+                        ...filters,
+                        releaseDate: filters.releaseDate === option.token ? "" : option.token,
+                      })
+                    }
                   />
                 ))}
               </div>
@@ -108,32 +112,49 @@ export default function FilterPanel() {
             <div>
               <FilterLabel>{translate("movies.genre")}</FilterLabel>
               <div className="grid grid-cols-2 gap-x-4 gap-y-2">
-                {GENRES.map((genre) => (
+                {filterOptions.genres.map((genre) => (
                   <FilterCheckRow
-                    key={genre}
-                    label={genre}
-                    checked={filters.genres.includes(genre)}
-                    onChange={() => toggleGenre(genre)}
+                    key={genre.id}
+                    label={genre.name}
+                    checked={filters.genres.includes(genre.name)}
+                    onChange={() => toggleGenre(genre.name)}
                   />
                 ))}
               </div>
             </div>
 
-            {/* Rating + Length */}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <FilterLabel>{translate("movies.rating")}</FilterLabel>
-                <div className="flex flex-col gap-2">
-                  {RATING_OPTIONS.map((option) => (
-                    <FilterCheckRow
-                      key={option}
-                      label={option}
-                      checked={filters.rating === option}
-                      onChange={() => toggleSingle("rating")(option)}
-                    />
-                  ))}
-                </div>
+            {/* Rating slider (backend scale 0–10) */}
+            <div>
+              <FilterLabel>{translate("movies.rating")}</FilterLabel>
+              <div className="flex items-center gap-4">
+                <input
+                  type="range"
+                  min={RATING_MIN}
+                  max={RATING_MAX}
+                  step={RATING_STEP}
+                  value={filters.rating ? Number(filters.rating) : RATING_MIN}
+                  onChange={(event) => {
+                    const value = Number(event.target.value);
+                    setFilters({
+                      ...filters,
+                      rating: value > RATING_MIN ? String(value) : "",
+                    });
+                  }}
+                  aria-label={translate("movies.rating")}
+                  className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-(--color-border) accent-(--color-gold)"
+                />
+                <span
+                  className={`min-w-14 text-right text-sm font-bold tabular-nums ${
+                    filters.rating ? "text-(--color-gold)" : "text-(--color-text-muted)"
+                  }`}
+                >
+                  {filters.rating ? `≥ ${filters.rating}` : "—"}
+                </span>
               </div>
+            </div>
+
+            {/* Length + Age Rating */}
+            <div className="grid grid-cols-2 gap-4">
               <div>
                 <FilterLabel>{translate("movies.length")}</FilterLabel>
                 <div className="flex flex-col gap-2">
@@ -147,40 +168,39 @@ export default function FilterPanel() {
                   ))}
                 </div>
               </div>
-            </div>
-
-            {/* Format + Age Rating */}
-            <div className="grid grid-cols-2 gap-4">
               <div>
-                <FilterLabel>{translate("movies.format")}</FilterLabel>
+                <FilterLabel>{translate("movies.age_rating")}</FilterLabel>
                 <div className="flex flex-wrap gap-2">
-                  {FORMAT_OPTIONS.map((option) => (
+                  {filterOptions.ageRatings.map((ageRating) => (
                     <FilterChip
-                      key={option}
-                      label={option}
-                      active={filters.format === option}
-                      onClick={() => toggleSingle("format")(option)}
+                      key={ageRating.id}
+                      label={ageRating.name}
+                      active={filters.ageRating === ageRating.name}
+                      onClick={() => toggleSingle("ageRating")(ageRating.name)}
                     />
                   ))}
                 </div>
               </div>
-              <div>
-                <FilterLabel>{translate("movies.age_rating")}</FilterLabel>
-                <div className="flex flex-wrap gap-2">
-                  {AGE_RATINGS.map((option) => (
-                    <FilterChip
-                      key={option}
-                      label={option}
-                      active={filters.ageRating === option}
-                      onClick={() => toggleSingle("ageRating")(option)}
-                    />
-                  ))}
-                </div>
+            </div>
+
+            {/* Format */}
+            <div>
+              <FilterLabel>{translate("movies.format")}</FilterLabel>
+              <div className="flex flex-wrap gap-2">
+                {filterOptions.formats.map((format) => (
+                  <FilterChip
+                    key={format.id}
+                    label={format.name}
+                    active={filters.format === format.name}
+                    onClick={() => toggleSingle("format")(format.name)}
+                  />
+                ))}
               </div>
             </div>
 
             {/* Apply */}
-            <button type="button"
+            <button
+              type="button"
               onClick={applyFilters}
               className="
                 w-full rounded-(--radius-md) bg-(--color-gold) py-3.5

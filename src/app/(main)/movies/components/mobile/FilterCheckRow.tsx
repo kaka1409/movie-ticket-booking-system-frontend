@@ -10,7 +10,8 @@ export default function CheckRow({
   onChange: () => void;
 }) {
   return (
-    <button type="button"
+    <button
+      type="button"
       onClick={onChange}
       className="flex items-center gap-2.5 py-0.5 group"
       aria-pressed={checked}
@@ -37,11 +38,7 @@ export default function CheckRow({
           </svg>
         )}
       </span>
-      <span
-        className={`text-sm font-medium transition-colors`}
-      >
-        {label}
-      </span>
+      <span className={`text-sm font-medium transition-colors`}>{label}</span>
     </button>
   );
 }

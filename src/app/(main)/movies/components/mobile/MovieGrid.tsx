@@ -1,39 +1,40 @@
-"use client";
+﻿"use client";
 
 import { useRef, useEffect, useState } from "react";
 import { Search } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useMovieList } from "@/features/movies/context";
-import { useMovieFilters } from "@/hooks/useMovieFilters";
 import MovieCard from "@/components/ui/MovieCard";
+import SectionFallback from "@/components/ui/SectionFallback";
 
 export default function MovieGrid() {
   const { translate } = useLocale();
   const {
     activeTab,
-    query,
-    appliedFilters,
+    appliedQuery,
     movies,
+    total,
     hasMore,
     isLoadingMore,
+    isFetching,
+    fetchError,
     activeFilterCount,
     loadMore,
     clearFilters,
+    retryFetch,
   } = useMovieList();
 
-  const filtered = useMovieFilters(movies, query, appliedFilters);
-
-  /* ── Hooks must run before any early return ── */
+  /* â”€â”€ Hooks must run before any early return â”€â”€ */
   const gridRef = useRef<HTMLDivElement>(null);
   const prevLoadedCountRef = useRef(movies.length);
-  const prevRenderedCountRef = useRef(filtered.length);
+  const prevRenderedCountRef = useRef(movies.length);
   const prevTabRef = useRef(activeTab);
-  const [animThreshold, setAnimThreshold] = useState(filtered.length);
+  const [animThreshold, setAnimThreshold] = useState(movies.length);
 
   useEffect(() => {
     const tabChanged = activeTab !== prevTabRef.current;
     const loadedGrew = movies.length > prevLoadedCountRef.current;
-    const renderedGrew = filtered.length > prevRenderedCountRef.current;
+    const renderedGrew = movies.length > prevRenderedCountRef.current;
 
     if (!tabChanged && loadedGrew && renderedGrew) {
       const grid = gridRef.current;
@@ -48,17 +49,33 @@ export default function MovieGrid() {
     }
 
     prevLoadedCountRef.current = movies.length;
-    prevRenderedCountRef.current = filtered.length;
+    prevRenderedCountRef.current = movies.length;
     prevTabRef.current = activeTab;
-  }, [activeTab, movies.length, filtered.length]);
+  }, [activeTab, movies.length]);
+
+  const showResultsCount = activeFilterCount > 0 || appliedQuery;
 
   return (
     <>
-      {/* Results count */}
-      {activeFilterCount > 0 && (
+      {/* Fetch failed and there is nothing to show */}
+      {fetchError && movies.length === 0 && (
+        <div className="px-(--space-md)">
+          <SectionFallback error={fetchError} />
+          <button
+            type="button"
+            onClick={retryFetch}
+            className="mx-auto mt-2 block text-sm font-bold text-(--color-gold) underline underline-offset-2"
+          >
+            {translate("common.try_again")}
+          </button>
+        </div>
+      )}
+
+      {/* Results count (server total, not the rendered page count) */}
+      {showResultsCount && !fetchError && (
         <div className="px-(--space-md)">
           <p className="text-base font-bold text-white">
-            {filtered.length}{" "}
+            {total}{" "}
             <span className="font-medium text-(--color-text-muted)">
               {translate("movies.results_found")}
             </span>
@@ -67,9 +84,14 @@ export default function MovieGrid() {
       )}
 
       {/* Grid */}
-      {filtered.length > 0 ? (
-        <div ref={gridRef} className="grid grid-cols-2 gap-x-3 gap-y-6 px-(--space-md)">
-          {filtered.map((movie, index) => (
+      {movies.length > 0 ? (
+        <div
+          ref={gridRef}
+          className={`grid grid-cols-2 gap-x-3 gap-y-6 px-(--space-md) transition-opacity ${
+            isFetching ? "opacity-60" : "opacity-100"
+          }`}
+        >
+          {movies.map((movie, index) => (
             <div
               key={movie.id}
               data-movie-card
@@ -82,28 +104,32 @@ export default function MovieGrid() {
           ))}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center gap-3 px-(--space-md) py-16">
-          <Search size={36} className="text-(--color-border)" />
-          <p className="text-center text-sm text-(--color-text-muted)">
-            {translate("movies.no_results")}
-            <br />
-            {translate("movies.no_results_hint")}
-          </p>
-          <button type="button"
-            onClick={clearFilters}
-            className="text-sm font-bold text-(--color-gold) underline underline-offset-2"
-          >
-            {translate("movies.clear_filters")}
-          </button>
-        </div>
+        !fetchError && (
+          <div className="flex flex-col items-center justify-center gap-3 px-(--space-md) py-16">
+            <Search size={36} className="text-(--color-border)" />
+            <p className="text-center text-sm text-(--color-text-muted)">
+              {translate("movies.no_results")}
+              <br />
+              {translate("movies.no_results_hint")}
+            </p>
+            <button
+              type="button"
+              onClick={clearFilters}
+              className="text-sm font-bold text-(--color-gold) underline underline-offset-2"
+            >
+              {translate("movies.clear_filters")}
+            </button>
+          </div>
+        )
       )}
 
-      {/* Load More — fetches the next page from the backend */}
+      {/* Load More â€” appends the next server page of the SAME query */}
       {hasMore && (
         <div className="px-(--space-md)">
-          <button type="button"
+          <button
+            type="button"
             onClick={loadMore}
-            disabled={isLoadingMore}
+            disabled={isLoadingMore || isFetching}
             className="
               w-full rounded-(--radius-lg) border border-(--color-border)
               bg-(--color-surface) py-3.5 text-sm font-bold uppercase
@@ -114,7 +140,7 @@ export default function MovieGrid() {
               disabled:opacity-60 disabled:cursor-not-allowed
             "
           >
-            {isLoadingMore
+            {isLoadingMore || isFetching
               ? translate("common.loading")
               : translate("movies.load_more")}
           </button>
