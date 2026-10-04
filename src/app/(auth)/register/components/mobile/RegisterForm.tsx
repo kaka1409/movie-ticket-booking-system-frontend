@@ -27,10 +27,7 @@ export default function RegisterForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [serverError, setServerError] = useState("");
 
-  const schema = useMemo(
-    () => createRegisterSchema(translate),
-    [translate],
-  );
+  const schema = useMemo(() => createRegisterSchema(translate), [translate]);
   const result = schema.safeParse({
     name,
     email,
@@ -39,56 +36,50 @@ export default function RegisterForm() {
     terms,
   });
   const isValid = result.success;
-  const fieldErrors = result.success
-    ? {}
-    : result.error.flatten().fieldErrors;
+  const fieldErrors = result.success ? {} : result.error.flatten().fieldErrors;
 
   const nameError = touched ? fieldErrors.name?.[0] : undefined;
   const emailError = touched ? fieldErrors.email?.[0] : undefined;
   const passwordError = touched ? fieldErrors.password?.[0] : undefined;
   const confirmError = touched ? fieldErrors.confirmPassword?.[0] : undefined;
 
-  const handleSubmit = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault();
-    setTouched(true);
-    setServerError("");
-    if (!isValid) return;
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      setTouched(true);
+      setServerError("");
+      if (!isValid) return;
 
-    setIsSubmitting(true);
-    try {
-      const result = await registerAction(
-        { success: false, error: "" },
-        { fullname: name, email, password },
-      );
-      if (result.success) {
-        router.push("/login");
-      } else {
-        if (result.status === 409) {
-          setServerError(translate("auth.register.error_email_exists"));
+      setIsSubmitting(true);
+      try {
+        const result = await registerAction(
+          { success: false, error: "" },
+          { fullname: name, email, password },
+        );
+        if (result.success) {
+          router.push("/login");
         } else {
-          setServerError(translate("auth.register.error_server"));
+          if (result.status === 409) {
+            setServerError(translate("auth.register.error_email_exists"));
+          } else {
+            setServerError(translate("auth.register.error_server"));
+          }
         }
+      } catch {
+        setServerError(translate("auth.register.error_server"));
+      } finally {
+        setIsSubmitting(false);
       }
-    } catch {
-      setServerError(translate("auth.register.error_server"));
-    } finally {
-      setIsSubmitting(false);
-    }
-  }, [
-    isValid,
-    name,
-    email,
-    password,
-    router,
-    translate,
-  ]);
+    },
+    [isValid, name, email, password, router, translate],
+  );
 
   return (
     <div className="w-full max-w-md mx-auto animate-fade-in">
       <div className="flex justify-center mb-4">
         <Logo size="lg" />
       </div>
-      
+
       <h1 className="text-center text-2xl font-extrabold text-(--color-text-primary) mb-1">
         {translate("auth.register.title")}
       </h1>
@@ -144,11 +135,7 @@ export default function RegisterForm() {
           error={confirmError}
         />
 
-        <TermsCheckbox
-          checked={terms}
-          onChange={() => setTerms(!terms)}
-          translate={translate}
-        />
+        <TermsCheckbox checked={terms} onChange={() => setTerms(!terms)} translate={translate} />
 
         {serverError && (
           <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20">
@@ -157,19 +144,15 @@ export default function RegisterForm() {
           </div>
         )}
 
-        <Button
-          type="submit"
-          variant="primary"
-          size="lg"
-          loading={isSubmitting}
-        >
+        <Button type="submit" variant="primary" size="lg" loading={isSubmitting}>
           {translate("auth.register.register_btn")}
         </Button>
       </form>
 
       <p className="text-center text-xs text-(--color-text-muted) mt-6">
         {translate("auth.register.has_account")}{" "}
-        <button type="button"
+        <button
+          type="button"
           onClick={() => router.push("/login")}
           className="text-(--color-gold) font-semibold underline underline-offset-2 hover:text-(--color-gold-light) transition-colors"
         >

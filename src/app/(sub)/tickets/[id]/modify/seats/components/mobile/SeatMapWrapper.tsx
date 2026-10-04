@@ -17,7 +17,8 @@ function getSeatLabel(rowLabel: string, seat: Seat): string {
 
 export default function SeatMapWrapper() {
   const { translate } = useLocale();
-  const { toggleSeat, selectedSeats, seatRows, setSeatRows, seatPrices, setSeatPrices } = useModification();
+  const { toggleSeat, selectedSeats, seatRows, setSeatRows, seatPrices, setSeatPrices } =
+    useModification();
   const { ticket } = useTicketDetail();
 
   useEffect(() => {
@@ -41,20 +42,18 @@ export default function SeatMapWrapper() {
         seat.kind === "available"
           ? translate("booking.seats.standard")
           : seat.kind === "vip"
-          ? "VIP"
-          : "SweetBox";
+            ? "VIP"
+            : "SweetBox";
       const price = seatPrices[seat.kind as keyof SeatPrice];
 
       toggleSeat({ label, type, price });
     },
-    [seatPrices, toggleSeat, translate]
+    [seatPrices, toggleSeat, translate],
   );
 
   if (!seatPrices || seatRows.length === 0) {
     return (
-      <div className="px-4 py-8 text-center text-(--color-text-muted)">
-        Loading seat map...
-      </div>
+      <div className="px-4 py-8 text-center text-(--color-text-muted)">Loading seat map...</div>
     );
   }
 

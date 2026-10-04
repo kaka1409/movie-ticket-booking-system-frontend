@@ -5,10 +5,7 @@ import type { ShowtimeDateOption } from "@/features/showtimes/types";
 import { getReviews } from "@/features/reviews/api";
 import SectionFallback from "@/components/ui/SectionFallback";
 import { REVIEWS_PAGE_SIZE } from "@/features/reviews/constants";
-import {
-  MovieDetailProvider,
-  MovieSelectionProvider,
-} from "@/features/movies/context";
+import { MovieDetailProvider, MovieSelectionProvider } from "@/features/movies/context";
 
 // Mobile
 import MobileHeroSection from "./components/mobile/HeroSection";
@@ -41,19 +38,13 @@ function todayISO(): string {
 
 /* Backend only returns the upcoming dates that actually have showtimes. */
 function toAvailableDates(records: ShowtimeDateOption[]): string[] {
-  return records
-    .filter((record) => record.hasShowtimes)
-    .map((record) => record.date);
+  return records.filter((record) => record.hasShowtimes).map((record) => record.date);
 }
 
 /* Prefer a date that really has showtimes (from the API). Only when the API
    gives us nothing do we fall back to the local window, so the strip is never
    empty and a stale `?date=` param can never point at a day without sessions. */
-function resolveDate(
-  param: string | undefined,
-  availableDates: string[],
-  today: string,
-): string {
+function resolveDate(param: string | undefined, availableDates: string[], today: string): string {
   if (availableDates.length > 0) {
     if (param && availableDates.includes(param)) return param;
     /* Keep the current day when it is on the list, otherwise jump to the first. */
@@ -74,10 +65,7 @@ export default async function MovieDetailPage({
   params: Promise<{ slug: string }>;
   searchParams: Promise<{ date?: string }>;
 }) {
-  const [{ slug }, { date: dateParam }] = await Promise.all([
-    params,
-    searchParams,
-  ]);
+  const [{ slug }, { date: dateParam }] = await Promise.all([params, searchParams]);
   const today = todayISO();
 
   const [movieResult, showtimeDatesResult, reviewsResult] = await Promise.all([
@@ -102,19 +90,14 @@ export default async function MovieDetailPage({
   }
 
   const movie = movieResult.data;
-  const dateOptions =
-    "error" in showtimeDatesResult ? [] : showtimeDatesResult.data;
+  const dateOptions = "error" in showtimeDatesResult ? [] : showtimeDatesResult.data;
   const date = resolveDate(dateParam, toAvailableDates(dateOptions), today);
 
   const showtimesResult = await getShowtimes(slug, date);
-  const showtimeCinemas =
-    "error" in showtimesResult ? [] : showtimesResult.data.cinemas;
-  const showtimesError =
-    "error" in showtimesResult ? showtimesResult.error.message : null;
-  const reviewsData =
-    "error" in reviewsResult ? null : reviewsResult.data;
-  const reviewsError =
-    "error" in reviewsResult ? reviewsResult.error.message : null;
+  const showtimeCinemas = "error" in showtimesResult ? [] : showtimesResult.data.cinemas;
+  const showtimesError = "error" in showtimesResult ? showtimesResult.error.message : null;
+  const reviewsData = "error" in reviewsResult ? null : reviewsResult.data;
+  const reviewsError = "error" in reviewsResult ? reviewsResult.error.message : null;
 
   return (
     <MovieDetailProvider movie={movie}>

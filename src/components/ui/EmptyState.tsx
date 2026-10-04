@@ -18,9 +18,7 @@ export default function EmptyState({
       </div>
       <div className="text-center">
         <p className="text-lg font-bold text-(--color-text-primary)">{title}</p>
-        {description && (
-          <p className="mt-1 text-sm text-(--color-text-muted)">{description}</p>
-        )}
+        {description && <p className="mt-1 text-sm text-(--color-text-muted)">{description}</p>}
       </div>
       {children}
     </div>

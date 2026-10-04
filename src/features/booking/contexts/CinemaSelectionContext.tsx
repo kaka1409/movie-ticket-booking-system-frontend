@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import type { Cinema, DateOption } from "../types";
@@ -32,17 +25,11 @@ interface CinemaSelectionContextType {
   hasSelection: boolean;
   setSelectedDate: (date: string) => void;
   setQuery: (query: string) => void;
-  handleSelect: (
-    cinemaId: string,
-    time: string,
-    meta?: ShowtimeSelectionMeta,
-  ) => void;
+  handleSelect: (cinemaId: string, time: string, meta?: ShowtimeSelectionMeta) => void;
   clearSelection: () => void;
 }
 
-const CinemaSelectionContext = createContext<CinemaSelectionContextType | null>(
-  null,
-);
+const CinemaSelectionContext = createContext<CinemaSelectionContextType | null>(null);
 
 /* Resolve a showtime (and its cinema) coming from the movie detail page. */
 function findShowtime(cinemas: Cinema[], showtimeId?: string | null) {
@@ -92,24 +79,18 @@ export function CinemaSelectionProvider({
 
   // URL params (already resolved server-side) win over the previously saved
   // booking state so the date strip, cinemas and showtimes always agree.
-  const resolvedCinemaId =
-    preselected?.cinema.id ?? initialCinemaId ?? savedCinemaId;
+  const resolvedCinemaId = preselected?.cinema.id ?? initialCinemaId ?? savedCinemaId;
   const resolvedTime = preselected?.time || initialTime || savedTime;
   const resolvedShowtimeId = initialShowtimeId || savedShowtimeId || "";
   const resolvedDate = initialDate || savedDate || dates[0]?.value || "";
 
   const [selectedDate, setSelectedDateState] = useState(resolvedDate);
   const [query, setQuery] = useState("");
-  const [selectedCinemaId, setSelectedCinemaId] = useState<string | null>(
-    resolvedCinemaId,
-  );
+  const [selectedCinemaId, setSelectedCinemaId] = useState<string | null>(resolvedCinemaId);
   const [selectedTime, setSelectedTime] = useState(resolvedTime);
-  const [selectedShowtimeId, setSelectedShowtimeId] =
-    useState(resolvedShowtimeId);
+  const [selectedShowtimeId, setSelectedShowtimeId] = useState(resolvedShowtimeId);
 
-  const selectedCinema = cinemas.find(
-    (cinema) => cinema.id === selectedCinemaId,
-  );
+  const selectedCinema = cinemas.find((cinema) => cinema.id === selectedCinemaId);
 
   /* Showtimes are fetched per date on the server, so a new date re-renders it. */
   const setSelectedDate = useCallback(
@@ -131,8 +112,7 @@ export function CinemaSelectionProvider({
 
     const matchedShowtime = selectedCinema.showtimes.find(
       (slot) =>
-        (selectedShowtimeId !== "" && slot.id === selectedShowtimeId) ||
-        slot.time === selectedTime,
+        (selectedShowtimeId !== "" && slot.id === selectedShowtimeId) || slot.time === selectedTime,
     );
 
     setCinema(
@@ -144,19 +124,9 @@ export function CinemaSelectionProvider({
       selectedCinema.address,
       matchedShowtime?.id ?? selectedShowtimeId,
     );
-  }, [
-    selectedCinema,
-    selectedTime,
-    selectedDate,
-    selectedShowtimeId,
-    setCinema,
-  ]);
+  }, [selectedCinema, selectedTime, selectedDate, selectedShowtimeId, setCinema]);
 
-  const handleSelect = (
-    cinemaId: string,
-    time: string,
-    meta?: ShowtimeSelectionMeta,
-  ) => {
+  const handleSelect = (cinemaId: string, time: string, meta?: ShowtimeSelectionMeta) => {
     if (selectedCinemaId === cinemaId && selectedTime === time) {
       setSelectedCinemaId(null);
       setSelectedTime("");
@@ -213,9 +183,6 @@ export function CinemaSelectionProvider({
 
 export function useCinemaSelection() {
   const ctx = useContext(CinemaSelectionContext);
-  if (!ctx)
-    throw new Error(
-      "useCinemaSelection must be used within CinemaSelectionProvider",
-    );
+  if (!ctx) throw new Error("useCinemaSelection must be used within CinemaSelectionProvider");
   return ctx;
 }

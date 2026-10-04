@@ -43,8 +43,7 @@ export default async function SelectSeatPage({
 
   // The selected showtime drives the room, cinema and seat map of this step.
   const showtimeResult = showtimeId ? await getShowtimeById(showtimeId) : null;
-  const showtime =
-    showtimeResult && !("error" in showtimeResult) ? showtimeResult.data : null;
+  const showtime = showtimeResult && !("error" in showtimeResult) ? showtimeResult.data : null;
 
   return (
     <SeatSelectionProvider

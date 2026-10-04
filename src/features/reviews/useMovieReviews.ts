@@ -56,13 +56,9 @@ export function useMovieReviews({
   const { translate, locale } = useLocale();
   const { token, isAuthenticated, user } = useAuth();
 
-  const [rawReviews, setRawReviews] = useState<MovieReview[]>(
-    initialData?.reviews ?? [],
-  );
+  const [rawReviews, setRawReviews] = useState<MovieReview[]>(initialData?.reviews ?? []);
   const [total, setTotal] = useState(initialData?.total ?? 0);
-  const [summary, setSummary] = useState<ReviewSummary | null>(
-    initialData?.ratingSummary ?? null,
-  );
+  const [summary, setSummary] = useState<ReviewSummary | null>(initialData?.ratingSummary ?? null);
   const [error, setError] = useState<string | null>(initialError);
   const [actionError, setActionError] = useState<string | null>(null);
   const [mutating, setMutating] = useState(false);

@@ -10,22 +10,12 @@ export default function Avatar({
   size?: string;
 }) {
   return (
-    <div
-      className={`${size} rounded-full overflow-hidden shrink-0 border border-(--color-border)`}
-    >
+    <div className={`${size} rounded-full overflow-hidden shrink-0 border border-(--color-border)`}>
       {src ? (
-        <Image
-          src={src}
-          alt={name}
-          width={44}
-          height={44}
-          className="w-full h-full object-cover"
-        />
+        <Image src={src} alt={name} width={44} height={44} className="w-full h-full object-cover" />
       ) : (
         <div className="w-full h-full bg-(--color-border) flex items-center justify-center">
-          <span className="text-(--color-gold) text-xs font-bold">
-            {name.charAt(0)}
-          </span>
+          <span className="text-(--color-gold) text-xs font-bold">{name.charAt(0)}</span>
         </div>
       )}
     </div>

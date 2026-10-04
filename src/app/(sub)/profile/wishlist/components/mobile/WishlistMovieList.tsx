@@ -8,9 +8,7 @@ import EmptyState from "./EmptyState";
 export default function WishlistMovieList({ allMovies }: { allMovies: Movie[] }) {
   const { wishlist } = useWishlist();
 
-  const movies = wishlist
-    .map((id) => allMovies.find((m) => m.id === id))
-    .filter(Boolean);
+  const movies = wishlist.map((id) => allMovies.find((m) => m.id === id)).filter(Boolean);
 
   if (movies.length === 0) {
     return (

@@ -17,7 +17,9 @@ export default function RecipientInput() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    searchRecipients(query).then(setResults);
+    searchRecipients(query)
+      .then(setResults)
+      .catch(() => setResults([]));
   }, [query]);
 
   // Close dropdown on click outside
@@ -83,18 +85,13 @@ export default function RecipientInput() {
                     <span className="text-sm font-bold text-(--color-text-primary)">
                       {item.name}
                     </span>
-                    <span className="text-xs text-(--color-text-muted)">
-                      @{item.username}
-                    </span>
+                    <span className="text-xs text-(--color-text-muted)">@{item.username}</span>
                   </span>
                 </button>
               ))
             ) : (
               <p className="px-4 py-3 text-sm text-red-400">
-                {translate("tickets.transfer.recipient_not_found").replace(
-                  "{query}",
-                  query.trim()
-                )}
+                {translate("tickets.transfer.recipient_not_found").replace("{query}", query.trim())}
               </p>
             )}
           </div>
@@ -112,12 +109,8 @@ export default function RecipientInput() {
             className="shrink-0 w-12 h-12 rounded-full object-cover bg-(--color-surface-2)"
           />
           <span className="flex flex-col gap-0.5 min-w-0">
-            <span className="font-bold text-sm text-(--color-text-primary)">
-              {recipient.name}
-            </span>
-            <span className="text-xs text-(--color-text-muted)">
-              @{recipient.username}
-            </span>
+            <span className="font-bold text-sm text-(--color-text-primary)">{recipient.name}</span>
+            <span className="text-xs text-(--color-text-muted)">@{recipient.username}</span>
           </span>
         </div>
       )}

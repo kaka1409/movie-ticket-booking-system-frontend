@@ -13,9 +13,24 @@ interface TypeOption {
 }
 
 const TYPES: TypeOption[] = [
-  { type: "showtime", icon: CalendarDays, labelKey: "tickets.modify.change_showtime", descKey: "tickets.modify.change_showtime_desc" },
-  { type: "seats", icon: Armchair, labelKey: "tickets.modify.change_seats", descKey: "tickets.modify.change_seats_desc" },
-  { type: "both", icon: ArrowUpRight, labelKey: "tickets.modify.change_both", descKey: "tickets.modify.change_both_desc" },
+  {
+    type: "showtime",
+    icon: CalendarDays,
+    labelKey: "tickets.modify.change_showtime",
+    descKey: "tickets.modify.change_showtime_desc",
+  },
+  {
+    type: "seats",
+    icon: Armchair,
+    labelKey: "tickets.modify.change_seats",
+    descKey: "tickets.modify.change_seats_desc",
+  },
+  {
+    type: "both",
+    icon: ArrowUpRight,
+    labelKey: "tickets.modify.change_both",
+    descKey: "tickets.modify.change_both_desc",
+  },
 ];
 
 export default function TypeCards() {
@@ -30,7 +45,8 @@ export default function TypeCards() {
       {TYPES.map(({ type, icon: Icon, labelKey, descKey }) => {
         const selected = modificationType === type;
         return (
-          <button type="button"
+          <button
+            type="button"
             key={type}
             onClick={() => setModificationType(type)}
             className={`w-full flex items-center gap-4 px-4 py-4 rounded-2xl border transition-all duration-150 active:scale-[0.99] text-left ${
@@ -51,16 +67,12 @@ export default function TypeCards() {
             <div className="flex-1 min-w-0">
               <p
                 className={`font-bold text-sm ${
-                  selected
-                    ? "text-(--color-text-primary)"
-                    : "text-(--color-text-secondary)"
+                  selected ? "text-(--color-text-primary)" : "text-(--color-text-secondary)"
                 }`}
               >
                 {translate(labelKey)}
               </p>
-              <p className="text-xs text-(--color-text-muted) mt-0.5">
-                {translate(descKey)}
-              </p>
+              <p className="text-xs text-(--color-text-muted) mt-0.5">{translate(descKey)}</p>
             </div>
             <div
               className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all duration-150 ${

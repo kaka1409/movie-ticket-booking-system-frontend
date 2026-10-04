@@ -46,9 +46,7 @@ export default function ComboCard({ item }: { item: ComboItem }) {
             <h3 className="font-bold text-base text-(--color-text-primary) leading-snug mb-1">
               {item.name}
             </h3>
-            <p className="text-xs text-(--color-text-muted) leading-relaxed">
-              {item.description}
-            </p>
+            <p className="text-xs text-(--color-text-muted) leading-relaxed">{item.description}</p>
           </div>
 
           <div className="flex items-center justify-between">

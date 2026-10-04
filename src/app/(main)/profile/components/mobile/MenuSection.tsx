@@ -10,13 +10,7 @@ interface MenuItem {
   href: string;
 }
 
-export default function MenuSection({
-  labelKey,
-  items,
-}: {
-  labelKey: string;
-  items: MenuItem[];
-}) {
+export default function MenuSection({ labelKey, items }: { labelKey: string; items: MenuItem[] }) {
   const { translate } = useLocale();
 
   return (

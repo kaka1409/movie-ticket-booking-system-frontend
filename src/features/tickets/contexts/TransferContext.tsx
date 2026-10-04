@@ -22,7 +22,7 @@ export function TransferProvider({ children }: { children: ReactNode }) {
 
   const toggleSeat = useCallback((label: string) => {
     setSelectedSeats((prev) =>
-      prev.includes(label) ? prev.filter((seat) => seat !== label) : [...prev, label]
+      prev.includes(label) ? prev.filter((seat) => seat !== label) : [...prev, label],
     );
   }, []);
 
@@ -36,7 +36,7 @@ export function TransferProvider({ children }: { children: ReactNode }) {
       transferSnacks,
       setTransferSnacks,
     }),
-    [selectedSeats, toggleSeat, recipient, transferSnacks]
+    [selectedSeats, toggleSeat, recipient, transferSnacks],
   );
 
   return <TransferContext.Provider value={value}>{children}</TransferContext.Provider>;

@@ -10,11 +10,7 @@ import FailActions from "./components/mobile/FailActions";
 // Desktop components
 import DesktopFailContent from "./components/desktop/FailContent";
 
-export default async function FailPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+export default async function FailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const movie = await getMovieBySlug(slug);
 

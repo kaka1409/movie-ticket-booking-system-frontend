@@ -12,11 +12,7 @@ import BottomBar from "./components/mobile/BottomBar";
 // Desktop components
 import DesktopCredentialsContent from "./components/desktop/CredentialsContent";
 
-export default async function CredentialsPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+export default async function CredentialsPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const movie = await getMovieBySlug(slug);
 

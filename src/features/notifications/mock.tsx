@@ -7,8 +7,8 @@ export const INITIAL_NOTIFS: Notification[] = [
     title: "Booking Confirmed!",
     message: (
       <>
-        Your premium tickets for <strong>Dune: Part Two</strong> are ready.
-        View your seating details.
+        Your premium tickets for <strong>Dune: Part Two</strong> are ready. View your seating
+        details.
       </>
     ),
     time: "2 MINS AGO",
@@ -31,8 +31,7 @@ export const INITIAL_NOTIFS: Notification[] = [
     title: "Movie Reminder",
     message: (
       <strong>
-        The Batman: Echoes starts in 2 hours. Don{"'"}t forget to order your snacks
-        ahead of time!
+        The Batman: Echoes starts in 2 hours. Don{"'"}t forget to order your snacks ahead of time!
       </strong>
     ),
     time: "1 HOUR AGO",

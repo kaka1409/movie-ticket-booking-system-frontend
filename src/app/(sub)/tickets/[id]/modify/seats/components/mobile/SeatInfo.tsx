@@ -11,9 +11,7 @@ export default function SeatInfo() {
     <section className="px-4 py-3 rounded-2xl bg-(--color-surface) border border-(--color-border)">
       <div className="flex items-center justify-between">
         <div>
-          <p className="font-bold text-sm text-(--color-text-primary)">
-            {ticket.movie}
-          </p>
+          <p className="font-bold text-sm text-(--color-text-primary)">{ticket.movie}</p>
           <p className="text-xs text-(--color-text-muted) mt-0.5">
             {ticket.cinema} · {ticket.room}
           </p>

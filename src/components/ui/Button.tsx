@@ -8,8 +8,7 @@ type ButtonSize = "sm" | "md" | "lg";
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary: "bg-(--color-gold) text-[#0F0F0F] shadow-[--shadow-glow]",
-  outline:
-    "border border-(--color-gold) text-(--color-gold) bg-transparent",
+  outline: "border border-(--color-gold) text-(--color-gold) bg-transparent",
   loadMore:
     "border border-(--color-border) bg-(--color-surface) text-(--color-gold-light) hover:border-(--color-gold)/40 hover:text-(--color-gold)",
 };

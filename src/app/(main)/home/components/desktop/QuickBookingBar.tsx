@@ -21,14 +21,7 @@ interface SelectColProps {
   hint?: string;
 }
 
-const SelectCol: React.FC<SelectColProps> = ({
-  icon,
-  label,
-  value,
-  onChange,
-  options,
-  hint,
-}) => (
+const SelectCol: React.FC<SelectColProps> = ({ icon, label, value, onChange, options, hint }) => (
   <div className="flex flex-1 flex-col gap-1">
     <span className="flex items-center gap-1.5 text-[10px] font-bold tracking-widest uppercase text-(--color-gold)">
       {icon} {label}
@@ -58,9 +51,7 @@ const SelectCol: React.FC<SelectColProps> = ({
   </div>
 );
 
-const Divider = () => (
-  <div className="mt-4 w-px self-stretch bg-(--color-border)" />
-);
+const Divider = () => <div className="mt-4 w-px self-stretch bg-(--color-border)" />;
 
 export default function QuickBookingBar({
   movies,
@@ -82,16 +73,13 @@ export default function QuickBookingBar({
 
   const selectedCinema = useMemo(
     () => cinemas.find((c) => String(c.id) === cinemaId),
-    [cinemas, cinemaId]
+    [cinemas, cinemaId],
   );
 
-  const availableShowtimes = useMemo(
-    () => selectedCinema?.showtimes ?? [],
-    [selectedCinema]
-  );
+  const availableShowtimes = useMemo(() => selectedCinema?.showtimes ?? [], [selectedCinema]);
 
   const [selectedTime, setSelectedTime] = useState(
-    availableShowtimes.find((s) => s.available)?.time ?? ""
+    availableShowtimes.find((s) => s.available)?.time ?? "",
   );
 
   // When cinema changes, update selectedTime if current time is not available
@@ -118,9 +106,7 @@ export default function QuickBookingBar({
 
   return (
     <section className="mx-auto max-w-7xl px-8 pt-4 pb-2" aria-label="Quick Booking Bar">
-      <div
-        className="relative z-10 rounded-(--radius-lg) border border-(--color-border) bg-(--color-surface) px-7 pb-5 pt-5 shadow-lg"
-      >
+      <div className="relative z-10 rounded-(--radius-lg) border border-(--color-border) bg-(--color-surface) px-7 pb-5 pt-5 shadow-lg">
         <div className="mb-5 flex items-start gap-6">
           {/* Movie Select */}
           <SelectCol
@@ -188,9 +174,7 @@ export default function QuickBookingBar({
               >
                 −
               </button>
-              <span className="min-w-5 text-center text-sm font-bold text-white">
-                {tickets}
-              </span>
+              <span className="min-w-5 text-center text-sm font-bold text-white">{tickets}</span>
               <button
                 type="button"
                 onClick={() => setTickets((prev) => Math.min(8, prev + 1))}

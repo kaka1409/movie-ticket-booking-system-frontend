@@ -20,16 +20,11 @@ export default function StepBar({ current }: { current: number }) {
       </div>
       <div className="flex gap-1.5">
         {BOOKING_STEP_KEYS.map((_, i) => (
-          <div
-            key={i}
-            className="flex-1 h-1 rounded-full overflow-hidden bg-(--color-border)"
-          >
+          <div key={i} className="flex-1 h-1 rounded-full overflow-hidden bg-(--color-border)">
             {i < current && (
               <div
                 className={`h-full rounded-full w-full ${
-                  i === current - 1
-                    ? "bg-(--color-gold)"
-                    : "bg-(--color-gold-dark)"
+                  i === current - 1 ? "bg-(--color-gold)" : "bg-(--color-gold-dark)"
                 }`}
               />
             )}

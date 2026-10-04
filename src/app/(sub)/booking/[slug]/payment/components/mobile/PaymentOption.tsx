@@ -11,7 +11,8 @@ export default function PaymentOption({ method }: { method: PaymentMethod }) {
   const { imageSrc } = method;
 
   return (
-    <button type="button"
+    <button
+      type="button"
       onClick={() => setSelectedMethod(method.id)}
       aria-pressed={selected}
       className={`w-full flex items-center gap-4 px-4 py-4 rounded-2xl border transition-all duration-150 active:scale-[0.99] text-left ${
@@ -31,38 +32,23 @@ export default function PaymentOption({ method }: { method: PaymentMethod }) {
       </div>
 
       <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 bg-(--color-surface-2) overflow-hidden">
-        <Image
-          src={imageSrc}
-          alt={method.name}
-          width={28}
-          height={28}
-          className="object-contain"
-        />
+        <Image src={imageSrc} alt={method.name} width={28} height={28} className="object-contain" />
       </div>
 
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
           <span
             className={`font-bold text-sm ${
-              selected
-                ? "text-(--color-text-primary)"
-                : "text-(--color-text-secondary)"
+              selected ? "text-(--color-text-primary)" : "text-(--color-text-secondary)"
             }`}
           >
             {method.name}
           </span>
         </div>
-        <p className="text-xs text-(--color-text-muted) mt-0.5">
-          {method.description}
-        </p>
+        <p className="text-xs text-(--color-text-muted) mt-0.5">{method.description}</p>
       </div>
 
-      {selected && (
-        <CheckCircle2
-          size={18}
-          className="text-(--color-gold) flex-shrink-0"
-        />
-      )}
+      {selected && <CheckCircle2 size={18} className="text-(--color-gold) flex-shrink-0" />}
     </button>
   );
 }

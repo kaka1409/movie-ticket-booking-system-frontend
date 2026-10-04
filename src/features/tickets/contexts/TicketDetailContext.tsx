@@ -20,9 +20,12 @@ export function TicketDetailProvider({
   const transfer = "transfer" in ticket ? ticket.transfer : undefined;
 
   return (
-    <TicketDetailContext.Provider value={{
-      ticket, transfer
-    }}>
+    <TicketDetailContext.Provider
+      value={{
+        ticket,
+        transfer,
+      }}
+    >
       {children}
     </TicketDetailContext.Provider>
   );

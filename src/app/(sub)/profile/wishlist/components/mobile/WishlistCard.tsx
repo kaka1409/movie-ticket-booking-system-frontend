@@ -37,9 +37,7 @@ export default function WishlistCard({ movie }: { movie: Movie }) {
               </Badge>
             </div>
 
-            <h2 className="text-2xl font-bold text-(--color-text-secondary)">
-              {movie.title}
-            </h2>
+            <h2 className="text-2xl font-bold text-(--color-text-secondary)">{movie.title}</h2>
 
             <div className="mt-1 mb-4 flex items-center gap-1.5">
               <Star className="h-4 w-4 fill-(--color-gold) text-(--color-gold)" />
@@ -54,15 +52,17 @@ export default function WishlistCard({ movie }: { movie: Movie }) {
       {/* Heart toggle */}
       <button
         type="button"
-        aria-label={liked ? translate("profile.wishlist.remove_wishlist") : translate("profile.wishlist.add_wishlist")}
+        aria-label={
+          liked
+            ? translate("profile.wishlist.remove_wishlist")
+            : translate("profile.wishlist.add_wishlist")
+        }
         onClick={() => toggleWishlist(movie.id)}
         className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full bg-black/50 backdrop-blur-sm z-10"
       >
         <Heart
           className={`h-5 w-5 ${
-            liked
-              ? "fill-pink-400 text-pink-400"
-              : "fill-transparent text-white"
+            liked ? "fill-pink-400 text-pink-400" : "fill-transparent text-white"
           }`}
         />
       </button>

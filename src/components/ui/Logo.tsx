@@ -8,13 +8,6 @@ export default function Logo({ size }: { size?: "sm" | "md" | "lg" }) {
     lg: 80,
   };
   const logoSize = sizeMap[size ?? "md"];
-  
-  return (
-    <Image
-      src={logo}
-      alt="Logo"
-      width={logoSize}
-      height={logoSize}
-    />
-  );
+
+  return <Image src={logo} alt="Logo" width={logoSize} height={logoSize} />;
 }

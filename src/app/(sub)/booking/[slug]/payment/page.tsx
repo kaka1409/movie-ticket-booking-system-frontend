@@ -16,11 +16,7 @@ import BottomBar from "./components/mobile/BottomBar";
 // Desktop components
 import DesktopPaymentContent from "./components/desktop/PaymentContent";
 
-export default async function PaymentPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+export default async function PaymentPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const movie = await getMovieBySlug(slug);
 

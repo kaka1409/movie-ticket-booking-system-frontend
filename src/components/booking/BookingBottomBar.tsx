@@ -64,7 +64,8 @@ export default function BookingBottomBar({
 
     if (onCtaClick) {
       return (
-        <button type="button"
+        <button
+          type="button"
           onClick={onCtaClick}
           disabled={!effectivelyEnabled || isLoading}
           className={effectivelyEnabled ? activeClasses : disabledClasses}
@@ -108,9 +109,7 @@ export default function BookingBottomBar({
                   </p>
                 )}
                 {selectionInfo.subLabel && (
-                  <p className="text-xs text-(--color-text-muted)">
-                    {selectionInfo.subLabel}
-                  </p>
+                  <p className="text-xs text-(--color-text-muted)">{selectionInfo.subLabel}</p>
                 )}
               </div>
               {selectionInfo.secondaryLabel && (
@@ -124,7 +123,8 @@ export default function BookingBottomBar({
                     </p>
                   </div>
                   {selectionInfo.showClearButton && selectionInfo.onClear && (
-                    <button type="button"
+                    <button
+                      type="button"
                       onClick={selectionInfo.onClear}
                       className="w-7 h-7 rounded-full flex items-center justify-center bg-(--color-surface-2) text-(--color-text-muted)"
                       aria-label="Clear selection"
@@ -156,9 +156,7 @@ export default function BookingBottomBar({
               hasTotal ? "text-(--color-gold)" : "text-(--color-text-muted)"
             }`}
           >
-            {totalInfo.amount !== undefined
-              ? formatVND(totalInfo.amount)
-              : "—"}
+            {totalInfo.amount !== undefined ? formatVND(totalInfo.amount) : "—"}
           </p>
         </div>
       )}

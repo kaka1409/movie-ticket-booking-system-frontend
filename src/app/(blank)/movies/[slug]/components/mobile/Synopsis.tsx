@@ -12,19 +12,16 @@ export default function Synopsis() {
   const SHORT_LIMIT = 160;
   const isLong = movie.synopsis.length > SHORT_LIMIT;
   const displayText =
-    !isLong || expanded
-      ? movie.synopsis
-      : movie.synopsis.slice(0, SHORT_LIMIT) + "…";
+    !isLong || expanded ? movie.synopsis : movie.synopsis.slice(0, SHORT_LIMIT) + "…";
 
   return (
     <section className="px-4">
-      <SectionHeader variant="goldBar">
-        {translate("movies.detail.synopsis")}
-      </SectionHeader>
+      <SectionHeader variant="goldBar">{translate("movies.detail.synopsis")}</SectionHeader>
       <p className="text-(--color-text-secondary) text-sm leading-relaxed">
         {displayText}
         {isLong && (
-          <button type="button"
+          <button
+            type="button"
             className="text-(--color-gold) font-bold ml-1 hover:underline"
             onClick={() => setExpanded((v) => !v)}
           >

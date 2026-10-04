@@ -55,9 +55,5 @@ function FailReason() {
 
   const message = REASONS[reason ?? ""] ?? translate("booking.status.failed.reason_unknown");
 
-  return (
-    <p className="text-sm text-white/60 leading-relaxed max-w-xs mx-auto">
-      {message}
-    </p>
-  );
+  return <p className="text-sm text-white/60 leading-relaxed max-w-xs mx-auto">{message}</p>;
 }

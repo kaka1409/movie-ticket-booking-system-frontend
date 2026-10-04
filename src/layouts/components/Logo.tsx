@@ -10,11 +10,7 @@ interface LogoProps {
   href?: string;
 }
 
-export default function Logo({
-  size = "sm",
-  tagline = false,
-  href = "/",
-}: LogoProps) {
+export default function Logo({ size = "sm", tagline = false, href = "/" }: LogoProps) {
   const { translate } = useLocale();
   const dimensions = size === "sm" ? 20 : 32;
 

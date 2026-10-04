@@ -15,13 +15,7 @@ export default function MovieSummary({ movie }: { movie: Movie }) {
         style={{ aspectRatio: "2/3" }}
       >
         {movie.src ? (
-          <Image
-            src={movie.src}
-            alt={movie.title}
-            fill
-            sizes="64px"
-            className="object-cover"
-          />
+          <Image src={movie.src} alt={movie.title} fill sizes="64px" className="object-cover" />
         ) : (
           <span className="text-[8px] font-black uppercase tracking-tight leading-tight text-(--color-text-muted)">
             {movie.title}
@@ -31,9 +25,7 @@ export default function MovieSummary({ movie }: { movie: Movie }) {
 
       {/* Info */}
       <div className="flex-1 min-w-0">
-        <h2 className="font-bold text-base mb-1 text-(--color-text-primary)">
-          {movie.title}
-        </h2>
+        <h2 className="font-bold text-base mb-1 text-(--color-text-primary)">{movie.title}</h2>
         <p className="flex items-center gap-1.5 text-xs mb-2 text-(--color-text-muted)">
           <Clock size={11} />
           {movie.duration} {translate("booking.min")}

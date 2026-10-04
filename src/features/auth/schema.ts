@@ -1,9 +1,5 @@
 import { z } from "zod";
-import {
-  PASSWORD_UPPERCASE,
-  PASSWORD_NUMBER,
-  PASSWORD_SPECIAL,
-} from "@/libs/zod";
+import { PASSWORD_UPPERCASE, PASSWORD_NUMBER, PASSWORD_SPECIAL } from "@/libs/zod";
 
 export function createLoginSchema(t: (key: string) => string) {
   return z.object({
@@ -12,9 +8,7 @@ export function createLoginSchema(t: (key: string) => string) {
       .trim()
       .min(1, t("auth.login.error_email_required"))
       .email(t("auth.login.error_email_invalid")),
-    password: z
-      .string()
-      .min(1, t("auth.login.error_password_required")),
+    password: z.string().min(1, t("auth.login.error_password_required")),
   });
 }
 
@@ -39,13 +33,8 @@ export function createRegisterSchema(t: (key: string) => string) {
         .min(8, t("auth.register.error_password_min"))
         .regex(PASSWORD_UPPERCASE, t("auth.register.error_password_uppercase"))
         .regex(PASSWORD_NUMBER, t("auth.register.error_password_number"))
-        .regex(
-          PASSWORD_SPECIAL,
-          t("auth.register.error_password_special"),
-        ),
-      confirmPassword: z
-        .string()
-        .min(1, t("auth.register.error_confirm_required")),
+        .regex(PASSWORD_SPECIAL, t("auth.register.error_password_special")),
+      confirmPassword: z.string().min(1, t("auth.register.error_confirm_required")),
     })
     .refine((data) => data.password === data.confirmPassword, {
       message: t("auth.register.error_confirm_match"),

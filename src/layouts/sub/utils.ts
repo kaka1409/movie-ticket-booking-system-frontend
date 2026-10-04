@@ -32,10 +32,7 @@ export function getBackHref(pathname: string): string | null {
   return null;
 }
 
-export function getSubTitle(
-  pathname: string,
-  translate?: (key: string) => string,
-): string {
+export function getSubTitle(pathname: string, translate?: (key: string) => string): string {
   const t = translate ?? ((k: string) => k);
 
   switch (true) {
@@ -93,4 +90,3 @@ export function getSubTitle(
       return "";
   }
 }
-

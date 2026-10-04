@@ -49,11 +49,7 @@ export default function FoodItemCard({
         </p>
       </div>
 
-      <Stepper
-        value={qty}
-        onDecrement={onDecrement}
-        onIncrement={onIncrement}
-      />
+      <Stepper value={qty} onDecrement={onDecrement} onIncrement={onIncrement} />
     </div>
   );
 }

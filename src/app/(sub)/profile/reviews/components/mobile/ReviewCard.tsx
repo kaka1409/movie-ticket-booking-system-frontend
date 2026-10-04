@@ -19,21 +19,13 @@ export default function ReviewCard({
       >
         {movie.src && (
           <div className="relative h-28 w-20 flex-shrink-0 overflow-hidden rounded-xl">
-            <Image
-              src={movie.src}
-              alt={movie.title}
-              fill
-              sizes="80px"
-              className="object-cover"
-            />
+            <Image src={movie.src} alt={movie.title} fill sizes="80px" className="object-cover" />
           </div>
         )}
 
         <div className="flex min-w-0 flex-1 flex-col gap-1">
           <div className="flex items-start justify-between gap-2">
-            <h2 className="text-lg font-semibold text-(--color-text-primary)">
-              {movie.title}
-            </h2>
+            <h2 className="text-lg font-semibold text-(--color-text-primary)">{movie.title}</h2>
             <span className="shrink-0 text-xs text-(--color-text-muted)">
               {formatDate(movie.releaseDate)}
             </span>

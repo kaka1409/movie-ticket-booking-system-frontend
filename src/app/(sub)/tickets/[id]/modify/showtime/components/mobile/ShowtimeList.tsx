@@ -6,17 +6,11 @@ import CinemaCard from "@/components/ui/CinemaCard";
 import type { Cinema } from "@/features/booking/types";
 import type { EligibleShowtime } from "@/features/tickets/types";
 
-function groupToCinemas(
-  showtimes: EligibleShowtime[],
-  stripDate?: boolean
-): Cinema[] {
-  const grouped = showtimes.reduce<Record<string, EligibleShowtime[]>>(
-    (acc, showtime) => {
-      (acc[showtime.cinemaId] ??= []).push(showtime);
-      return acc;
-    },
-    {}
-  );
+function groupToCinemas(showtimes: EligibleShowtime[], stripDate?: boolean): Cinema[] {
+  const grouped = showtimes.reduce<Record<string, EligibleShowtime[]>>((acc, showtime) => {
+    (acc[showtime.cinemaId] ??= []).push(showtime);
+    return acc;
+  }, {});
 
   return Object.entries(grouped).map(([id, items]) => ({
     id,
@@ -36,13 +30,8 @@ function groupToCinemas(
 
 export default function ShowtimeList() {
   const { translate } = useLocale();
-  const {
-    showtimes,
-    selectedShowtime,
-    setSelectedShowtime,
-    selectedDate,
-    query,
-  } = useModification();
+  const { showtimes, selectedShowtime, setSelectedShowtime, selectedDate, query } =
+    useModification();
 
   if (showtimes.length === 0) {
     return (
@@ -60,7 +49,7 @@ export default function ShowtimeList() {
     ? showtimes.filter(
         (s) =>
           s.cinemaName.toLowerCase().includes(normalizedQuery) ||
-          s.address.toLowerCase().includes(normalizedQuery)
+          s.address.toLowerCase().includes(normalizedQuery),
       )
     : showtimes;
 
@@ -89,21 +78,18 @@ export default function ShowtimeList() {
   const handleSelect = (
     cinemaId: string,
     time: string,
-    meta?: { room?: string; date?: string; showtimeId?: string }
+    meta?: { room?: string; date?: string; showtimeId?: string },
   ) => {
     const matched = filtered.find(
       (showtime) =>
         showtime.cinemaId === cinemaId &&
         showtime.time === time &&
-        (meta?.date ? showtime.date === meta.date : true)
+        (meta?.date ? showtime.date === meta.date : true),
     );
 
     if (matched) {
       setSelectedShowtime(
-        selectedShowtime?.cinemaId === cinemaId &&
-          selectedShowtime?.time === time
-          ? null
-          : matched
+        selectedShowtime?.cinemaId === cinemaId && selectedShowtime?.time === time ? null : matched,
       );
     }
   };

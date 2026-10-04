@@ -24,9 +24,7 @@ export default function BookTicketCTA() {
 
   return (
     <div className="px-4">
-      <Button onClick={handleClick}>
-        {translate("movies.detail.book_ticket")}
-      </Button>
+      <Button onClick={handleClick}>{translate("movies.detail.book_ticket")}</Button>
     </div>
   );
 }

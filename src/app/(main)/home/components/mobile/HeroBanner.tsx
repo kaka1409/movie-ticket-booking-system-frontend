@@ -33,8 +33,7 @@ export default function HeroBanner({
     [fading, movies.length],
   );
 
-  const goToPreviousSlide = () =>
-    navigateToSlide((index - 1 + movies.length) % movies.length);
+  const goToPreviousSlide = () => navigateToSlide((index - 1 + movies.length) % movies.length);
   const goToNextSlide = () => navigateToSlide((index + 1) % movies.length);
 
   const onTouchStart = (event: React.TouchEvent) => {
@@ -111,10 +110,7 @@ export default function HeroBanner({
               className="h-1.5 rounded-full transition-all duration-300"
               style={{
                 width: movieIndex === index ? 16 : 5,
-                background:
-                  movieIndex === index
-                    ? "var(--color-gold)"
-                    : "rgba(255,255,255,0.2)",
+                background: movieIndex === index ? "var(--color-gold)" : "rgba(255,255,255,0.2)",
               }}
             />
           ))}

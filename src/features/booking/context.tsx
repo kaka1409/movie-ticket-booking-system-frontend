@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  useMemo,
-  type ReactNode,
-} from "react";
+import { createContext, useContext, useState, useCallback, useMemo, type ReactNode } from "react";
 
 /* ─── Types ─────────────────────────────────────────────── */
 
@@ -48,17 +41,12 @@ interface BookingContextType extends BookingState {
     date: string,
     room: string,
     location: string,
-    showtimeId?: string
+    showtimeId?: string,
   ) => void;
   setSeats: (seats: SelectedSeat[]) => void;
   setSnacks: (combos: SelectedCombo[], foods: SelectedFood[]) => void;
   setPaymentMethod: (method: string) => void;
-  setCredentials: (
-    name: string,
-    email: string,
-    phone: string,
-    countryCode: string
-  ) => void;
+  setCredentials: (name: string, email: string, phone: string, countryCode: string) => void;
   startCountdown: () => void;
   resetBooking: () => void;
 }
@@ -99,8 +87,7 @@ export function BookingProvider({
 }: {
   children: ReactNode;
   initialCountdownSeconds?: number;
-  }) {
-  
+}) {
   const { translate } = useLocale();
 
   // Cinema & showtimes
@@ -138,7 +125,7 @@ export function BookingProvider({
       showDate: string,
       screenRoom: string,
       location: string,
-      showtimeId?: string
+      showtimeId?: string,
     ) => {
       setCinemaId(id);
       setCinemaName(name);
@@ -148,32 +135,30 @@ export function BookingProvider({
       setLocation(location);
       setShowtimeId(showtimeId ?? "");
     },
-    []
+    [],
   );
 
   const setSeats = useCallback((seats: SelectedSeat[]) => {
     setSelectedSeats(seats);
   }, []);
 
-  const setSnacks = useCallback((
-    selectedCombos: SelectedCombo[],
-    selectedFoods: SelectedFood[]
-  ) => {
-    setCombos(selectedCombos);
-    setFoods(selectedFoods);
-  }, []);
+  const setSnacks = useCallback(
+    (selectedCombos: SelectedCombo[], selectedFoods: SelectedFood[]) => {
+      setCombos(selectedCombos);
+      setFoods(selectedFoods);
+    },
+    [],
+  );
 
-  const setCredentials = useCallback((
-    name: string,
-    email: string,
-    phone: string,
-    countryCode: string
-  ) => {
-    setContactName(name);
-    setContactEmail(email);
-    setContactPhone(phone);
-    setContactCountryCode(countryCode);
-  }, []);
+  const setCredentials = useCallback(
+    (name: string, email: string, phone: string, countryCode: string) => {
+      setContactName(name);
+      setContactEmail(email);
+      setContactPhone(phone);
+      setContactCountryCode(countryCode);
+    },
+    [],
+  );
 
   const startCountdown = useCallback(() => {
     if (!countdownStarted) {
@@ -218,7 +203,7 @@ export function BookingProvider({
     const total = ticketPrice + snackTotal;
 
     return {
-      // Cinema 
+      // Cinema
       cinemaId,
       showtimeId,
       cinemaName,
@@ -249,7 +234,7 @@ export function BookingProvider({
       contactPhone,
       contactCountryCode,
       setCredentials,
-      
+
       // Payment
       paymentMethod,
       setPaymentMethod,
@@ -260,7 +245,7 @@ export function BookingProvider({
       resetBooking,
     };
   }, [
-    // Cinema 
+    // Cinema
     cinemaId,
     showtimeId,
     cinemaName,
@@ -288,7 +273,7 @@ export function BookingProvider({
     contactPhone,
     contactCountryCode,
     setCredentials,
-    
+
     // Payment
     paymentMethod,
     setPaymentMethod,
@@ -300,9 +285,7 @@ export function BookingProvider({
     initialCountdownSeconds,
   ]);
 
-  return (
-    <BookingContext.Provider value={value}>{children}</BookingContext.Provider>
-  );
+  return <BookingContext.Provider value={value}>{children}</BookingContext.Provider>;
 }
 
 export function useBooking(): BookingContextType {

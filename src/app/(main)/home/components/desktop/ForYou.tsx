@@ -23,9 +23,7 @@ export default function ForYou({ movies }: { movies: Movie[] }) {
 
   const recommendedMovies = movies.slice(0, 5);
 
-  const greetingName = isAuthenticated && user?.name
-    ? user.name.split(" ")[0].toUpperCase()
-    : null;
+  const greetingName = isAuthenticated && user?.name ? user.name.split(" ")[0].toUpperCase() : null;
 
   return (
     <section
@@ -55,11 +53,7 @@ export default function ForYou({ movies }: { movies: Movie[] }) {
 
         <div className="grid grid-cols-5 gap-4">
           {recommendedMovies.map((movie, index) => (
-            <Link
-              key={movie.id}
-              href={`/movies/${movie.slug}`}
-              className="group block"
-            >
+            <Link key={movie.id} href={`/movies/${movie.slug}`} className="group block">
               <article className="cursor-pointer">
                 {/* Poster */}
                 <div className="relative mb-2.5 aspect-[2/3] w-full overflow-hidden rounded-(--radius-md) border border-(--color-border) bg-(--color-surface-2) transition-all duration-300 group-hover:-translate-y-1 group-hover:border-(--color-gold)/50 group-hover:shadow-lg">

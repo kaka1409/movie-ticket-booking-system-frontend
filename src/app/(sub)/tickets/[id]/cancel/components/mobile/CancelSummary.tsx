@@ -43,12 +43,8 @@ export default function CancelSummary({
             <p className="font-extrabold text-base text-(--color-text-primary) truncate">
               {ticket.movie}
             </p>
-            <p className="text-xs text-white/60 mt-0.5">
-              {ticket.cinema}
-            </p>
-            <p className="text-xs text-white/60">
-              {ticket.datetime}
-            </p>
+            <p className="text-xs text-white/60 mt-0.5">{ticket.cinema}</p>
+            <p className="text-xs text-white/60">{ticket.datetime}</p>
           </div>
         </div>
 
@@ -67,18 +63,14 @@ export default function CancelSummary({
         {/* Price breakdown */}
         <div className="px-4 py-4 space-y-3">
           <div className="flex justify-between text-sm">
-            <span className="text-white/60">
-              {translate("tickets.cancel.ticket_price")}
-            </span>
+            <span className="text-white/60">{translate("tickets.cancel.ticket_price")}</span>
             <span className="font-medium text-(--color-text-primary)">
               {totalSeatPrice > 0 ? formatVND(totalSeatPrice) : "\u20AB0"}
             </span>
           </div>
           {totalSnackPrice > 0 && (
             <div className="flex justify-between text-sm">
-              <span className="text-white/60">
-                {translate("tickets.cancel.snack_price")}
-              </span>
+              <span className="text-white/60">{translate("tickets.cancel.snack_price")}</span>
               <span className="font-medium text-(--color-text-primary)">
                 {formatVND(totalSnackPrice)}
               </span>
@@ -94,14 +86,10 @@ export default function CancelSummary({
             <span className="text-(--color-text-primary)">
               {translate("tickets.cancel.total_paid")}
             </span>
-            <span className="text-(--color-text-primary)">
-              {formatVND(totalPrice)}
-            </span>
+            <span className="text-(--color-text-primary)">{formatVND(totalPrice)}</span>
           </div>
           <div className="flex justify-between text-sm">
-            <span className="text-white/60">
-              {translate("tickets.cancel.cancellation_fee")}
-            </span>
+            <span className="text-white/60">{translate("tickets.cancel.cancellation_fee")}</span>
             <span className="text-(--color-text-primary) font-bold">
               {formatVND(CANCELLATION_FEE)}
             </span>

@@ -9,13 +9,8 @@ import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext
 
 export default function SeatSelector() {
   const { ticket } = useTicketDetail();
-  const {
-    selectedSeats,
-    setSelectedSeats,
-    toggleSeat,
-    transferSnacks,
-    setTransferSnacks,
-  } = useTransfer();
+  const { selectedSeats, setSelectedSeats, toggleSeat, transferSnacks, setTransferSnacks } =
+    useTransfer();
   const { translate } = useLocale();
 
   const seatItems = ticket.seatItems;
@@ -106,9 +101,7 @@ export default function SeatSelector() {
         >
           <span
             className={`flex shrink-0 items-center justify-center w-5 h-5 rounded-md border-2 transition-colors ${
-              transferSnacks
-                ? "border-(--color-gold) bg-(--color-gold)"
-                : "border-(--color-border)"
+              transferSnacks ? "border-(--color-gold) bg-(--color-gold)" : "border-(--color-border)"
             }`}
           >
             {transferSnacks && <Check size={12} className="text-[#0F0F0F]" />}

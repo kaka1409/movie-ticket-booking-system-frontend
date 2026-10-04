@@ -43,7 +43,9 @@ export default function BottomBar() {
   return (
     <BookingBottomBar
       canProceed={canPay}
-      ctaText={isLoading ? translate("booking.payment.processing") : translate("booking.payment.confirm")}
+      ctaText={
+        isLoading ? translate("booking.payment.processing") : translate("booking.payment.confirm")
+      }
       onCtaClick={handleClick}
       isLoading={isLoading}
     />

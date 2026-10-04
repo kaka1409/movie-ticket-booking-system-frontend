@@ -9,13 +9,8 @@ function StepBarSkeleton() {
       </div>
       <div className="flex gap-1.5">
         {Array.from({ length: 5 }).map((_, index) => (
-          <div
-            key={index}
-            className="flex-1 h-1 rounded-full bg-(--color-border)"
-          >
-            {index === 0 && (
-              <div className="h-full rounded-full w-full bg-(--color-gold)" />
-            )}
+          <div key={index} className="flex-1 h-1 rounded-full bg-(--color-border)">
+            {index === 0 && <div className="h-full rounded-full w-full bg-(--color-gold)" />}
           </div>
         ))}
       </div>
@@ -96,10 +91,7 @@ function SeatsStepSkeleton() {
       <div className="px-4 py-4 flex justify-center">
         <div className="grid grid-cols-10 gap-1.5">
           {Array.from({ length: 80 }).map((_, index) => (
-            <Skeleton
-              key={index}
-              className="w-6.5 h-6.5 rounded-sm"
-            />
+            <Skeleton key={index} className="w-6.5 h-6.5 rounded-sm" />
           ))}
         </div>
       </div>

@@ -70,9 +70,7 @@ export default function AvatarEditor({
         onChange={handleFileChange}
       />
 
-      <p className="mt-4 text-xl font-bold text-(--color-text-primary)">
-        {user.name}
-      </p>
+      <p className="mt-4 text-xl font-bold text-(--color-text-primary)">{user.name}</p>
       <p className="text-sm text-(--color-text-secondary)">Member</p>
     </div>
   );

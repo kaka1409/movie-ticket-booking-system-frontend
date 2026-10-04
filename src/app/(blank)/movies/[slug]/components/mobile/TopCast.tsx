@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import Image from "next/image";
 import SectionHeader from "@/components/ui/SectionHeader";
@@ -11,16 +11,11 @@ export default function TopCast() {
 
   return (
     <section className="px-4">
-      <SectionHeader variant="goldBar">
-        {translate("movies.detail.top_cast")}
-      </SectionHeader>
+      <SectionHeader variant="goldBar">{translate("movies.detail.top_cast")}</SectionHeader>
 
       <div className="flex flex-nowrap gap-4 overflow-x-auto scrollbar-hide pb-1">
         {movie.cast.map((actor) => (
-          <div
-            key={actor.name}
-            className="flex flex-col items-center gap-1.5 shrink-0"
-          >
+          <div key={actor.name} className="flex flex-col items-center gap-1.5 shrink-0">
             <div className="w-16 h-16 rounded-full bg-(--color-surface) border border-(--color-border) overflow-hidden">
               <Image
                 src={actor.src}
@@ -33,9 +28,7 @@ export default function TopCast() {
             <p className="text-(--color-text-primary) text-xs font-semibold text-center leading-tight">
               {actor.name}
             </p>
-            <p className="text-(--color-text-muted) text-[10px] text-center">
-              {actor.role}
-            </p>
+            <p className="text-(--color-text-muted) text-[10px] text-center">{actor.role}</p>
           </div>
         ))}
       </div>

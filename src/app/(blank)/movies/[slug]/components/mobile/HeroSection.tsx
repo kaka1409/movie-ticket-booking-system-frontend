@@ -28,7 +28,8 @@ export default function HeroSection() {
       <div className="absolute inset-0 bg-black/25" />
       <div className="absolute inset-0 bg-linear-to-b from-transparent via-transparent to-(--color-bg)" />
 
-      <button type="button"
+      <button
+        type="button"
         className="absolute inset-0 flex items-center justify-center group"
         aria-label={translate("movies.detail.watch_trailer")}
       >
@@ -38,7 +39,8 @@ export default function HeroSection() {
       </button>
 
       <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-4 pt-5">
-        <button type="button"
+        <button
+          type="button"
           onClick={() => router.back()}
           className="w-9 h-9 rounded-full bg-black/40 flex items-center justify-center"
           aria-label={translate("movies.detail.back")}
@@ -50,7 +52,11 @@ export default function HeroSection() {
           type="button"
           onClick={() => toggleWishlist(movie.id)}
           className="w-9 h-9 rounded-full bg-black/40 flex items-center justify-center"
-          aria-label={liked ? translate("movies.detail.remove_wishlist") : translate("movies.detail.add_wishlist")}
+          aria-label={
+            liked
+              ? translate("movies.detail.remove_wishlist")
+              : translate("movies.detail.add_wishlist")
+          }
         >
           <Heart
             size={18}
@@ -80,9 +86,7 @@ export default function HeroSection() {
               {movie.rating}/10
             </span>
             <span className="text-(--color-text-muted) text-xs">•</span>
-            <span className="text-(--color-gold-light) text-xs">
-              {movie.genre}
-            </span>
+            <span className="text-(--color-gold-light) text-xs">{movie.genre}</span>
             <span className="text-(--color-text-muted) text-xs">•</span>
             <span className="flex items-center gap-1 text-(--color-text-secondary) text-xs">
               <Clock size={11} />

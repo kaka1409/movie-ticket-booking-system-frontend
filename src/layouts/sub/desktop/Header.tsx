@@ -24,7 +24,8 @@ export default function Header() {
   return (
     <nav className="sticky top-0 z-50 border-b border-(--color-border) bg-black/92 backdrop-blur-md">
       <div className="mx-auto flex h-15 max-w-7xl items-center gap-8 px-8">
-        <button type="button"
+        <button
+          type="button"
           onClick={handleBack}
           className="flex shrink-0 items-center gap-2 no-underline"
         >
@@ -32,11 +33,7 @@ export default function Header() {
           <Logo size="lg" href="" />
         </button>
 
-        {title && (
-          <h1 className="text-lg font-bold text-(--color-gold-light)">
-            {title}
-          </h1>
-        )}
+        {title && <h1 className="text-lg font-bold text-(--color-gold-light)">{title}</h1>}
       </div>
     </nav>
   );

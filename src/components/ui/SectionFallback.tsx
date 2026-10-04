@@ -23,7 +23,8 @@ export default function SectionFallback({ error }: { error?: ErrorResponse["erro
             {error?.message ?? translate("error.description")}
           </p>
         </div>
-        <button type="button"
+        <button
+          type="button"
           onClick={() => router.refresh()}
           className="
             rounded-(--radius-sm) border border-(--color-gold) px-5 py-2 text-xs font-bold uppercase tracking-widest 

@@ -8,11 +8,5 @@ export default function DatePickerWrapper() {
 
   if (dates.length === 0) return null;
 
-  return (
-    <DatePicker
-      dates={dates}
-      selected={selectedDate}
-      onSelect={setSelectedDate}
-    />
-  );
+  return <DatePicker dates={dates} selected={selectedDate} onSelect={setSelectedDate} />;
 }

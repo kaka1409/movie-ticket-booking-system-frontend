@@ -16,9 +16,7 @@ export default function SuccessActions() {
         mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
       }`}
     >
-      <Button icon={Download}>
-        {translate("booking.status.success.download")}
-      </Button>
+      <Button icon={Download}>{translate("booking.status.success.download")}</Button>
 
       <Link
         href="/"

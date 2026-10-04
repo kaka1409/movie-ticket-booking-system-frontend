@@ -47,9 +47,7 @@ export default function TopCast() {
             <p className="mt-2 text-center text-xs leading-tight font-semibold text-(--color-text-primary) transition-colors group-hover:text-(--color-gold)">
               {actor.name}
             </p>
-            <p className="mt-0.5 text-center text-[10px] text-(--color-text-muted)">
-              {actor.role}
-            </p>
+            <p className="mt-0.5 text-center text-[10px] text-(--color-text-muted)">{actor.role}</p>
           </div>
         ))}
       </div>

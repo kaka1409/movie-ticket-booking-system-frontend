@@ -26,12 +26,7 @@ export default function InputField({
   inputMode?: React.HTMLAttributes<HTMLInputElement>["inputMode"];
 }) {
   return (
-    <FormField
-      icon={icon}
-      disabled={disabled}
-      error={error}
-      rightSlot={rightSlot}
-    >
+    <FormField icon={icon} disabled={disabled} error={error} rightSlot={rightSlot}>
       <input
         type={type}
         value={value}

@@ -17,7 +17,8 @@ export default function CinemaList() {
         <p className="text-sm text-center text-(--color-text-muted)">
           {translate("booking.cinema.no_results")} &ldquo;{query}&rdquo;
         </p>
-        <button type="button"
+        <button
+          type="button"
           onClick={() => setQuery("")}
           className="text-sm font-bold underline underline-offset-2 text-(--color-gold)"
         >

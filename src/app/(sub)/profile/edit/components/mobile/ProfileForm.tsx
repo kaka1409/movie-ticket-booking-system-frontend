@@ -65,17 +65,7 @@ export default function ProfileForm() {
         }
       }
     });
-  }, [
-    hasChanges,
-    isValid,
-    fullName,
-    phone,
-    dob,
-    token,
-    updateUser,
-    router,
-    translate,
-  ]);
+  }, [hasChanges, isValid, fullName, phone, dob, token, updateUser, router, translate]);
 
   const handleCancel = () => {
     router.back();

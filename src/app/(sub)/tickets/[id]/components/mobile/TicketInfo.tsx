@@ -3,7 +3,15 @@
 import Image from "next/image";
 import { useActionState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { MonitorPlay, CalendarDays, Armchair, Popcorn, CreditCard, Clock, Loader2 } from "lucide-react";
+import {
+  MonitorPlay,
+  CalendarDays,
+  Armchair,
+  Popcorn,
+  CreditCard,
+  Clock,
+  Loader2,
+} from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { formatVND } from "@/libs/utils";
@@ -22,7 +30,10 @@ export default function TicketInfo() {
   const router = useRouter();
   const { token } = useAuth();
 
-  const [cancelState, cancelFormAction, isCancelPending] = useActionState(cancelTransfer, initialTransferState);
+  const [cancelState, cancelFormAction, isCancelPending] = useActionState(
+    cancelTransfer,
+    initialTransferState,
+  );
 
   const seatItems = ticket?.seatItems ?? [];
   const hasSnacks = !!ticket?.foodDrink && ticket.foodDrink.length > 0;
@@ -64,9 +75,7 @@ export default function TicketInfo() {
                 </span>
               )}
             </div>
-            <h2 className="text-white font-extrabold text-2xl leading-tight">
-              {ticket.movie}
-            </h2>
+            <h2 className="text-white font-extrabold text-2xl leading-tight">{ticket.movie}</h2>
           </div>
         </div>
 
@@ -106,14 +115,16 @@ export default function TicketInfo() {
               seatItems.reduce<Record<string, typeof seatItems>>((acc, seat) => {
                 (acc[seat.type] ??= []).push(seat);
                 return acc;
-              }, {})
+              }, {}),
             ).map(([type, seats]) => (
               <div key={type} className="space-y-1">
                 <p className="text-sm font-bold text-white">
                   {seats.map((seat) => seat.label).join(", ")}
                 </p>
                 <div className="flex justify-between text-sm">
-                  <span className="text-white">{type} {translate("booking.common.ticket")}</span>
+                  <span className="text-white">
+                    {type} {translate("booking.common.ticket")}
+                  </span>
                   <span className="font-medium text-white">
                     {seats.length}× {formatVND(seats[0].price)}
                   </span>
@@ -180,7 +191,7 @@ export default function TicketInfo() {
             <p className="text-sm text-(--color-text-muted)">
               {translate("tickets.transfer.pending_waiting").replace(
                 "{name}",
-                transfer.recipient.name
+                transfer.recipient.name,
               )}
             </p>
             <button

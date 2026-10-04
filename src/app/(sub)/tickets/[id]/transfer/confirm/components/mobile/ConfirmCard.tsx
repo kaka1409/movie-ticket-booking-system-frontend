@@ -1,14 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import {
-  MonitorPlay,
-  CalendarDays,
-  Armchair,
-  Popcorn,
-  CreditCard,
-  User,
-} from "lucide-react";
+import { MonitorPlay, CalendarDays, Armchair, Popcorn, CreditCard, User } from "lucide-react";
 import type { Recipient } from "@/features/tickets/types";
 import { useLocale } from "@/contexts/LocaleContext";
 import { formatVND } from "@/libs/utils";
@@ -30,9 +23,7 @@ export default function ConfirmCard({
   const { ticket } = useTicketDetail();
   const { translate } = useLocale();
 
-  const selectedSeats = ticket.seatItems.filter((seat) =>
-    seatLabels.includes(seat.label)
-  );
+  const selectedSeats = ticket.seatItems.filter((seat) => seatLabels.includes(seat.label));
   const totalSeats = ticket.seatItems.length;
   const showSnacks = transferSnacks && !!ticket.foodDrink && ticket.foodDrink.length > 0;
 
@@ -90,14 +81,13 @@ export default function ConfirmCard({
           <div className="space-y-3">
             <p className="flex items-center gap-1.5 text-[9px] font-black tracking-[0.16em] uppercase text-white/60">
               <Armchair size={10} />
-              {translate("tickets.transfer.seats_label")} (
-              {selectedSeats.length}/{totalSeats})
+              {translate("tickets.transfer.seats_label")} ({selectedSeats.length}/{totalSeats})
             </p>
             {Object.entries(
               selectedSeats.reduce<Record<string, typeof selectedSeats>>((acc, seat) => {
                 (acc[seat.type] ??= []).push(seat);
                 return acc;
-              }, {})
+              }, {}),
             ).map(([type, seats]) => (
               <div key={type} className="space-y-1">
                 <p className="text-sm font-bold text-white">
@@ -176,9 +166,7 @@ export default function ConfirmCard({
               <span className="font-bold text-sm text-(--color-text-primary)">
                 {recipient.name}
               </span>
-              <span className="text-xs text-(--color-text-muted)">
-                @{recipient.username}
-              </span>
+              <span className="text-xs text-(--color-text-muted)">@{recipient.username}</span>
             </span>
           </div>
         </div>

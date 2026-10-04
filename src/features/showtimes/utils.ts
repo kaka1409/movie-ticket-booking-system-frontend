@@ -13,15 +13,11 @@ function toLocaleTag(locale: "en" | "vn"): string {
 }
 
 function toMonthLabel(date: Date, locale: "en" | "vn"): string {
-  return date
-    .toLocaleDateString(toLocaleTag(locale), { month: "short" })
-    .toUpperCase();
+  return date.toLocaleDateString(toLocaleTag(locale), { month: "short" }).toUpperCase();
 }
 
 function toWeekdayLabel(date: Date, locale: "en" | "vn"): string {
-  return date
-    .toLocaleDateString(toLocaleTag(locale), { weekday: "short" })
-    .toUpperCase();
+  return date.toLocaleDateString(toLocaleTag(locale), { weekday: "short" }).toUpperCase();
 }
 
 /* Backend sends the real dates that have showtimes (YYYY-MM-DD + day + month). */
@@ -35,7 +31,9 @@ export function toShowtimeDateChips(
     return {
       label: toMonthLabel(new Date(year, month - 1, day), locale),
       day: String(record.day),
-      weekday: (record.dayOfWeek || toWeekdayLabel(new Date(year, month - 1, day), locale)).toUpperCase(),
+      weekday: (
+        record.dayOfWeek || toWeekdayLabel(new Date(year, month - 1, day), locale)
+      ).toUpperCase(),
       value: record.date,
       disabled: !record.hasShowtimes,
     };

@@ -11,11 +11,7 @@ import SuccessActions from "./components/mobile/SuccessActions";
 // Desktop components
 import DesktopSuccessContent from "./components/desktop/SuccessContent";
 
-export default async function SuccessPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+export default async function SuccessPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const movie = await getMovieBySlug(slug);
 

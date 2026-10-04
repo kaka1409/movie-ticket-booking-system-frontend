@@ -32,13 +32,10 @@ export default function QuickBooking({
 
   const selectedCinema = useMemo(
     () => cinemas.find((cinema) => cinema.id === selectedCinemaId),
-    [cinemas, selectedCinemaId]
+    [cinemas, selectedCinemaId],
   );
 
-  const availableShowtimes = useMemo(
-    () => selectedCinema?.showtimes ?? [],
-    [selectedCinema]
-  );
+  const availableShowtimes = useMemo(() => selectedCinema?.showtimes ?? [], [selectedCinema]);
 
   if (error) return <SectionFallback error={error} />;
 
@@ -53,7 +50,8 @@ export default function QuickBooking({
       className="mx-(--space-md) rounded-(--radius-sm) p-(--space-md) bg-(--color-surface)"
       aria-labelledby="qb-heading"
     >
-      <button type="button"
+      <button
+        type="button"
         className="flex w-full items-center justify-between"
         onClick={() => setIsExpanded((previousValue) => !previousValue)}
         aria-expanded={isExpanded}
@@ -102,7 +100,8 @@ export default function QuickBooking({
               </span>
               <div className="flex gap-(--space-sm)">
                 {firstThreeDates.map((dateOption) => (
-                  <button type="button"
+                  <button
+                    type="button"
                     key={dateOption.value}
                     className={`rounded-(--radius-sm) px-(--space-md) py-1.5 text-xs font-semibold transition-colors ${
                       selectedDate === dateOption.value
@@ -150,15 +149,16 @@ export default function QuickBooking({
               </span>
               <div className="flex flex-wrap gap-(--space-sm)">
                 {availableShowtimes.map((showtime) => (
-                  <button type="button"
+                  <button
+                    type="button"
                     key={showtime.time}
                     disabled={!showtime.available}
                     className={`rounded-(--radius-sm) px-(--space-md) py-1.5 text-xs font-semibold transition-colors ${
                       !showtime.available
                         ? "border border-transparent bg-(--color-surface) text-(--color-text-muted) cursor-not-allowed opacity-40"
                         : selectedTime === showtime.time
-                        ? "border border-(--color-gold) bg-(--color-bg) text-(--color-gold)"
-                        : "border border-transparent bg-(--color-surface) text-white"
+                          ? "border border-(--color-gold) bg-(--color-bg) text-(--color-gold)"
+                          : "border border-transparent bg-(--color-surface) text-white"
                     }`}
                     onClick={() => showtime.available && setSelectedTime(showtime.time)}
                     aria-pressed={selectedTime === showtime.time}
@@ -178,7 +178,8 @@ export default function QuickBooking({
                 {translate("home.quick_booking.book")}
               </Link>
             ) : (
-              <button type="button"
+              <button
+                type="button"
                 disabled
                 className="w-full rounded-(--radius-sm) bg-(--color-surface) py-3 text-center text-sm font-bold tracking-widest text-(--color-text-muted) border border-(--color-border) cursor-not-allowed"
               >

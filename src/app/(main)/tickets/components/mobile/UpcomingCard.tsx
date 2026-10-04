@@ -33,9 +33,7 @@ export default function UpcomingCard({ ticket }: { ticket: UpcomingTicket }) {
           </span>
           <span
             className={`absolute top-2 left-2 px-2 py-0.5 rounded text-[10px] font-black ${
-              failed
-                ? "bg-red-500 text-white"
-                : "bg-green-500 text-white"
+              failed ? "bg-red-500 text-white" : "bg-green-500 text-white"
             }`}
           >
             {failed ? translate("tickets.failed") : translate("tickets.success")}
@@ -44,9 +42,7 @@ export default function UpcomingCard({ ticket }: { ticket: UpcomingTicket }) {
 
         {/* Info */}
         <div className="flex-1 min-w-0 pt-1">
-          <h3 className="text-white font-bold text-lg leading-tight mb-2">
-            {ticket.movie}
-          </h3>
+          <h3 className="text-white font-bold text-lg leading-tight mb-2">{ticket.movie}</h3>
 
           <div className="space-y-1.5 mb-3">
             <p className="flex items-center gap-2 text-sm ">
@@ -64,7 +60,8 @@ export default function UpcomingCard({ ticket }: { ticket: UpcomingTicket }) {
               {ticket.format}
             </span>
             <span className="px-3 py-1 rounded-full text-[11px] font-bold bg-(--color-surface-2) text-(--color-text-secondary) border border-(--color-border)">
-              {translate("tickets.seats_label")}{ticket.seatItems.map((seat) => seat.label).join(", ")}
+              {translate("tickets.seats_label")}
+              {ticket.seatItems.map((seat) => seat.label).join(", ")}
             </span>
           </div>
         </div>
@@ -81,15 +78,16 @@ export default function UpcomingCard({ ticket }: { ticket: UpcomingTicket }) {
           >
             {failed ? translate("tickets.failed") : translate("tickets.booking_id")}
           </p>
-          <p
-            className={`font-extrabold text-xl text-(--color-text-primary)`}
-          >
+          <p className={`font-extrabold text-xl text-(--color-text-primary)`}>
             {failed ? ticket.totalPrice : ticket.id}
           </p>
         </div>
 
         {failed ? (
-          <button type="button" className="flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all duration-150 active:scale-[0.97] bg-(--color-gold) text-[#0F0F0F] shadow-(--shadow-glow)">
+          <button
+            type="button"
+            className="flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all duration-150 active:scale-[0.97] bg-(--color-gold) text-[#0F0F0F] shadow-(--shadow-glow)"
+          >
             <RefreshCw size={15} />
             {translate("tickets.pay_now")}
           </button>

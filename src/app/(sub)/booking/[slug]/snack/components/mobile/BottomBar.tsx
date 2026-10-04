@@ -11,14 +11,8 @@ export default function BottomBar() {
   const { combos, foodItems, comboQty, foodQty } = useSnackSelection();
   const { translate } = useLocale();
 
-  const comboTotal = combos.reduce(
-    (sum, c) => sum + c.price * (comboQty[c.id] ?? 0),
-    0
-  );
-  const foodTotal = foodItems.reduce(
-    (sum, f) => sum + f.price * (foodQty[f.id] ?? 0),
-    0
-  );
+  const comboTotal = combos.reduce((sum, c) => sum + c.price * (comboQty[c.id] ?? 0), 0);
+  const foodTotal = foodItems.reduce((sum, f) => sum + f.price * (foodQty[f.id] ?? 0), 0);
   const total = comboTotal + foodTotal;
 
   const totalItems =

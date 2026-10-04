@@ -13,13 +13,8 @@ import PhoneField from "./PhoneField";
 export default function ContactForm() {
   const { setIsValid } = useCredentials();
   const { translate } = useLocale();
-  const {
-    contactName,
-    contactEmail,
-    contactPhone,
-    contactCountryCode,
-    setCredentials,
-  } = useBooking();
+  const { contactName, contactEmail, contactPhone, contactCountryCode, setCredentials } =
+    useBooking();
 
   const [name, setName] = useState(contactName);
   const [email, setEmail] = useState(contactEmail);
@@ -43,14 +38,19 @@ export default function ContactForm() {
 
   return (
     <section className="px-4 space-y-4">
-      <h2 className="font-bold text-xl text-(--color-text-primary)">{translate("booking.credentials.your_details")}</h2>
+      <h2 className="font-bold text-xl text-(--color-text-primary)">
+        {translate("booking.credentials.your_details")}
+      </h2>
 
       <div>
         <FieldLabel>{translate("booking.credentials.full_name")}</FieldLabel>
         <TextInput
           id="full-name"
           value={name}
-          onChange={(v) => { setName(v); setTouched(true); }}
+          onChange={(v) => {
+            setName(v);
+            setTouched(true);
+          }}
           placeholder={translate("booking.credentials.name_placeholder")}
           icon={User}
           autoComplete="name"
@@ -64,7 +64,10 @@ export default function ContactForm() {
           id="email"
           type="email"
           value={email}
-          onChange={(v) => { setEmail(v); setTouched(true); }}
+          onChange={(v) => {
+            setEmail(v);
+            setTouched(true);
+          }}
           placeholder={translate("booking.credentials.email_placeholder")}
           icon={Mail}
           autoComplete="email"
@@ -79,7 +82,10 @@ export default function ContactForm() {
           countryCode={countryCode}
           onCountryChange={setCountryCode}
           phone={phone}
-          onPhoneChange={(v) => { setPhone(v); setTouched(true); }}
+          onPhoneChange={(v) => {
+            setPhone(v);
+            setTouched(true);
+          }}
           error={showErrors ? errors.phone?.[0] : undefined}
         />
       </div>

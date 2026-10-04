@@ -3,10 +3,7 @@ import { isValidPhone } from "@/libs/zod";
 
 export function createContactSchema(t: (key: string) => string) {
   return z.object({
-    name: z
-      .string()
-      .trim()
-      .min(1, t("booking.credentials.error_name_required")),
+    name: z.string().trim().min(1, t("booking.credentials.error_name_required")),
     email: z
       .string()
       .trim()
@@ -16,10 +13,7 @@ export function createContactSchema(t: (key: string) => string) {
       .string()
       .trim()
       .min(1, t("booking.credentials.error_phone_required"))
-      .refine(
-        (val) => isValidPhone(val),
-        t("booking.credentials.error_phone_invalid"),
-      ),
+      .refine((val) => isValidPhone(val), t("booking.credentials.error_phone_invalid")),
   });
 }
 

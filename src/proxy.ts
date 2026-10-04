@@ -7,8 +7,7 @@ export function proxy(request: NextRequest): NextResponse {
   const currentPath = request.nextUrl.pathname + request.nextUrl.search;
   const isProtectedPath = PROTECTED_PREFIXES.some(
     (prefix) =>
-      request.nextUrl.pathname === prefix ||
-      request.nextUrl.pathname.startsWith(`${prefix}/`),
+      request.nextUrl.pathname === prefix || request.nextUrl.pathname.startsWith(`${prefix}/`),
   );
 
   if (isProtectedPath && !request.cookies.get("refreshToken")) {
@@ -21,11 +20,5 @@ export function proxy(request: NextRequest): NextResponse {
 }
 
 export const config = {
-  matcher: [
-    "/notifications",
-    "/tickets/:path*",
-    "/booking/:path*",
-    "/profile",
-    "/profile/:path*",
-  ],
+  matcher: ["/notifications", "/tickets/:path*", "/booking/:path*", "/profile", "/profile/:path*"],
 };

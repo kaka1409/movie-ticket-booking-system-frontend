@@ -17,8 +17,8 @@ export default function Card({
         error
           ? "border border-red-500/20 shadow-[0_0_0_1px_rgba(239,68,68,0.06)]"
           : selected
-          ? "border border-(--color-gold) shadow-[0_0_0_1px_rgba(255,204,77,0.15)]"
-          : "border border-(--color-border)"
+            ? "border border-(--color-gold) shadow-[0_0_0_1px_rgba(255,204,77,0.15)]"
+            : "border border-(--color-border)"
       } ${className}`}
     >
       {children}

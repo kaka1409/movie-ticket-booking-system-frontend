@@ -7,10 +7,7 @@ import { CalendarDays, MapPin, RotateCcw, Ticket } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useMovieDetail, useMovieSelection } from "@/features/movies/context";
 import { DATE_STRIP_DAYS } from "@/features/showtimes/constants";
-import {
-  buildFallbackDateChips,
-  toShowtimeDateChips,
-} from "@/features/showtimes/utils";
+import { buildFallbackDateChips, toShowtimeDateChips } from "@/features/showtimes/utils";
 import type {
   GroupedShowtimeCinema,
   ShowtimeDateOption,
@@ -39,13 +36,7 @@ interface ShowtimesProps {
   error: string | null;
 }
 
-export default function Showtimes({
-  date,
-  today,
-  dates,
-  cinemas,
-  error,
-}: ShowtimesProps) {
+export default function Showtimes({ date, today, dates, cinemas, error }: ShowtimesProps) {
   const { translate, locale } = useLocale();
   const movie = useMovieDetail();
   const { selectedShowtime, setSelectedShowtime } = useMovieSelection();
@@ -68,20 +59,12 @@ export default function Showtimes({
 
   const selectDate = (value: string) => {
     if (value === date) return;
-    startTransition(() =>
-      router.replace(`${pathname}?date=${value}`, { scroll: false }),
-    );
+    startTransition(() => router.replace(`${pathname}?date=${value}`, { scroll: false }));
   };
 
-  const selectTime = (
-    cinema: GroupedShowtimeCinema,
-    showtimeId: string,
-    time: string,
-  ) => {
+  const selectTime = (cinema: GroupedShowtimeCinema, showtimeId: string, time: string) => {
     const isSameSlot = selectedShowtime?.showtimeId === showtimeId;
-    const next = isSameSlot
-      ? null
-      : { cinemaId: cinema.id, showtimeId, time };
+    const next = isSameSlot ? null : { cinemaId: cinema.id, showtimeId, time };
 
     setSelectedShowtime(next ? { ...next, date } : null);
   };
@@ -141,9 +124,7 @@ export default function Showtimes({
                   </span>
                   <span
                     className={`text-lg leading-tight font-extrabold ${
-                      active
-                        ? "text-(--color-bg)"
-                        : "text-(--color-text-primary)"
+                      active ? "text-(--color-bg)" : "text-(--color-text-primary)"
                     }`}
                   >
                     {chip.day}
@@ -188,9 +169,7 @@ export default function Showtimes({
             >
               {cinemas.map((cinema) => (
                 <div key={cinema.id}>
-                  <p className="text-sm font-bold text-(--color-text-primary)">
-                    {cinema.name}
-                  </p>
+                  <p className="text-sm font-bold text-(--color-text-primary)">{cinema.name}</p>
                   <p className="mt-0.5 flex items-start gap-1 text-[10px] text-(--color-text-muted)">
                     <MapPin size={10} className="mt-0.5 shrink-0" />
                     <span className="line-clamp-2">{cinema.address}</span>
@@ -203,17 +182,14 @@ export default function Showtimes({
                       </p>
                       <div className="flex flex-wrap gap-1.5">
                         {slots.map((slot) => {
-                          const active =
-                            selectedShowtime?.showtimeId === slot.id;
+                          const active = selectedShowtime?.showtimeId === slot.id;
 
                           return (
                             <button
                               key={slot.id}
                               type="button"
                               title={slot.roomName}
-                              onClick={() =>
-                                selectTime(cinema, slot.id, slot.startTime)
-                              }
+                              onClick={() => selectTime(cinema, slot.id, slot.startTime)}
                               disabled={!slot.isAvailable}
                               aria-pressed={active}
                               className={`rounded-(--radius-sm) border px-3 py-1.5 text-xs font-semibold transition-all duration-150 active:scale-[0.96] ${

@@ -2,47 +2,47 @@
 
 :root {
   /* Brand colours */
-  --color-gold:        #FFCC4D;
-  --color-gold-light:  #FFE4AF;
-  --color-gold-dark:   #E6B800;
- 
+  --color-gold: #ffcc4d;
+  --color-gold-light: #ffe4af;
+  --color-gold-dark: #e6b800;
+
   /* Neutrals */
-  --color-bg:          #0F0F0F;
-  --color-surface:     #1C1B1B;
-  --color-surface-2:   #242424;
-  --color-border:      #2E2E2E;
- 
+  --color-bg: #0f0f0f;
+  --color-surface: #1c1b1b;
+  --color-surface-2: #242424;
+  --color-border: #2e2e2e;
+
   /* Text */
-  --color-text-primary:   #FFFFFF;
-  --color-text-secondary: #FFE4AF;
-  --color-text-muted:     #606060;
- 
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #ffe4af;
+  --color-text-muted: #606060;
+
   /* Typography */
-  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
- 
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+
   /* Spacing scale */
-  --space-xs:  4px;
-  --space-sm:  8px;
-  --space-md:  16px;
-  --space-lg:  24px;
-  --space-xl:  32px;
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
   --space-2xl: 48px;
- 
+
   /* Border radius */
-  --radius-sm:   6px;
-  --radius-md:   10px;
-  --radius-lg:   16px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
   --radius-pill: 999px;
- 
+
   /* Shadows */
   --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
   --shadow-glow: 0 0 20px rgba(255, 204, 77, 0.25);
 }
- 
+
 html {
   scroll-behavior: smooth;
 }
- 
+
 body {
   font-family: var(--font-sans);
   background-color: var(--color-bg);
@@ -54,7 +54,12 @@ body {
 
 /* ─── Custom Utilities ───────────────────────────────────────── */
 .bg-hero-gradient {
-  background: linear-gradient(to top, rgba(15,15,15,0.95) 0%, rgba(15,15,15,0.2) 50%, transparent 100%);
+  background: linear-gradient(
+    to top,
+    rgba(15, 15, 15, 0.95) 0%,
+    rgba(15, 15, 15, 0.2) 50%,
+    transparent 100%
+  );
 }
 
 @utility scrollbar-hide {
@@ -89,26 +94,71 @@ body {
 
 /* ─── Film Strip Scroll — 404 page ──────────────────────────── */
 @keyframes filmStripScroll {
-  0%   { transform: translateY(-100%); opacity: 0; }
-  60%  { transform: translateY(8%); opacity: 1; }
-  80%  { transform: translateY(-3%); }
-  100% { transform: translateY(0); opacity: 1; }
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  60% {
+    transform: translateY(8%);
+    opacity: 1;
+  }
+  80% {
+    transform: translateY(-3%);
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 /* ─── Glitch Decode — error page ────────────────────────────── */
 @keyframes glitchDecode {
-  0%, 100% { text-shadow: none; transform: translate(0); }
-  20%      { text-shadow: -2px 0 #ff0040, 2px 0 #00d4ff; transform: translate(-1px, 1px); }
-  40%      { text-shadow: 2px 0 #ff0040, -2px 0 #00d4ff; transform: translate(1px, -1px); }
-  60%      { text-shadow: -1px 0 #ff0040, 1px 0 #00d4ff; transform: translate(-1px, 0); }
-  80%      { text-shadow: 1px 0 #ff0040, -1px 0 #00d4ff; transform: translate(0, 1px); }
+  0%,
+  100% {
+    text-shadow: none;
+    transform: translate(0);
+  }
+  20% {
+    text-shadow:
+      -2px 0 #ff0040,
+      2px 0 #00d4ff;
+    transform: translate(-1px, 1px);
+  }
+  40% {
+    text-shadow:
+      2px 0 #ff0040,
+      -2px 0 #00d4ff;
+    transform: translate(1px, -1px);
+  }
+  60% {
+    text-shadow:
+      -1px 0 #ff0040,
+      1px 0 #00d4ff;
+    transform: translate(-1px, 0);
+  }
+  80% {
+    text-shadow:
+      1px 0 #ff0040,
+      -1px 0 #00d4ff;
+    transform: translate(0, 1px);
+  }
 }
 
 @keyframes shake {
-  0%,100% { transform: translateX(0); }
-  20%      { transform: translateX(-6px) rotate(-2deg); }
-  40%      { transform: translateX(6px)  rotate(2deg);  }
-  60%      { transform: translateX(-4px) rotate(-1deg); }
-  80%      { transform: translateX(4px)  rotate(1deg);  }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-6px) rotate(-2deg);
+  }
+  40% {
+    transform: translateX(6px) rotate(2deg);
+  }
+  60% {
+    transform: translateX(-4px) rotate(-1deg);
+  }
+  80% {
+    transform: translateX(4px) rotate(1deg);
+  }
 }
-

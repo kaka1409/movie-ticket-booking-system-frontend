@@ -32,7 +32,8 @@ export default function BottomBar() {
 
   return (
     <div className="sticky bottom-0 z-50 bg-(--color-bg) border-t border-(--color-border) px-4 pb-6 pt-3">
-      <button type="button"
+      <button
+        type="button"
         onClick={handleContinue}
         disabled={!canContinue}
         className={`flex items-center justify-center gap-2.5 w-full py-4 rounded-2xl font-extrabold text-sm tracking-widest uppercase transition-all duration-150 ${

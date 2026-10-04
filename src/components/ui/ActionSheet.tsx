@@ -19,10 +19,7 @@ interface ActionRowProps {
 
 export default function ActionSheet({ open, onClose, children }: ActionSheetProps) {
   return (
-    <div
-      className={`fixed inset-0 z-50 ${open ? "" : "pointer-events-none"}`}
-      aria-hidden={!open}
-    >
+    <div className={`fixed inset-0 z-50 ${open ? "" : "pointer-events-none"}`} aria-hidden={!open}>
       {/* Backdrop */}
       <div
         onClick={onClose}
@@ -80,7 +77,9 @@ export function ActionRow({
         <Icon size={18} />
       </span>
       <span className="flex flex-col gap-0.5 min-w-0">
-        <span className={`text-sm font-bold ${danger ? "text-red-400" : "text-(--color-text-primary)"}`}>
+        <span
+          className={`text-sm font-bold ${danger ? "text-red-400" : "text-(--color-text-primary)"}`}
+        >
           {label}
         </span>
         <span className="text-xs text-(--color-text-muted)">{description}</span>

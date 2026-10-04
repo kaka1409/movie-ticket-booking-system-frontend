@@ -6,7 +6,8 @@ export default function LoadMoreButton({ onClick }: { onClick: () => void }) {
   const { translate } = useLocale();
   return (
     <div>
-      <button type="button"
+      <button
+        type="button"
         onClick={onClick}
         className="
           w-full rounded-2xl border border-(--color-border)

@@ -7,9 +7,7 @@ import type { Movie } from "@/features/movies/types";
 const MovieCard: React.FC<{ movie: Movie; minLabel?: string }> = ({ movie, minLabel = "min" }) => (
   <Link href={`/movies/${movie.slug}`} className="block w-[130px]">
     <article className="cursor-pointer">
-      <div
-        className="relative aspect-[2/3] overflow-hidden rounded-(--radius-lg) bg-(--color-surface-2)"
-      >
+      <div className="relative aspect-[2/3] overflow-hidden rounded-(--radius-lg) bg-(--color-surface-2)">
         <Image
           src={movie.src || "/images/movie-poster-placholder.jpg"}
           alt={movie.title}

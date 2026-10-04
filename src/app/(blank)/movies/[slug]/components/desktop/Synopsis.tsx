@@ -13,9 +13,7 @@ export default function Synopsis() {
 
   const isLong = movie.synopsis.length > SHORT_LIMIT;
   const displayText =
-    !isLong || expanded
-      ? movie.synopsis
-      : `${movie.synopsis.slice(0, SHORT_LIMIT).trimEnd()}…`;
+    !isLong || expanded ? movie.synopsis : `${movie.synopsis.slice(0, SHORT_LIMIT).trimEnd()}…`;
 
   return (
     <section>
@@ -30,9 +28,7 @@ export default function Synopsis() {
             onClick={() => setExpanded((value) => !value)}
             className="ml-1.5 cursor-pointer text-sm font-semibold text-(--color-gold) transition-colors hover:text-(--color-gold-light)"
           >
-            {expanded
-              ? translate("movies.detail.show_less")
-              : translate("movies.detail.read_more")}
+            {expanded ? translate("movies.detail.show_less") : translate("movies.detail.read_more")}
           </button>
         )}
       </p>

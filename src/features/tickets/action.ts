@@ -1,18 +1,12 @@
 "use server";
 
-import type {
-  UpcomingTicket,
-  Recipient,
-  ModificationType,
-  ModificationSeat,
-} from "./types";
+import type { UpcomingTicket, Recipient, ModificationType, ModificationSeat } from "./types";
 import { apiMutation } from "@/libs/api";
 
 /* ─── Transfer ──────────────────────────────────────────── */
 
 export type TransferActionResult =
-  | { success: true; data: UpcomingTicket }
-  | { success: false; error: string };
+  { success: true; data: UpcomingTicket } | { success: false; error: string };
 
 export async function createTransfer(
   prevState: TransferActionResult,
@@ -56,8 +50,7 @@ export async function cancelTransfer(
 /* ─── Modification ──────────────────────────────────────── */
 
 export type ModifyActionResult =
-  | { success: true; data: UpcomingTicket }
-  | { success: false; error: string };
+  { success: true; data: UpcomingTicket } | { success: false; error: string };
 
 export async function modifyTicket(
   prevState: ModifyActionResult,
@@ -106,11 +99,7 @@ export async function cancelTicket(
         refundStatus: "processing" | "failed";
         refundAmount: number;
       };
-    }>(
-      `/tickets/${data.ticketId}/cancel`,
-      { method: "POST" },
-      data.token,
-    );
+    }>(`/tickets/${data.ticketId}/cancel`, { method: "POST" }, data.token);
     return { success: true, data: response.data };
   } catch (error: unknown) {
     return { success: false, error: (error as Error).message };

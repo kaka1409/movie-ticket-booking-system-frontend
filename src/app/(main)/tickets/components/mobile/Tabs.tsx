@@ -13,5 +13,11 @@ export default function TabsComponent() {
     { key: "past", label: translate("tickets.past") },
   ];
 
-  return <Tabs tabs={tabs} activeTab={activeTab} onTabChange={(tab) => setActiveTab(tab as "upcoming" | "past")} />;
+  return (
+    <Tabs
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={(tab) => setActiveTab(tab as "upcoming" | "past")}
+    />
+  );
 }

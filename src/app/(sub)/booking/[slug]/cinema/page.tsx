@@ -1,10 +1,7 @@
 import { notFound } from "next/navigation";
 import { getMovieDetail } from "@/features/movies/api";
 import { getShowtimeDates, getShowtimes } from "@/features/showtimes/api";
-import type {
-  ShowtimeDateOption,
-  ShowtimesResponse,
-} from "@/features/showtimes/types";
+import type { ShowtimeDateOption, ShowtimesResponse } from "@/features/showtimes/types";
 import { CinemaSelectionProvider } from "@/features/booking/contexts/CinemaSelectionContext";
 import type { Cinema, DateOption } from "@/features/booking/types";
 import SectionFallback from "@/components/ui/SectionFallback";
@@ -31,10 +28,7 @@ function todayISO(): string {
 }
 
 /* Backend returns one record per date that has showtimes. */
-function toDateOptions(
-  records: ShowtimeDateOption[],
-  today: string,
-): DateOption[] {
+function toDateOptions(records: ShowtimeDateOption[], today: string): DateOption[] {
   return records.map((record) => {
     const [year, month, day] = record.date.split("-").map(Number);
     const parsed = new Date(year, month - 1, day);
@@ -96,16 +90,12 @@ export default async function CinemaShowtimePage({
   const today = todayISO();
 
   const datesResult = await getShowtimeDates(slug);
-  const dates =
-    "error" in datesResult ? [] : toDateOptions(datesResult.data, today);
+  const dates = "error" in datesResult ? [] : toDateOptions(datesResult.data, today);
   const resolvedDate =
-    query.date && DATE_PATTERN.test(query.date)
-      ? query.date
-      : (dates[0]?.value ?? today);
+    query.date && DATE_PATTERN.test(query.date) ? query.date : (dates[0]?.value ?? today);
 
   const showtimesResult = await getShowtimes(slug, resolvedDate);
-  const cinemas =
-    "error" in showtimesResult ? [] : toCinemas(showtimesResult.data.cinemas);
+  const cinemas = "error" in showtimesResult ? [] : toCinemas(showtimesResult.data.cinemas);
 
   return (
     <CinemaSelectionProvider

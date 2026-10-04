@@ -125,9 +125,7 @@ export default function ReviewCard({
             </p>
             <div className="mt-0.5 flex items-center gap-2">
               <Stars rating={review.rating} size={11} />
-              <span className="text-[10px] text-(--color-text-muted)">
-                {review.time}
-              </span>
+              <span className="text-[10px] text-(--color-text-muted)">{review.time}</span>
             </div>
           </div>
         </div>
@@ -160,9 +158,7 @@ export default function ReviewCard({
         )}
       </div>
 
-      <p className="pl-12 text-sm leading-relaxed text-(--color-text-muted)">
-        {review.text}
-      </p>
+      <p className="pl-12 text-sm leading-relaxed text-(--color-text-muted)">{review.text}</p>
     </article>
   );
 }

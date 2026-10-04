@@ -17,19 +17,14 @@ import SearchBar from "@/app/(main)/home/components/mobile/SearchBar";
 import MovieRow from "@/app/(main)/home/components/mobile/MovieRow";
 
 export default async function HomePage() {
-  const [
-    nowShowingSettled,
-    comingSoonSettled,
-    featuredSettled,
-    cinemasSettled,
-    datesSettled,
-  ] = await Promise.allSettled([
-    getMovies("now_showing", 1, MOVIES_PAGE_SIZE),
-    getMovies("coming_soon", 1, MOVIES_PAGE_SIZE),
-    getFeaturedMovies(),
-    getCinemas(),
-    getDates(),
-  ]);
+  const [nowShowingSettled, comingSoonSettled, featuredSettled, cinemasSettled, datesSettled] =
+    await Promise.allSettled([
+      getMovies({ status: "now_showing", page: 1, limit: MOVIES_PAGE_SIZE }),
+      getMovies({ status: "coming_soon", page: 1, limit: MOVIES_PAGE_SIZE }),
+      getFeaturedMovies(),
+      getCinemas(),
+      getDates(),
+    ]);
 
   const nowShowing = toApiResponse(nowShowingSettled);
   const comingSoon = toApiResponse(comingSoonSettled);
@@ -51,10 +46,7 @@ export default async function HomePage() {
       {/* Mobile */}
       <div className="block md:hidden">
         <div className="flex flex-col gap-(--space-lg)">
-          <HeroBanner
-            movies={featured}
-            error={featuredError}
-          />
+          <HeroBanner movies={featured} error={featuredError} />
           <QuickBooking
             movies={nowShowingList}
             cinemas={cinemas}
@@ -83,10 +75,7 @@ export default async function HomePage() {
 
       {/* Desktop */}
       <div className="hidden md:block">
-        <HeroSection
-          movies={featured}
-          error={featuredError}
-        />
+        <HeroSection movies={featured} error={featuredError} />
         <QuickBookingBar
           movies={nowShowingList}
           cinemas={cinemas}

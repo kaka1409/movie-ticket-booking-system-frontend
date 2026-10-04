@@ -10,9 +10,7 @@ export default function SnackHeader() {
       <h2 className="font-extrabold text-2xl text-(--color-text-primary) mb-1">
         {translate("booking.snack.heading")}
       </h2>
-      <p className="text-sm text-(--color-text-muted)">
-        {translate("booking.snack.subtitle")}
-      </p>
+      <p className="text-sm text-(--color-text-muted)">{translate("booking.snack.subtitle")}</p>
     </div>
   );
 }

@@ -2,15 +2,7 @@
 
 import { useLocale } from "@/contexts/LocaleContext";
 
-function LegendItem({
-  color,
-  label,
-  icon,
-}: {
-  color: string;
-  label: string;
-  icon?: string;
-}) {
+function LegendItem({ color, label, icon }: { color: string; label: string; icon?: string }) {
   return (
     <div className="flex items-center gap-2">
       <div
@@ -18,18 +10,12 @@ function LegendItem({
       >
         {icon}
       </div>
-      <span className="text-xs font-medium text-(--color-text-secondary)">
-        {label}
-      </span>
+      <span className="text-xs font-medium text-(--color-text-secondary)">{label}</span>
     </div>
   );
 }
 
-export default function SeatLegend({
-  showSweetbox = true,
-}: {
-  showSweetbox?: boolean;
-}) {
+export default function SeatLegend({ showSweetbox = true }: { showSweetbox?: boolean }) {
   const { translate } = useLocale();
   return (
     <div className="px-4 flex flex-col items-center gap-x-5 gap-y-2">
@@ -38,10 +24,7 @@ export default function SeatLegend({
           color="bg-(--color-surface-2) border border-(--color-border)"
           label={translate("booking.seats.available")}
         />
-        <LegendItem
-          color="bg-(--color-gold)"
-          label={translate("booking.seats.selected")}
-        />
+        <LegendItem color="bg-(--color-gold)" label={translate("booking.seats.selected")} />
         <LegendItem
           color="bg-(--color-surface-2) border border-(--color-border)"
           label={translate("booking.seats.occupied")}
@@ -49,15 +32,9 @@ export default function SeatLegend({
         />
       </div>
       <div className="flex justify-center gap-20 w-full">
-        <LegendItem
-          color="bg-amber-700"
-          label={translate("booking.seats.vip")}
-        />
+        <LegendItem color="bg-amber-700" label={translate("booking.seats.vip")} />
         {showSweetbox && (
-          <LegendItem
-            color="bg-pink-500"
-            label={translate("booking.seats.sweetbox")}
-          />
+          <LegendItem color="bg-pink-500" label={translate("booking.seats.sweetbox")} />
         )}
       </div>
     </div>

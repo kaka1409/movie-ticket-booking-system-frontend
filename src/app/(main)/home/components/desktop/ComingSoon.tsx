@@ -56,7 +56,8 @@ export default function ComingSoon({
         {/* Carousel controls */}
         {movies.length > ITEMS_PER_PAGE && (
           <div className="flex items-center gap-2">
-            <button type="button"
+            <button
+              type="button"
               onClick={prev}
               disabled={startIndex === 0}
               className={`flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-(--color-border) bg-(--color-surface) text-white transition-all ${
@@ -68,7 +69,8 @@ export default function ComingSoon({
             >
               <ChevronLeft size={16} />
             </button>
-            <button type="button"
+            <button
+              type="button"
               onClick={next}
               disabled={startIndex >= maxIndex}
               className={`flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-(--color-border) bg-(--color-surface) text-white transition-all ${

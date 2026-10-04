@@ -1,7 +1,4 @@
-import type {
-  GroupedShowtimeCinema,
-  ShowtimeDateOption,
-} from "@/features/showtimes/types";
+import type { GroupedShowtimeCinema, ShowtimeDateOption } from "@/features/showtimes/types";
 import type { ReviewsResponse } from "@/features/reviews/types";
 
 import HeroSection from "./HeroSection";
@@ -38,10 +35,7 @@ export default function MovieDetailDesktop({
             <div className="min-w-0 flex-1 space-y-10">
               <Synopsis />
               <TopCast />
-              <Reviews
-                initialData={reviewsData}
-                initialError={reviewsError}
-              />
+              <Reviews initialData={reviewsData} initialError={reviewsError} />
             </div>
 
             <div className="w-80 shrink-0">

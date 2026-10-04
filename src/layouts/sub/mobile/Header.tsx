@@ -12,7 +12,8 @@ export default function Header() {
   const title = getSubTitle(pathname, translate);
   const backHref = getBackHref(pathname);
 
-  const backClassName = "w-9 h-9 flex items-center justify-center rounded-full hover:bg-(--color-surface) transition-colors";
+  const backClassName =
+    "w-9 h-9 flex items-center justify-center rounded-full hover:bg-(--color-surface) transition-colors";
 
   const handleBack = () => {
     if (backHref) {
@@ -24,7 +25,8 @@ export default function Header() {
 
   return (
     <header className="flex items-center justify-between px-4 py-2 border-b border-(--color-border)">
-      <button type="button"
+      <button
+        type="button"
         onClick={handleBack}
         className={backClassName}
         aria-label={translate("layout.sub.back")}
@@ -33,9 +35,7 @@ export default function Header() {
       </button>
 
       <div className="flex items-center gap-2">
-        <h1 className="text-xl font-bold text-(--color-gold-light)">
-          {title}
-        </h1>
+        <h1 className="text-xl font-bold text-(--color-gold-light)">{title}</h1>
       </div>
 
       <div className="w-9 h-9" />

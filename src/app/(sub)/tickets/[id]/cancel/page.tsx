@@ -1,9 +1,7 @@
-
 import CancelContent from "./components/desktop/CancelContent";
 import CancelView from "./components/mobile/CancelView";
 
 export default function CancelPage() {
-
   return (
     <>
       {/* Mobile */}

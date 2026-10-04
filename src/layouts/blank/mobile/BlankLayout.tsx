@@ -1,7 +1,3 @@
-export default function MobileBlankLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function MobileBlankLayout({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }

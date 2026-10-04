@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  useMemo,
-  type ReactNode,
-} from "react";
+import { createContext, useContext, useState, useCallback, useMemo, type ReactNode } from "react";
 import en from "@/locales/en.json";
 import vn from "@/locales/vn.json";
 
@@ -56,16 +49,9 @@ export function LocaleProvider({
     [locale],
   );
 
-  const value = useMemo(
-    () => ({ locale, setLocale, translate }),
-    [locale, setLocale, translate],
-  );
+  const value = useMemo(() => ({ locale, setLocale, translate }), [locale, setLocale, translate]);
 
-  return (
-    <LocaleContext.Provider value={value}>
-      {children}
-    </LocaleContext.Provider>
-  );
+  return <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>;
 }
 
 export function useLocale(): LocaleContextType {
@@ -73,4 +59,3 @@ export function useLocale(): LocaleContextType {
   if (!ctx) throw new Error("useLocale must be used within LocaleProvider");
   return ctx;
 }
-

@@ -32,9 +32,7 @@ export default function ConfirmationSheet({
           <p className="text-xs text-(--color-text-muted) mb-2">
             {translate("tickets.cancel.confirm_you_receive")}
           </p>
-          <p className="text-3xl font-extrabold text-(--color-gold)">
-            {formatVND(refundAmount)}
-          </p>
+          <p className="text-3xl font-extrabold text-(--color-gold)">{formatVND(refundAmount)}</p>
           <p className="text-xs text-(--color-text-muted) mt-2">
             {translate("tickets.cancel.confirm_refund_text")}
           </p>

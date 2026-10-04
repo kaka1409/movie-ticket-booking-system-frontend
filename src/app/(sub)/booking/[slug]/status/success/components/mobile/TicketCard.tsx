@@ -8,13 +8,7 @@ import { useLocale } from "@/contexts/LocaleContext";
 import DetailRow from "@/app/(sub)/booking/components/mobile/DetailRow";
 import TearLine from "@/components/ui/TearLine";
 import { formatVND } from "@/libs/utils";
-import {
-  MonitorPlay,
-  CalendarDays,
-  Armchair,
-  Popcorn,
-  CreditCard,
-} from "lucide-react";
+import { MonitorPlay, CalendarDays, Armchair, Popcorn, CreditCard } from "lucide-react";
 
 export default function TicketCard() {
   const {
@@ -54,9 +48,7 @@ export default function TicketCard() {
           </div>
         )}
         <div className="flex-1 min-w-0 pt-1">
-          <h3 className="font-bold text-base text-white mb-1">
-            {movie?.title ?? "N/A"}
-          </h3>
+          <h3 className="font-bold text-base text-white mb-1">{movie?.title ?? "N/A"}</h3>
           <p className="text-xs text-white/60 mb-2">{movie?.ageRating}</p>
         </div>
       </div>
@@ -96,14 +88,14 @@ export default function TicketCard() {
             selectedSeats.reduce<Record<string, typeof selectedSeats>>((acc, seat) => {
               (acc[seat.type] ??= []).push(seat);
               return acc;
-            }, {})
+            }, {}),
           ).map(([type, seats]) => (
             <div key={type} className="space-y-1">
-              <p className="text-sm font-bold text-white">
-                {seats.map((s) => s.label).join(", ")}
-              </p>
+              <p className="text-sm font-bold text-white">{seats.map((s) => s.label).join(", ")}</p>
               <div className="flex justify-between text-sm">
-                <span className="text-white">{type} {translate("booking.common.ticket")}</span>
+                <span className="text-white">
+                  {type} {translate("booking.common.ticket")}
+                </span>
                 <span className="font-medium text-white">
                   {seats.length}× {formatVND(seats[0].price)}
                 </span>
@@ -149,9 +141,7 @@ export default function TicketCard() {
             <p className="flex items-center justify-end gap-1.5 text-[9px] font-black tracking-[0.16em] uppercase text-white/60">
               {translate("booking.common.total_price")}
             </p>
-            <p className="font-bold text-base text-(--color-gold)">
-              {formatVND(total)}
-            </p>
+            <p className="font-bold text-base text-(--color-gold)">{formatVND(total)}</p>
           </div>
         </div>
       </div>
@@ -162,11 +152,7 @@ export default function TicketCard() {
       {/* QR code */}
       <div className="px-4 pb-5 pt-4 flex flex-col items-center gap-3">
         <div className="flex flex-col items-center gap-4 px-6 py-6 rounded-2xl bg-white">
-          <QRCodeSVG
-            value={`https://primseat.com/tickets/${transactionId}`}
-            size={250}
-            level="H"
-          />
+          <QRCodeSVG value={`https://primseat.com/tickets/${transactionId}`} size={250} level="H" />
           <p className="text-[11px] font-bold tracking-[0.2em] uppercase text-gray-500">
             {translate("booking.common.scan_enter")}
           </p>

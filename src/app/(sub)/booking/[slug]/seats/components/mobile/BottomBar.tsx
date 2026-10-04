@@ -12,7 +12,11 @@ interface Selection {
   price: number;
 }
 
-function collectSelections(rows: SeatRow[], seatPrices: SeatPrice, translate: (key: string) => string): Selection[] {
+function collectSelections(
+  rows: SeatRow[],
+  seatPrices: SeatPrice,
+  translate: (key: string) => string,
+): Selection[] {
   return rows.flatMap((row) =>
     row.segments.flatMap((seg) =>
       seg
@@ -22,10 +26,15 @@ function collectSelections(rows: SeatRow[], seatPrices: SeatPrice, translate: (k
             s.kind === "sweetbox"
               ? `${row.label}(${s.pairId?.split("-").slice(1).join("-")})`
               : `${row.label}${s.col}`,
-          type: s.kind === "available" ? translate("booking.seats.standard") : s.kind === "vip" ? "VIP" : "SweetBox",
+          type:
+            s.kind === "available"
+              ? translate("booking.seats.standard")
+              : s.kind === "vip"
+                ? "VIP"
+                : "SweetBox",
           price: seatPrices[s.kind as keyof SeatPrice],
-        }))
-    )
+        })),
+    ),
   );
 }
 

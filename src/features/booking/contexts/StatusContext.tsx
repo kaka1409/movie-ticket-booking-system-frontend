@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  type ReactNode,
-} from "react";
+import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import type { Movie } from "@/features/movies/types";
 
@@ -41,9 +35,7 @@ export function StatusProvider({
   }, []);
 
   return (
-    <StatusContext.Provider
-      value={{ slug, transactionId, reason, movie, mounted }}
-    >
+    <StatusContext.Provider value={{ slug, transactionId, reason, movie, mounted }}>
       {children}
     </StatusContext.Provider>
   );

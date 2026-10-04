@@ -3,11 +3,7 @@
 import { CheckCircle2, Circle } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 
-export default function PasswordRequirements({
-  password,
-}: {
-  password: string;
-}) {
+export default function PasswordRequirements({ password }: { password: string }) {
   const { translate } = useLocale();
 
   const REQUIREMENTS: { label: string; test: (value: string) => boolean }[] = [
@@ -33,9 +29,7 @@ export default function PasswordRequirements({
               )}
               <span
                 className={
-                  met
-                    ? "text-sm text-(--color-text-primary)"
-                    : "text-sm text-(--color-text-muted)"
+                  met ? "text-sm text-(--color-text-primary)" : "text-sm text-(--color-text-muted)"
                 }
               >
                 {req.label}

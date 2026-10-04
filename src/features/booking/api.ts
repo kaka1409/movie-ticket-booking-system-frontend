@@ -1,4 +1,12 @@
-import type { Cinema, DateOption, SeatRow, SeatPrice, ComboItem, FoodItem, FoodCategory } from "./types";
+import type {
+  Cinema,
+  DateOption,
+  SeatRow,
+  SeatPrice,
+  ComboItem,
+  FoodItem,
+  FoodCategory,
+} from "./types";
 // import { apiFetch } from "@/libs/api";
 import {
   CINEMAS,

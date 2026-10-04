@@ -19,7 +19,7 @@ export default function TransferBottomBar() {
     const seatsParam = selectedSeats.join(",");
     const snacksParam = transferSnacks ? "&transferSnacks=true" : "";
     router.push(
-      `/tickets/${ticket.id}/transfer/confirm?seats=${encodeURIComponent(seatsParam)}&recipient=${encodeURIComponent(recipient.username)}${snacksParam}`
+      `/tickets/${ticket.id}/transfer/confirm?seats=${encodeURIComponent(seatsParam)}&recipient=${encodeURIComponent(recipient.username)}${snacksParam}`,
     );
   };
 

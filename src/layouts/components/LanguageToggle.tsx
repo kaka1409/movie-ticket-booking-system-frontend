@@ -12,7 +12,8 @@ export default function LanguageToggle({ variant = "flag" }: LanguageToggleProps
 
   if (variant === "text") {
     return (
-      <button type="button"
+      <button
+        type="button"
         className="text-xs font-semibold tracking-widest px-2 py-1 rounded text-(--color-gold-light) border border-(--color-border)"
         aria-label={translate("common.change_language")}
         onClick={() => setLocale(locale === "en" ? "vn" : "en")}
@@ -23,7 +24,8 @@ export default function LanguageToggle({ variant = "flag" }: LanguageToggleProps
   }
 
   return (
-    <button type="button"
+    <button
+      type="button"
       className="flex items-center gap-1.5 text-xs font-semibold tracking-widest px-2 py-1 rounded text-(--color-gold-light) border border-(--color-border)"
       aria-label={translate("common.change_language")}
       onClick={() => setLocale(locale === "en" ? "vn" : "en")}

@@ -55,8 +55,7 @@ export default function PaymentContent() {
           }
         : undefined;
 
-      const newSeats =
-        selectedSeats.length > 0 ? selectedSeats : undefined;
+      const newSeats = selectedSeats.length > 0 ? selectedSeats : undefined;
 
       await modifyTicket(
         { success: false, error: "" },
@@ -100,7 +99,8 @@ export default function PaymentContent() {
               {PAYMENT_METHODS.map((method) => {
                 const selected = selectedMethod === method.id;
                 return (
-                  <button type="button"
+                  <button
+                    type="button"
                     key={method.id}
                     onClick={() => setSelectedMethod(method.id)}
                     className={`w-full flex items-center gap-4 px-4 py-4 rounded-2xl border transition-all duration-150 active:scale-[0.99] text-left ${
@@ -153,7 +153,8 @@ export default function PaymentContent() {
 
           {/* Bottom bar */}
           <div className="sticky bottom-0 z-50 bg-(--color-bg) border-t border-(--color-border) px-4 pb-6 pt-3">
-            <button type="button"
+            <button
+              type="button"
               onClick={handleConfirm}
               disabled={!canPay}
               className={`flex items-center justify-center gap-2.5 w-full py-4 rounded-2xl font-extrabold text-sm tracking-widest uppercase transition-all duration-150 ${
@@ -165,7 +166,11 @@ export default function PaymentContent() {
               {isPending
                 ? translate("booking.payment.processing")
                 : translate("tickets.modify.payment.confirm_cta")}
-              {isPending ? <Loader2 size={17} className="animate-spin" /> : <ArrowRight size={17} />}
+              {isPending ? (
+                <Loader2 size={17} className="animate-spin" />
+              ) : (
+                <ArrowRight size={17} />
+              )}
             </button>
           </div>
         </div>

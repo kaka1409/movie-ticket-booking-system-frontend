@@ -26,9 +26,7 @@ export default function NotificationCard({
       onClick={() => onMarkRead(notification.id)}
     >
       {!notification.read && cfg.dot && (
-        <span
-          className={`absolute top-4 right-4 w-2.5 h-2.5 rounded-full ${cfg.dot}`}
-        />
+        <span className={`absolute top-4 right-4 w-2.5 h-2.5 rounded-full ${cfg.dot}`} />
       )}
 
       <div className="flex gap-3">
@@ -45,9 +43,7 @@ export default function NotificationCard({
         <div className="flex-1 min-w-0 pr-4">
           <h3
             className={`font-bold text-base leading-snug mb-1 ${
-              notification.type === "error"
-                ? "text-red-400"
-                : "text-(--color-text-primary)"
+              notification.type === "error" ? "text-red-400" : "text-(--color-text-primary)"
             }`}
           >
             {notification.title}

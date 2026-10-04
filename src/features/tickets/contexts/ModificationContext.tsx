@@ -1,18 +1,7 @@
 "use client";
 
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-  type ReactNode,
-} from "react";
-import type {
-  ModificationType,
-  ModificationSeat,
-  EligibleShowtime,
-} from "../types";
+import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
+import type { ModificationType, ModificationSeat, EligibleShowtime } from "../types";
 import type { SeatRow, SeatPrice, DateOption } from "@/features/booking/types";
 
 interface ModificationContextType {
@@ -63,16 +52,12 @@ export function ModificationProvider({
   const [seatPrices, setSeatPrices] = useState<SeatPrice | null>(null);
   const [selectedSeats, setSelectedSeats] = useState<ModificationSeat[]>([]);
   const [originalSeatCount, setOriginalSeatCount] = useState(initialSeatCount);
-  
+
   const toggleSeat = useCallback((seat: ModificationSeat) => {
     setSelectedSeats((previous) => {
-      const exists = previous.some(
-        (s) => s.label === seat.label && s.type === seat.type
-      );
+      const exists = previous.some((s) => s.label === seat.label && s.type === seat.type);
       if (exists) {
-        return previous.filter(
-          (s) => !(s.label === seat.label && s.type === seat.type)
-        );
+        return previous.filter((s) => !(s.label === seat.label && s.type === seat.type));
       }
       return [...previous, seat];
     });
@@ -115,22 +100,16 @@ export function ModificationProvider({
       dates,
       selectedDate,
       query,
-    ]
+    ],
   );
 
-  return (
-    <ModificationContext.Provider value={value}>
-      {children}
-    </ModificationContext.Provider>
-  );
+  return <ModificationContext.Provider value={value}>{children}</ModificationContext.Provider>;
 }
 
 export function useModification() {
   const context = useContext(ModificationContext);
   if (!context) {
-    throw new Error(
-      "useModification must be used within ModificationProvider"
-    );
+    throw new Error("useModification must be used within ModificationProvider");
   }
   return context;
 }

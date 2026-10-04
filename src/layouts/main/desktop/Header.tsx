@@ -45,7 +45,8 @@ export default function Header() {
           ))}
         </div>
 
-        <div className="
+        <div
+          className="
           ml-auto flex max-w-[280px] h-fit flex-1 items-center gap-2 rounded-(--radius-pill) border border-(--color-border) 
           bg-(--color-surface) px-3.5 py-2 text-[13px] text-(--color-text-muted)"
         >
@@ -61,7 +62,10 @@ export default function Header() {
           <button className="cursor-pointer border-none bg-transparent p-1 text-inherit">
             <Settings size={18} />
           </button>*/}
-          <button type="button" className="relative cursor-pointer border-none bg-transparent p-1 text-inherit">
+          <button
+            type="button"
+            className="relative cursor-pointer border-none bg-transparent p-1 text-inherit"
+          >
             <Bell size={18} />
             <span className="absolute right-1 top-1 h-1.5 w-1.5 rounded-full bg-(--color-gold)" />
           </button>
@@ -73,7 +77,9 @@ export default function Header() {
           </div>
           <div className="leading-tight">
             <p className="text-xs font-bold text-white">Alex Rivers</p>
-            <p className="text-[9px] font-semibold tracking-widest text-(--color-gold) uppercase">{translate("layout.header.gold_member")}</p>
+            <p className="text-[9px] font-semibold tracking-widest text-(--color-gold) uppercase">
+              {translate("layout.header.gold_member")}
+            </p>
           </div>
         </div>
       </div>

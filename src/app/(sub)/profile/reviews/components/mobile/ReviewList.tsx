@@ -20,9 +20,7 @@ export default function ReviewList({
   const sortedMovies = [...allMovies].sort((a, b) => {
     if (activeFilter === "highest") return b.rating - a.rating;
     if (activeFilter === "lowest") return a.rating - b.rating;
-    return (
-      new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime()
-    );
+    return new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime();
   });
 
   const visible = sortedMovies.slice(0, visibleCount);
@@ -58,18 +56,13 @@ export default function ReviewList({
 
       <div ref={listRef} className="space-y-3">
         {visible.map((movie, index) => (
-          <div
-            key={movie.id}
-            className={index >= animThreshold ? "animate-fade-in" : ""}
-          >
+          <div key={movie.id} className={index >= animThreshold ? "animate-fade-in" : ""}>
             <ReviewCard movie={movie} />
           </div>
         ))}
       </div>
 
-      {hasMore && (
-        <LoadMoreButton onClick={() => setVisibleCount((c) => c + 8)} />
-      )}
+      {hasMore && <LoadMoreButton onClick={() => setVisibleCount((c) => c + 8)} />}
     </main>
   );
 }

@@ -39,17 +39,13 @@ export default function PasswordField({
           error
             ? "border-red-500/70"
             : focused
-            ? "border-(--color-gold)/60"
-            : "border-(--color-border)"
+              ? "border-(--color-gold)/60"
+              : "border-(--color-border)"
         }`}
       >
         <Icon
           className={`h-5 w-5 shrink-0 transition-colors duration-150 ${
-            error
-              ? "text-red-400"
-              : focused
-              ? "text-(--color-gold)"
-              : "text-(--color-text-muted)"
+            error ? "text-red-400" : focused ? "text-(--color-gold)" : "text-(--color-text-muted)"
           }`}
         />
         <input
@@ -61,15 +57,15 @@ export default function PasswordField({
         />
         <button
           type="button"
-          aria-label={visible ? translate("profile.password.hide_password") : translate("profile.password.show_password")}
+          aria-label={
+            visible
+              ? translate("profile.password.hide_password")
+              : translate("profile.password.show_password")
+          }
           onClick={onToggleVisible}
           className="shrink-0 text-(--color-text-muted)"
         >
-          {visible ? (
-            <Eye className="h-5 w-5" />
-          ) : (
-            <EyeOff className="h-5 w-5" />
-          )}
+          {visible ? <Eye className="h-5 w-5" /> : <EyeOff className="h-5 w-5" />}
         </button>
       </div>
       {error && (

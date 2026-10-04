@@ -29,11 +29,7 @@ export function SnackSelectionProvider({
   foodCategories: readonly { id: string; label: string }[];
   children: ReactNode;
 }) {
-  const {
-    combos: savedCombos,
-    foods: savedFoods,
-    setSnacks,
-  } = useBooking();
+  const { combos: savedCombos, foods: savedFoods, setSnacks } = useBooking();
 
   // Initialize comboQty with saved combos and default values
   const [comboQty, setComboQty] = useState<Record<string, number>>(() => {
@@ -102,7 +98,7 @@ export function SnackSelectionProvider({
         ...category,
         items: foodItems.filter((food) => food.category === category.id),
       })),
-    [foodCategories, foodItems]
+    [foodCategories, foodItems],
   );
 
   return (

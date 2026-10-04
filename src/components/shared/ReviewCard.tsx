@@ -56,7 +56,8 @@ export default function ReviewCard({
             </p>
             <div className="flex gap-1 mt-1">
               {[1, 2, 3, 4, 5].map((star) => (
-                <button type="button"
+                <button
+                  type="button"
                   key={star}
                   onMouseEnter={() => setEditHovered(star)}
                   onMouseLeave={() => setEditHovered(0)}
@@ -85,14 +86,16 @@ export default function ReviewCard({
         />
 
         <div className="flex gap-2 pl-11">
-          <button type="button"
+          <button
+            type="button"
             onClick={() => void handleSave()}
             disabled={!editRating || !editText.trim()}
             className="flex items-center gap-1 px-4 py-2 rounded-lg text-xs font-bold bg-(--color-gold) text-(--color-bg) hover:bg-(--color-gold-dark) disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
             <Check size={14} /> {translate("movies.detail.save")}
           </button>
-          <button type="button"
+          <button
+            type="button"
             onClick={handleCancel}
             className="flex items-center gap-1 px-4 py-2 rounded-lg text-xs font-bold border border-(--color-border) text-(--color-text-secondary) hover:bg-(--color-surface) transition-colors"
           >
@@ -114,15 +117,14 @@ export default function ReviewCard({
             </p>
             <div className="flex items-center gap-2 mt-0.5">
               <Stars rating={review.rating} size={11} />
-              <span className="text-(--color-text-muted) text-[10px]">
-                {review.time}
-              </span>
+              <span className="text-(--color-text-muted) text-[10px]">{review.time}</span>
             </div>
           </div>
         </div>
         {isOwner && (
           <div className="flex items-center gap-2">
-            <button type="button"
+            <button
+              type="button"
               onClick={() => setEditing(true)}
               aria-label={translate("movies.detail.edit_review")}
             >
@@ -131,7 +133,8 @@ export default function ReviewCard({
                 className="text-(--color-text-muted) hover:text-(--color-gold) transition-colors"
               />
             </button>
-            <button type="button"
+            <button
+              type="button"
               onClick={() => void onDelete()}
               aria-label={translate("movies.detail.delete_review")}
             >
@@ -144,9 +147,7 @@ export default function ReviewCard({
         )}
       </div>
 
-      <p className="text-(--color-text-secondary) text-sm leading-relaxed pl-11">
-        {review.text}
-      </p>
+      <p className="text-(--color-text-secondary) text-sm leading-relaxed pl-11">{review.text}</p>
     </div>
   );
 }

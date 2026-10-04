@@ -35,7 +35,8 @@ export default function BottomBar() {
         </div>
       </div>
 
-      <button type="button"
+      <button
+        type="button"
         onClick={handleContinue}
         disabled={!canContinue}
         className={`flex items-center justify-center gap-2.5 w-full py-4 rounded-2xl font-extrabold text-sm tracking-widest uppercase transition-all duration-150 ${

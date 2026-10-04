@@ -30,7 +30,7 @@ export default function HeroSection({
       setTimeout(() => setIndex(nextIndex), 150);
       setTimeout(() => setFading(false), 300);
     },
-    [fading]
+    [fading],
   );
 
   const prev = useCallback(() => {
@@ -85,7 +85,8 @@ export default function HeroSection({
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
 
           {/* Navigation Arrows */}
-          <button type="button"
+          <button
+            type="button"
             onClick={prev}
             className="
               absolute left-4 top-1/2 z-20 -translate-y-1/2 cursor-pointer rounded-full border border-white/15 
@@ -96,7 +97,8 @@ export default function HeroSection({
           >
             <ChevronLeft size={22} />
           </button>
-          <button type="button"
+          <button
+            type="button"
             onClick={next}
             className="
               absolute right-4 top-1/2 z-20 -translate-y-1/2 cursor-pointer rounded-full border border-white/15 
@@ -170,8 +172,7 @@ export default function HeroSection({
                   className="h-1.5 cursor-pointer rounded-full transition-all duration-300"
                   style={{
                     width: i === index ? 24 : 8,
-                    background:
-                      i === index ? "var(--color-gold)" : "rgba(255,255,255,0.3)",
+                    background: i === index ? "var(--color-gold)" : "rgba(255,255,255,0.3)",
                   }}
                   onClick={() => goTo(i)}
                 />

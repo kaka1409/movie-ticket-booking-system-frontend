@@ -14,8 +14,7 @@ export default function CancellationPolicySheet({
 
   const rules = [
     translate("tickets.cancel.policy_rule_1"),
-    translate("tickets.cancel.policy_rule_2")
-      .replace("{fee}", "\u20AB20,000"),
+    translate("tickets.cancel.policy_rule_2").replace("{fee}", "\u20AB20,000"),
     translate("tickets.cancel.policy_rule_3"),
     translate("tickets.cancel.policy_rule_4"),
   ];
@@ -29,7 +28,10 @@ export default function CancellationPolicySheet({
 
         <ul className="space-y-3">
           {rules.map((rule, i) => (
-            <li key={i} className="flex gap-2 text-sm text-(--color-text-secondary) leading-relaxed">
+            <li
+              key={i}
+              className="flex gap-2 text-sm text-(--color-text-secondary) leading-relaxed"
+            >
               <span className="shrink-0 mt-1.5 w-1.5 h-1.5 rounded-full bg-(--color-gold)" />
               {rule}
             </li>

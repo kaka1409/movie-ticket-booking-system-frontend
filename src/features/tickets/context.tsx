@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  type ReactNode,
-} from "react";
+import { createContext, useContext, useState, useCallback, type ReactNode } from "react";
 
 export type Tab = "upcoming" | "past";
 
@@ -35,7 +29,10 @@ export function TicketsProvider({ children }: { children: ReactNode }) {
   return (
     <TicketsContext.Provider
       value={{
-        activeTab, visibleCount, setActiveTab, loadMore
+        activeTab,
+        visibleCount,
+        setActiveTab,
+        loadMore,
       }}
     >
       {children}

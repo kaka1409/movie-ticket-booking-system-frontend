@@ -15,7 +15,7 @@ export default function CinemaCard({
   onSelect: (
     cinemaId: string,
     time: string,
-    meta?: { room?: string; date?: string; showtimeId?: string }
+    meta?: { room?: string; date?: string; showtimeId?: string },
   ) => void;
 }) {
   const isActive = selectedCinemaId === cinema.id;
@@ -45,19 +45,17 @@ export default function CinemaCard({
           )}
         </div>
 
-        <p className="text-xs mb-4 text-(--color-text-muted)">
-          {cinema.address}
-        </p>
+        <p className="text-xs mb-4 text-(--color-text-muted)">{cinema.address}</p>
 
         <div className="flex flex-wrap gap-2">
           {cinema.showtimes.map(({ id, time, available, room, date }) => {
             const isTimeActive = isActive && selectedTime === time;
             return (
-              <button type="button"
+              <button
+                type="button"
                 key={`${id ?? time}-${date ?? ""}`}
                 onClick={() => {
-                  if (available)
-                    onSelect(cinema.id, time, { room, date, showtimeId: id });
+                  if (available) onSelect(cinema.id, time, { room, date, showtimeId: id });
                 }}
                 disabled={!available}
                 aria-pressed={isTimeActive}
@@ -65,16 +63,12 @@ export default function CinemaCard({
                   isTimeActive
                     ? "bg-(--color-gold) border-(--color-gold) text-[#0F0F0F] shadow-(--shadow-glow)"
                     : !available
-                    ? "bg-transparent border-(--color-border) text-(--color-text-muted) line-through opacity-50 cursor-not-allowed"
-                    : "bg-(--color-surface-2) border-(--color-border) text-(--color-text-primary)"
+                      ? "bg-transparent border-(--color-border) text-(--color-text-muted) line-through opacity-50 cursor-not-allowed"
+                      : "bg-(--color-surface-2) border-(--color-border) text-(--color-text-primary)"
                 }`}
               >
                 <span>{time}</span>
-                {date && (
-                  <span className="block text-[9px] mt-0.5 opacity-70">
-                    {date}
-                  </span>
-                )}
+                {date && <span className="block text-[9px] mt-0.5 opacity-70">{date}</span>}
               </button>
             );
           })}

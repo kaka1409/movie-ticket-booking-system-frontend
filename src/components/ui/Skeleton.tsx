@@ -1,22 +1,8 @@
-function Skeleton({
-  className = "",
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
-  return (
-    <div
-      className={`animate-pulse bg-(--color-surface-2) ${className}`}
-      {...props}
-    />
-  );
+function Skeleton({ className = "", ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return <div className={`animate-pulse bg-(--color-surface-2) ${className}`} {...props} />;
 }
 
-function SkeletonCircle({
-  size = 40,
-  className = "",
-}: {
-  size?: number;
-  className?: string;
-}) {
+function SkeletonCircle({ size = 40, className = "" }: { size?: number; className?: string }) {
   return (
     <Skeleton
       className={`rounded-full shrink-0 ${className}`}

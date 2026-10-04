@@ -19,10 +19,7 @@ export const DATES: DateOption[] = Array.from({ length: 10 }, (_, i) => {
     value: d.toISOString().slice(0, 10),
     day: d.getDate(),
     month: d.toLocaleString("en", { month: "short" }).toUpperCase(),
-    weekday:
-      i === 0
-        ? "TODAY"
-        : d.toLocaleString("en", { weekday: "short" }).toUpperCase(),
+    weekday: i === 0 ? "TODAY" : d.toLocaleString("en", { weekday: "short" }).toUpperCase(),
   };
 });
 
@@ -119,7 +116,12 @@ export const CINEMAS: Cinema[] = [
 
 /* ─── Seat Map Data ────────────────────────────────────── */
 
-function seat(col: number, kind: Seat["kind"], status: Seat["status"] = "idle", pairId?: string): Seat {
+function seat(
+  col: number,
+  kind: Seat["kind"],
+  status: Seat["status"] = "idle",
+  pairId?: string,
+): Seat {
   return { col, kind, status, pairId };
 }
 
@@ -223,16 +225,64 @@ export const FOOD_CATEGORIES = [
 
 export const FOOD_ITEMS: FoodItem[] = [
   // Popcorn
-  { id: "pop-regular", name: "Regular Popcorn", category: "popcorn", price: 50000, image: "/images/snack/pop-regular.jpg" },
-  { id: "pop-large", name: "Large Popcorn", category: "popcorn", price: 75000, image: "/images/snack/pop-large.jpg" },
-  { id: "pop-caramel", name: "Caramel Popcorn", category: "popcorn", price: 85000, image: "/images/snack/pop-caramel.jpg" },
+  {
+    id: "pop-regular",
+    name: "Regular Popcorn",
+    category: "popcorn",
+    price: 50000,
+    image: "/images/snack/pop-regular.jpg",
+  },
+  {
+    id: "pop-large",
+    name: "Large Popcorn",
+    category: "popcorn",
+    price: 75000,
+    image: "/images/snack/pop-large.jpg",
+  },
+  {
+    id: "pop-caramel",
+    name: "Caramel Popcorn",
+    category: "popcorn",
+    price: 85000,
+    image: "/images/snack/pop-caramel.jpg",
+  },
   // Drinks
-  { id: "drink-cola", name: "Cola", category: "drinks", price: 35000, image: "/images/snack/drink-cola.jpeg" },
-  { id: "drink-water", name: "Mineral Water", category: "drinks", price: 25000, image: "/images/snack/drink-water.png" },
-  { id: "drink-juice", name: "Orange Juice", category: "drinks", price: 45000, image: "/images/snack/drink-juice.jpg" },
+  {
+    id: "drink-cola",
+    name: "Cola",
+    category: "drinks",
+    price: 35000,
+    image: "/images/snack/drink-cola.jpeg",
+  },
+  {
+    id: "drink-water",
+    name: "Mineral Water",
+    category: "drinks",
+    price: 25000,
+    image: "/images/snack/drink-water.png",
+  },
+  {
+    id: "drink-juice",
+    name: "Orange Juice",
+    category: "drinks",
+    price: 45000,
+    image: "/images/snack/drink-juice.jpg",
+  },
   // Candy
-  { id: "candy-gummy", name: "Gummy Bears", category: "candy", price: 45000, image: "/images/snack/candy-gummy.jpg" },
-  { id: "candy-choco", name: "Chocolate", category: "candy", price: 55000, image: "/images/snack/candy-choco.jpg" },
+  {
+    id: "candy-gummy",
+    name: "Gummy Bears",
+    category: "candy",
+    price: 45000,
+    image: "/images/snack/candy-gummy.jpg",
+  },
+  {
+    id: "candy-choco",
+    name: "Chocolate",
+    category: "candy",
+    price: 55000,
+    image: "/images/snack/candy-choco.jpg",
+  },
 ];
 
 /* ─── Payment Methods ──────────────────────────────────── */

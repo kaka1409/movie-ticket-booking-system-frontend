@@ -1,9 +1,11 @@
 # Plan: Booking Context for Booking Flow
 
 ## Goal
+
 Replace hardcoded `ORDER_SUMMARY` with a `BookingContext` that carries user selections across all booking steps (cinema → seats → snack → credentials).
 
 ## Problem
+
 Currently each booking step is fully isolated. The credentials page displays hardcoded mock data regardless of what the user actually selected.
 
 ## Solution: React Context
@@ -28,7 +30,7 @@ Credentials  ← read all from BookingContext → OrderSummary + BottomBar
 
 interface SelectedSeat {
   label: string;
-  type: string;       // "Standard" | "VIP" | "SweetBox"
+  type: string; // "Standard" | "VIP" | "SweetBox"
   price: number;
 }
 
@@ -52,11 +54,11 @@ interface BookingState {
   cinemaName: string;
   time: string;
   date: string;
-  room: string;         // badge: "IMAX", "STANDARD", etc.
+  room: string; // badge: "IMAX", "STANDARD", etc.
 
   // Step 2 — Seats
   selectedSeats: SelectedSeat[];
-  seatType: string;     // derived from first seat's type
+  seatType: string; // derived from first seat's type
   seatTotal: number;
 
   // Step 3 — Snacks
@@ -66,13 +68,19 @@ interface BookingState {
 
   // Derived
   ticketCount: number;
-  ticketPrice: number;  // sum of seat prices
+  ticketPrice: number; // sum of seat prices
   convFee: number;
   total: number;
 }
 
 interface BookingContextType extends BookingState {
-  setCinema: (cinemaId: number, cinemaName: string, time: string, date: string, room: string) => void;
+  setCinema: (
+    cinemaId: number,
+    cinemaName: string,
+    time: string,
+    date: string,
+    room: string,
+  ) => void;
   setSeats: (seats: SelectedSeat[]) => void;
   setSnacks: (combos: SelectedCombo[], foods: SelectedFood[]) => void;
   resetBooking: () => void;
@@ -155,12 +163,12 @@ Remove the hardcoded `ORDER_SUMMARY` constant.
 
 ## State Initialization Strategy
 
-| Step | State | Initialized from |
-|------|-------|------------------|
-| Cinema | cinemaId, cinemaName, time, date, room | User selection → `setCinema()` |
-| Seats | selectedSeats, seatType, seatTotal | User selection → `setSeats()` |
-| Snack | combos, foods, snackTotal | User selection → `setSnacks()` |
-| Credentials | all above | Read-only from context |
+| Step        | State                                  | Initialized from               |
+| ----------- | -------------------------------------- | ------------------------------ |
+| Cinema      | cinemaId, cinemaName, time, date, room | User selection → `setCinema()` |
+| Seats       | selectedSeats, seatType, seatTotal     | User selection → `setSeats()`  |
+| Snack       | combos, foods, snackTotal              | User selection → `setSnacks()` |
+| Credentials | all above                              | Read-only from context         |
 
 ### Back-navigation handling
 
@@ -181,8 +189,8 @@ Computed in `BookingProvider` via `useMemo`:
 ticketCount = selectedSeats.length;
 ticketPrice = selectedSeats.reduce((sum, s) => sum + s.price, 0);
 seatType = selectedSeats[0]?.type ?? "Standard";
-snackTotal = combos.reduce((s, c) => s + c.price * c.qty, 0)
-           + foods.reduce((s, f) => s + f.price * f.qty, 0);
+snackTotal =
+  combos.reduce((s, c) => s + c.price * c.qty, 0) + foods.reduce((s, f) => s + f.price * f.qty, 0);
 convFee = 25000; // fixed mock fee
 total = ticketPrice + snackTotal + convFee;
 ```

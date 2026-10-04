@@ -36,7 +36,9 @@ export default function CountdownBanner() {
     <div className="mx-4 flex items-center justify-between px-4 py-3 rounded-xl bg-(--color-surface) border border-(--color-border)">
       <div className="flex items-center gap-2 text-sm font-medium text-(--color-text-secondary)">
         <Timer size={15} className="text-(--color-gold)" />
-        {expired ? translate("booking.common.time_expired") : translate("booking.common.time_remaining")}
+        {expired
+          ? translate("booking.common.time_expired")
+          : translate("booking.common.time_remaining")}
       </div>
       <span
         className={`font-extrabold text-lg tabular-nums tracking-tight ${

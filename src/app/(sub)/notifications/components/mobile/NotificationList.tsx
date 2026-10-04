@@ -14,15 +14,13 @@ export default function NotificationList({
   const { translate } = useLocale();
   const [notifications, setNotifications] = useState(initialNotifications);
 
-  const unreadCount = notifications.filter(
-    (notification) => !notification.read
-  ).length;
+  const unreadCount = notifications.filter((notification) => !notification.read).length;
 
   const markRead = (id: number) =>
     setNotifications((previousNotifications) =>
       previousNotifications.map((notification) =>
-        notification.id === id ? { ...notification, read: true } : notification
-      )
+        notification.id === id ? { ...notification, read: true } : notification,
+      ),
     );
 
   const markAllRead = () =>
@@ -30,14 +28,15 @@ export default function NotificationList({
       previousNotifications.map((notification) => ({
         ...notification,
         read: true,
-      }))
+      })),
     );
 
   return (
     <div className="flex flex-col">
       {unreadCount > 0 && (
         <div className="px-4 pt-3 pb-1 flex justify-end">
-          <button type="button"
+          <button
+            type="button"
             onClick={markAllRead}
             className="text-[11px] font-semibold text-(--color-gold) underline underline-offset-2"
           >

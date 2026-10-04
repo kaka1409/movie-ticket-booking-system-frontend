@@ -78,9 +78,7 @@ export default function CancelResult({
             <p className="text-xs text-(--color-text-muted) uppercase tracking-wider font-bold">
               {translate("tickets.cancel.refund_amount")}
             </p>
-            <p className="text-3xl font-extrabold text-(--color-gold)">
-              {formatVND(refundAmount)}
-            </p>
+            <p className="text-3xl font-extrabold text-(--color-gold)">{formatVND(refundAmount)}</p>
           </div>
 
           <div className="border-t border-(--color-border) pt-4 space-y-2">
@@ -156,9 +154,7 @@ export default function CancelResult({
             <div className="absolute w-20 h-20 rounded-full bg-red-500/12" />
             <div
               className={`relative w-16 h-16 rounded-full bg-red-500/20 flex items-center justify-center shadow-[0_0_28px_rgba(239,68,68,0.2)] ${
-                mounted
-                  ? "animate-[shake_0.5s_ease-in-out_0.3s]"
-                  : ""
+                mounted ? "animate-[shake_0.5s_ease-in-out_0.3s]" : ""
               }`}
             >
               <AlertCircle size={34} className="text-red-400" strokeWidth={2} />
@@ -190,9 +186,7 @@ export default function CancelResult({
           <p className="text-xs text-(--color-text-muted) uppercase tracking-wider font-bold">
             {translate("tickets.cancel.failed_refund_amount")}
           </p>
-          <p className="text-3xl font-extrabold text-(--color-gold)">
-            {formatVND(refundAmount)}
-          </p>
+          <p className="text-3xl font-extrabold text-(--color-gold)">{formatVND(refundAmount)}</p>
         </div>
 
         <div className="border-t border-(--color-border) pt-4 space-y-2">

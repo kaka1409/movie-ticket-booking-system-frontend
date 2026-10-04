@@ -66,7 +66,11 @@ export default function PhoneField({
 
         <div
           className={`flex items-center gap-3 px-4 py-3.5 rounded-2xl min-w-0 bg-(--color-surface) border transition-all duration-150 ${
-            error ? "border-red-500/70" : focused ? "border-(--color-gold)/60" : "border-(--color-border)"
+            error
+              ? "border-red-500/70"
+              : focused
+                ? "border-(--color-gold)/60"
+                : "border-(--color-border)"
           }`}
         >
           <Phone

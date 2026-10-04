@@ -39,21 +39,14 @@ export default function SeatGrid({
             {translate("booking.common.screen")}
           </span>
           <svg width="300" height="24" viewBox="0 0 260 24" fill="none">
-            <path
-              d="M 4 20 Q 130 0 256 20"
-              stroke="rgba(255,204,77,0.8)"
-              strokeWidth="5"
-            />
+            <path d="M 4 20 Q 130 0 256 20" stroke="rgba(255,204,77,0.8)" strokeWidth="5" />
           </svg>
         </div>
       )}
       <div className="px-2 overflow-x-auto scrollbar-hide">
         <div className="inline-flex flex-col justify-center gap-2 w-full">
           {rows.map((row) => (
-            <div
-              key={row.label}
-              className="flex items-center gap-1 justify-between"
-            >
+            <div key={row.label} className="flex items-center gap-1 justify-between">
               <span className="w-5 text-center text-xs font-bold text-(--color-text-muted) shrink-0">
                 {row.label}
               </span>

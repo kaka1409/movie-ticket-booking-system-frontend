@@ -7,11 +7,7 @@ import type { UpcomingTicket } from "@/features/tickets/types";
 import UpcomingCard from "@/app/(main)/tickets/components/mobile/UpcomingCard";
 import EmptyState from "@/app/(main)/tickets/components/mobile/EmptyState";
 
-export default function UpcomingTicketList({
-  tickets,
-}: {
-  tickets: UpcomingTicket[];
-}) {
+export default function UpcomingTicketList({ tickets }: { tickets: UpcomingTicket[] }) {
   const { translate } = useLocale();
   const { activeTab, visibleCount, loadMore } = useTickets();
 
@@ -55,7 +51,8 @@ export default function UpcomingTicketList({
       ))}
 
       {hasMore && (
-        <button type="button"
+        <button
+          type="button"
           onClick={loadMore}
           className="w-full py-3.5 rounded-2xl text-sm font-bold tracking-widest uppercase transition-colors bg-transparent border border-(--color-border) text-(--color-text-secondary)"
         >

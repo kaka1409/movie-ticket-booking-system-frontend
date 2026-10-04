@@ -51,9 +51,7 @@ export default function PriceSummary() {
               <span className="text-(--color-text-secondary)">
                 {translate("tickets.modify.change_seats")}
               </span>
-              <span className="font-medium text-(--color-text-primary)">
-                {formatVND(seatsFee)}
-              </span>
+              <span className="font-medium text-(--color-text-primary)">{formatVND(seatsFee)}</span>
             </div>
           )}
 
@@ -66,8 +64,8 @@ export default function PriceSummary() {
                 isPay
                   ? "text-(--color-gold)"
                   : isRefund
-                  ? "text-emerald-500"
-                  : "text-(--color-text-primary)"
+                    ? "text-emerald-500"
+                    : "text-(--color-text-primary)"
               }`}
             >
               {isRefund ? `+${formatVND(Math.abs(difference))}` : formatVND(difference)}
@@ -78,8 +76,8 @@ export default function PriceSummary() {
             {isRefund
               ? translate("tickets.modify.review.you_refund")
               : isPay
-              ? translate("tickets.modify.review.you_pay")
-              : translate("tickets.modify.review.no_change")}
+                ? translate("tickets.modify.review.you_pay")
+                : translate("tickets.modify.review.no_change")}
           </p>
         </div>
       </div>

@@ -5,13 +5,7 @@ import SectionHeader from "@/components/ui/SectionHeader";
 import FoodItemCard from "./FoodItemCard";
 import type { FoodItem } from "@/features/booking/types";
 
-export default function CategorySection({
-  label,
-  items,
-}: {
-  label: string;
-  items: FoodItem[];
-}) {
+export default function CategorySection({ label, items }: { label: string; items: FoodItem[] }) {
   const { foodQty, changeFood } = useSnackSelection();
 
   return (

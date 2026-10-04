@@ -23,11 +23,7 @@ export default async function CombosPage() {
   ]);
 
   return (
-    <SnackSelectionProvider
-      combos={combos}
-      foodItems={foodItems}
-      foodCategories={foodCategories}
-    >
+    <SnackSelectionProvider combos={combos} foodItems={foodItems} foodCategories={foodCategories}>
       {/* Mobile */}
       <div className="block md:hidden">
         <StepBar current={3} />

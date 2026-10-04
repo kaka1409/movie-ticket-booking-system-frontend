@@ -48,18 +48,17 @@ function cookieHeader(value: string): string {
 /* ─── Register ──────────────────────────────────────────── */
 
 export type RegisterActionResult =
-  | { success: true; data: RegisterResponse }
-  | { success: false; error: string; status?: number };
+  { success: true; data: RegisterResponse } | { success: false; error: string; status?: number };
 
 export async function registerAction(
   prevState: RegisterActionResult,
   data: RegisterRequest,
 ): Promise<RegisterActionResult> {
   try {
-    const result = await apiMutation<{ data: RegisterResponse }>(
-      "/auth/register",
-      { method: "POST", body: JSON.stringify(data) },
-    );
+    const result = await apiMutation<{ data: RegisterResponse }>("/auth/register", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
     return { success: true, data: result.data };
   } catch (error: unknown) {
     const status = (error as { status?: number }).status;
@@ -70,8 +69,7 @@ export async function registerAction(
 /* ─── Login ─────────────────────────────────────────────── */
 
 export type LoginActionResult =
-  | { success: true; data: LoginResponse }
-  | { success: false; error: string; status?: number };
+  { success: true; data: LoginResponse } | { success: false; error: string; status?: number };
 
 export async function loginAction(
   prevState: LoginActionResult,
@@ -101,8 +99,7 @@ export async function loginAction(
 /* ─── Refresh ───────────────────────────────────────────── */
 
 export type RefreshActionResult =
-  | { success: true; data: RefreshResponse }
-  | { success: false; error: string };
+  { success: true; data: RefreshResponse } | { success: false; error: string };
 
 export async function refreshAction(): Promise<RefreshActionResult> {
   try {
@@ -129,9 +126,7 @@ export async function refreshAction(): Promise<RefreshActionResult> {
 
 /* ─── Logout ────────────────────────────────────────────── */
 
-export type LogoutActionResult =
-  | { success: true }
-  | { success: false; error: string };
+export type LogoutActionResult = { success: true } | { success: false; error: string };
 
 export async function logoutAction(): Promise<LogoutActionResult> {
   try {

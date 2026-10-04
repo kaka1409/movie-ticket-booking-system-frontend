@@ -2,23 +2,13 @@
 
 import { useRef } from "react";
 import { useRouter } from "next/navigation";
-import {
-  ChevronLeft,
-  ChevronRight,
-  LogIn,
-  Pencil,
-  RotateCcw,
-  X,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, LogIn, Pencil, RotateCcw, X } from "lucide-react";
 import Stars from "@/components/ui/Stars";
 import ReviewCard from "./ReviewCard";
 import WriteReview from "./WriteReview";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useMovieDetail } from "@/features/movies/context";
-import {
-  useMovieReviews,
-  formatReviewCount,
-} from "@/features/reviews/useMovieReviews";
+import { useMovieReviews, formatReviewCount } from "@/features/reviews/useMovieReviews";
 import type { ReviewsResponse } from "@/features/reviews/types";
 
 function RatingBar({ stars, pct }: { stars: number; pct: number }) {
@@ -97,8 +87,7 @@ export default function Reviews({
           </span>
           <Stars rating={average} size={13} />
           <span className="mt-0.5 text-[10px] text-(--color-text-muted)">
-            {formatReviewCount(ratingCount)}{" "}
-            {translate("movies.detail.ratings")}
+            {formatReviewCount(ratingCount)} {translate("movies.detail.ratings")}
           </span>
         </div>
 
@@ -157,9 +146,7 @@ export default function Reviews({
 
       {error && (
         <div className="mb-4 flex flex-col items-center gap-3 rounded-(--radius-lg) border border-(--color-border) bg-(--color-surface) px-6 py-10 text-center">
-          <p className="text-sm text-(--color-text-muted)">
-            {error || translate("common.error")}
-          </p>
+          <p className="text-sm text-(--color-text-muted)">{error || translate("common.error")}</p>
           <button
             type="button"
             onClick={() => void retry()}
@@ -211,24 +198,22 @@ export default function Reviews({
                 <ChevronLeft size={14} />
               </button>
 
-              {Array.from({ length: totalPages }, (_, index) => index + 1).map(
-                (pageNumber) => (
-                  <button
-                    key={pageNumber}
-                    type="button"
-                    onClick={() => void goToPage(pageNumber)}
-                    disabled={loadingPage}
-                    aria-current={pageNumber === page ? "page" : undefined}
-                    className={`h-8 w-8 cursor-pointer rounded-(--radius-sm) border text-xs font-bold transition-all duration-150 disabled:cursor-not-allowed disabled:opacity-30 ${
-                      pageNumber === page
-                        ? "border-(--color-gold) bg-(--color-gold) text-(--color-bg)"
-                        : "border-(--color-border) text-(--color-text-muted) hover:border-(--color-gold)/40 hover:text-(--color-gold)"
-                    }`}
-                  >
-                    {pageNumber}
-                  </button>
-                ),
-              )}
+              {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
+                <button
+                  key={pageNumber}
+                  type="button"
+                  onClick={() => void goToPage(pageNumber)}
+                  disabled={loadingPage}
+                  aria-current={pageNumber === page ? "page" : undefined}
+                  className={`h-8 w-8 cursor-pointer rounded-(--radius-sm) border text-xs font-bold transition-all duration-150 disabled:cursor-not-allowed disabled:opacity-30 ${
+                    pageNumber === page
+                      ? "border-(--color-gold) bg-(--color-gold) text-(--color-bg)"
+                      : "border-(--color-border) text-(--color-text-muted) hover:border-(--color-gold)/40 hover:text-(--color-gold)"
+                  }`}
+                >
+                  {pageNumber}
+                </button>
+              ))}
 
               <button
                 type="button"

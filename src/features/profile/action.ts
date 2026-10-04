@@ -4,8 +4,7 @@ import type { UpdateProfileRequest, User } from "./types";
 import { apiMutation } from "@/libs/api";
 
 export type ProfileActionResult =
-  | { success: true; data: User }
-  | { success: false; error: string; status?: number };
+  { success: true; data: User } | { success: false; error: string; status?: number };
 
 export async function updateProfile(
   prevState: ProfileActionResult,

@@ -19,20 +19,10 @@ export default function FormActions({
 }) {
   return (
     <div className="mt-8 flex flex-col gap-4">
-      <Button
-        variant="primary"
-        size="lg"
-        disabled={disabled}
-        loading={loading}
-        onClick={onPrimary}
-      >
+      <Button variant="primary" size="lg" disabled={disabled} loading={loading} onClick={onPrimary}>
         {primaryLabel}
       </Button>
-      <Button
-        variant="outline"
-        size="lg"
-        onClick={onCancel}
-      >
+      <Button variant="outline" size="lg" onClick={onCancel}>
         {cancelLabel}
       </Button>
     </div>

@@ -5,8 +5,7 @@ import { getReviews } from "./api";
 import type { ReviewsResponse } from "./types";
 
 export type ActionResult<T> =
-  | { success: true; data: T }
-  | { success: false; error: string; status?: number };
+  { success: true; data: T } | { success: false; error: string; status?: number };
 
 function failure(error: unknown): {
   success: false;

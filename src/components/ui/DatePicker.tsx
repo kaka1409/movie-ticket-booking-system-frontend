@@ -16,7 +16,8 @@ export default function DatePicker({
       {dates.map((d) => {
         const active = selected === d.value;
         return (
-          <button type="button"
+          <button
+            type="button"
             key={d.value}
             onClick={() => onSelect(d.value)}
             aria-pressed={active}

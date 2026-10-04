@@ -8,13 +8,7 @@ import DetailRow from "@/app/(sub)/booking/components/mobile/DetailRow";
 import TearLine from "@/components/ui/TearLine";
 import Badge from "@/components/ui/Badge";
 import { formatVND } from "@/libs/utils";
-import {
-  MonitorPlay,
-  CalendarDays,
-  Armchair,
-  Popcorn,
-  CreditCard,
-} from "lucide-react";
+import { MonitorPlay, CalendarDays, Armchair, Popcorn, CreditCard } from "lucide-react";
 
 const ERROR_CODES: Record<string, string> = {
   payment_declined: "ERR_PAYMENT_DECLINED",
@@ -62,9 +56,7 @@ export default function FailedOrderCard() {
           </div>
         )}
         <div className="flex-1 min-w-0 pt-1">
-          <h3 className="font-bold text-base text-white mb-1">
-            {movie?.title ?? "N/A"}
-          </h3>
+          <h3 className="font-bold text-base text-white mb-1">{movie?.title ?? "N/A"}</h3>
           <p className="text-xs text-white/60 mb-2">{movie?.ageRating}</p>
         </div>
       </div>
@@ -104,14 +96,14 @@ export default function FailedOrderCard() {
             selectedSeats.reduce<Record<string, typeof selectedSeats>>((acc, seat) => {
               (acc[seat.type] ??= []).push(seat);
               return acc;
-            }, {})
+            }, {}),
           ).map(([type, seats]) => (
             <div key={type} className="space-y-1">
-              <p className="text-sm font-bold text-white">
-                {seats.map((s) => s.label).join(", ")}
-              </p>
+              <p className="text-sm font-bold text-white">{seats.map((s) => s.label).join(", ")}</p>
               <div className="flex justify-between text-sm">
-                <span className="text-white">{type} {translate("booking.common.ticket")}</span>
+                <span className="text-white">
+                  {type} {translate("booking.common.ticket")}
+                </span>
                 <span className="font-medium text-white">
                   {seats.length}× {formatVND(seats[0].price)}
                 </span>
@@ -157,15 +149,17 @@ export default function FailedOrderCard() {
             <p className="flex items-center justify-end gap-1.5 text-[9px] font-black tracking-[0.16em] uppercase text-white/60">
               {translate("booking.common.total_price")}
             </p>
-            <p className="font-bold text-base text-white">
-              {formatVND(total)}
-            </p>
+            <p className="font-bold text-base text-white">{formatVND(total)}</p>
           </div>
         </div>
 
         {/* Error code pill */}
         <div className="flex items-center gap-2 pt-1">
-          <Badge variant="error" size="xs" className="bg-red-500/10 text-red-400 border border-red-500/20">
+          <Badge
+            variant="error"
+            size="xs"
+            className="bg-red-500/10 text-red-400 border border-red-500/20"
+          >
             {errorCode}
           </Badge>
           <span className="text-[10px] text-white/60">

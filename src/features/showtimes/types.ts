@@ -63,4 +63,3 @@ export interface ShowtimeDetail {
     name: string;
   };
 }
-

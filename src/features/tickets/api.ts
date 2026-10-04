@@ -1,6 +1,4 @@
-import type {
-  UpcomingTicket, PastTicket, Recipient, EligibleShowtime,
-} from "./types";
+import type { UpcomingTicket, PastTicket, Recipient, EligibleShowtime } from "./types";
 // import { apiFetch } from "@/libs/api";
 
 import { UPCOMING, PAST, MOCK_RECIPIENTS, MOCK_ELIGIBLE_SHOWTIMES } from "./mock";
@@ -22,8 +20,11 @@ export async function getPastTickets(cookie?: string): Promise<PastTicket[]> {
   return PAST;
 }
 
-/* eslint-disable-next-line @typescript-eslint/no-unused-vars -- cookie is reserved for the real API call (currently mocked) */
-export async function getTicketById(id: string, cookie?: string): Promise<UpcomingTicket | PastTicket | undefined> {
+export async function getTicketById(
+  id: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- cookie is reserved for the real API call (currently mocked)
+  cookie?: string,
+): Promise<UpcomingTicket | PastTicket | undefined> {
   const allTickets = [...UPCOMING, ...PAST];
   return allTickets.find((ticket) => ticket.id === id);
 
@@ -40,7 +41,7 @@ export async function findRecipient(query: string, cookie?: string): Promise<Rec
     MOCK_RECIPIENTS.find(
       (recipient) =>
         recipient.username.toLowerCase() === normalized ||
-        recipient.email.toLowerCase() === normalized
+        recipient.email.toLowerCase() === normalized,
     ) ?? null
   );
 
@@ -61,9 +62,9 @@ export async function searchRecipients(query: string): Promise<Recipient[]> {
     (recipient) =>
       recipient.name.toLowerCase().includes(normalized) ||
       recipient.username.toLowerCase().includes(normalized) ||
-      recipient.email.toLowerCase().includes(normalized)
+      recipient.email.toLowerCase().includes(normalized),
   );
-  
+
   // const response = await apiFetch<{ data: Recipient[] }>(
   //   `/tickets/recipients/search?q=${encodeURIComponent(query)}`,
   // );

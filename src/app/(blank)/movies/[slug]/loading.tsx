@@ -32,10 +32,7 @@ function DesktopLoading() {
                 <Skeleton className="h-6 w-28 rounded-full" />
                 <div className="flex flex-wrap gap-4">
                   {Array.from({ length: 6 }).map((_, index) => (
-                    <Skeleton
-                      key={index}
-                      className="h-20 w-20 rounded-(--radius-lg)"
-                    />
+                    <Skeleton key={index} className="h-20 w-20 rounded-(--radius-lg)" />
                   ))}
                 </div>
               </div>

@@ -42,41 +42,41 @@ export default function LoginForm({ returnUrl }: { returnUrl?: string }) {
       : result.error.flatten().fieldErrors.password?.[0]
     : undefined;
 
-  const handleSubmit = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault();
-    setTouched(true);
-    setServerError("");
-    if (!isValid) return;
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      setTouched(true);
+      setServerError("");
+      if (!isValid) return;
 
-    setIsSubmitting(true);
-    try {
-      const result = await loginAction(
-        { success: false, error: "" },
-        { email, password },
-      );
-      if (result.success) {
-        setAuth(result.data.user, result.data.accessToken);
-        router.push(returnUrl ?? "/");
-      } else {
-        if (result.status === 401) {
-          setServerError(translate("auth.login.error_invalid_credentials"));
+      setIsSubmitting(true);
+      try {
+        const result = await loginAction({ success: false, error: "" }, { email, password });
+        if (result.success) {
+          setAuth(result.data.user, result.data.accessToken);
+          router.push(returnUrl ?? "/");
         } else {
-          setServerError(translate("auth.login.error_server"));
+          if (result.status === 401) {
+            setServerError(translate("auth.login.error_invalid_credentials"));
+          } else {
+            setServerError(translate("auth.login.error_server"));
+          }
         }
+      } catch {
+        setServerError(translate("auth.login.error_server"));
+      } finally {
+        setIsSubmitting(false);
       }
-    } catch {
-      setServerError(translate("auth.login.error_server"));
-    } finally {
-      setIsSubmitting(false);
-    }
-  }, [isValid, setAuth, email, password, router, translate, returnUrl]);
+    },
+    [isValid, setAuth, email, password, router, translate, returnUrl],
+  );
 
   return (
     <div className="w-full max-w-md mx-auto animate-fade-in">
       <div className="flex justify-center mb-4">
         <Logo size="lg" />
       </div>
-      
+
       <h1 className="text-center text-2xl font-extrabold text-(--color-text-primary) mb-1">
         {translate("auth.login.title")}
       </h1>
@@ -130,19 +130,15 @@ export default function LoginForm({ returnUrl }: { returnUrl?: string }) {
           </div>
         )}
 
-        <Button
-          type="submit"
-          variant="primary"
-          size="lg"
-          loading={isSubmitting}
-        >
+        <Button type="submit" variant="primary" size="lg" loading={isSubmitting}>
           {translate("auth.login.login_btn")}
         </Button>
       </form>
 
       <p className="text-center text-xs text-(--color-text-muted) mt-6">
         {translate("auth.login.no_account")}{" "}
-        <button type="button"
+        <button
+          type="button"
           onClick={() => router.push("/register")}
           className="text-(--color-gold) font-semibold underline underline-offset-2 hover:text-(--color-gold-light) transition-colors"
         >

@@ -21,18 +21,11 @@ export default function FailActions() {
           mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
         }`}
       >
-        <Button
-          icon={RefreshCw}
-          onClick={() => router.push(`/booking/${slug}/payment`)}
-        >
+        <Button icon={RefreshCw} onClick={() => router.push(`/booking/${slug}/payment`)}>
           {translate("booking.status.failed.retry")}
         </Button>
 
-        <Button
-          variant="outline"
-          icon={Home}
-          onClick={() => router.push("/")}
-        >
+        <Button variant="outline" icon={Home} onClick={() => router.push("/")}>
           {translate("booking.common.back_to_home")}
         </Button>
       </div>

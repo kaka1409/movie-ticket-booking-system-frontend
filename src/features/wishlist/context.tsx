@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  type ReactNode,
-} from "react";
+import { createContext, useContext, useState, useCallback, type ReactNode } from "react";
 import { INITIAL_WISHLIST } from "@/features/wishlist/api";
 
 interface WishlistContextType {
@@ -21,15 +15,10 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
   const [wishlist, setWishlist] = useState<string[]>(INITIAL_WISHLIST);
 
   const toggleWishlist = useCallback((id: string) => {
-    setWishlist((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
-    );
+    setWishlist((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
   }, []);
 
-  const isWishlisted = useCallback(
-    (id: string) => wishlist.includes(id),
-    [wishlist]
-  );
+  const isWishlisted = useCallback((id: string) => wishlist.includes(id), [wishlist]);
 
   return (
     <WishlistContext.Provider value={{ wishlist, toggleWishlist, isWishlisted }}>

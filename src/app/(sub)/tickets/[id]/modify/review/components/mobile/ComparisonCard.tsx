@@ -38,9 +38,7 @@ export default function ComparisonCard() {
                 {translate("tickets.modify.review.current")}
               </span>
               <div className="flex-1 min-w-0">
-                <p className="text-sm text-(--color-text-primary)">
-                  {ticket.cinema}
-                </p>
+                <p className="text-sm text-(--color-text-primary)">{ticket.cinema}</p>
                 <p className="text-xs text-(--color-text-muted)">
                   {ticket.room} · {ticket.datetime}
                 </p>
@@ -84,9 +82,7 @@ export default function ComparisonCard() {
                 <p className="text-sm text-(--color-text-primary)">
                   {ticket.seatItems.map((s) => s.label).join(", ")}
                 </p>
-                <p className="text-xs text-(--color-text-muted)">
-                  {formatVND(currentSeatsTotal)}
-                </p>
+                <p className="text-xs text-(--color-text-muted)">{formatVND(currentSeatsTotal)}</p>
               </div>
             </div>
             <div className="flex justify-center">
@@ -100,9 +96,7 @@ export default function ComparisonCard() {
                 <p className="text-sm font-bold text-(--color-gold)">
                   {selectedSeats.map((s) => s.label).join(", ")}
                 </p>
-                <p className="text-xs text-(--color-text-muted)">
-                  {formatVND(newSeatsTotal)}
-                </p>
+                <p className="text-xs text-(--color-text-muted)">{formatVND(newSeatsTotal)}</p>
               </div>
             </div>
           </div>

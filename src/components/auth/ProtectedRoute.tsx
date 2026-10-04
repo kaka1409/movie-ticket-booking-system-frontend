@@ -7,11 +7,7 @@ import Button from "@/components/ui/Button";
 import { useLocale } from "@/contexts/LocaleContext";
 import { Skeleton } from "@/components/ui/Skeleton";
 
-export default function ProtectedRoute({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
@@ -44,9 +40,7 @@ export default function ProtectedRoute({
         </div>
         <Button
           icon={LogIn}
-          onClick={() =>
-            router.push(`/login?returnUrl=${encodeURIComponent(pathname)}`)
-          }
+          onClick={() => router.push(`/login?returnUrl=${encodeURIComponent(pathname)}`)}
         >
           {translate("auth.protected.login_btn")}
         </Button>

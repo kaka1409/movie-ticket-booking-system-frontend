@@ -70,11 +70,7 @@ export default function HeroSection() {
           >
             <Heart
               size={18}
-              className={
-                liked
-                  ? "fill-pink-400 text-pink-400"
-                  : "text-(--color-gold-light)"
-              }
+              className={liked ? "fill-pink-400 text-pink-400" : "text-(--color-gold-light)"}
             />
           </button>
         </div>
