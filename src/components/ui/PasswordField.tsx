@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { LockKeyhole, Eye, EyeOff } from "lucide-react";
+import { useLocale } from "@/contexts/LocaleContext";
 import InputField from "./InputField";
 
 export default function PasswordField({
@@ -18,6 +19,7 @@ export default function PasswordField({
   autoComplete?: string;
 }) {
   const [show, setShow] = useState(false);
+  const { translate } = useLocale();
 
   return (
     <InputField
@@ -33,7 +35,7 @@ export default function PasswordField({
           type="button"
           onClick={() => setShow((previous) => !previous)}
           className="shrink-0 text-(--color-text-muted) transition-colors"
-          aria-label={show ? "Hide password" : "Show password"}
+          aria-label={show ? translate("common.hide_password") : translate("common.show_password")}
         >
           {show ? <EyeOff size={17} /> : <Eye size={17} />}
         </button>

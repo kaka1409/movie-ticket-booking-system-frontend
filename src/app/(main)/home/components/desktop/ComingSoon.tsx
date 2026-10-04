@@ -40,7 +40,10 @@ export default function ComingSoon({
   const visibleMovies = movies.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
   return (
-    <section className="mx-auto max-w-7xl px-8 pt-12 pb-6" aria-label="Coming Soon Movies">
+    <section
+      className="mx-auto max-w-7xl px-8 pt-12 pb-6"
+      aria-label={translate("home.desktop.coming_soon_section")}
+    >
       {/* Section Header */}
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -65,7 +68,7 @@ export default function ComingSoon({
                   ? "cursor-not-allowed opacity-40"
                   : "hover:border-(--color-gold) hover:text-(--color-gold)"
               }`}
-              aria-label="Previous coming soon movies"
+              aria-label={translate("home.desktop.prev_coming_soon")}
             >
               <ChevronLeft size={16} />
             </button>
@@ -78,7 +81,7 @@ export default function ComingSoon({
                   ? "cursor-not-allowed opacity-40"
                   : "hover:border-(--color-gold) hover:text-(--color-gold)"
               }`}
-              aria-label="Next coming soon movies"
+              aria-label={translate("home.desktop.next_coming_soon")}
             >
               <ChevronRight size={16} />
             </button>
@@ -136,7 +139,7 @@ export default function ComingSoon({
                         ? "border-(--color-gold) bg-(--color-gold) text-black shadow-md"
                         : "border-white/20 bg-black/60 text-white backdrop-blur-xs hover:border-(--color-gold) hover:text-(--color-gold)"
                     }`}
-                    aria-label={`Notify me about ${movie.title}`}
+                    aria-label={`${translate("home.desktop.notify_me")} ${movie.title}`}
                     title={wished ? "Saved to Wishlist" : "Remind Me"}
                   >
                     <Bell size={16} fill={wished ? "currentColor" : "none"} />

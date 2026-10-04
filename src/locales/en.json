@@ -9,7 +9,11 @@
     "header": {
       "search": "Search movies, cinemas...",
       "notifications": "Notifications",
-      "gold_member": "GOLD MEMBER"
+      "gold_member": "GOLD MEMBER",
+      "guest": "Guest"
+    },
+    "nav": {
+      "main": "Main navigation"
     },
     "footer": {
       "description": "Redefining the premium movie-going experience since 2012. Join us for a world of cinematic wonders and exclusive perks.",
@@ -69,7 +73,19 @@
       "explore_all": "Explore All",
       "estimated_total": "Estimated Total:",
       "view_schedule": "View Full Schedule",
-      "quick_book_now": "Quick Book Now"
+      "quick_book_now": "Quick Book Now",
+      "quick_booking_section": "Quick Booking Bar",
+      "decrease_tickets": "Decrease tickets",
+      "increase_tickets": "Increase tickets",
+      "now_showing_section": "Now Showing Movies",
+      "view_movie_details": "View details for",
+      "featured_section": "Featured Movies Carousel",
+      "go_to_slide": "Go to slide",
+      "for_you_section": "Personalized Recommendations",
+      "coming_soon_section": "Coming Soon Movies",
+      "prev_coming_soon": "Previous coming soon movies",
+      "next_coming_soon": "Next coming soon movies",
+      "notify_me": "Notify me about"
     }
   },
   "movies": {
@@ -195,6 +211,7 @@
     },
     "modify": {
       "title": "Modify Ticket",
+      "loading_seat_map": "Loading seat map...",
       "select_type": "What would you like to modify?",
       "change_showtime": "Change Showtime",
       "change_showtime_desc": "Switch to a different date, time, or cinema",
@@ -533,6 +550,11 @@
     "not_found_desc": "The page you are looking for does not exist.",
     "cinematic_excellence": "Cinematic Excellence",
     "change_language": "Change language",
-    "more_info": "More Info"
+    "more_info": "More Info",
+    "close": "Close",
+    "clear_selection": "Clear selection",
+    "clear_search": "Clear search",
+    "show_password": "Show password",
+    "hide_password": "Hide password"
   }
 }

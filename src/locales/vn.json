@@ -9,7 +9,11 @@
     "header": {
       "search": "Tìm phim, rạp chiếu...",
       "notifications": "Thông Báo",
-      "gold_member": "HẠNG VÀNG"
+      "gold_member": "HẠNG VÀNG",
+      "guest": "Khách"
+    },
+    "nav": {
+      "main": "Điều hướng chính"
     },
     "footer": {
       "description": "Định nghĩa lại trải nghiệm xem phim cao cấp từ năm 2012. Tham gia cùng chúng tôi để khám phá thế giới điện ảnh tuyệt vời và đặc quyền độc quyền.",
@@ -69,7 +73,19 @@
       "explore_all": "Khám Phá Thêm",
       "estimated_total": "Tổng ước tính:",
       "view_schedule": "Xem Lịch Chiếu",
-      "quick_book_now": "Đặt Nhanh"
+      "quick_book_now": "Đặt Nhanh",
+      "quick_booking_section": "Thanh đặt vé nhanh",
+      "decrease_tickets": "Giảm số vé",
+      "increase_tickets": "Tăng số vé",
+      "now_showing_section": "Phim Đang Chiếu",
+      "view_movie_details": "Xem chi tiết",
+      "featured_section": "Băng chuyền phim nổi bật",
+      "go_to_slide": "Đến trang",
+      "for_you_section": "Gợi ý dành cho bạn",
+      "coming_soon_section": "Phim Sắp Chiếu",
+      "prev_coming_soon": "Phim sắp chiếu trước",
+      "next_coming_soon": "Phim sắp chiếu tiếp",
+      "notify_me": "Nhận thông báo về"
     }
   },
   "movies": {
@@ -195,6 +211,7 @@
     },
     "modify": {
       "title": "Sửa Vé",
+      "loading_seat_map": "Đang tải sơ đồ ghế...",
       "select_type": "Bạn muốn sửa gì?",
       "change_showtime": "Đổi Suất Chiếu",
       "change_showtime_desc": "Chuyển ngày, giờ, hoặc rạp khác",
@@ -533,6 +550,11 @@
     "not_found_desc": "Trang bạn tìm kiếm không tồn tại.",
     "cinematic_excellence": "Xuất Sắc Điện Ảnh",
     "change_language": "Thay đổi ngôn ngữ",
-    "more_info": "Thông tin"
+    "more_info": "Thông tin",
+    "close": "Đóng",
+    "clear_selection": "Xóa lựa chọn",
+    "clear_search": "Xóa tìm kiếm",
+    "show_password": "Hiện mật khẩu",
+    "hide_password": "Ẩn mật khẩu"
   }
 }

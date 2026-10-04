@@ -29,7 +29,7 @@ const SelectCol: React.FC<SelectColProps> = ({ icon, label, value, onChange, opt
     <div className="relative">
       <select
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(event) => onChange(event.target.value)}
         className="w-full cursor-pointer appearance-none border-0 border-b border-(--color-border) bg-transparent pb-2 pr-6 pt-2 text-[13px] font-medium text-white outline-none font-sans transition-colors focus:border-(--color-gold)"
       >
         {options.map((o) => (
@@ -105,7 +105,10 @@ export default function QuickBookingBar({
   const bookingUrl = `/booking/${effectiveMovieSlug}/cinema?cinema=${cinemaId}&time=${selectedTime}&date=${date}`;
 
   return (
-    <section className="mx-auto max-w-7xl px-8 pt-4 pb-2" aria-label="Quick Booking Bar">
+    <section
+      className="mx-auto max-w-7xl px-8 pt-4 pb-2"
+      aria-label={translate("home.desktop.quick_booking_section")}
+    >
       <div className="relative z-10 rounded-(--radius-lg) border border-(--color-border) bg-(--color-surface) px-7 pb-5 pt-5 shadow-lg">
         <div className="mb-5 flex items-start gap-6">
           {/* Movie Select */}
@@ -170,7 +173,7 @@ export default function QuickBookingBar({
                 type="button"
                 onClick={() => setTickets((prev) => Math.max(1, prev - 1))}
                 className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-full border border-(--color-border) bg-(--color-surface-2) text-sm font-bold text-white transition-colors hover:border-(--color-gold) hover:text-(--color-gold)"
-                aria-label="Decrease tickets"
+                aria-label={translate("home.desktop.decrease_tickets")}
               >
                 −
               </button>
@@ -179,7 +182,7 @@ export default function QuickBookingBar({
                 type="button"
                 onClick={() => setTickets((prev) => Math.min(8, prev + 1))}
                 className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-full border border-(--color-border) bg-(--color-surface-2) text-sm font-bold text-white transition-colors hover:border-(--color-gold) hover:text-(--color-gold)"
-                aria-label="Increase tickets"
+                aria-label={translate("home.desktop.increase_tickets")}
               >
                 +
               </button>

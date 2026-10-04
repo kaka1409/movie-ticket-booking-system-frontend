@@ -61,7 +61,7 @@ export default function HeroSection({
         className="group relative mx-auto w-full max-w-7xl px-8 pt-6 pb-2"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
-        aria-label="Featured Movies Carousel"
+        aria-label={translate("home.desktop.featured_section")}
       >
         <div className="relative h-[480px] w-full overflow-hidden rounded-(--radius-lg) border border-(--color-border) bg-(--color-surface)">
           {/* Backdrop Image */}
@@ -168,7 +168,7 @@ export default function HeroSection({
                 <button
                   key={i}
                   type="button"
-                  aria-label={`Go to slide ${i + 1}`}
+                  aria-label={`${translate("home.desktop.go_to_slide")} ${i + 1}`}
                   className="h-1.5 cursor-pointer rounded-full transition-all duration-300"
                   style={{
                     width: i === index ? 24 : 8,

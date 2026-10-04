@@ -2,6 +2,7 @@
 
 import { X } from "lucide-react";
 import type { ReactNode, ElementType } from "react";
+import { useLocale } from "@/contexts/LocaleContext";
 
 interface ActionSheetProps {
   open: boolean;
@@ -18,6 +19,8 @@ interface ActionRowProps {
 }
 
 export default function ActionSheet({ open, onClose, children }: ActionSheetProps) {
+  const { translate } = useLocale();
+
   return (
     <div className={`fixed inset-0 z-50 ${open ? "" : "pointer-events-none"}`} aria-hidden={!open}>
       {/* Backdrop */}
@@ -40,7 +43,7 @@ export default function ActionSheet({ open, onClose, children }: ActionSheetProp
           <button
             type="button"
             onClick={onClose}
-            aria-label="Close"
+            aria-label={translate("common.close")}
             className="absolute right-4 top-3.5 p-1.5 rounded-full text-(--color-text-muted) transition-colors hover:text-(--color-text-primary)"
           >
             <X size={20} />

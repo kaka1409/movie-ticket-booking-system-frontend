@@ -1,6 +1,7 @@
 "use client";
 
 import { Search, X } from "lucide-react";
+import { useLocale } from "@/contexts/LocaleContext";
 
 export default function SearchBar({
   value,
@@ -17,6 +18,8 @@ export default function SearchBar({
   showClearButton?: boolean;
   className?: string;
 }) {
+  const { translate } = useLocale();
+
   return (
     <div
       className={`flex items-center gap-3 rounded-2xl bg-(--color-surface) border border-(--color-border) px-4 py-3 transition-colors focus-within:border-(--color-gold)/50 ${className}`}
@@ -37,7 +40,7 @@ export default function SearchBar({
         <button
           type="button"
           onClick={() => onChange("")}
-          aria-label="Clear search"
+          aria-label={translate("common.clear_search")}
           className="shrink-0 text-(--color-text-muted) transition-colors hover:text-(--color-text-primary)"
         >
           <X size={14} />

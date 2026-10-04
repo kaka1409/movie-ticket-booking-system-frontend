@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ArrowRight, X } from "lucide-react";
 import { formatVND } from "@/libs/utils";
+import { useLocale } from "@/contexts/LocaleContext";
 
 interface SelectionInfo {
   label?: string;
@@ -43,6 +44,7 @@ export default function BookingBottomBar({
   promptText,
   alwaysEnabled = false,
 }: BookingBottomBarProps) {
+  const { translate } = useLocale();
   const hasSelection = selectionInfo?.label || selectionInfo?.subLabel;
   const hasTotal = totalInfo?.amount !== undefined;
 
@@ -80,9 +82,9 @@ export default function BookingBottomBar({
         <Link
           href={effectivelyEnabled ? ctaHref : "#"}
           aria-disabled={!effectivelyEnabled}
-          onClick={(e) => {
+          onClick={(event) => {
             if (!effectivelyEnabled) {
-              e.preventDefault();
+              event.preventDefault();
             }
           }}
           className={effectivelyEnabled ? activeClasses : disabledClasses}
@@ -127,7 +129,7 @@ export default function BookingBottomBar({
                       type="button"
                       onClick={selectionInfo.onClear}
                       className="w-7 h-7 rounded-full flex items-center justify-center bg-(--color-surface-2) text-(--color-text-muted)"
-                      aria-label="Clear selection"
+                      aria-label={translate("common.clear_selection")}
                     >
                       <X size={13} />
                     </button>

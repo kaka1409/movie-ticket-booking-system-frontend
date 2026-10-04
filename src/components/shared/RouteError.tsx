@@ -8,11 +8,16 @@ import { AlertTriangle, Home } from "lucide-react";
 
 const GLITCH_CHARS = "!@#$%^&*0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
+/**
+ * Decode-animation: every character of `target` cycles through random glyphs
+ * before settling on its real value. The LAST character to settle flips
+ * `isDone` (deferred by 100ms so the final paint lands before `onDone`).
+ */
 function useGlitchDecode(target: string, duration = 2000) {
   const [chars, setChars] = useState(() =>
     target.split("").map(() => GLITCH_CHARS[Math.floor(Math.random() * GLITCH_CHARS.length)]),
   );
-  const [done, setDone] = useState(false);
+  const [isDone, setIsDone] = useState(false);
   const intervalsRef = useRef<ReturnType<typeof setInterval>[]>([]);
 
   useEffect(() => {
@@ -32,7 +37,7 @@ function useGlitchDecode(target: string, duration = 2000) {
             return next;
           });
           if (i === steps - 1) {
-            setTimeout(() => setDone(true), 100);
+            setTimeout(() => setIsDone(true), 100);
           }
           return;
         }
@@ -54,7 +59,7 @@ function useGlitchDecode(target: string, duration = 2000) {
 
   const isDecoded = useCallback((index: number) => chars[index] === target[index], [chars, target]);
 
-  return { chars, done, isDecoded };
+  return { chars, isDone, isDecoded };
 }
 
 function GlitchText({
@@ -66,11 +71,11 @@ function GlitchText({
   className?: string;
   onDone?: () => void;
 }) {
-  const { chars, done, isDecoded } = useGlitchDecode(text, 2000);
+  const { chars, isDone, isDecoded } = useGlitchDecode(text, 2000);
 
   useEffect(() => {
-    if (done) onDone?.();
-  }, [done, onDone]);
+    if (isDone) onDone?.();
+  }, [isDone, onDone]);
 
   return (
     <span className={className} aria-label={text}>

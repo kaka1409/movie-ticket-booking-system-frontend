@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Search, Bell } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
+import { useAuth } from "@/contexts/AuthContext";
 import Logo from "@/layouts/components/Logo";
 import LanguageToggle from "@/layouts/components/LanguageToggle";
 
@@ -22,7 +23,18 @@ function isActiveLink(href: string, pathname: string): boolean {
 
 export default function Header() {
   const { translate } = useLocale();
+  const { user } = useAuth();
   const pathname = usePathname();
+
+  const displayName = user?.name ?? translate("layout.header.guest");
+  const initials =
+    displayName
+      .split(" ")
+      .filter(Boolean)
+      .map((word) => word[0])
+      .slice(-2)
+      .join("")
+      .toUpperCase() || "?";
 
   return (
     <nav className="sticky top-0 z-50 border-b border-(--color-border) bg-black/92 backdrop-blur-md">
@@ -56,12 +68,6 @@ export default function Header() {
 
         <div className="flex items-center gap-3.5 text-(--color-text-muted)">
           <LanguageToggle variant="text" />
-          {/*<button className="cursor-pointer border-none bg-transparent p-1 text-inherit">
-            <SlidersHorizontal size={18} />
-          </button>
-          <button className="cursor-pointer border-none bg-transparent p-1 text-inherit">
-            <Settings size={18} />
-          </button>*/}
           <button
             type="button"
             className="relative cursor-pointer border-none bg-transparent p-1 text-inherit"
@@ -73,10 +79,10 @@ export default function Header() {
 
         <div className="flex shrink-0 items-center gap-2 rounded-(--radius-pill) border border-(--color-border) bg-(--color-surface) pl-1.5 pr-3 py-1">
           <div className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-(--color-gold) to-(--color-gold-dark) text-[11px] font-extrabold text-black">
-            AR
+            {initials}
           </div>
           <div className="leading-tight">
-            <p className="text-xs font-bold text-white">Alex Rivers</p>
+            <p className="text-xs font-bold text-white">{displayName}</p>
             <p className="text-[9px] font-semibold tracking-widest text-(--color-gold) uppercase">
               {translate("layout.header.gold_member")}
             </p>

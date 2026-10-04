@@ -32,7 +32,7 @@ export default function ForYou({ movies }: { movies: Movie[] }) {
         background:
           "linear-gradient(180deg, transparent 0%, rgba(255,204,77,0.04) 50%, transparent 100%)",
       }}
-      aria-label="Personalized Recommendations"
+      aria-label={translate("home.desktop.for_you_section")}
     >
       <div className="mx-auto max-w-7xl px-8">
         <div className="mb-9 text-center">

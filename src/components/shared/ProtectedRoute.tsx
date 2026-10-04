@@ -6,6 +6,7 @@ import { LogIn } from "lucide-react";
 import Button from "@/components/ui/Button";
 import { useLocale } from "@/contexts/LocaleContext";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { buildLoginUrl } from "@/libs/utils";
 
 export default function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth();
@@ -38,10 +39,7 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
             {translate("auth.protected.description")}
           </p>
         </div>
-        <Button
-          icon={LogIn}
-          onClick={() => router.push(`/login?returnUrl=${encodeURIComponent(pathname)}`)}
-        >
+        <Button icon={LogIn} onClick={() => router.push(buildLoginUrl(pathname))}>
           {translate("auth.protected.login_btn")}
         </Button>
       </div>

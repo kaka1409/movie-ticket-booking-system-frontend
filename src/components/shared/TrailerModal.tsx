@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { X } from "lucide-react";
+import { useLocale } from "@/contexts/LocaleContext";
 
 interface TrailerModalProps {
   isOpen: boolean;
@@ -10,9 +11,11 @@ interface TrailerModalProps {
 }
 
 export default function TrailerModal({ isOpen, onClose, title }: TrailerModalProps) {
+  const { translate } = useLocale();
+
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
     };
 
     if (isOpen) {
@@ -35,7 +38,7 @@ export default function TrailerModal({ isOpen, onClose, title }: TrailerModalPro
     >
       <div
         className="relative w-full max-w-4xl overflow-hidden rounded-(--radius-lg) border border-(--color-border) bg-(--color-surface) shadow-2xl"
-        onClick={(e) => e.stopPropagation()}
+        onClick={(event) => event.stopPropagation()}
       >
         <div className="flex items-center justify-between border-b border-(--color-border) px-6 py-4">
           <h3 className="text-base font-bold text-white">Trailer: {title}</h3>
@@ -43,7 +46,7 @@ export default function TrailerModal({ isOpen, onClose, title }: TrailerModalPro
             type="button"
             onClick={onClose}
             className="rounded-full p-1.5 text-(--color-text-muted) transition-colors hover:bg-(--color-surface-2) hover:text-white"
-            aria-label="Close"
+            aria-label={translate("common.close")}
           >
             <X size={20} />
           </button>

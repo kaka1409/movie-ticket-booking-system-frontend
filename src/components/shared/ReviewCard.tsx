@@ -35,8 +35,8 @@ export default function ReviewCard({
 
   const handleSave = async () => {
     if (!editRating || !editText.trim()) return;
-    const ok = await onSave(editRating, editText.trim());
-    if (ok) setEditing(false);
+    const isSaved = await onSave(editRating, editText.trim());
+    if (isSaved) setEditing(false);
   };
 
   const handleCancel = () => {

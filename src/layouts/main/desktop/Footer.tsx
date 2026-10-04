@@ -114,7 +114,7 @@ export default function Footer() {
                 type="email"
                 placeholder={translate("layout.footer.email_placeholder")}
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(event) => setEmail(event.target.value)}
                 className="flex-1 border border-r-0 border-(--color-border) bg-(--color-surface) px-3.5 py-2.5 text-xs text-white outline-none font-sans rounded-l-(--radius-sm)"
               />
               <button

@@ -18,8 +18,8 @@ export default function WriteReview({
 
   const handleSubmit = async () => {
     if (!userRating || !text.trim() || disabled) return;
-    const ok = await onSubmit(userRating, text.trim());
-    if (ok) {
+    const isSubmitted = await onSubmit(userRating, text.trim());
+    if (isSubmitted) {
       setUserRating(0);
       setText("");
     }

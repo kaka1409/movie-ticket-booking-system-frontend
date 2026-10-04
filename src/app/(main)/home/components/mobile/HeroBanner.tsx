@@ -68,7 +68,7 @@ export default function HeroBanner({
       <Link
         href={`/movies/${currentMovie.slug}`}
         className="absolute inset-0 z-10"
-        aria-label={`View ${currentMovie.title}`}
+        aria-label={`${translate("home.desktop.view_movie_details")} ${currentMovie.title}`}
       >
         <div
           className={`relative h-full w-full transition-opacity duration-300 ${fading ? "opacity-0" : "opacity-100"}`}

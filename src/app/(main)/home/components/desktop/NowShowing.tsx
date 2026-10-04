@@ -21,7 +21,10 @@ export default function NowShowing({
   if (movies.length === 0) return null;
 
   return (
-    <section className="mx-auto max-w-7xl px-8 pt-12 pb-4" aria-label="Now Showing Movies">
+    <section
+      className="mx-auto max-w-7xl px-8 pt-12 pb-4"
+      aria-label={translate("home.desktop.now_showing_section")}
+    >
       {/* Header */}
       <div className="mb-7 flex items-end justify-between">
         <div>
@@ -112,7 +115,7 @@ export default function NowShowing({
                 {/*<Link
                   href={`/movies/${movie.slug}`}
                   className="flex items-center justify-center rounded-(--radius-sm) border border-(--color-border) bg-(--color-surface-2) px-3 py-2 text-xs font-semibold text-white no-underline transition-colors hover:border-(--color-gold)/50 hover:text-(--color-gold)"
-                  aria-label={`View details for ${movie.title}`}
+                  aria-label={`${translate("home.desktop.view_movie_details")} ${movie.title}`}
                 >
                   <ChevronRight size={14} />
                 </Link>*/}
