@@ -43,8 +43,8 @@ export default function LoginForm({ returnUrl }: { returnUrl?: string }) {
     : undefined;
 
   const handleSubmit = useCallback(
-    async (e: React.FormEvent) => {
-      e.preventDefault();
+    async (event: React.FormEvent) => {
+      event.preventDefault();
       setTouched(true);
       setServerError("");
       if (!isValid) return;

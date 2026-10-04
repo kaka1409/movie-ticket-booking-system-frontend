@@ -6,6 +6,7 @@ import { getReviews } from "@/features/reviews/api";
 import SectionFallback from "@/components/ui/SectionFallback";
 import { REVIEWS_PAGE_SIZE } from "@/features/reviews/constants";
 import { MovieDetailProvider, MovieSelectionProvider } from "@/features/movies/context";
+import { formatDateOnly } from "@/libs/date";
 
 // Mobile
 import MobileHeroSection from "./components/mobile/HeroSection";
@@ -21,13 +22,9 @@ import DesktopMovieDetail from "./components/desktop/MovieDetailDesktop";
 
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
-function formatISODate(date: Date): string {
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
-}
-
 function shiftISODate(date: string, days: number): string {
   const [year, month, day] = date.split("-").map(Number);
-  return formatISODate(new Date(year, month - 1, day + days));
+  return formatDateOnly(new Date(year, month - 1, day + days));
 }
 
 function todayISO(): string {

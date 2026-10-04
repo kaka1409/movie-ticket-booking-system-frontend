@@ -1,4 +1,5 @@
 import type { ShowtimeDateOption } from "./types";
+import { formatDateOnly } from "@/libs/date";
 
 export interface ShowtimeDateChip {
   label: string;
@@ -20,7 +21,10 @@ function toWeekdayLabel(date: Date, locale: "en" | "vn"): string {
   return date.toLocaleDateString(toLocaleTag(locale), { weekday: "short" }).toUpperCase();
 }
 
-/* Backend sends the real dates that have showtimes (YYYY-MM-DD + day + month). */
+/**
+ * Map backend date records (real dates that have showtimes: YYYY-MM-DD + day
+ * + month) to display-ready date chips.
+ */
 export function toShowtimeDateChips(
   records: ShowtimeDateOption[],
   locale: "en" | "vn",
@@ -40,7 +44,7 @@ export function toShowtimeDateChips(
   });
 }
 
-/* Local fallback used only when the showtime-dates API is unavailable. */
+/** Local fallback chips used only when the showtime-dates API is unavailable. */
 export function buildFallbackDateChips(
   anchor: string,
   locale: "en" | "vn",
@@ -55,7 +59,7 @@ export function buildFallbackDateChips(
       label: toMonthLabel(date, locale),
       day: String(date.getDate()),
       weekday: toWeekdayLabel(date, locale),
-      value: `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`,
+      value: formatDateOnly(date),
     };
   });
 }

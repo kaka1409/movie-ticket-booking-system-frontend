@@ -47,7 +47,7 @@ export default function Showtimes({ date, today, dates, cinemas, error }: Showti
   // Cinema section's states
   const [showAll, setShowAll] = useState(false);
   const [isCollapsing, setIsCollapsing] = useState(false);
-  const [maxH, setMaxH] = useState<string>("none");
+  const [maxHeight, setMaxHeight] = useState<string>("none");
 
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -73,8 +73,8 @@ export default function Showtimes({ date, today, dates, cinemas, error }: Showti
       }
 
       collapsedHeight += (count - 1) * 16;
-      setMaxH(collapsedHeight + "px");
-    } else setMaxH(containerRef.current.scrollHeight + "px");
+      setMaxHeight(collapsedHeight + "px");
+    } else setMaxHeight(containerRef.current.scrollHeight + "px");
   }, [showAll, isCollapsing, cinemas.length]);
 
   useEffect(() => {
@@ -189,7 +189,7 @@ export default function Showtimes({ date, today, dates, cinemas, error }: Showti
       {!error && cinemas.length > 0 && (
         <div
           ref={containerRef}
-          style={{ maxHeight: maxH }}
+          style={{ maxHeight }}
           className={`animate-expand space-y-4 transition-opacity duration-200 ${
             isPending ? "opacity-40 pointer-events-none" : "opacity-100"
           }`}

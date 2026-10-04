@@ -33,7 +33,7 @@ export default function Reviews({ initialData, initialError }: ReviewsProps) {
   const { slug } = useMovieDetail();
   const router = useRouter();
 
-  const [maxH, setMaxH] = useState<string>("none");
+  const [maxHeight, setMaxHeight] = useState<string>("none");
   const containerRef = useRef<HTMLDivElement>(null);
 
   const {
@@ -66,7 +66,7 @@ export default function Reviews({ initialData, initialError }: ReviewsProps) {
 
   useEffect(() => {
     if (containerRef.current) {
-      setMaxH(containerRef.current.scrollHeight + "px");
+      setMaxHeight(containerRef.current.scrollHeight + "px");
     }
   }, [reviews.length, page]);
 
@@ -151,7 +151,7 @@ export default function Reviews({ initialData, initialError }: ReviewsProps) {
       {!error && hasReviews && (
         <div
           ref={containerRef}
-          style={{ maxHeight: maxH }}
+          style={{ maxHeight }}
           className="animate-expand rounded-2xl bg-(--color-surface) border border-(--color-border) px-4 divide-y divide-(--color-border)"
         >
           {reviews.map((review) => (

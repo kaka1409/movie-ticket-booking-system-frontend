@@ -11,8 +11,8 @@ export default function NotificationCard({
   notification: Notification;
   onMarkRead: (id: number) => void;
 }) {
-  const cfg = TYPE_CONFIG[notification.type];
-  const Icon = cfg.Icon;
+  const typeConfig = TYPE_CONFIG[notification.type];
+  const Icon = typeConfig.Icon;
 
   return (
     <article
@@ -20,13 +20,13 @@ export default function NotificationCard({
         relative rounded-2xl p-4 border
         bg-(--color-surface) cursor-pointer
         transition-all duration-200 hover:bg-(--color-surface-2) active:scale-[0.99]
-        ${cfg.border}
+        ${typeConfig.border}
         ${notification.read ? "opacity-40" : ""}
       `}
       onClick={() => onMarkRead(notification.id)}
     >
-      {!notification.read && cfg.dot && (
-        <span className={`absolute top-4 right-4 w-2.5 h-2.5 rounded-full ${cfg.dot}`} />
+      {!notification.read && typeConfig.dot && (
+        <span className={`absolute top-4 right-4 w-2.5 h-2.5 rounded-full ${typeConfig.dot}`} />
       )}
 
       <div className="flex gap-3">
@@ -34,10 +34,10 @@ export default function NotificationCard({
           className={`
             shrink-0 w-12 h-12 rounded-full
             flex items-center justify-center
-            ${cfg.iconBg}
+            ${typeConfig.iconBg}
           `}
         >
-          <Icon size={22} className={cfg.iconColor} />
+          <Icon size={22} className={typeConfig.iconColor} />
         </div>
 
         <div className="flex-1 min-w-0 pr-4">
@@ -60,13 +60,13 @@ export default function NotificationCard({
             {notification.action && (
               <Link
                 href={notification.action.href}
-                onClick={(e) => e.stopPropagation()}
+                onClick={(event) => event.stopPropagation()}
                 className={`
                   ml-auto px-4 py-1.5 rounded-(--radius-md)
                   font-semibold text-[11px] cursor-pointer
                   border transition-colors
-                  ${cfg.actionBg} ${cfg.actionText}
-                  ${cfg.actionBorder} ${cfg.actionHover}
+                  ${typeConfig.actionBg} ${typeConfig.actionText}
+                  ${typeConfig.actionBorder} ${typeConfig.actionHover}
                 `}
               >
                 {notification.action.label}

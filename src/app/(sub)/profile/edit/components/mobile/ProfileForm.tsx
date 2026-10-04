@@ -86,7 +86,7 @@ export default function ProfileForm() {
           <input
             type="text"
             value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
+            onChange={(event) => setFullName(event.target.value)}
             className="w-full bg-transparent text-(--color-text-primary) outline-none placeholder:text-(--color-text-muted)"
           />
         </FormField>
@@ -114,7 +114,7 @@ export default function ProfileForm() {
           <input
             type="tel"
             value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            onChange={(event) => setPhone(event.target.value)}
             className="w-full bg-transparent text-(--color-text-primary) outline-none placeholder:text-(--color-text-muted)"
           />
         </FormField>
@@ -127,7 +127,7 @@ export default function ProfileForm() {
           <input
             type="date"
             value={dob}
-            onChange={(e) => setDob(e.target.value)}
+            onChange={(event) => setDob(event.target.value)}
             className="w-full bg-transparent text-(--color-text-primary) outline-none [&::-webkit-calendar-picker-indicator]:hidden"
           />
         </FormField>

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-// import type { ReactNode } from "react";
 import { Eye, EyeOff, AlertCircle } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 
@@ -51,7 +50,7 @@ export default function PasswordField({
         <input
           type={visible ? "text" : "password"}
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={(event) => onChange(event.target.value)}
           placeholder={placeholder}
           className="w-full bg-transparent text-(--color-text-primary) outline-none placeholder:text-(--color-text-muted)"
         />

@@ -22,7 +22,7 @@ export default function RegisterForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [terms, setTerms] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const [touched, setTouched] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [serverError, setServerError] = useState("");
@@ -33,7 +33,7 @@ export default function RegisterForm() {
     email,
     password,
     confirmPassword,
-    terms,
+    termsAccepted,
   });
   const isValid = result.success;
   const fieldErrors = result.success ? {} : result.error.flatten().fieldErrors;
@@ -44,8 +44,8 @@ export default function RegisterForm() {
   const confirmError = touched ? fieldErrors.confirmPassword?.[0] : undefined;
 
   const handleSubmit = useCallback(
-    async (e: React.FormEvent) => {
-      e.preventDefault();
+    async (event: React.FormEvent) => {
+      event.preventDefault();
       setTouched(true);
       setServerError("");
       if (!isValid) return;
@@ -135,7 +135,11 @@ export default function RegisterForm() {
           error={confirmError}
         />
 
-        <TermsCheckbox checked={terms} onChange={() => setTerms(!terms)} translate={translate} />
+        <TermsCheckbox
+          checked={termsAccepted}
+          onChange={() => setTermsAccepted(!termsAccepted)}
+          translate={translate}
+        />
 
         {serverError && (
           <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20">

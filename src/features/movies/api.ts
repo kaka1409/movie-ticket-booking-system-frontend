@@ -8,6 +8,7 @@ import type {
   Filters,
 } from "./types";
 import { apiFetch, type ApiResponse } from "@/libs/api";
+import { formatDateOnly } from "@/libs/date";
 import { MOVIES_PAGE_SIZE } from "./constants";
 import { ALL_MOVIES } from "./mock";
 
@@ -30,14 +31,6 @@ function toDurationRange(length?: string): { min?: number; max?: number } {
   return LENGTH_RANGES[length] ?? {};
 }
 
-function padDate(n: number): string {
-  return String(n).padStart(2, "0");
-}
-
-function toLocalISO(date: Date): string {
-  return `${date.getFullYear()}-${padDate(date.getMonth() + 1)}-${padDate(date.getDate())}`;
-}
-
 /**
  * Release window tokens → inclusive YYYY-MM-DD bounds computed in local time.
  * - "today" → the current calendar day
@@ -49,7 +42,7 @@ function toReleaseWindow(release?: string): { from: string; to: string } | null 
   const now = new Date();
 
   if (release === "today") {
-    const iso = toLocalISO(now);
+    const iso = formatDateOnly(now);
     return { from: iso, to: iso };
   }
 
@@ -60,13 +53,13 @@ function toReleaseWindow(release?: string): { from: string; to: string } | null 
     monday.setDate(now.getDate() - daysSinceMonday);
     const sunday = new Date(monday);
     sunday.setDate(monday.getDate() + 6);
-    return { from: toLocalISO(monday), to: toLocalISO(sunday) };
+    return { from: formatDateOnly(monday), to: formatDateOnly(sunday) };
   }
 
   if (release === "month") {
     const first = new Date(now.getFullYear(), now.getMonth(), 1);
     const last = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-    return { from: toLocalISO(first), to: toLocalISO(last) };
+    return { from: formatDateOnly(first), to: formatDateOnly(last) };
   }
 
   return null;
@@ -133,10 +126,10 @@ export async function getMovies(query: MovieQuery): Promise<ApiResponse<Movie[],
 
   if (query.format) params.set("format", query.format);
 
-  const window = toReleaseWindow(query.release);
-  if (window) {
-    params.set("releaseFrom", window.from);
-    params.set("releaseTo", window.to);
+  const releaseWindow = toReleaseWindow(query.release);
+  if (releaseWindow) {
+    params.set("releaseFrom", releaseWindow.from);
+    params.set("releaseTo", releaseWindow.to);
   }
 
   if (query.page) params.set("page", String(query.page));
@@ -147,14 +140,23 @@ export async function getMovies(query: MovieQuery): Promise<ApiResponse<Movie[],
   });
 }
 
+/**
+ * MOCK — reads the local catalog, no backend call. Used by the booking flow
+ * (credentials/payment/status pages) and wishlist/reviews lists, which need
+ * full movie payloads the `/movies` list endpoint does not return.
+ * TODO(api): switch those callers to `getMovieDetail()` once the backend
+ * serves complete movie objects for every route.
+ */
 export async function getAllMovies(): Promise<Movie[]> {
   return ALL_MOVIES;
 }
 
+/** MOCK counterpart of {@link getMovieDetail} — local lookup, undefined when the slug is unknown. */
 export async function getMovieBySlug(slug: string): Promise<Movie | undefined> {
   return ALL_MOVIES.find((movie) => movie.slug === slug);
 }
 
+/** LIVE — `GET /movies/:slug` returning the union (`{ data }` or `{ error }`). */
 export function getMovieDetail(slug: string): Promise<ApiResponse<Movie>> {
   return apiFetch<Movie>(`/movies/${encodeURIComponent(slug)}`);
 }

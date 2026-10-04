@@ -28,9 +28,8 @@ No test runner. `tests/{e2e,integration,unit}/` are empty dirs. `pnpm test` unde
   - `auth/` — `index.tsx`, `mobile/AuthLayout.tsx`, `desktop/AuthLayout.tsx`
   - `blank/` — `index.tsx`, `mobile/BlankLayout.tsx`, `desktop/BlankLayout.tsx`
   - `constants.ts` — LayoutType, Device types (device hook lives in `src/hooks/useDevice.ts`)
-  - `constants.ts` — LayoutType, Device types
 - **Shared layout components** (`src/layouts/components/`): `Logo.tsx` (size="sm"|"lg", tagline), `LanguageToggle.tsx` (variant="flag"|"text")
-- **Shared UI components** (`src/components/ui/`): `MovieCard.tsx` (reusable movie card), `Skeleton.tsx` (Skeleton, SkeletonCircle, SkeletonText, SkeletonCard loaders), `TearLine.tsx` (ticket-style dashed separator with circular cutouts), `FormActions.tsx` (primary + cancel button pair), `Tabs.tsx` (generic tab bar), `Button.tsx` (primary/outline/loadMore variants, loading state), `FormField.tsx` (icon + input + focus/error border), `Badge.tsx` (neutral/dark/gold/success/error pills), `Card.tsx` (card wrapper with selected/error states), `SectionHeader.tsx` (borderLeft/goldBar/uppercase variants), `SearchBar.tsx` (icon + input + clear button), `EmptyState.tsx` (icon + title + description + CTA), `InputField.tsx` (text input with icon), `PasswordField.tsx` (password input with Eye/EyeOff toggle), `Logo.tsx` (brand logo), `TermsCheckbox.tsx` (checkbox with terms/privacy links)
+- **Shared UI components** (`src/components/ui/`): `MovieCard.tsx` (reusable movie card), `Skeleton.tsx` (Skeleton, SkeletonCard loaders), `TearLine.tsx` (ticket-style dashed separator with circular cutouts), `FormActions.tsx` (primary + cancel button pair), `Tabs.tsx` (generic tab bar), `Button.tsx` (primary/outline/loadMore variants, loading state), `FormField.tsx` (icon + input + focus/error border), `Badge.tsx` (neutral/dark/gold/success/error pills), `SectionHeader.tsx` (borderLeft/goldBar/uppercase variants), `SearchBar.tsx` (icon + input + clear button), `EmptyState.tsx` (icon + title + description + CTA), `InputField.tsx` (text input with icon), `PasswordField.tsx` (password input with Eye/EyeOff toggle), `Logo.tsx` (brand logo), `TermsCheckbox.tsx` (checkbox with terms/privacy links)
 - **Shared hooks** (`src/hooks/`): `useDevice.ts` — returns `"mobile" | "desktop"` via `matchMedia`
 - **Redux Toolkit**: store wired at `src/store/index.ts` — `reducer: {}` (unused; reserved for future global state, e.g. notifications badge).
 - **i18n**: `useLocale()` from `LocaleContext` via `useSyncExternalStore`. Returns `{ locale, setLocale, translate }`. Persists to `localStorage("locale")`. Translations at `src/locales/{en,vn}.json`. Throws if used outside `LocaleProvider`.
@@ -56,16 +55,16 @@ No test runner. `tests/{e2e,integration,unit}/` are empty dirs. `pnpm test` unde
 
 ## Feature Scaffolding
 
-- `src/features/movies/` — `mock.tsx` (NOW_SHOWING, COMING_SOON, ALL_MOVIES, FEATURED_MOVIES), `constants.ts` (GENRES, AGE_RATINGS, RELEASE_OPTIONS, RATING_OPTIONS, LENGTH_OPTIONS, FORMAT_OPTIONS), `types.ts` (Movie, CastMember, FeaturedMovie), `api.ts` (getNowShowingMovies, getComingSoonMovies, getAllMovies, getFeaturedMovies, getMovieBySlug — mock with commented-out fetch). No hooks — `page.tsx` calls API directly via `await`.
-- `src/features/tickets/` — `constants.ts` (SEAT_TYPES: Standard/VIP/SweetBox), `mock.ts` (UPCOMING with full detail + PAST with full detail including cancelled/refunded tickets, MOCK_RECIPIENTS, MOCK_ELIGIBLE_SHOWTIMES), `types.ts` (FoodDrinkItem, UpcomingTicket, PastTicket, Recipient, TicketTransfer, SeatTicket, ModificationType, ModificationSeat, EligibleShowtime, ModificationResult), `api.ts` (queries only: getUpcomingTickets, getPastTickets, getTicketById, findRecipient, searchRecipients, getEligibleShowtimes), `action.ts` (server actions: createTransfer, cancelTransfer, modifyTicket, cancelTicket — `"use server"`), `context.tsx` (TicketsProvider), `contexts/` (TransferContext, TicketDetailContext, ModificationContext).
+- `src/features/movies/` — `mock.tsx` (NOW_SHOWING, COMING_SOON, ALL_MOVIES — module-internal), `constants.ts` (GENRES, AGE_RATINGS, RELEASE_OPTIONS, RATING_OPTIONS, LENGTH_OPTIONS, FORMAT_OPTIONS), `types.ts` (Movie, CastMember, FeaturedMovie), `api.ts` (LIVE: `buildMovieQuery`, `getMovies`, `getFeaturedMovies`, `getGenres`/`getFormats`/`getAgeRatings`; MOCK: `getAllMovies`, `getMovieBySlug` — marked with `MOCK` comments, TODO(api) to switch callers to `getMovieDetail`). No hooks — `page.tsx` calls API directly via `await`.
+- `src/features/tickets/` — `constants.ts` (TICKET_STATUS, CANCELLATION_FEE), `mock.ts` (UPCOMING with full detail + PAST with full detail including cancelled/refunded tickets, MOCK_RECIPIENTS, MOCK_ELIGIBLE_SHOWTIMES), `types.ts` (FoodDrinkItem, UpcomingTicket, PastTicket, Recipient, TicketTransfer, SeatTicket, ModificationType, ModificationSeat, EligibleShowtime), `api.ts` (queries only: getUpcomingTickets, getPastTickets, getTicketById, findRecipient, searchRecipients, getEligibleShowtimes, cancelTicket — all mock, `TODO(api)` marker), `action.ts` (server actions: createTransfer, cancelTransfer, modifyTicket, cancelTicket — `"use server"`), `context.tsx` (TicketsProvider), `contexts/` (TransferContext, TicketDetailContext, ModificationContext).
 - `src/features/notifications/` — `mock.tsx`, `constants.ts`, `types.ts`, `api.ts` (getNotifications).
-- `src/features/auth/` — `types.ts` (User, LoginRequest, LoginResponse, RegisterRequest, RegisterResponse, RefreshResponse, LogoutResponse), `action.ts` (server actions: loginAction, registerAction, refreshAction, logoutAction — `"use server"`), `schema.ts` (createLoginSchema, createRegisterSchema — Zod factory functions with i18n).
-- `src/features/profile/` — `types.ts` (User interface, UpdateProfileRequest), `action.ts` (updateProfile server action), `api.ts` (empty, deprecated).
+- `src/features/auth/` — `types.ts` (User, LoginRequest, LoginResponse, RegisterRequest, RegisterResponse, RefreshResponse), `action.ts` (server actions: loginAction, registerAction, refreshAction, logoutAction — `"use server"`), `schema.ts` (createLoginSchema, createRegisterSchema — Zod factory functions with i18n).
+- `src/features/profile/` — `types.ts` (User interface, UpdateProfileRequest), `action.ts` (updateProfile server action), `mock.ts`.
 - `src/features/reviews/` — `mock.ts` (FILTERS with FilterKey), `types.ts` (FilterKey), `api.ts` (getReviewFilters).
-- `src/features/wishlist/` — `mock.ts` (INITIAL_WISHLIST IDs), `api.ts` (getInitialWishlist, re-exports INITIAL_WISHLIST), `context.tsx` (WishlistProvider, useWishlist).
-- `src/features/booking/` — `types.ts` (SelectedSeat, SelectedCombo, SelectedFood, BookingSelection, BOOKING_STEPS [5 steps] — re-exports shared types from `features/shared/types`), `mock.ts` (re-exports shared mock data from `features/shared/mock`), `api.ts` (getCinemas, getDates, getSeatRows, getSeatPrices, getCombos, getFoodItems, getFoodCategories, getCountdownSeconds, getMaxSeatsPerBooking — all re-export from shared), `context.tsx` (BookingProvider, useBooking), `contexts/` (CinemaSelectionContext, SeatSelectionContext, SnackSelectionContext, CredentialsContext, PaymentContext, StatusContext).
+- `src/features/wishlist/` — `mock.ts` (INITIAL_WISHLIST IDs), `api.ts` (re-exports INITIAL_WISHLIST), `context.tsx` (WishlistProvider, useWishlist).
+- `src/features/booking/` — `types.ts` (SelectedSeat, SelectedCombo, SelectedFood, BOOKING_STEP_KEYS — re-exports shared types from `features/shared/types`), `utils.ts` (`getSeatLabel` — the single seat-label format used everywhere), `mock.ts` (re-exports shared mock data from `features/shared/mock`), `api.ts` (getCinemas, getDates, getSeatRows, getSeatPrices, getCombos, getFoodItems, getFoodCategories, getCountdownSeconds, getMaxSeatsPerBooking — all re-export from shared), `context.tsx` (BookingProvider, useBooking), `contexts/` (CinemaSelectionContext, SeatSelectionContext, SnackSelectionContext, CredentialsContext, PaymentContext, StatusContext).
 - `src/hooks/` — `useDevice.ts` (returns `"mobile" | "desktop"` via `matchMedia`)
-- `src/libs/constants.ts` has generic constants; `src/libs/utils.ts` has `slugify`, `formatVND`, `formatDate` helpers; `src/libs/zod.ts` has shared Zod validators (`isValidPhone`, password regex patterns); `src/types/index.ts` has shared types (`Device`, `Movie`, `CastMember`, `FeaturedMovie`). Feature-specific types live in `features/*/types.ts`. Feature-specific Zod schemas live in `features/*/schema.ts`.
+- `src/libs/utils.ts` has `slugify`, `formatVND`, `formatDate`, `formatRelativeTime`, `getSafeReturnUrl`, `buildLoginUrl`; `src/libs/date.ts` has `formatDateOnly` (local calendar dates); `src/libs/zod.ts` has shared Zod validators (`isValidPhone`, password regex patterns); `src/types/index.ts` has shared types (`Device`, `Movie`, `CastMember`, `FeaturedMovie`). Feature-specific types live in `features/*/types.ts`. Feature-specific Zod schemas live in `features/*/schema.ts`.
 
 ## Auth Pages (Login & Register)
 
@@ -78,7 +77,7 @@ Tab-switching auth page — both login and register in a single `AuthPage` compo
 - **RegisterForm** (`(auth)/register/components/mobile/RegisterForm.tsx`): register form, on success → `/login`.
 - **Validation**: Zod schemas from `features/auth/schema.ts` — `createLoginSchema(translate)` and `createRegisterSchema(translate)` (factory functions). Pattern: `schema.safeParse()` → `result.error.flatten().fieldErrors` → `touched` + show errors.
 - **API calls**: Server actions in `features/auth/action.ts` — `loginAction()`, `registerAction()`, `refreshAction()`, `logoutAction()` (all `"use server"`).
-- **Auth context**: `contexts/AuthContext.tsx` — `AuthProvider` wraps root layout, `useAuth()` hook provides `{ user, token, isAuthenticated, isLoading, setAuth, clearAuth, updateUser }`. AuthContext is **state-only** — consumer components (LoginForm, RegisterForm, ProfileMenu) call server actions directly, then update state via `setAuth()`/`clearAuth()`. Access token stored in RAM only (React state). Refresh token in HttpOnly cookie (managed by server actions via `cookies()` API). On mount, calls `refreshAction()` to restore session.
+- **Auth context**: `src/contexts/AuthContext.tsx` — `AuthProvider` wraps root layout, `useAuth()` hook provides `{ user, token, isAuthenticated, isLoading, setAuth, clearAuth, updateUser }`. AuthContext is **state-only** — consumer components (LoginForm, RegisterForm, ProfileMenu) call server actions directly, then update state via `setAuth()`/`clearAuth()`. Access token stored in RAM only (React state). Refresh token in HttpOnly cookie (managed by server actions via `cookies()` API). On mount, calls `refreshAction()` to restore session.
 - **Error handling**: 401 → "Invalid email or password", 409 → "Email already exists", other → generic server error. Displayed as red alert box below form.
 - **CSS conventions**: Uses `bg-(--color-gold)`, `text-(--color-text-muted)`, `border-(--color-border)` parenthesized syntax (NOT `bg-[--color-gold]` bracket syntax).
 - **Backend endpoints**:
@@ -243,7 +242,7 @@ Sub layout provides back button (→ movie detail) + "Cinema & Showtime" title. 
 
 - `components/mobile/StepBar.tsx` — step=2
 - `components/mobile/CountdownBanner.tsx` — 5m59s countdown timer
-- Seat map rendered inline in page (zoom-to-fit via ResizeObserver + CSS `zoom`). Screen rendered as curved SVG arc. Max 8 seats enforced via `MAX_SEATS_PER_BOOKING`.
+- Seat map rendered inline in page (fixed layout, no zoom/pan — `SeatGrid` fits the viewport width). Screen rendered as curved SVG arc. Max 8 seats enforced via `getMaxSeatsPerBooking()` (mock: `MAX_SEATS_PER_BOOKING = 8`).
 - `components/mobile/BottomBar.tsx` — sticky bottom bar, selected seats + total price, "Continue to Snacks" CTA → `/booking/[slug]/snack`
 - `components/desktop/SeatContent.tsx` — stub (returns null)
 
@@ -274,7 +273,7 @@ Section titles (`Quick Combos`, `Pick & Mix`) use `--color-gold-dark`. Prices us
 
 `(sub)/booking/[slug]/credentials/page.tsx` — **server component** fetches movie, wraps with `CredentialsProvider`, imports components directly:
 
-- `components/mobile/CredentialsContext.tsx` — manages `isValid` state shared between `ContactForm` and `BottomBar`
+- Shared state: `CredentialsProvider` (`features/booking/contexts/CredentialsContext.tsx`) manages `isValid` between `ContactForm` and `BottomBar`
 - `components/mobile/TextInput.tsx` — reusable text input with label
 - `components/mobile/PhoneField.tsx` — phone input with country code selector (CDN flags via `flagcdn.com/w20/{flag}.png`)
 - `components/mobile/FieldLabel.tsx` — field label component
@@ -285,7 +284,7 @@ Section titles (`Quick Combos`, `Pick & Mix`) use `--color-gold-dark`. Prices us
 
 `(sub)/booking/[slug]/payment/page.tsx` — **server component** fetches movie, wraps with `PaymentProvider`, imports components directly:
 
-- `components/mobile/PaymentContext.tsx` — manages `selectedMethod` state shared between `PaymentOption` and `BottomBar`
+- Shared state: `PaymentProvider` (`features/booking/contexts/PaymentContext.tsx`) manages `selectedMethod` between `PaymentOption` and `BottomBar`
 - `components/mobile/PaymentOption.tsx` — payment method card with brand image (`public/images/VNPay.png`, `public/images/momo.png` via `next/image`), reads `selected`/`setSelected` from `usePayment()`
 - `components/mobile/OrderSummary.tsx` — same as credentials page, reads from BookingContext
 - `components/mobile/SecureBadge.tsx` — security badge
@@ -316,9 +315,10 @@ Both pages use `<Suspense>` wrapper (required for `useSearchParams()`). White te
 
 `booking/components/mobile/` (shared across all booking steps):
 
-- `StepBar.tsx` — 5-step booking progress bar, reads `BOOKING_STEPS`, highlights current step
+- `StepBar.tsx` — 5-step booking progress bar, reads `BOOKING_STEP_KEYS`, highlights current step
 - `CountdownBanner.tsx` — 5m59s countdown timer, reads from BookingContext (only visible after first seat selection)
 - `DetailRow.tsx` — reusable label/value row with icon, used in ticket cards
+- `PriceBreakdown.tsx` — shared seats→snacks→payment/total block used by ticket detail, booking success/failed cards, transfer confirm and both OrderSummary panels
 
 ## Framework / Toolchain Quirks
 
@@ -367,6 +367,12 @@ URL → state is applied **once, server-side at render** (via `features/movies/u
 - Types defined inline or in `features/*/types.ts`.
 - `"use client"` at the top of every file using hooks or browser APIs.
 - No single-letter variables or abbreviations — all variable names must be clear and descriptive (e.g. `translate` not `t`, `movie` not `m`, `event` not `e`).
+- Never shadow browser globals (`window`, `document`) — pick a descriptive name (`releaseWindow`, not `window`).
+- Exported functions, components and types get English `/** JSDoc */`; non-obvious logic gets a short WHY comment. Never leave commented-out dead code in files.
+- State flags are `is*`/`setIs*` (`isLoading`, `isAuthenticated`); simple adjective flags for local display state are acceptable (`mounted`, `expired`).
+- Helper placement: calendar-date math → `libs/date.ts` (`formatDateOnly`); shared pure helpers → `libs/utils.ts` (`buildLoginUrl`, `formatVND`); feature helpers → `features/*/utils.ts` (`getSeatLabel`).
+- Mock vs live: every API function is marked at its definition (`MOCK`/`LIVE` comment or file-level `TODO(api)` marker). Mock-only behavior (e.g. booking flow movies) is intentional until the backend serves it — do not "just wire it live" without checking the payload.
+- Repeated markup goes to a shared component: `booking/components/mobile/PriceBreakdown.tsx` (seats/snacks/total), `(main)/tickets/components/mobile/TicketList.tsx` (upcoming/past list).
 - Filter components (FilterChip, FilterCheckRow, FilterLabel) are internal to movies page `components/mobile/`.
 - All cinema data uses **PrimeSeat** brand — Vietnamese addresses, km-based distances, 24h time format.
 - Inline `style={}` props are used for dynamic/computed values (gradients, animation delays, computed widths, aspect ratios). Static styling always uses Tailwind utility classes with CSS custom property syntax.
@@ -422,7 +428,7 @@ URL → state is applied **once, server-side at render** (via `features/movies/u
 - [x] Environment documentation — `.env.example` added; README documents `BACKEND_URL`/`API_PREFIX` (evaluated at build time)
 - [x] README accuracy — stale `features/auth/api.ts` reference fixed; env + test sections added
 - [x] Unused dev tooling — `babel-plugin-react-compiler` removed (`reactCompiler: false` unchanged)
-- [ ] Mock data — 9 mock files, 5 "replace with real fetch when backend is ready" TODOs `[blocked]`
+- [ ] Mock data — mock files under `features/*/mock*`; live vs mock split marked at each function (`MOCK` comment + 3 file-level `TODO(api)` markers in `notifications/api.ts`, `booking/api.ts`, `tickets/api.ts`) `[blocked]`
 
 ### Level 2 — Security
 

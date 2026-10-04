@@ -16,8 +16,8 @@ export default function AvatarEditor({
   const { translate } = useLocale();
   const { user } = useAuth();
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
     if (file) {
       setPreview(URL.createObjectURL(file));
       onAvatarChange?.(true);
