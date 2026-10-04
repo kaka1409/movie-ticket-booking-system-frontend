@@ -35,7 +35,7 @@ No test runner. `tests/{e2e,integration,unit}/` are empty dirs. `pnpm test` unde
 - **Redux Toolkit**: store wired at `src/store/index.ts` — `reducer: {}` (unused; reserved for future global state, e.g. notifications badge).
 - **i18n**: `useLocale()` from `LocaleContext` via `useSyncExternalStore`. Returns `{ locale, setLocale, translate }`. Persists to `localStorage("locale")`. Translations at `src/locales/{en,vn}.json`. Throws if used outside `LocaleProvider`.
 - **`@/`** alias → `src/` in `tsconfig.json`.
-- Error pages: `src/app/error.tsx` (root, uses shared `components/errors/RouteError.tsx`), `src/app/global-error.tsx`, per-group `error.tsx` in `(main)`, `(blank)`, `(sub)`, `(auth)`; 404 at `src/app/not-found.tsx`.
+- Error pages: `src/app/error.tsx` (root, uses shared `components/shared/RouteError.tsx`), `src/app/global-error.tsx`, per-group `error.tsx` in `(main)`, `(blank)`, `(sub)`, `(auth)`; 404 at `src/app/not-found.tsx`.
 - **All API calls on server**: Every `page.tsx` is a server component that fetches data via `await`. Client components (`"use client"`) receive data via props only — no `useEffect` + API call pattern. Protected pages are wrapped with `<ProtectedRoute>` client component for auth gating.
 
 ## State Management
@@ -93,7 +93,7 @@ Protection is layered (outside-in):
 
 1. **`src/proxy.ts`** — Next 16 network-boundary hook (NOT `middleware.ts`: deprecated and **silently ignored** in Next 16). Matcher: `/notifications`, `/tickets/:path*`, `/booking/:path*`, `/profile`, `/profile/:path*`. Missing `refreshToken` cookie → `307 /login?returnUrl=<pathname+query>` (returnUrl is sanitized again by the login page). Optimistic check only — not an auth boundary.
 2. **Server gate** — `requireAuth(returnUrl?)` from `src/libs/session.ts`, called at the top of `(sub)/layout.tsx`, `(main)/tickets/page.tsx`, `(main)/profile/page.tsx`. Throws `redirect("/login...")` when the `refreshToken` cookie is absent, **before any data fetch** → protected data never enters the RSC payload.
-3. **`src/components/auth/ProtectedRoute.tsx`** — client component, UX layer:
+3. **`src/components/shared/ProtectedRoute.tsx`** — client component, UX layer:
    - `isLoading` → skeleton spinner
    - `!isAuthenticated` → login prompt with icon + "Login Required" + CTA button → `/login?returnUrl={pathname}`
    - `isAuthenticated` → render children
@@ -441,7 +441,7 @@ URL → state is applied **once, server-side at render** (via `features/movies/u
 - [x] 404 page (root `not-found.tsx` + in-component `MovieNotFound`)
 - [x] Loading states — 25 `loading.tsx` skeletons built on `components/ui/Skeleton.tsx`
 - [x] API layer never rejects — `apiFetch` returns a discriminated union; actions return `{ success }` unions
-- [x] Error boundaries — root `error.tsx` (shared `components/errors/RouteError.tsx`) + per-group `error.tsx` in all 4 route groups + `global-error.tsx`
+- [x] Error boundaries — root `error.tsx` (shared `components/shared/RouteError.tsx`) + per-group `error.tsx` in all 4 route groups + `global-error.tsx`
 - [x] Unhandled rejections — all 3 `.then()` chains now have `.catch()` (movies context surfaces `fetchFailure`, RecipientInput clears results, ShowtimeDataLoader shows error + retry instead of hanging skeleton)
 - [x] Silent failure — `AuthContext` session-restore failure logged via `console.warn`
 

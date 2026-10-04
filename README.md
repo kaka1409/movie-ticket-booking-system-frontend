@@ -72,9 +72,8 @@ src/
 │   ├── (sub)/        # ALL routes protected: notifications, tickets/[id], booking/[slug]/*, profile/*
 │   └── (auth)/       # Login, register
 ├── components/
-│   ├── auth/         # ProtectedRoute (auth guard)
 │   ├── ui/           # Button, Badge, Card, Skeleton, InputField, PasswordField, Logo, TermsCheckbox, etc.
-│   └── shared/       # MovieCard, CinemaCard, etc.
+│   └── shared/       # ProtectedRoute, BookingBottomBar, RouteError, ReviewCard, TrailerModal, WriteReview
 ├── layouts/          # Layout system
 │   ├── LayoutProvider.tsx
 │   ├── constants.ts

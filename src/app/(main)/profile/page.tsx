@@ -1,4 +1,4 @@
-import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import ProtectedRoute from "@/components/shared/ProtectedRoute";
 import { requireAuth } from "@/libs/session";
 import Avatar from "./components/mobile/Avatar";
 import UserInfo from "./components/mobile/UserInfo";

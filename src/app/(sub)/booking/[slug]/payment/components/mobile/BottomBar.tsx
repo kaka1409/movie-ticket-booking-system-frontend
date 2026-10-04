@@ -6,7 +6,7 @@ import { useBooking } from "@/features/booking/context";
 import { usePayment } from "@/features/booking/contexts/PaymentContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import { PAYMENT_METHODS } from "@/features/booking/mock";
-import BookingBottomBar from "@/components/booking/BookingBottomBar";
+import BookingBottomBar from "@/components/shared/BookingBottomBar";
 
 export default function BottomBar() {
   const params = useParams();

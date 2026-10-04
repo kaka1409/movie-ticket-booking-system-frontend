@@ -3,7 +3,7 @@
 import { useParams } from "next/navigation";
 import { useSnackSelection } from "@/features/booking/contexts/SnackSelectionContext";
 import { useLocale } from "@/contexts/LocaleContext";
-import BookingBottomBar from "@/components/booking/BookingBottomBar";
+import BookingBottomBar from "@/components/shared/BookingBottomBar";
 
 export default function BottomBar() {
   const params = useParams();

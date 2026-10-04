@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 import type { SeatPrice, SeatRow } from "@/features/booking/types";
 import { useSeatSelection } from "@/features/booking/contexts/SeatSelectionContext";
 import { useLocale } from "@/contexts/LocaleContext";
-import BookingBottomBar from "@/components/booking/BookingBottomBar";
+import BookingBottomBar from "@/components/shared/BookingBottomBar";
 
 interface Selection {
   label: string;

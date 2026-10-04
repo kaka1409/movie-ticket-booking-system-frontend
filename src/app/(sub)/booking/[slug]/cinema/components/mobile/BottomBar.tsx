@@ -2,7 +2,7 @@
 
 import { useCinemaSelection } from "@/features/booking/contexts/CinemaSelectionContext";
 import { useLocale } from "@/contexts/LocaleContext";
-import BookingBottomBar from "@/components/booking/BookingBottomBar";
+import BookingBottomBar from "@/components/shared/BookingBottomBar";
 
 export default function BottomBar({ movieSlug }: { movieSlug: string }) {
   const {

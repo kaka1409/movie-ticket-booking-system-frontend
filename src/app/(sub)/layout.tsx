@@ -1,5 +1,5 @@
 import LayoutProvider from "@/layouts/LayoutProvider";
-import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import ProtectedRoute from "@/components/shared/ProtectedRoute";
 import { requireAuth } from "@/libs/session";
 
 export default async function SubLayout({ children }: { children: React.ReactNode }) {

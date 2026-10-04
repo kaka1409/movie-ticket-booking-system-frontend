@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { TicketsProvider } from "@/features/tickets/context";
 import { getUpcomingTickets, getPastTickets } from "@/features/tickets/api";
-import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import ProtectedRoute from "@/components/shared/ProtectedRoute";
 import { getRequestCookie, requireAuth } from "@/libs/session";
 
 // Mobile components
