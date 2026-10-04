@@ -38,13 +38,29 @@ pnpm dev
 
 Open http://localhost:3000
 
+### Environment Variables
+
+Copy the template, then adjust values in `.env.local` (gitignored; `.env.example` is committed):
+
+```bash
+cp .env.example .env.local
+```
+
+| Variable      | Default                 | Description                                                                                                                                                        |
+| ------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `BACKEND_URL` | `http://localhost:8080` | Backend origin. Read server-side by `src/libs/api.ts` **and evaluated at build time** by `next.config.ts` `rewrites()` — set it before `pnpm build` when deploying |
+| `API_PREFIX`  | `/api/v1`               | API path prefix                                                                                                                                                    |
+
 ### Other Commands
 
 ```bash
 pnpm build    # production build
 pnpm start    # production server
 pnpm lint     # ESLint
+pnpm format   # Prettier write (config: .prettierrc)
 ```
+
+> No test runner yet — `tests/{unit,integration,e2e}/` are empty placeholders.
 
 ## Project Structure
 
@@ -86,7 +102,7 @@ src/
 - Responsive layout: `LayoutProvider` selects layout type (main/auth/sub/blank), each layout's `index.tsx` uses `useDevice()` hook to switch between mobile/desktop variants via `matchMedia`
 - Brand theme uses CSS variables (gold/black palette) in `global.css`
 - Movie poster images configured in `next.config.ts` `images.remotePatterns`
-- API layer (`features/*/api.ts`): movie/booking/notification APIs return mock data (commented-out fetch ready for backend). Auth API (`features/auth/api.ts`) connects to real backend via `apiFetch()` with `credentials: "include"`.
+- API layer (`features/*/api.ts`): movie/booking/notification APIs return mock data (commented-out fetch ready for backend). Auth mutations (`features/auth/action.ts`) connect to real backend via `apiMutation()` with cookies.
 - Server components: all `page.tsx` files are server components that fetch data via API layer (`await`) and pass props to client components. Protected pages (`/tickets`, `/profile`, `(sub)/*`) are wrapped with `<ProtectedRoute>` client component.
 - Auth system: RAM-only access token, HttpOnly cookie refresh token, automatic session restore on mount via `/api/v1/auth/refresh`
 - Protected routes: `/tickets`, `/profile`, and all `(sub)/*` routes require authentication. Unauthenticated users see a login prompt with CTA.
