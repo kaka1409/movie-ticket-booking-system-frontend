@@ -9,7 +9,9 @@ import {
   useMemo,
   type ReactNode,
 } from "react";
+import { useRouter } from "next/navigation";
 import { refreshAction } from "@/features/auth/action";
+import { UNAUTHORIZED_EVENT } from "@/libs/api";
 import type { User } from "@/features/auth/types";
 
 interface AuthContextType {
@@ -28,6 +30,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     refreshAction()
@@ -37,7 +40,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setUser(result.data.user);
         }
       })
-      .catch(() => {})
+      .catch((error: unknown) => {
+        console.warn("Session restore failed:", error);
+      })
       .finally(() => setIsLoading(false));
   }, []);
 
@@ -50,6 +55,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setToken(null);
     setUser(null);
   }, []);
+
+  // Backend answered 401 on an authenticated request — the session is gone
+  // (revoked/expired refresh, rejected access token). Reset state and bounce
+  // to login, remembering where the user was.
+  useEffect(() => {
+    const handleUnauthorized = () => {
+      const currentPath = window.location.pathname;
+      if (currentPath === "/login" || currentPath === "/register") return;
+      const returnUrl = currentPath + window.location.search;
+      clearAuth();
+      router.replace(`/login?returnUrl=${encodeURIComponent(returnUrl)}`);
+    };
+    window.addEventListener(UNAUTHORIZED_EVENT, handleUnauthorized);
+    return () => window.removeEventListener(UNAUTHORIZED_EVENT, handleUnauthorized);
+  }, [clearAuth, router]);
 
   const updateUser = useCallback((patch: Partial<User>) => {
     setUser((prev) => (prev ? { ...prev, ...patch } : prev));

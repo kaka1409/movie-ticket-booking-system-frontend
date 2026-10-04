@@ -5,6 +5,21 @@ const API_PREFIX = process.env.API_PREFIX ?? "/api/v1";
 // Server: absolute URL → direct backend call, no proxy hop.
 const backendUrl = (typeof window === "undefined" ? SERVER_BASE_URL : "") + API_PREFIX;
 
+/** Window event fired when the backend answers 401 (handled by AuthContext). */
+export const UNAUTHORIZED_EVENT = "primseat:unauthorized";
+
+/**
+ * Tells the client auth layer that the current credentials were rejected.
+ * `/auth/*` endpoints are skipped — a failed login/refresh 401 is an expected
+ * answer, not an expired session. On the server (no `window`) callers use
+ * `redirectIfUnauthorized()` from `libs/session.ts` instead.
+ */
+function notifyUnauthorized(path: string): void {
+  if (typeof window === "undefined") return;
+  if (path.startsWith("/auth/")) return;
+  window.dispatchEvent(new Event(UNAUTHORIZED_EVENT));
+}
+
 export type SuccessResponse<T, M = Record<string, unknown>> = {
   data: T;
   meta?: M;
@@ -19,18 +34,17 @@ export type ErrorResponse = {
   };
 };
 
-export type ApiResponse<T, M = Record<string, unknown>> =
-  | SuccessResponse<T, M>
-  | ErrorResponse;
+export type ApiResponse<T, M = Record<string, unknown>> = SuccessResponse<T, M> | ErrorResponse;
 
 function parseApiError(status: number, body: unknown): ErrorResponse["error"] {
-  const error = (body as {
-    error?: {
-      code?: unknown;
-      message?: unknown;
-      details?: unknown
-    }
-  } | null
+  const error = (
+    body as {
+      error?: {
+        code?: unknown;
+        message?: unknown;
+        details?: unknown;
+      };
+    } | null
   )?.error;
 
   return {
@@ -56,8 +70,8 @@ export function toApiResponse<T, M = Record<string, unknown>>(
     error: {
       status: 0,
       code: "UNKNOWN_ERROR",
-      message
-    }
+      message,
+    },
   };
 }
 
@@ -72,14 +86,14 @@ export async function apiFetch<T, M = Record<string, unknown>>(
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...(cookie ? { Cookie: cookie } : {}),
     ...options?.headers,
-  }
+  };
 
   let response: Response;
   try {
     response = await fetch(backendUrl + path, {
       ...options,
       headers,
-      credentials: options?.credentials ?? "include"
+      credentials: options?.credentials ?? "include",
     });
   } catch {
     return { error: { status: 0, code: "NETWORK_ERROR", message: "Network error" } };
@@ -87,6 +101,7 @@ export async function apiFetch<T, M = Record<string, unknown>>(
 
   if (!response.ok) {
     const body = await response.json().catch(() => null);
+    if (response.status === 401) notifyUnauthorized(path);
     return { error: parseApiError(response.status, body) };
   }
 
@@ -99,7 +114,11 @@ export async function apiFetch<T, M = Record<string, unknown>>(
 
   if (body === null || body === undefined) {
     return {
-      error: { status: response.status, code: "INVALID_RESPONSE", message: "Invalid response body" },
+      error: {
+        status: response.status,
+        code: "INVALID_RESPONSE",
+        message: "Invalid response body",
+      },
     };
   }
 
@@ -160,6 +179,7 @@ export async function apiMutation<T>(
 
   if (!response.ok) {
     const body = await response.json().catch(() => null);
+    if (response.status === 401) notifyUnauthorized(path);
     const apiError = parseApiError(response.status, body);
     const error = new Error(apiError.message) as Error & {
       status: number;
