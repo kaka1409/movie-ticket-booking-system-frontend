@@ -67,8 +67,11 @@ function toReleaseWindow(release?: string): { from: string; to: string } | null 
 
 /* ─── Movies ─────────────────────────────────────────────── */
 
+/** Data-cache policy for static-ish catalog reads (movies, genres, movie detail). */
+export const REVALIDATE_60 = { next: { revalidate: 60 } } as const;
+
 export async function getFeaturedMovies(): Promise<ApiResponse<FeaturedMovie[]>> {
-  const result = await apiFetch<FeaturedMovieResponse[]>("/movies?featured=true");
+  const result = await apiFetch<FeaturedMovieResponse[]>("/movies?featured=true", REVALIDATE_60);
 
   if ("error" in result) {
     return { error: result.error };
@@ -158,21 +161,19 @@ export async function getMovieBySlug(slug: string): Promise<Movie | undefined> {
 
 /** LIVE — `GET /movies/:slug` returning the union (`{ data }` or `{ error }`). */
 export function getMovieDetail(slug: string): Promise<ApiResponse<Movie>> {
-  return apiFetch<Movie>(`/movies/${encodeURIComponent(slug)}`);
+  return apiFetch<Movie>(`/movies/${encodeURIComponent(slug)}`, REVALIDATE_60);
 }
 
 /* ─── Catalog endpoints (filter options) ─────────────────── */
 
-const CATALOG_CACHE = { next: { revalidate: 60 } } as const;
-
 export async function getGenres(): Promise<ApiResponse<CatalogOption[]>> {
-  return apiFetch<CatalogOption[]>("/genres", CATALOG_CACHE);
+  return apiFetch<CatalogOption[]>("/genres", REVALIDATE_60);
 }
 
 export async function getFormats(): Promise<ApiResponse<CatalogOption[]>> {
-  return apiFetch<CatalogOption[]>("/formats", CATALOG_CACHE);
+  return apiFetch<CatalogOption[]>("/formats", REVALIDATE_60);
 }
 
 export async function getAgeRatings(): Promise<ApiResponse<CatalogOption[]>> {
-  return apiFetch<CatalogOption[]>("/age-ratings", CATALOG_CACHE);
+  return apiFetch<CatalogOption[]>("/age-ratings", REVALIDATE_60);
 }

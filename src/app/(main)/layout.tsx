@@ -1,14 +1,10 @@
-import { getNotifications } from "@/features/notifications/api";
 import LayoutProvider from "@/layouts/LayoutProvider";
-import { getRequestCookie } from "@/libs/session";
 
-export default async function MainLayout({ children }: { children: React.ReactNode }) {
-  const notifications = await getNotifications(await getRequestCookie());
-  const unreadCount = notifications.filter((n) => !n.read).length;
-
-  return (
-    <LayoutProvider layout="main" unreadCount={unreadCount}>
-      {children}
-    </LayoutProvider>
-  );
+/**
+ * No `cookies()` and no data fetch here on purpose: the notification badge
+ * loads client-side in the mobile header, so `/` and `/home` can be
+ * statically generated (ISR — see the `revalidate` export on the pages).
+ */
+export default function MainLayout({ children }: { children: React.ReactNode }) {
+  return <LayoutProvider layout="main">{children}</LayoutProvider>;
 }

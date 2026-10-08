@@ -1,5 +1,6 @@
 "use server";
 
+import { updateTag } from "next/cache";
 import { apiMutation } from "@/libs/api";
 import { getReviews } from "./api";
 import type { ReviewsResponse } from "./types";
@@ -47,6 +48,9 @@ async function mutateAndRefetch(
 ): Promise<ActionResult<ReviewsResponse>> {
   try {
     await mutate();
+    // Server-action-only tag invalidation: the refetch below immediately sees
+    // fresh data, and every ISR page that rendered with the tag regenerates.
+    updateTag("reviews");
     return await fetchReviews({ movieSlug, skip: refetchSkip, limit: refetchLimit });
   } catch (error: unknown) {
     return failure(error);

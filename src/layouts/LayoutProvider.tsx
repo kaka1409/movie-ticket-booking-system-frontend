@@ -8,7 +8,6 @@ import BlankLayout from "./blank";
 interface LayoutProviderProps {
   children: ReactNode;
   layout?: LayoutType;
-  unreadCount?: number;
 }
 
 const LAYOUTS = {
@@ -18,15 +17,11 @@ const LAYOUTS = {
   blank: BlankLayout,
 } as const;
 
-export default function LayoutProvider({
-  children,
-  layout = "main",
-  unreadCount = 0,
-}: LayoutProviderProps) {
+export default function LayoutProvider({ children, layout = "main" }: LayoutProviderProps) {
   const Layout = LAYOUTS[layout];
 
   if (layout === "main") {
-    return <MainLayout unreadCount={unreadCount}>{children}</MainLayout>;
+    return <MainLayout>{children}</MainLayout>;
   }
 
   return <Layout>{children}</Layout>;

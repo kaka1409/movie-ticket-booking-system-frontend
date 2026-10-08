@@ -3,6 +3,9 @@ import { MOVIES_PAGE_SIZE } from "@/features/movies/constants";
 import { getCinemas, getDates } from "@/features/booking/api";
 import { toApiResponse } from "@/libs/api";
 
+/** Static shell rebuilt every 60s so catalog edits show up without a redeploy. */
+export const revalidate = 60;
+
 // Desktop
 import HeroSection from "@/app/(main)/home/components/desktop/HeroSection";
 import NowShowing from "@/app/(main)/home/components/desktop/NowShowing";
