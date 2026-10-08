@@ -1,4 +1,3 @@
-import type { GroupedShowtimeCinema, ShowtimeDateOption } from "@/features/showtimes/types";
 import type { ReviewsResponse } from "@/features/reviews/types";
 
 import HeroSection from "./HeroSection";
@@ -7,21 +6,13 @@ import TopCast from "./TopCast";
 import Showtimes from "./Showtimes";
 import Reviews from "./Reviews";
 
-/* Desktop layout: full-bleed hero, then content column + sticky showtimes rail. */
+/* Desktop layout: full-bleed hero, then content column + sticky showtimes rail.
+   Date/slot state lives in `ShowtimesProvider` (page level), not props — the
+   rail and the mobile tree must observe the same selection. */
 export default function MovieDetailDesktop({
-  date,
-  today,
-  dates,
-  cinemas,
-  showtimesError,
   reviewsData,
   reviewsError,
 }: {
-  date: string;
-  today: string;
-  dates: ShowtimeDateOption[];
-  cinemas: GroupedShowtimeCinema[];
-  showtimesError: string | null;
   reviewsData: ReviewsResponse | null;
   reviewsError: string | null;
 }) {
@@ -39,13 +30,7 @@ export default function MovieDetailDesktop({
             </div>
 
             <div className="w-80 shrink-0">
-              <Showtimes
-                date={date}
-                today={today}
-                dates={dates}
-                cinemas={cinemas}
-                error={showtimesError}
-              />
+              <Showtimes />
             </div>
           </div>
         </div>

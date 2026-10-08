@@ -1,18 +1,14 @@
 "use client";
 
-import { useEffect, useMemo, useTransition } from "react";
+import { useMemo } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
 import { CalendarDays, MapPin, RotateCcw, Ticket } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useMovieDetail, useMovieSelection } from "@/features/movies/context";
+import { useShowtimes } from "@/features/showtimes/context";
 import { DATE_STRIP_DAYS } from "@/features/showtimes/constants";
 import { buildFallbackDateChips, toShowtimeDateChips } from "@/features/showtimes/utils";
-import type {
-  GroupedShowtimeCinema,
-  ShowtimeDateOption,
-  ShowtimeSlot,
-} from "@/features/showtimes/types";
+import type { GroupedShowtimeCinema, ShowtimeSlot } from "@/features/showtimes/types";
 
 /* Group a cinema's slots by format so 2D / IMAX reads as separate blocks. */
 function groupByFormat(slots: ShowtimeSlot[]): [string, ShowtimeSlot[]][] {
@@ -28,21 +24,11 @@ function groupByFormat(slots: ShowtimeSlot[]): [string, ShowtimeSlot[]][] {
   return Array.from(groups.entries());
 }
 
-interface ShowtimesProps {
-  date: string;
-  today: string;
-  dates: ShowtimeDateOption[];
-  cinemas: GroupedShowtimeCinema[];
-  error: string | null;
-}
-
-export default function Showtimes({ date, today, dates, cinemas, error }: ShowtimesProps) {
+export default function Showtimes() {
   const { translate, locale } = useLocale();
   const movie = useMovieDetail();
   const { selectedShowtime, setSelectedShowtime } = useMovieSelection();
-  const router = useRouter();
-  const pathname = usePathname();
-  const [isPending, startTransition] = useTransition();
+  const { activeDate, cinemas, error, isPending, dates, today, selectDate, retry } = useShowtimes();
 
   const dateChips = useMemo(
     () =>
@@ -52,25 +38,11 @@ export default function Showtimes({ date, today, dates, cinemas, error }: Showti
     [dates, today, locale],
   );
 
-  /* Switching day invalidates any picked showtime. */
-  useEffect(() => {
-    setSelectedShowtime(null);
-  }, [date, setSelectedShowtime]);
-
-  const selectDate = (value: string) => {
-    if (value === date) return;
-    startTransition(() => router.replace(`${pathname}?date=${value}`, { scroll: false }));
-  };
-
   const selectTime = (cinema: GroupedShowtimeCinema, showtimeId: string, time: string) => {
     const isSameSlot = selectedShowtime?.showtimeId === showtimeId;
     const next = isSameSlot ? null : { cinemaId: cinema.id, showtimeId, time };
 
-    setSelectedShowtime(next ? { ...next, date } : null);
-  };
-
-  const retry = () => {
-    startTransition(() => router.refresh());
+    setSelectedShowtime(next ? { ...next, date: activeDate } : null);
   };
 
   const bookingHref = (() => {
@@ -98,7 +70,7 @@ export default function Showtimes({ date, today, dates, cinemas, error }: Showti
           {/* Date chips */}
           <div className="flex flex-wrap gap-2">
             {dateChips.map((chip) => {
-              const active = chip.value === date;
+              const active = chip.value === activeDate;
 
               return (
                 <button

@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useRef, useEffect, useMemo, useTransition } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { ChevronDown, ChevronUp, RotateCcw } from "lucide-react";
-import { useRouter, usePathname } from "next/navigation";
 import SectionHeader from "@/components/ui/SectionHeader";
 import { DATE_STRIP_DAYS, INITIAL_CINEMAS_VISIBLE } from "@/features/showtimes/constants";
 import { useMovieSelection } from "@/features/movies/context";
+import { useShowtimes } from "@/features/showtimes/context";
 import { useLocale } from "@/contexts/LocaleContext";
-import type { GroupedShowtimeCinema, ShowtimeDateOption } from "@/features/showtimes/types";
+import type { GroupedShowtimeCinema } from "@/features/showtimes/types";
 import { buildFallbackDateChips, toShowtimeDateChips } from "@/features/showtimes/utils";
 
 const BADGE_COLOR: Record<string, string> = {
@@ -21,20 +21,10 @@ function badgeColor(badge: string): string {
   return BADGE_COLOR[badge] ?? "bg-(--color-border) text-(--color-text-secondary)";
 }
 
-interface ShowtimesProps {
-  date: string;
-  today: string;
-  dates: ShowtimeDateOption[];
-  cinemas: GroupedShowtimeCinema[];
-  error: string | null;
-}
-
-export default function Showtimes({ date, today, dates, cinemas, error }: ShowtimesProps) {
+export default function Showtimes() {
+  const { activeDate, cinemas, error, isPending, dates, today, selectDate, retry } = useShowtimes();
   const { selectedShowtime, setSelectedShowtime } = useMovieSelection();
   const { translate, locale } = useLocale();
-  const router = useRouter();
-  const pathname = usePathname();
-  const [isPending, startTransition] = useTransition();
 
   const dateOptions = useMemo(
     () =>
@@ -50,10 +40,6 @@ export default function Showtimes({ date, today, dates, cinemas, error }: Showti
   const [maxHeight, setMaxHeight] = useState<string>("none");
 
   const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    setSelectedShowtime(null);
-  }, [date, setSelectedShowtime]);
 
   const shouldShowAll = showAll || isCollapsing;
   const visibleCinemas = shouldShowAll ? cinemas : cinemas.slice(0, INITIAL_CINEMAS_VISIBLE);
@@ -99,16 +85,7 @@ export default function Showtimes({ date, today, dates, cinemas, error }: Showti
         ? null
         : { cinemaId: cinema.id, showtimeId, time };
 
-    setSelectedShowtime(next ? { ...next, date } : null);
-  };
-
-  const selectDate = (value: string) => {
-    if (value === date) return;
-    startTransition(() => router.replace(`${pathname}?date=${value}`, { scroll: false }));
-  };
-
-  const retry = () => {
-    startTransition(() => router.refresh());
+    setSelectedShowtime(next ? { ...next, date: activeDate } : null);
   };
 
   return (
@@ -117,7 +94,7 @@ export default function Showtimes({ date, today, dates, cinemas, error }: Showti
 
       <div className="flex gap-2 mb-5 overflow-x-auto scrollbar-hide pb-1">
         {dateOptions.map((option) => {
-          const active = option.value === date;
+          const active = option.value === activeDate;
           return (
             <button
               type="button"

@@ -1,5 +1,26 @@
 import type { ShowtimeDateOption } from "./types";
 import { formatDateOnly } from "@/libs/date";
+import { DATE_STRIP_DAYS } from "./constants";
+
+const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+
+/** Shift a `YYYY-MM-DD` string by `days` calendar days (local time). */
+function shiftISODate(date: string, days: number): string {
+  const [year, month, day] = date.split("-").map(Number);
+  return formatDateOnly(new Date(year, month - 1, day + days));
+}
+
+/**
+ * Validate an external `?date=` deep-link value: it must be a real calendar
+ * date and either on the API's available list or — when the dates API is
+ * unavailable — inside the local fallback strip.
+ */
+export function isValidDateParam(value: string, availableDates: string[], today: string): boolean {
+  if (!DATE_PATTERN.test(value)) return false;
+  if (availableDates.length > 0) return availableDates.includes(value);
+  const last = shiftISODate(today, DATE_STRIP_DAYS - 1);
+  return value >= today && value <= last;
+}
 
 export interface ShowtimeDateChip {
   label: string;

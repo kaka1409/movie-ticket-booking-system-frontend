@@ -1,12 +1,13 @@
-import { getMovieDetail } from "@/features/movies/api";
+import { getMovieDetail, getMovies } from "@/features/movies/api";
 import { getShowtimeDates, getShowtimes } from "@/features/showtimes/api";
-import { DATE_STRIP_DAYS } from "@/features/showtimes/constants";
 import type { ShowtimeDateOption } from "@/features/showtimes/types";
+import { ShowtimesProvider } from "@/features/showtimes/context";
 import { getReviews } from "@/features/reviews/api";
 import SectionFallback from "@/components/ui/SectionFallback";
 import { REVIEWS_PAGE_SIZE } from "@/features/reviews/constants";
 import { MovieDetailProvider, MovieSelectionProvider } from "@/features/movies/context";
-import { formatDateOnly } from "@/libs/date";
+import { SITE_NAME, SITE_URL } from "@/libs/site";
+import type { Metadata } from "next";
 
 // Mobile
 import MobileHeroSection from "./components/mobile/HeroSection";
@@ -20,11 +21,14 @@ import MobileMovieNotFound from "./components/mobile/MovieNotFound";
 // Desktop
 import DesktopMovieDetail from "./components/desktop/MovieDetailDesktop";
 
-const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+/** Statically generated movie pages rebuild every 60s (catalog edits show up). */
+export const revalidate = 60;
 
-function shiftISODate(date: string, days: number): string {
-  const [year, month, day] = date.split("-").map(Number);
-  return formatDateOnly(new Date(year, month - 1, day + days));
+/** Trim to a social-preview friendly length without cutting mid-word. */
+function truncate(text: string, limit: number): string {
+  if (text.length <= limit) return text;
+  const cut = text.slice(0, limit);
+  return `${cut.slice(0, Math.max(cut.lastIndexOf(" "), limit - 20))}…`;
 }
 
 function todayISO(): string {
@@ -38,42 +42,93 @@ function toAvailableDates(records: ShowtimeDateOption[]): string[] {
   return records.filter((record) => record.hasShowtimes).map((record) => record.date);
 }
 
-/* Prefer a date that really has showtimes (from the API). Only when the API
-   gives us nothing do we fall back to the local window, so the strip is never
-   empty and a stale `?date=` param can never point at a day without sessions. */
-function resolveDate(param: string | undefined, availableDates: string[], today: string): string {
-  if (availableDates.length > 0) {
-    if (param && availableDates.includes(param)) return param;
-    /* Keep the current day when it is on the list, otherwise jump to the first. */
-    return availableDates.includes(today) ? today : availableDates[0];
-  }
-
-  const last = shiftISODate(today, DATE_STRIP_DAYS - 1);
-  if (param && DATE_PATTERN.test(param) && param >= today && param <= last) {
-    return param;
-  }
-  return today;
+/**
+ * Prefer the current day when it really has showtimes (from the API),
+ * otherwise jump to the first available one. `?date=` deep links are applied
+ * client-side in `ShowtimesProvider` — the static HTML always renders this
+ * default so the page never has to read `searchParams`.
+ */
+function resolveDate(availableDates: string[], today: string): string {
+  if (availableDates.length === 0) return today;
+  return availableDates.includes(today) ? today : availableDates[0];
 }
 
-export default async function MovieDetailPage({
+/**
+ * Pre-render the catalog's movie pages at build time; unknown slugs still
+ * render on demand (`dynamicParams` stays on) and follow the same ISR policy.
+ * When the API is down during the build nothing is pre-rendered — the pages
+ * degrade to on-demand rendering and heal on their 60s revalidation.
+ */
+export async function generateStaticParams(): Promise<{ slug: string }[]> {
+  const result = await getMovies({ page: 1, limit: 100 });
+  if ("error" in result) return [];
+  return result.data.map((movie) => ({ slug: movie.slug }));
+}
+
+export async function generateMetadata({
   params,
-  searchParams,
 }: {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ date?: string }>;
-}) {
-  const [{ slug }, { date: dateParam }] = await Promise.all([params, searchParams]);
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const result = await getMovieDetail(slug);
+
+  if ("error" in result) {
+    return {
+      title: "Movie not found",
+      robots: { index: false },
+    };
+  }
+
+  const movie = result.data;
+  const description = truncate(
+    movie.synopsis ||
+      `${movie.title} (${movie.releaseDate}) — ${movie.genre}, ${movie.duration} min.`,
+    160,
+  );
+  const url = `/movies/${movie.slug}`;
+  const images = movie.src ? [movie.src] : undefined;
+
+  return {
+    title: movie.title,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      type: "video.movie",
+      url,
+      title: movie.title,
+      description,
+      siteName: SITE_NAME,
+      ...(images ? { images } : {}),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: movie.title,
+      description,
+      ...(images ? { images } : {}),
+    },
+  };
+}
+
+export default async function MovieDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   const today = todayISO();
 
-  const [movieResult, showtimeDatesResult, reviewsResult] = await Promise.all([
-    getMovieDetail(slug),
-    getShowtimeDates(slug),
-    getReviews({
-      movieSlug: slug,
-      skip: 0,
-      limit: REVIEWS_PAGE_SIZE,
-    }),
-  ]);
+  /* One parallel round trip: the usual case resolves the default day to
+     `today`, so no waterfall — a second fetch only runs when today has no
+     sessions and the strip jumps to the first available day. */
+  const [movieResult, showtimeDatesResult, reviewsResult, todayShowtimesResult] = await Promise.all(
+    [
+      getMovieDetail(slug),
+      getShowtimeDates(slug),
+      getReviews({
+        movieSlug: slug,
+        skip: 0,
+        limit: REVIEWS_PAGE_SIZE,
+      }),
+      getShowtimes(slug, today),
+    ],
+  );
 
   if ("error" in movieResult) {
     if (movieResult.error.status === 404) {
@@ -88,9 +143,9 @@ export default async function MovieDetailPage({
 
   const movie = movieResult.data;
   const dateOptions = "error" in showtimeDatesResult ? [] : showtimeDatesResult.data;
-  const date = resolveDate(dateParam, toAvailableDates(dateOptions), today);
+  const date = resolveDate(toAvailableDates(dateOptions), today);
 
-  const showtimesResult = await getShowtimes(slug, date);
+  const showtimesResult = date === today ? todayShowtimesResult : await getShowtimes(slug, date);
   const showtimeCinemas = "error" in showtimesResult ? [] : showtimesResult.data.cinemas;
   const showtimesError = "error" in showtimesResult ? showtimesResult.error.message : null;
   const reviewsData = "error" in reviewsResult ? null : reviewsResult.data;
@@ -99,36 +154,64 @@ export default async function MovieDetailPage({
   return (
     <MovieDetailProvider movie={movie}>
       <MovieSelectionProvider>
-        {/* Mobile */}
-        <div className="block md:hidden min-h-dvh bg-(--color-bg) w-full max-w-md mx-auto flex flex-col overflow-x-hidden">
-          <MobileHeroSection />
-          <div className="flex flex-col gap-8 py-6 pb-12">
-            <MobileSynopsis />
-            <MobileTopCast />
-            <MobileShowtimes
-              date={date}
-              today={today}
-              dates={dateOptions}
-              cinemas={showtimeCinemas}
-              error={showtimesError}
-            />
-            <MobileBookTicketCTA />
-            <MobileReviews initialData={reviewsData} initialError={reviewsError} />
-          </div>
-        </div>
-
-        {/* Desktop */}
-        <div className="hidden md:block">
-          <DesktopMovieDetail
-            date={date}
-            today={today}
-            dates={dateOptions}
-            cinemas={showtimeCinemas}
-            showtimesError={showtimesError}
-            reviewsData={reviewsData}
-            reviewsError={reviewsError}
+        <ShowtimesProvider
+          movieSlug={slug}
+          initialDate={date}
+          dates={dateOptions}
+          today={today}
+          initialCinemas={showtimeCinemas}
+          initialError={showtimesError}
+        >
+          {/* JSON-LD structured data for search engines (Movie + aggregate rating).
+              JSON.stringify output is safe for script content; `<` is escaped so
+              the payload can never break out of the script element. */}
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "Movie",
+                name: movie.title,
+                url: `${SITE_URL}/movies/${movie.slug}`,
+                ...(movie.src ? { image: movie.src } : {}),
+                description: movie.synopsis,
+                genre: movie.genre,
+                datePublished: movie.releaseDate,
+                duration: `PT${movie.duration}M`,
+                director: { "@type": "Person", name: movie.director },
+                contentRating: movie.ageRating,
+                actor: movie.cast.map((member) => ({ "@type": "Person", name: member.name })),
+                ...(reviewsData && reviewsData.ratingSummary.total > 0
+                  ? {
+                      aggregateRating: {
+                        "@type": "AggregateRating",
+                        ratingValue: reviewsData.ratingSummary.average,
+                        reviewCount: reviewsData.ratingSummary.total,
+                        bestRating: 10,
+                        worstRating: 1,
+                      },
+                    }
+                  : {}),
+              }).replace(/</g, "\\u003c"),
+            }}
           />
-        </div>
+          {/* Mobile */}
+          <div className="block md:hidden min-h-dvh bg-(--color-bg) w-full max-w-md mx-auto flex flex-col overflow-x-hidden">
+            <MobileHeroSection />
+            <div className="flex flex-col gap-8 py-6 pb-12">
+              <MobileSynopsis />
+              <MobileTopCast />
+              <MobileShowtimes />
+              <MobileBookTicketCTA />
+              <MobileReviews initialData={reviewsData} initialError={reviewsError} />
+            </div>
+          </div>
+
+          {/* Desktop */}
+          <div className="hidden md:block">
+            <DesktopMovieDetail reviewsData={reviewsData} reviewsError={reviewsError} />
+          </div>
+        </ShowtimesProvider>
       </MovieSelectionProvider>
     </MovieDetailProvider>
   );
