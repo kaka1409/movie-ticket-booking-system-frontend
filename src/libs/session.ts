@@ -14,21 +14,21 @@ export async function getRequestCookie(): Promise<string | undefined> {
 }
 
 /**
- * Optimistic redirect to `/login` unless a `refreshToken` cookie exists.
- * Run at the top of protected layouts/pages so unauthenticated traffic never
- * reaches a data fetch — protected data never enters the RSC payload.
+ * Whether the incoming request carries a `refreshToken` cookie — the
+ * server-side counterpart of `isAuthenticated` (server components cannot read
+ * `AuthContext`). Run at the top of protected layouts/pages so unauthenticated
+ * traffic never reaches a data fetch — protected data never enters the RSC
+ * payload; the caller renders `LoginPrompt` instead of its children.
  * A present-but-revoked cookie still passes here; the post-fetch
  * {@link redirectIfUnauthorized} catches that case.
  */
-export async function requireAuth(returnUrl?: string): Promise<void> {
+export async function hasSession(): Promise<boolean> {
   const cookieStore = await cookies();
-  if (cookieStore.get("refreshToken")) return;
-
-  redirect(buildLoginUrl(returnUrl));
+  return cookieStore.get("refreshToken") !== undefined;
 }
 
 /**
- * Server-side 401 guard for user-scoped fetches. `requireAuth()` only checks
+ * Server-side 401 guard for user-scoped fetches. `hasSession()` only checks
  * that a `refreshToken` cookie exists — a revoked or stale one still passes,
  * and the backend then answers 401. Call this on the `apiFetch` result right
  * after fetching so the user is bounced to login instead of seeing the page's

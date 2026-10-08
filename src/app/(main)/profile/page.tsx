@@ -1,12 +1,19 @@
 import ProtectedRoute from "@/components/shared/ProtectedRoute";
-import { requireAuth } from "@/libs/session";
+import LoginPrompt from "@/components/shared/LoginPrompt";
+import { hasSession } from "@/libs/session";
 import Avatar from "./components/mobile/Avatar";
 import UserInfo from "./components/mobile/UserInfo";
 import ProfileMenu from "./components/mobile/ProfileMenu";
 import DesktopProfileContent from "./components/desktop/ProfileContent";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "My Profile",
+  robots: { index: false },
+};
 
 export default async function ProfilePage() {
-  await requireAuth("/profile");
+  if (!(await hasSession())) return <LoginPrompt />;
 
   return (
     <ProtectedRoute>

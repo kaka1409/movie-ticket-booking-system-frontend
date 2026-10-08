@@ -2,7 +2,14 @@ import { Suspense } from "react";
 import { TicketsProvider } from "@/features/tickets/context";
 import { getUpcomingTickets, getPastTickets } from "@/features/tickets/api";
 import ProtectedRoute from "@/components/shared/ProtectedRoute";
-import { getRequestCookie, requireAuth } from "@/libs/session";
+import LoginPrompt from "@/components/shared/LoginPrompt";
+import { getRequestCookie, hasSession } from "@/libs/session";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "My Tickets",
+  robots: { index: false },
+};
 
 // Mobile components
 import Tabs from "@/app/(main)/tickets/components/mobile/Tabs";
@@ -14,7 +21,7 @@ import TicketsSkeleton from "@/app/(main)/tickets/components/mobile/TicketsSkele
 import TicketsContent from "@/app/(main)/tickets/components/desktop/TicketsContent";
 
 export default async function TicketsPage() {
-  await requireAuth("/tickets");
+  if (!(await hasSession())) return <LoginPrompt />;
   const requestCookie = await getRequestCookie();
 
   const [upcoming, past] = await Promise.all([
