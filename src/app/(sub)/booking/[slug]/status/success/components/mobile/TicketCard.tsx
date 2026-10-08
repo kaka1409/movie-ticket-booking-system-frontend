@@ -3,14 +3,26 @@
 import Image from "next/image";
 import { QRCodeSVG } from "qrcode.react";
 import { useBooking } from "@/features/booking/context";
-import { useStatus } from "@/features/booking/contexts/StatusContext";
+import { useMounted } from "@/hooks/useMounted";
+import { bookingCardData } from "@/features/booking/utils/bookingCard";
 import { useLocale } from "@/contexts/LocaleContext";
 import DetailRow from "@/app/(sub)/booking/components/mobile/DetailRow";
 import PriceBreakdown from "@/app/(sub)/booking/components/mobile/PriceBreakdown";
 import TearLine from "@/components/ui/TearLine";
 import { MonitorPlay, CalendarDays } from "lucide-react";
+import type { Movie } from "@/features/movies/types";
+import type { BookingDetail } from "@/features/booking/types";
 
-export default function TicketCard() {
+export default function TicketCard({
+  movie,
+  booking,
+  transactionId,
+}: {
+  movie: Movie | undefined;
+  /** Authoritative booking payload when the page was reached with `?bookingId=`. */
+  booking: BookingDetail | null;
+  transactionId: string;
+}) {
   const {
     cinemaName,
     room,
@@ -23,8 +35,19 @@ export default function TicketCard() {
     foods,
     total,
   } = useBooking();
-  const { transactionId, movie, mounted } = useStatus();
+  const mounted = useMounted();
   const { translate } = useLocale();
+
+  // `?bookingId=` payload is authoritative; the BookingContext draft covers
+  // direct links / mock-era URLs without one.
+  const cardData = booking ? bookingCardData(booking) : null;
+  const posterSrc = movie?.src ?? booking?.showtime.movie.posterUrl ?? null;
+  const title = movie?.title ?? booking?.showtime.movie.title ?? "N/A";
+  const ageRating = movie?.ageRating ?? booking?.showtime.movie.ageRating;
+  const bookingRef = cardData?.bookingRef ?? transactionId;
+  const qrValue = booking
+    ? `https://primseat.com/tickets/${booking.id}`
+    : `https://primseat.com/tickets/${transactionId}`;
 
   return (
     <div
@@ -34,11 +57,11 @@ export default function TicketCard() {
     >
       {/* Top: movie info */}
       <div className="flex gap-3 p-4">
-        {movie?.src && (
+        {posterSrc && (
           <div className="w-20 h-30 flex-shrink-0 rounded-sm overflow-hidden relative">
             <Image
-              src={movie.src}
-              alt={movie.title}
+              src={posterSrc}
+              alt={title}
               width={80}
               height={120}
               className="object-cover w-full h-full"
@@ -46,8 +69,8 @@ export default function TicketCard() {
           </div>
         )}
         <div className="flex-1 min-w-0 pt-1">
-          <h3 className="font-bold text-base text-white mb-1">{movie?.title ?? "N/A"}</h3>
-          <p className="text-xs text-white/60 mb-2">{movie?.ageRating}</p>
+          <h3 className="font-bold text-base text-white mb-1">{title}</h3>
+          <p className="text-xs text-white/60 mb-2">{ageRating}</p>
         </div>
       </div>
 
@@ -61,27 +84,31 @@ export default function TicketCard() {
             icon={MonitorPlay}
             label={translate("booking.common.theater")}
             value={
-              <>
-                {cinemaName}
-                {room && <>, {room}</>}
-                {location && <>, {location}</>}
-              </>
+              cardData ? (
+                cardData.theater
+              ) : (
+                <>
+                  {cinemaName}
+                  {room && <>, {room}</>}
+                  {location && <>, {location}</>}
+                </>
+              )
             }
           />
           <DetailRow
             icon={CalendarDays}
             label={translate("booking.common.date_time")}
-            value={`${date}  ${time}`}
+            value={cardData ? cardData.dateTime : `${date}  ${time}`}
             valueClass="text-white font-bold text-sm text-right"
             labelClass="justify-end"
           />
         </div>
 
         <PriceBreakdown
-          seats={selectedSeats}
-          snacks={[...combos, ...foods]}
-          paymentMethod={paymentMethod}
-          total={total}
+          seats={cardData?.seats ?? selectedSeats}
+          snacks={cardData?.snacks ?? [...combos, ...foods]}
+          paymentMethod={cardData?.paymentMethod ?? paymentMethod}
+          total={cardData?.total ?? total}
         />
       </div>
 
@@ -91,14 +118,14 @@ export default function TicketCard() {
       {/* QR code */}
       <div className="px-4 pb-5 pt-4 flex flex-col items-center gap-3">
         <div className="flex flex-col items-center gap-4 px-6 py-6 rounded-2xl bg-white">
-          <QRCodeSVG value={`https://primseat.com/tickets/${transactionId}`} size={250} level="H" />
+          <QRCodeSVG value={qrValue} size={250} level="H" />
           <p className="text-[11px] font-bold tracking-[0.2em] uppercase text-gray-500">
             {translate("booking.common.scan_enter")}
           </p>
         </div>
         <p className="text-xs text-white/60 tracking-wide">
           {translate("booking.status.success.booking_id")}
-          <span className="font-bold text-white">#{transactionId}</span>
+          <span className="font-bold text-white">#{bookingRef}</span>
         </p>
       </div>
     </div>

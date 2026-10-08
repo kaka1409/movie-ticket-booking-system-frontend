@@ -1,11 +1,11 @@
 "use client";
 
 import { AlertCircle } from "lucide-react";
-import { useStatus } from "@/features/booking/contexts/StatusContext";
+import { useMounted } from "@/hooks/useMounted";
 import { useLocale } from "@/contexts/LocaleContext";
 
-export default function FailedIcon() {
-  const { mounted } = useStatus();
+export default function FailedIcon({ reason }: { reason: string | null }) {
+  const mounted = useMounted();
   const { translate } = useLocale();
 
   return (
@@ -36,14 +36,13 @@ export default function FailedIcon() {
         <h1 className="font-extrabold text-3xl text-white leading-tight mb-2">
           {translate("booking.status.failed.title")}
         </h1>
-        <FailReason />
+        <FailReason reason={reason} />
       </div>
     </section>
   );
 }
 
-function FailReason() {
-  const { reason /* , mounted */ } = useStatus();
+function FailReason({ reason }: { reason: string | null }) {
   const { translate } = useLocale();
 
   const REASONS: Record<string, string> = {

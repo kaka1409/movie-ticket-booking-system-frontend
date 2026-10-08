@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { RefreshCw, Home, ChevronRight, HeadphonesIcon } from "lucide-react";
-import { useStatus } from "@/features/booking/contexts/StatusContext";
+import { useMounted } from "@/hooks/useMounted";
 import { useLocale } from "@/contexts/LocaleContext";
 import Button from "@/components/ui/Button";
 
@@ -11,7 +11,7 @@ export default function FailActions() {
   const params = useParams();
   const router = useRouter();
   const slug = params.slug as string;
-  const { mounted } = useStatus();
+  const mounted = useMounted();
   const { translate } = useLocale();
 
   return (

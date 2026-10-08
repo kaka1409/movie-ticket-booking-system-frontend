@@ -17,8 +17,6 @@ interface SelectionInfo {
 interface TotalInfo {
   label?: string;
   amount?: number;
-  showEmptyState?: boolean;
-  useEmptyState?: boolean;
 }
 
 interface BookingBottomBarProps {
@@ -31,6 +29,8 @@ interface BookingBottomBarProps {
   isLoading?: boolean;
   promptText?: string;
   alwaysEnabled?: boolean;
+  /** Inline failure line above the CTA (e.g. a booking/pay error the user can retry). */
+  errorText?: string | null;
 }
 
 export default function BookingBottomBar({
@@ -43,6 +43,7 @@ export default function BookingBottomBar({
   isLoading = false,
   promptText,
   alwaysEnabled = false,
+  errorText,
 }: BookingBottomBarProps) {
   const { translate } = useLocale();
   const hasSelection = selectionInfo?.label || selectionInfo?.subLabel;
@@ -51,7 +52,7 @@ export default function BookingBottomBar({
   const renderButton = () => {
     const buttonContent = (
       <>
-        {isLoading ? ctaText : ctaText}
+        {ctaText}
         {!isLoading && <ArrowRight size={17} />}
       </>
     );
@@ -99,6 +100,10 @@ export default function BookingBottomBar({
 
   return (
     <div className="sticky bottom-0 z-50 px-4 pb-6 pt-3 bg-(--color-bg) border-t border-(--color-border)">
+      {errorText && (
+        <p className="mb-3 px-1 text-xs font-medium text-red-400 leading-relaxed">{errorText}</p>
+      )}
+
       {/* Selection Info */}
       {selectionInfo && (
         <div className="flex items-center justify-between mb-3 px-1">

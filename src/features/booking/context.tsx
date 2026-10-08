@@ -1,53 +1,35 @@
 "use client";
 
-import { createContext, useContext, useState, useCallback, useMemo, type ReactNode } from "react";
+import { createContext, useContext, useReducer, useCallback, useMemo, type ReactNode } from "react";
 
 /* ─── Types ─────────────────────────────────────────────── */
 
-import type { SelectedSeat, SelectedCombo, SelectedFood } from "./types";
+import type { SelectedCombo, SelectedFood, CinemaDraft, Seat, SeatRow } from "./types";
+import type { BookingState } from "./reducer";
+import { bookingReducer, INITIAL_BOOKING_STATE } from "./reducer";
 import { useLocale } from "@/contexts/LocaleContext";
 
-interface BookingState {
-  cinemaId: string | null;
-  showtimeId: string;
-  cinemaName: string;
-  time: string;
-  date: string;
-  room: string;
-  location: string;
-  selectedSeats: SelectedSeat[];
+interface BookingContextType extends BookingState {
+  /** Derived: translated label of the first selected seat's type. */
   seatType: string;
-  combos: SelectedCombo[];
-  foods: SelectedFood[];
-  paymentMethod: string;
-  contactName: string;
-  contactEmail: string;
-  contactPhone: string;
-  contactCountryCode: string;
   ticketCount: number;
   ticketPrice: number;
   snackTotal: number;
   total: number;
-  countdownStarted: boolean;
-  countdownStartTime: number;
-}
-
-interface BookingContextType extends BookingState {
   countdownSeconds: number;
-  setCinema: (
-    cinemaId: string,
-    cinemaName: string,
-    time: string,
-    date: string,
-    room: string,
-    location: string,
-    showtimeId?: string,
-  ) => void;
-  setSeats: (seats: SelectedSeat[]) => void;
+  setCinema: (draft: CinemaDraft) => void;
+  setCinemaQuery: (query: string) => void;
+  setCinemaDate: (date: string) => void;
+  clearCinemaSlot: () => void;
+  adoptSeatGrid: (rows: SeatRow[], maxSeats: number) => void;
+  setSeatGrid: (rows: SeatRow[], maxSeats: number) => void;
+  selectHoldCells: (seatIds: string[]) => void;
+  clearSeatSelection: () => void;
+  toggleSeat: (rowLabel: string, seat: Seat) => void;
   setSnacks: (combos: SelectedCombo[], foods: SelectedFood[]) => void;
-  setPaymentMethod: (method: string) => void;
+  setPayment: (methodId: string, methodName: string) => void;
   setCredentials: (name: string, email: string, phone: string, countryCode: string) => void;
-  startCountdown: () => void;
+  setHoldExpiresAt: (deadline: number | null) => void;
   resetBooking: () => void;
 }
 
@@ -63,200 +45,126 @@ export function BookingProvider({
   initialCountdownSeconds?: number;
 }) {
   const { translate } = useLocale();
+  const [state, dispatch] = useReducer(bookingReducer, INITIAL_BOOKING_STATE);
 
-  // Cinema & showtimes
-  const [cinemaId, setCinemaId] = useState<string | null>(null);
-  const [showtimeId, setShowtimeId] = useState("");
-  const [cinemaName, setCinemaName] = useState("");
-  const [time, setTime] = useState("");
-  const [date, setDate] = useState("");
-  const [room, setRoom] = useState("");
-  const [location, setLocation] = useState("");
+  const setCinema = useCallback((draft: CinemaDraft) => {
+    dispatch({ type: "SET_CINEMA", ...draft, showtimeId: draft.showtimeId ?? "" });
+  }, []);
 
-  // Seats
-  const [selectedSeats, setSelectedSeats] = useState<SelectedSeat[]>([]);
-  const [countdownStarted, setCountdownStarted] = useState(false);
-  const [countdownStartTime, setCountdownStartTime] = useState(0);
+  const setCinemaQuery = useCallback((query: string) => {
+    dispatch({ type: "SET_CINEMA_QUERY", query });
+  }, []);
 
-  // Snacks
-  const [combos, setCombos] = useState<SelectedCombo[]>([]);
-  const [foods, setFoods] = useState<SelectedFood[]>([]);
+  const setCinemaDate = useCallback((date: string) => {
+    dispatch({ type: "SET_CINEMA_DATE", date });
+  }, []);
 
-  // Credentials
-  const [contactName, setContactName] = useState("");
-  const [contactEmail, setContactEmail] = useState("");
-  const [contactPhone, setContactPhone] = useState("");
-  const [contactCountryCode, setContactCountryCode] = useState("+84");
+  const clearCinemaSlot = useCallback(() => {
+    dispatch({ type: "CLEAR_CINEMA_SLOT" });
+  }, []);
 
-  // Payment Method
-  const [paymentMethod, setPaymentMethod] = useState("");
+  const adoptSeatGrid = useCallback((rows: SeatRow[], maxSeats: number) => {
+    dispatch({ type: "ADOPT_SEAT_GRID", rows, maxSeats, now: Date.now() });
+  }, []);
 
-  const setCinema = useCallback(
-    (
-      id: string,
-      name: string,
-      showTime: string,
-      showDate: string,
-      screenRoom: string,
-      location: string,
-      showtimeId?: string,
-    ) => {
-      setCinemaId(id);
-      setCinemaName(name);
-      setTime(showTime);
-      setDate(showDate);
-      setRoom(screenRoom);
-      setLocation(location);
-      setShowtimeId(showtimeId ?? "");
-    },
-    [],
-  );
+  const setSeatGrid = useCallback((rows: SeatRow[], maxSeats: number) => {
+    dispatch({ type: "SET_SEAT_GRID", rows, maxSeats, now: Date.now() });
+  }, []);
 
-  const setSeats = useCallback((seats: SelectedSeat[]) => {
-    setSelectedSeats(seats);
+  const selectHoldCells = useCallback((seatIds: string[]) => {
+    dispatch({ type: "SELECT_HOLD_CELLS", seatIds, now: Date.now() });
+  }, []);
+
+  const clearSeatSelection = useCallback(() => {
+    dispatch({ type: "CLEAR_SEAT_SELECTION" });
+  }, []);
+
+  const toggleSeat = useCallback((rowLabel: string, seat: Seat) => {
+    dispatch({ type: "TOGGLE_SEAT", rowLabel, seat, now: Date.now() });
   }, []);
 
   const setSnacks = useCallback(
     (selectedCombos: SelectedCombo[], selectedFoods: SelectedFood[]) => {
-      setCombos(selectedCombos);
-      setFoods(selectedFoods);
+      dispatch({ type: "SET_SNACKS", combos: selectedCombos, foods: selectedFoods });
     },
     [],
   );
 
   const setCredentials = useCallback(
     (name: string, email: string, phone: string, countryCode: string) => {
-      setContactName(name);
-      setContactEmail(email);
-      setContactPhone(phone);
-      setContactCountryCode(countryCode);
+      dispatch({ type: "SET_CONTACT", name, email, phone, countryCode });
     },
     [],
   );
 
-  const startCountdown = useCallback(() => {
-    if (!countdownStarted) {
-      setCountdownStarted(true);
-      setCountdownStartTime(Date.now());
-    }
-  }, [countdownStarted]);
+  const setPayment = useCallback((methodId: string, methodName: string) => {
+    dispatch({ type: "SET_PAYMENT", methodId, methodName });
+  }, []);
+
+  const setHoldExpiresAt = useCallback((deadline: number | null) => {
+    dispatch({ type: "SET_HOLD", deadline });
+  }, []);
 
   const resetBooking = useCallback(() => {
-    setCinemaId(null);
-    setShowtimeId("");
-    setCinemaName("");
-    setTime("");
-    setDate("");
-    setRoom("");
-    setLocation("");
-    setSelectedSeats([]);
-    setCombos([]);
-    setFoods([]);
-    setPaymentMethod("");
-    setContactName("");
-    setContactEmail("");
-    setContactPhone("");
-    setContactCountryCode("+84");
-    setCountdownStarted(false);
-    setCountdownStartTime(0);
+    dispatch({ type: "RESET" });
   }, []);
 
   /* Translated label — kept in its own memo so it refreshes on locale change
      without dragging `translate` into the whole context value memo. */
   const seatType = useMemo(
-    () => selectedSeats[0]?.type ?? translate("booking.seats.standard"),
-    [selectedSeats, translate],
+    () => state.selectedSeats[0]?.type ?? translate("booking.seats.standard"),
+    [state.selectedSeats, translate],
   );
 
   const value = useMemo<BookingContextType>(() => {
-    const ticketCount = selectedSeats.length;
-    const ticketPrice = selectedSeats.reduce((total, seat) => total + seat.price, 0);
+    const ticketCount = state.selectedSeats.length;
+    const ticketPrice = state.selectedSeats.reduce((total, seat) => total + seat.price, 0);
     const snackTotal =
-      combos.reduce((total, combo) => total + combo.price * combo.qty, 0) +
-      foods.reduce((total, food) => total + food.price * food.qty, 0);
+      state.combos.reduce((total, combo) => total + combo.price * combo.qty, 0) +
+      state.foods.reduce((total, food) => total + food.price * food.qty, 0);
     const total = ticketPrice + snackTotal;
 
     return {
-      // Cinema
-      cinemaId,
-      showtimeId,
-      cinemaName,
-      time,
-      date,
-      room,
-      location,
-      setCinema,
-
-      // Seats
-      selectedSeats,
-      seatType,
+      ...state,
       countdownSeconds: initialCountdownSeconds,
-      countdownStarted,
-      countdownStartTime,
-      setSeats,
-      startCountdown,
-
-      // Snacks
-      combos,
-      foods,
-      snackTotal,
-      setSnacks,
-
-      // Credentials
-      contactName,
-      contactEmail,
-      contactPhone,
-      contactCountryCode,
-      setCredentials,
-
-      // Payment
-      paymentMethod,
-      setPaymentMethod,
-
+      seatType,
       total,
       ticketCount,
       ticketPrice,
+      snackTotal,
+      setCinema,
+      setCinemaQuery,
+      setCinemaDate,
+      clearCinemaSlot,
+      adoptSeatGrid,
+      setSeatGrid,
+      selectHoldCells,
+      clearSeatSelection,
+      toggleSeat,
+      setSnacks,
+      setCredentials,
+      setPayment,
+      setHoldExpiresAt,
       resetBooking,
     };
   }, [
-    // Cinema
-    cinemaId,
-    showtimeId,
-    cinemaName,
-    time,
-    date,
-    room,
-    location,
-    setCinema,
-
-    // Seats
-    selectedSeats,
-    countdownStarted,
-    countdownStartTime,
-    setSeats,
-    startCountdown,
-
-    // Snacks
-    combos,
-    foods,
-    setSnacks,
-
-    // Credentials
-    contactName,
-    contactEmail,
-    contactPhone,
-    contactCountryCode,
-    setCredentials,
-
-    // Payment
-    paymentMethod,
-    setPaymentMethod,
-
-    resetBooking,
-
-    // Derived values (must invalidate the memo when they change)
+    state,
     seatType,
     initialCountdownSeconds,
+    setCinema,
+    setCinemaQuery,
+    setCinemaDate,
+    clearCinemaSlot,
+    adoptSeatGrid,
+    setSeatGrid,
+    selectHoldCells,
+    clearSeatSelection,
+    toggleSeat,
+    setSnacks,
+    setCredentials,
+    setPayment,
+    setHoldExpiresAt,
+    resetBooking,
   ]);
 
   return <BookingContext.Provider value={value}>{children}</BookingContext.Provider>;

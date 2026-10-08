@@ -388,7 +388,6 @@
       "search": "Tìm rạp hoặc địa điểm...",
       "no_results": "Không tìm thấy rạp cho",
       "clear_search": "Xóa tìm kiếm",
-      "clear_selection": "Xóa chọn",
       "showtime": "SUẤT CHIẾU",
       "select_prompt": "Chọn rạp & suất chiếu",
       "select_seats": "CHỌN GHẾ"
@@ -400,7 +399,6 @@
       "occupied": "Đã Bán",
       "vip": "VIP",
       "sweetbox": "SweetBox",
-      "selected_seats": "Ghế Đã Chọn",
       "seat_label": "Ghế",
       "standard": "Tiêu Chuẩn",
       "continue_snacks": "Tiếp Tục Chọn Đồ Ăn"
@@ -410,8 +408,6 @@
       "heading": "Lấy Đồ Ăn",
       "subtitle": "Thêm combo hoặc chọn món yêu thích — hoàn toàn tùy chọn.",
       "quick_combos": "Combo Nhanh",
-      "pick_mix": "Tự Chọn",
-      "selected_items": "Món Đã Chọn",
       "item": "món",
       "items": "món",
       "no_items": "Chưa chọn món nào",
@@ -447,14 +443,13 @@
       "terms_link": "Điều Khoản & Điều Kiện",
       "processing": "Đang xử lý...",
       "confirm": "Xác Nhận Thanh Toán",
-      "seats_count": "Ghế ({count})"
+      "error_missing_selection": "Thiếu thông tin đặt vé — quay lại và chọn ghế lại."
     },
     "status": {
       "success": {
         "title": "Đặt Vé Thành Công",
         "message": "Vé của bạn đã được đặt thành công và gửi đến email.",
         "download": "Tải Vé",
-        "share_booking": "Chia sẻ đặt vé",
         "booking_id": "Mã Đặt Vé: "
       },
       "failed": {

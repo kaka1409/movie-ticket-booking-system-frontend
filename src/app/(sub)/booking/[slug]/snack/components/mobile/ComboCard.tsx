@@ -3,12 +3,13 @@
 import Image from "next/image";
 import type { ComboItem } from "@/features/booking/types";
 import Stepper from "./Stepper";
-import { useSnackSelection } from "@/features/booking/contexts/SnackSelectionContext";
+import { useBooking } from "@/features/booking/context";
+import { withItemQty } from "@/features/booking/utils/snack";
 import { formatVND } from "@/libs/utils";
 
 export default function ComboCard({ item }: { item: ComboItem }) {
-  const { comboQty, changeCombo } = useSnackSelection();
-  const qty = comboQty[item.id] ?? 0;
+  const { combos, foods, setSnacks } = useBooking();
+  const qty = combos.find((entry) => entry.id === item.id)?.qty ?? 0;
   const isSelected = qty > 0;
 
   return (
@@ -25,14 +26,17 @@ export default function ComboCard({ item }: { item: ComboItem }) {
             isSelected ? "bg-(--color-gold)/8" : "bg-(--color-surface-2)"
           }`}
         >
-          <Image
-            className="object-contain w-auto h-auto"
-            src={item.image}
-            alt={item.name}
-            width={112}
-            height={80}
-            loading="eager"
-          />
+          {/* BE `image` is nullable — skip the brand box instead of feeding `next/image` an empty src. */}
+          {item.image && (
+            <Image
+              className="object-contain w-auto h-auto"
+              src={item.image}
+              alt={item.name}
+              width={112}
+              height={80}
+              loading="eager"
+            />
+          )}
 
           {item.tag && (
             <span className="absolute top-2 left-0 right-0 mx-auto w-fit px-2 py-0.5 rounded-full text-[8px] font-black tracking-widest uppercase bg-(--color-gold) text-[#0F0F0F]">
@@ -55,8 +59,8 @@ export default function ComboCard({ item }: { item: ComboItem }) {
             </span>
             <Stepper
               value={qty}
-              onDecrement={() => changeCombo(item.id, -1)}
-              onIncrement={() => changeCombo(item.id, +1)}
+              onDecrement={() => setSnacks(withItemQty(combos, item, -1), foods)}
+              onIncrement={() => setSnacks(withItemQty(combos, item, +1), foods)}
             />
           </div>
         </div>

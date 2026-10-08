@@ -2,7 +2,7 @@
 
 import { useLocale } from "@/contexts/LocaleContext";
 import type { SeatRow, Seat } from "@/features/booking/types";
-import { getSeatLabel } from "@/features/booking/utils";
+import { getSeatLabel } from "@/features/booking/utils/seat";
 import SeatCell from "./SeatCell";
 import SeatLegend from "./SeatLegend";
 

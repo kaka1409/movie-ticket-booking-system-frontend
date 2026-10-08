@@ -1,9 +1,9 @@
-import { getCombos, getFoodItems, getFoodCategories } from "@/features/booking/api";
-import { SnackSelectionProvider } from "@/features/booking/contexts/SnackSelectionContext";
+﻿import { getCombos, getFoodItems, getFoodCategories } from "@/features/booking/api";
 
 // Shared
 import StepBar from "@/app/(sub)/booking/components/mobile/StepBar";
 import CountdownBanner from "@/app/(sub)/booking/components/mobile/CountdownBanner";
+import PageError from "@/app/(sub)/booking/components/mobile/PageError";
 
 // Local mobile
 import ComboCard from "./components/mobile/ComboCard";
@@ -16,14 +16,22 @@ import BottomBar from "./components/mobile/BottomBar";
 import DesktopSnackContent from "./components/desktop/SnackContent";
 
 export default async function CombosPage() {
-  const [combos, foodItems, foodCategories] = await Promise.all([
+  const [combosResult, foodItemsResult, foodCategoriesResult] = await Promise.all([
     getCombos(),
     getFoodItems(),
     getFoodCategories(),
   ]);
 
+  if ("error" in combosResult) return <PageError error={combosResult.error} />;
+  if ("error" in foodItemsResult) return <PageError error={foodItemsResult.error} />;
+  if ("error" in foodCategoriesResult) return <PageError error={foodCategoriesResult.error} />;
+
+  const combos = combosResult.data;
+  const foodItems = foodItemsResult.data;
+  const foodCategories = foodCategoriesResult.data;
+
   return (
-    <SnackSelectionProvider combos={combos} foodItems={foodItems} foodCategories={foodCategories}>
+    <>
       {/* Mobile */}
       <div className="block md:hidden">
         <StepBar current={3} />
@@ -60,6 +68,6 @@ export default async function CombosPage() {
       <div className="hidden md:block">
         <DesktopSnackContent />
       </div>
-    </SnackSelectionProvider>
+    </>
   );
 }

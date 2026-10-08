@@ -388,7 +388,6 @@
       "search": "Search cinemas or locations...",
       "no_results": "No cinemas found for",
       "clear_search": "Clear search",
-      "clear_selection": "Clear selection",
       "showtime": "SHOWTIME",
       "select_prompt": "Select a cinema & showtime",
       "select_seats": "SELECT SEATS"
@@ -400,7 +399,6 @@
       "occupied": "Occupied",
       "vip": "VIP",
       "sweetbox": "SweetBox",
-      "selected_seats": "Selected Seats",
       "seat_label": "Seat",
       "standard": "Standard",
       "continue_snacks": "Continue to Snacks"
@@ -410,8 +408,6 @@
       "heading": "Grab a Snack",
       "subtitle": "Add combos or pick your favourites — totally optional.",
       "quick_combos": "Quick Combos",
-      "pick_mix": "Pick & Mix",
-      "selected_items": "Selected Items",
       "item": "Item",
       "items": "Items",
       "no_items": "No items selected",
@@ -447,14 +443,13 @@
       "terms_link": "Terms & Conditions",
       "processing": "Processing...",
       "confirm": "Confirm Payment",
-      "seats_count": "Seats ({count})"
+      "error_missing_selection": "Missing booking details — go back and select your seats again."
     },
     "status": {
       "success": {
         "title": "Booking Successful",
         "message": "Your tickets have been successfully booked and sent to your email.",
         "download": "Download Tickets",
-        "share_booking": "Share booking",
         "booking_id": "Booking ID: "
       },
       "failed": {

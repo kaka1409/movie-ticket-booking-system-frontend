@@ -116,13 +116,26 @@ export const CINEMAS: Cinema[] = [
 
 /* ─── Seat Map Data ────────────────────────────────────── */
 
+// Declared before the row helpers below — they read it at module init.
+export const SEAT_PRICES: SeatPrice = {
+  available: 90000,
+  vip: 140000,
+  sweetbox: 280000,
+};
+
 function seat(
   col: number,
   kind: Seat["kind"],
   status: Seat["status"] = "idle",
   pairId?: string,
 ): Seat {
-  return { col, kind, status, pairId };
+  const price =
+    kind === "vip"
+      ? SEAT_PRICES.vip
+      : kind === "sweetbox"
+        ? SEAT_PRICES.sweetbox
+        : SEAT_PRICES.available;
+  return { col, kind, status, pairId, seatIds: [], price };
 }
 
 function regularRow(label: string, occupied: number[] = []): SeatRow {
@@ -145,10 +158,12 @@ function vipRow(label: string, occupied: number[] = []): SeatRow {
 
 function sweetBoxRow(label: string, occupiedPairs: string[] = []): SeatRow {
   const makePair = (pairId: string): Seat => ({
-    col: parseInt(pairId.split("-")[0]),
+    col: parseInt(pairId.split("-")[1], 10),
     kind: "sweetbox",
     status: occupiedPairs.includes(pairId) ? "occupied" : "idle",
     pairId,
+    seatIds: [],
+    price: SEAT_PRICES.sweetbox,
   });
   return {
     label,
@@ -171,12 +186,6 @@ export const SEAT_ROWS: SeatRow[] = [
   sweetBoxRow("I", ["I-3-4"]),
   sweetBoxRow("J", ["J-5-6", "J-7-8"]),
 ];
-
-export const SEAT_PRICES: SeatPrice = {
-  available: 90000,
-  vip: 140000,
-  sweetbox: 280000,
-};
 
 export const COUNTDOWN_SECONDS = 5 * 60 + 59; // 5m59s
 export const MAX_SEATS_PER_BOOKING = 8;

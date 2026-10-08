@@ -2,12 +2,12 @@ import { notFound } from "next/navigation";
 import { getMovieDetail } from "@/features/movies/api";
 import { getShowtimeDates, getShowtimes } from "@/features/showtimes/api";
 import type { ShowtimeDateOption, ShowtimesResponse } from "@/features/showtimes/types";
-import { CinemaSelectionProvider } from "@/features/booking/contexts/CinemaSelectionContext";
+import CinemaAdopt from "@/features/booking/components/CinemaAdopt";
 import type { Cinema, DateOption } from "@/features/booking/types";
-import SectionFallback from "@/components/ui/SectionFallback";
 
 // Shared
 import StepBar from "@/app/(sub)/booking/components/mobile/StepBar";
+import PageError from "@/app/(sub)/booking/components/mobile/PageError";
 
 // Local mobile
 import MovieSummary from "./components/mobile/MovieSummary";
@@ -79,11 +79,7 @@ export default async function CinemaShowtimePage({
   if ("error" in movieResult) {
     if (movieResult.error.status === 404) notFound();
 
-    return (
-      <div className="min-h-dvh bg-(--color-bg) py-10">
-        <SectionFallback error={movieResult.error} />
-      </div>
-    );
+    return <PageError error={movieResult.error} />;
   }
 
   const movie = movieResult.data;
@@ -98,30 +94,32 @@ export default async function CinemaShowtimePage({
   const cinemas = "error" in showtimesResult ? [] : toCinemas(showtimesResult.data.cinemas);
 
   return (
-    <CinemaSelectionProvider
-      cinemas={cinemas}
-      dates={dates}
-      initialCinemaId={query.cinema ?? null}
-      initialTime={query.time ?? ""}
-      initialDate={resolvedDate}
-      initialShowtimeId={query.showtimeId ?? null}
-    >
+    <>
+      <CinemaAdopt
+        cinemas={cinemas}
+        dates={dates}
+        initialCinemaId={query.cinema ?? null}
+        initialTime={query.time ?? ""}
+        initialDate={resolvedDate}
+        initialShowtimeId={query.showtimeId ?? null}
+      />
+
       {/* Mobile */}
       <div className="block md:hidden">
         <StepBar current={1} />
         <div className="flex flex-col gap-4 px-4 py-6 pb-12">
           <MovieSummary movie={movie} />
-          <DatePickerWrapper />
+          <DatePickerWrapper dates={dates} />
           <SearchBar />
-          <CinemaList />
+          <CinemaList cinemas={cinemas} />
         </div>
-        <BottomBar movieSlug={slug} />
+        <BottomBar movieSlug={slug} cinemas={cinemas} />
       </div>
 
       {/* Desktop */}
       <div className="hidden md:block">
         <DesktopCinemaContent />
       </div>
-    </CinemaSelectionProvider>
+    </>
   );
 }

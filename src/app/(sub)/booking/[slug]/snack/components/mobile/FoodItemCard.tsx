@@ -31,13 +31,16 @@ export default function FoodItemCard({
           isSelected ? "bg-(--color-gold)/10" : "bg-(--color-surface-2)"
         }`}
       >
-        <Image
-          className="object-contain w-auto h-auto"
-          src={item.image}
-          alt={item.name}
-          width={40}
-          height={40}
-        />
+        {/* BE `image` is nullable — skip the icon instead of feeding `next/image` an empty src. */}
+        {item.image && (
+          <Image
+            className="object-contain w-auto h-auto"
+            src={item.image}
+            alt={item.name}
+            width={40}
+            height={40}
+          />
+        )}
       </div>
 
       <div className="flex-1 min-w-0">

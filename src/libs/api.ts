@@ -149,7 +149,7 @@ export async function apiFetch<T, M = Record<string, unknown>>(
 }
 
 /**
- * POST/PATCH/DELETE a backend endpoint. Unlike {@link apiFetch} this THROWS
+ * POST/PUT/PATCH/DELETE a backend endpoint. Unlike {@link apiFetch} this THROWS
  * an `Error` (with `status`, `code` and `body` attached) on network or HTTP
  * failure — server actions wrap it in try/catch and convert the throw into a
  * `{ success: false }` union.
@@ -161,21 +161,21 @@ export async function apiFetch<T, M = Record<string, unknown>>(
  */
 export async function apiMutation<T>(
   path: string,
-  options: RequestInit & { method: "POST" | "PATCH" | "DELETE" },
+  options: RequestInit & { method: "POST" | "PUT" | "PATCH" | "DELETE" },
   token?: string,
   cookie?: string,
   raw?: false,
 ): Promise<T>;
 export async function apiMutation(
   path: string,
-  options: RequestInit & { method: "POST" | "PATCH" | "DELETE" },
+  options: RequestInit & { method: "POST" | "PUT" | "PATCH" | "DELETE" },
   token?: string,
   cookie?: string,
   raw?: true,
 ): Promise<Response>;
 export async function apiMutation<T>(
   path: string,
-  options: RequestInit & { method: "POST" | "PATCH" | "DELETE" },
+  options: RequestInit & { method: "POST" | "PUT" | "PATCH" | "DELETE" },
   token?: string,
   cookie?: string,
   raw?: boolean,

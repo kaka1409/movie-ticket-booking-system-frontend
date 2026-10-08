@@ -5,29 +5,31 @@ import { Timer } from "lucide-react";
 import { useBooking } from "@/features/booking/context";
 import { useLocale } from "@/contexts/LocaleContext";
 
+function secondsUntil(deadline: number): number {
+  return Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
+}
+
 export default function CountdownBanner() {
-  const { countdownStarted, countdownStartTime, countdownSeconds } = useBooking();
+  const { countdownStarted, countdownStartTime, countdownSeconds, holdExpiresAt } = useBooking();
   const { translate } = useLocale();
 
   // Seed from wall-clock time rather than tick counts: background tabs
   // throttle setInterval, and an absolute deadline stays correct there.
-  const [remaining, setRemaining] = useState(() => {
-    if (!countdownStarted) return countdownSeconds;
-    const elapsed = Math.floor((Date.now() - countdownStartTime) / 1000);
-    return Math.max(0, countdownSeconds - elapsed);
-  });
+  // `holdExpiresAt` (BE) wins over the local first-selection fallback.
+  const initialDeadline =
+    holdExpiresAt ?? (countdownStarted ? countdownStartTime + countdownSeconds * 1000 : null);
+
+  const [remaining, setRemaining] = useState(() =>
+    initialDeadline === null ? countdownSeconds : secondsUntil(initialDeadline),
+  );
 
   useEffect(() => {
-    if (!countdownStarted) return;
+    if (initialDeadline === null) return;
 
-    const tick = () => {
-      const elapsed = Math.floor((Date.now() - countdownStartTime) / 1000);
-      setRemaining(Math.max(0, countdownSeconds - elapsed));
-    };
-
+    const tick = () => setRemaining(secondsUntil(initialDeadline));
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
-  }, [countdownStarted, countdownStartTime, countdownSeconds]);
+  }, [initialDeadline]);
 
   const minutes = String(Math.floor(remaining / 60)).padStart(2, "0");
   const seconds = String(remaining % 60).padStart(2, "0");

@@ -1,11 +1,11 @@
 "use client";
 
 import { Check } from "lucide-react";
-import { useStatus } from "@/features/booking/contexts/StatusContext";
+import { useMounted } from "@/hooks/useMounted";
 import { useLocale } from "@/contexts/LocaleContext";
 
 export default function SuccessIcon() {
-  const { mounted } = useStatus();
+  const mounted = useMounted();
   const { translate } = useLocale();
 
   return (

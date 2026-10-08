@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { User, Mail } from "lucide-react";
 import { useBooking } from "@/features/booking/context";
-import { useCredentials } from "@/features/booking/contexts/CredentialsContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import { createContactSchema } from "@/features/booking/schema";
 import FieldLabel from "./FieldLabel";
@@ -11,14 +11,15 @@ import TextInput from "./TextInput";
 import PhoneField from "./PhoneField";
 
 export default function ContactForm() {
-  const { setIsValid } = useCredentials();
   const { translate } = useLocale();
+  const { user } = useAuth();
   const { contactName, contactEmail, contactPhone, contactCountryCode, setCredentials } =
     useBooking();
 
-  const [name, setName] = useState(contactName);
-  const [email, setEmail] = useState(contactEmail);
-  const [phone, setPhone] = useState(contactPhone);
+  // Prefill order: saved booking state (back-nav) > auth profile > empty.
+  const [name, setName] = useState(contactName || user?.name || "");
+  const [email, setEmail] = useState(contactEmail || user?.email || "");
+  const [phone, setPhone] = useState(contactPhone || user?.phone || "");
   const [countryCode, setCountryCode] = useState(contactCountryCode || "+84");
   const [touched, setTouched] = useState(false);
 
@@ -27,10 +28,6 @@ export default function ContactForm() {
   const errors = result.success ? {} : result.error.flatten().fieldErrors;
   const isValid = result.success;
   const showErrors = touched && !isValid;
-
-  useEffect(() => {
-    setIsValid(isValid);
-  }, [isValid, setIsValid]);
 
   useEffect(() => {
     setCredentials(name, email, phone, countryCode);

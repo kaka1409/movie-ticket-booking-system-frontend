@@ -6,7 +6,7 @@ import { useModification } from "@/features/tickets/contexts/ModificationContext
 import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext";
 import { getSeatRows, getSeatPrices } from "@/features/booking/api";
 import type { Seat, SeatPrice } from "@/features/booking/types";
-import { getSeatLabel } from "@/features/booking/utils";
+import { getSeatLabel } from "@/features/booking/utils/seat";
 import SeatGrid from "@/components/ui/SeatGrid";
 
 export default function SeatMapWrapper() {

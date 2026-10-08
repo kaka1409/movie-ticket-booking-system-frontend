@@ -3,17 +3,20 @@
 import Image from "next/image";
 import { CheckCircle2 } from "lucide-react";
 import type { PaymentMethod } from "@/features/booking/types";
-import { usePayment } from "@/features/booking/contexts/PaymentContext";
+import { useBooking } from "@/features/booking/context";
 
 export default function PaymentOption({ method }: { method: PaymentMethod }) {
-  const { selectedMethod, setSelectedMethod } = usePayment();
-  const selected = selectedMethod === method.id;
+  const { paymentMethodId, setPayment } = useBooking();
+  const selected = paymentMethodId === method.id;
   const { imageSrc } = method;
 
   return (
     <button
       type="button"
-      onClick={() => setSelectedMethod(method.id)}
+      onClick={() => {
+        // Id for the pay action; display name for PriceBreakdown / ticket cards.
+        setPayment(method.id, method.name);
+      }}
       aria-pressed={selected}
       className={`w-full flex items-center gap-4 px-4 py-4 rounded-2xl border transition-all duration-150 active:scale-[0.99] text-left ${
         selected

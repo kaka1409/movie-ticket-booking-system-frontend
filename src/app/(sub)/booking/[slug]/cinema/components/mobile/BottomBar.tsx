@@ -1,25 +1,32 @@
 "use client";
 
-import { useCinemaSelection } from "@/features/booking/contexts/CinemaSelectionContext";
+import { useMemo } from "react";
+import { useBooking } from "@/features/booking/context";
 import { useLocale } from "@/contexts/LocaleContext";
 import BookingBottomBar from "@/components/shared/BookingBottomBar";
+import type { Cinema } from "@/features/booking/types";
 
-export default function BottomBar({ movieSlug }: { movieSlug: string }) {
-  const {
-    selectedCinema,
-    selectedTime,
-    selectedShowtimeId,
-    selectedDate,
-    hasSelection,
-    clearSelection,
-  } = useCinemaSelection();
+export default function BottomBar({
+  movieSlug,
+  cinemas,
+}: {
+  movieSlug: string;
+  cinemas: Cinema[];
+}) {
+  const { cinemaId, time, date, showtimeId, clearCinemaSlot } = useBooking();
   const { translate } = useLocale();
 
+  const selectedCinema = useMemo(
+    () => cinemas.find((cinema) => cinema.id === cinemaId),
+    [cinemas, cinemaId],
+  );
+  const hasSelection = Boolean(selectedCinema && time);
+
   const seatsQuery = new URLSearchParams();
-  if (selectedShowtimeId) seatsQuery.set("showtimeId", selectedShowtimeId);
+  if (showtimeId) seatsQuery.set("showtimeId", showtimeId);
   if (selectedCinema) seatsQuery.set("cinema", selectedCinema.id);
-  if (selectedTime) seatsQuery.set("time", selectedTime);
-  if (selectedDate) seatsQuery.set("date", selectedDate);
+  if (time) seatsQuery.set("time", time);
+  if (date) seatsQuery.set("date", date);
 
   const query = seatsQuery.toString();
   const seatsHref = `/booking/${movieSlug}/seats${query ? `?${query}` : ""}`;
@@ -31,10 +38,10 @@ export default function BottomBar({ movieSlug }: { movieSlug: string }) {
           ? {
               label: selectedCinema.name,
               subLabel: selectedCinema.address,
-              secondaryLabel: selectedTime,
+              secondaryLabel: time,
               secondaryLabelKey: translate("booking.cinema.showtime"),
               showClearButton: true,
-              onClear: clearSelection,
+              onClear: clearCinemaSlot,
             }
           : undefined
       }

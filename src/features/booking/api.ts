@@ -1,3 +1,4 @@
+import { apiFetch, apiMutation, type ApiResponse, type ErrorResponse } from "@/libs/api";
 import type {
   Cinema,
   DateOption,
@@ -6,20 +7,178 @@ import type {
   ComboItem,
   FoodItem,
   FoodCategory,
+  PaymentMethod,
+  PaymentMethodOption,
+  SeatMapResponse,
+  CurrentSeatHoldResponse,
+  SeatHoldResponse,
+  BookingDetail,
 } from "./types";
-import {
-  CINEMAS,
-  DATES,
-  SEAT_ROWS,
-  SEAT_PRICES,
-  COMBOS,
-  FOOD_ITEMS,
-  FOOD_CATEGORIES,
-  COUNTDOWN_SECONDS,
-  MAX_SEATS_PER_BOOKING,
-} from "./mock";
+import { CINEMAS, DATES, SEAT_ROWS, SEAT_PRICES, COUNTDOWN_SECONDS } from "./mock";
 
-// TODO(api): replace the mock returns below with real fetches when the backend is ready.
+/* ─── Booking catalogs (LIVE) ──────────────────────────────── */
+
+/**
+ * LIVE - `GET /seats?showtimeId=` (contract §4.1) — uncached, holds change every second.
+ * Also kept uncached: `/showtimes` slot lists (`features/showtimes/api.ts`) so the
+ * booking flow always reads fresh availability; movie detail pages cache them at
+ * the page level (ISR) instead.
+ */
+export function getSeatMap(showtimeId: string): Promise<ApiResponse<SeatMapResponse>> {
+  return apiFetch<SeatMapResponse>(`/seats?showtimeId=${encodeURIComponent(showtimeId)}`);
+}
+
+/** Wire shape allows nulls that the FE cards render as non-null strings. */
+interface WireCombo extends Omit<ComboItem, "description" | "image" | "tag"> {
+  description: string | null;
+  image: string | null;
+  tag: string | null;
+}
+
+interface WireFoodItem extends Omit<FoodItem, "image"> {
+  image: string | null;
+}
+
+const PAYMENT_IMAGES: Record<PaymentMethodOption["id"], string> = {
+  vnpay: "/images/VNPay.png",
+  momo: "/images/momo.png",
+};
+
+/** Static-ish catalogs (prices/names change rarely) — served for 60s. */
+const CATALOG_CACHE = { next: { revalidate: 60 } } as const;
+
+/** LIVE - `GET /combos` (contract §4.2). */
+export async function getCombos(): Promise<ApiResponse<ComboItem[]>> {
+  const result = await apiFetch<WireCombo[]>("/combos", CATALOG_CACHE);
+  if ("error" in result) return result;
+
+  return {
+    data: result.data.map(({ description, image, tag, ...rest }) => ({
+      ...rest,
+      description: description ?? "",
+      image: image ?? "",
+      ...(tag ? { tag } : {}),
+    })),
+  };
+}
+
+/** LIVE - `GET /food-items` (contract §4.3). */
+export async function getFoodItems(): Promise<ApiResponse<FoodItem[]>> {
+  const result = await apiFetch<WireFoodItem[]>("/food-items", CATALOG_CACHE);
+  if ("error" in result) return result;
+
+  return {
+    data: result.data.map(({ image, ...rest }) => ({ ...rest, image: image ?? "" })),
+  };
+}
+
+/** LIVE - `GET /food-categories` (contract §4.4). */
+export function getFoodCategories(): Promise<ApiResponse<{ id: FoodCategory; label: string }[]>> {
+  return apiFetch<{ id: FoodCategory; label: string }[]>("/food-categories", CATALOG_CACHE);
+}
+
+/** LIVE - `GET /payment-methods` (contract §4.5) — maps `imageSrc` from a local brand map. */
+export async function getPaymentMethods(): Promise<ApiResponse<PaymentMethod[]>> {
+  const result = await apiFetch<PaymentMethodOption[]>("/payment-methods", CATALOG_CACHE);
+  if ("error" in result) return result;
+
+  return {
+    data: result.data.map((method) => ({
+      ...method,
+      imageSrc: PAYMENT_IMAGES[method.id] ?? "",
+    })),
+  };
+}
+
+/**
+ * LIVE - `GET /bookings/:id` (contract §4.11) — read-auth: the server passes
+ * the incoming cookies (refresh token), the client would pass a Bearer token.
+ */
+export function getBookingById(
+  bookingId: string,
+  cookie?: string,
+  token?: string,
+): Promise<ApiResponse<BookingDetail>> {
+  return apiFetch<BookingDetail>(
+    `/bookings/${encodeURIComponent(bookingId)}`,
+    undefined,
+    token,
+    cookie,
+  );
+}
+
+/* ─── Seat holds (LIVE, client-interactive) ────────────────── */
+
+/**
+ * The three hold endpoints are interactive calls from the seats page: the
+ * access token lives in RAM only, so the Bearer header is attached here in the
+ * browser and the token never reaches the Next.js server (unlike the
+ * `action.ts` server actions). They never reject either — failures come back
+ * as the `{ error }` arm of the union, same as `apiFetch`.
+ */
+
+/** LIVE - `GET /seat-holds?showtimeId=` (contract §4.7) — hard-refresh restore. */
+export function getSeatHolds(
+  showtimeId: string,
+  token: string,
+): Promise<ApiResponse<CurrentSeatHoldResponse>> {
+  return apiFetch<CurrentSeatHoldResponse>(
+    `/seat-holds?showtimeId=${encodeURIComponent(showtimeId)}`,
+    undefined,
+    token,
+  );
+}
+
+/** Convert an `apiMutation` throw into the `{ error }` union arm. */
+function toErrorUnion(error: unknown): ErrorResponse {
+  const failure = error as Error & { status?: number; code?: string };
+  return {
+    error: {
+      status: failure.status ?? 0,
+      code: failure.code ?? "UNKNOWN_ERROR",
+      message: failure.message,
+    },
+  };
+}
+
+/** LIVE - `PUT /seat-holds` (contract §4.6) — debounced set-replacement, TTL 360s. */
+export async function putSeatHolds(
+  showtimeId: string,
+  seatIds: string[],
+  token: string,
+): Promise<ApiResponse<SeatHoldResponse>> {
+  try {
+    return await apiMutation<ApiResponse<SeatHoldResponse>>(
+      "/seat-holds",
+      { method: "PUT", body: JSON.stringify({ showtimeId, seatIds }) },
+      token,
+    );
+  } catch (error) {
+    return toErrorUnion(error);
+  }
+}
+
+/** LIVE - `DELETE /seat-holds?showtimeId=` (contract §4.8) — release on back-out. */
+export async function releaseSeatHolds(
+  showtimeId: string,
+  token: string,
+): Promise<ApiResponse<{ released: boolean }>> {
+  try {
+    return await apiMutation<ApiResponse<{ released: boolean }>>(
+      `/seat-holds?showtimeId=${encodeURIComponent(showtimeId)}`,
+      { method: "DELETE" },
+      token,
+    );
+  } catch (error) {
+    return toErrorUnion(error);
+  }
+}
+
+/* ─── Out-of-scope mocks (still used outside the booking flow) ─ */
+
+// MOCK - home page carousel + ticket-modify screens; the booking flow itself
+// no longer reads these. TODO(api): switch home to `GET /cinemas` and the
+// ticket-modify screens to live seat maps when those batches start.
 
 export async function getCinemas(): Promise<Cinema[]> {
   return CINEMAS;
@@ -37,22 +196,8 @@ export async function getSeatPrices(): Promise<SeatPrice> {
   return SEAT_PRICES;
 }
 
-export async function getCombos(): Promise<ComboItem[]> {
-  return COMBOS;
-}
-
-export async function getFoodItems(): Promise<FoodItem[]> {
-  return FOOD_ITEMS;
-}
-
-export async function getFoodCategories(): Promise<readonly { id: FoodCategory; label: string }[]> {
-  return FOOD_CATEGORIES;
-}
-
+// MOCK - the seats-page countdown starts at this value and is then driven by
+// the live `PUT /seat-holds` `expiresAt` (360s = contract `holdTtlSeconds`).
 export async function getCountdownSeconds(): Promise<number> {
   return COUNTDOWN_SECONDS;
-}
-
-export async function getMaxSeatsPerBooking(): Promise<number> {
-  return MAX_SEATS_PER_BOOKING;
 }

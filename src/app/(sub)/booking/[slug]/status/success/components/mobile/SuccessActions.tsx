@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import { Download, Home } from "lucide-react";
-import { useStatus } from "@/features/booking/contexts/StatusContext";
+import { useMounted } from "@/hooks/useMounted";
 import { useLocale } from "@/contexts/LocaleContext";
 import Button from "@/components/ui/Button";
 
 export default function SuccessActions() {
-  const { mounted } = useStatus();
+  const mounted = useMounted();
   const { translate } = useLocale();
 
   return (

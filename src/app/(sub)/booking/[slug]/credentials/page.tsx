@@ -1,10 +1,10 @@
 import { notFound } from "next/navigation";
-import { getMovieBySlug } from "@/features/movies/api";
-import { CredentialsProvider } from "@/features/booking/contexts/CredentialsContext";
+import { getMovieDetail } from "@/features/movies/api";
 
 // Mobile components
 import StepBar from "@/app/(sub)/booking/components/mobile/StepBar";
 import CountdownBanner from "@/app/(sub)/booking/components/mobile/CountdownBanner";
+import PageError from "@/app/(sub)/booking/components/mobile/PageError";
 import ContactForm from "./components/mobile/ContactForm";
 import OrderSummary from "./components/mobile/OrderSummary";
 import BottomBar from "./components/mobile/BottomBar";
@@ -14,27 +14,29 @@ import DesktopCredentialsContent from "./components/desktop/CredentialsContent";
 
 export default async function CredentialsPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const movie = await getMovieBySlug(slug);
+  const movieResult = await getMovieDetail(slug);
 
-  if (!movie) {
-    notFound();
+  if ("error" in movieResult) {
+    if (movieResult.error.status === 404) notFound();
+
+    return <PageError error={movieResult.error} />;
   }
+
+  const movie = movieResult.data;
 
   return (
     <>
       {/* Mobile */}
       <div className="block md:hidden">
-        <CredentialsProvider>
-          <div className="flex flex-col min-h-dvh">
-            <StepBar current={4} />
-            <main className="flex-1 overflow-y-auto pb-5 pt-1 space-y-6">
-              <CountdownBanner />
-              <ContactForm />
-              <OrderSummary movie={movie} />
-            </main>
-            <BottomBar />
-          </div>
-        </CredentialsProvider>
+        <div className="flex flex-col min-h-dvh">
+          <StepBar current={4} />
+          <main className="flex-1 overflow-y-auto pb-5 pt-1 space-y-6">
+            <CountdownBanner />
+            <ContactForm />
+            <OrderSummary movie={movie} />
+          </main>
+          <BottomBar />
+        </div>
       </div>
 
       {/* Desktop */}

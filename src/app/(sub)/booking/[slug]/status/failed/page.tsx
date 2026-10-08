@@ -1,6 +1,9 @@
-import { Suspense } from "react";
-import { getMovieBySlug } from "@/features/movies/api";
-import { StatusProvider } from "@/features/booking/contexts/StatusContext";
+import { getMovieDetail } from "@/features/movies/api";
+import { getBookingById } from "@/features/booking/api";
+import { getRequestCookie, redirectIfUnauthorized } from "@/libs/session";
+import PaidBookingReset from "@/features/booking/components/PaidBookingReset";
+import type { Movie } from "@/features/movies/types";
+import type { BookingDetail } from "@/features/booking/types";
 
 // Mobile components
 import FailedIcon from "./components/mobile/FailedIcon";
@@ -10,49 +13,66 @@ import FailActions from "./components/mobile/FailActions";
 // Desktop components
 import DesktopFailContent from "./components/desktop/FailContent";
 
-export default async function FailPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
-  const movie = await getMovieBySlug(slug);
+export default async function FailPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ bookingId?: string; reason?: string }>;
+}) {
+  const [{ slug }, query] = await Promise.all([params, searchParams]);
+
+  const [movieResult, bookingResult] = await Promise.all([
+    getMovieDetail(slug),
+    query.bookingId
+      ? getBookingById(query.bookingId, await getRequestCookie())
+      : Promise.resolve(null),
+  ]);
+
+  if (bookingResult) redirectIfUnauthorized(bookingResult, `/booking/${slug}/status/failed`);
+
+  const movie = "error" in movieResult ? undefined : movieResult.data;
+  const booking = bookingResult && !("error" in bookingResult) ? bookingResult.data : null;
+  // URL param first (explicit gateway failure), then the persisted payment
+  // reason on the fetched booking.
+  const reason = query.reason ?? booking?.payment?.reason ?? null;
 
   return (
-    <Suspense>
+    <>
+      <PaidBookingReset booking={booking} />
+
       {/* Mobile */}
       <div className="block md:hidden">
-        <StatusProvider movie={movie}>
-          <FailPageMobile />
-        </StatusProvider>
+        <FailPageMobile movie={movie} booking={booking} reason={reason} />
       </div>
 
       {/* Desktop */}
       <div className="hidden md:block">
         <DesktopFailContent />
       </div>
-    </Suspense>
+    </>
   );
 }
 
-function FailPageMobile() {
+function FailPageMobile({
+  movie,
+  booking,
+  reason,
+}: {
+  movie: Movie | undefined;
+  booking: BookingDetail | null;
+  reason: string | null;
+}) {
   return (
     <>
-      {/* Shake keyframe injection */}
-      <style>{`
-        @keyframes shake {
-          0%,100% { transform: translateX(0); }
-          20%      { transform: translateX(-6px) rotate(-2deg); }
-          40%      { transform: translateX(6px)  rotate(2deg);  }
-          60%      { transform: translateX(-4px) rotate(-1deg); }
-          80%      { transform: translateX(4px)  rotate(1deg);  }
-        }
-      `}</style>
-
       <div className="min-h-dvh max-w-md mx-auto flex flex-col bg-(--color-bg)">
         {/* Scrollable body */}
         <main className="flex-1 overflow-y-auto pb-8 pt-10 space-y-6">
           {/* Error hero */}
-          <FailedIcon />
+          <FailedIcon reason={reason} />
 
           {/* Failed order card */}
-          <FailedOrderCard />
+          <FailedOrderCard movie={movie} booking={booking} reason={reason} />
 
           {/* Action buttons */}
           <FailActions />

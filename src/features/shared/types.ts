@@ -35,6 +35,10 @@ export interface Seat {
   kind: SeatKind;
   status: SeatStatus;
   pairId?: string;
+  /** Backend seat UUIDs for `POST /bookings` — always empty in mock rows. */
+  seatIds: string[];
+  /** Price of this cell; a sweetbox cell covers both chairs of the pair. */
+  price: number;
 }
 
 export interface SeatRow {

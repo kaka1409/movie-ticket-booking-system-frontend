@@ -2,13 +2,16 @@
 
 import Image from "next/image";
 import { useBooking } from "@/features/booking/context";
-import { useStatus } from "@/features/booking/contexts/StatusContext";
+import { useMounted } from "@/hooks/useMounted";
 import { useLocale } from "@/contexts/LocaleContext";
 import DetailRow from "@/app/(sub)/booking/components/mobile/DetailRow";
 import PriceBreakdown from "@/app/(sub)/booking/components/mobile/PriceBreakdown";
 import TearLine from "@/components/ui/TearLine";
 import Badge from "@/components/ui/Badge";
+import { bookingCardData } from "@/features/booking/utils/bookingCard";
 import { MonitorPlay, CalendarDays } from "lucide-react";
+import type { Movie } from "@/features/movies/types";
+import type { BookingDetail } from "@/features/booking/types";
 
 const ERROR_CODES: Record<string, string> = {
   payment_declined: "ERR_PAYMENT_DECLINED",
@@ -17,7 +20,16 @@ const ERROR_CODES: Record<string, string> = {
   expired_card: "ERR_CARD_EXPIRED",
 };
 
-export default function FailedOrderCard() {
+export default function FailedOrderCard({
+  movie,
+  booking,
+  reason,
+}: {
+  movie: Movie | undefined;
+  /** Authoritative booking payload when the page was reached with `?bookingId=`. */
+  booking: BookingDetail | null;
+  reason: string | null;
+}) {
   const {
     cinemaName,
     room,
@@ -30,8 +42,15 @@ export default function FailedOrderCard() {
     foods,
     total,
   } = useBooking();
-  const { /* transactionId, */ reason, movie, mounted } = useStatus();
+  const mounted = useMounted();
   const { translate } = useLocale();
+
+  // `?bookingId=` payload is authoritative; the BookingContext draft covers
+  // direct links / mock-era URLs without one.
+  const cardData = booking ? bookingCardData(booking) : null;
+  const posterSrc = movie?.src ?? booking?.showtime.movie.posterUrl ?? null;
+  const title = movie?.title ?? booking?.showtime.movie.title ?? "N/A";
+  const ageRating = movie?.ageRating ?? booking?.showtime.movie.ageRating;
 
   const errorCode = ERROR_CODES[reason ?? ""] ?? "ERR_UNKNOWN";
 
@@ -43,11 +62,11 @@ export default function FailedOrderCard() {
     >
       {/* Top: movie info */}
       <div className="flex gap-3 p-4">
-        {movie?.src && (
+        {posterSrc && (
           <div className="w-20 h-30 flex-shrink-0 rounded-sm overflow-hidden relative opacity-70">
             <Image
-              src={movie.src}
-              alt={movie.title}
+              src={posterSrc}
+              alt={title}
               width={80}
               height={120}
               className="object-cover w-full h-full"
@@ -55,8 +74,8 @@ export default function FailedOrderCard() {
           </div>
         )}
         <div className="flex-1 min-w-0 pt-1">
-          <h3 className="font-bold text-base text-white mb-1">{movie?.title ?? "N/A"}</h3>
-          <p className="text-xs text-white/60 mb-2">{movie?.ageRating}</p>
+          <h3 className="font-bold text-base text-white mb-1">{title}</h3>
+          <p className="text-xs text-white/60 mb-2">{ageRating}</p>
         </div>
       </div>
 
@@ -70,27 +89,31 @@ export default function FailedOrderCard() {
             icon={MonitorPlay}
             label={translate("booking.common.theater")}
             value={
-              <>
-                {cinemaName}
-                {room && <>, {room}</>}
-                {location && <>, {location}</>}
-              </>
+              cardData ? (
+                cardData.theater
+              ) : (
+                <>
+                  {cinemaName}
+                  {room && <>, {room}</>}
+                  {location && <>, {location}</>}
+                </>
+              )
             }
           />
           <DetailRow
             icon={CalendarDays}
             label={translate("booking.common.date_time")}
-            value={`${date} • ${time}`}
+            value={cardData ? cardData.dateTime : `${date} • ${time}`}
             valueClass="font-bold text-sm text-white text-right"
             labelClass="justify-end"
           />
         </div>
 
         <PriceBreakdown
-          seats={selectedSeats}
-          snacks={[...combos, ...foods]}
-          paymentMethod={paymentMethod}
-          total={total}
+          seats={cardData?.seats ?? selectedSeats}
+          snacks={cardData?.snacks ?? [...combos, ...foods]}
+          paymentMethod={cardData?.paymentMethod ?? paymentMethod}
+          total={cardData?.total ?? total}
           totalClassName="text-white"
         />
 
