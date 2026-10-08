@@ -17,8 +17,9 @@
   --color-text-secondary: #ffe4af;
   --color-text-muted: #606060;
 
-  /* Typography */
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  /* Typography — `--font-inter` comes from `next/font` (Inter, self-hosted);
+     the generic stack keeps a sane fallback if the variable is missing. */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 
   /* Spacing scale */
   --space-xs: 4px;

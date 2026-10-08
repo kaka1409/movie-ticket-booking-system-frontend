@@ -1,5 +1,11 @@
 import LoginForm from "./components/mobile/LoginForm";
 import { getSafeReturnUrl } from "@/libs/utils";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Sign In",
+  robots: { index: false },
+};
 
 export default async function LoginPage({
   searchParams,

@@ -1,13 +1,49 @@
 import type { Metadata, Viewport } from "next";
-import { cookies } from "next/headers";
+import { Inter } from "next/font/google";
 import "@/styles/global.css";
-import { LocaleProvider, type Locale } from "@/contexts/LocaleContext";
+import { LocaleProvider } from "@/contexts/LocaleContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { WishlistProvider } from "@/features/wishlist/context";
+import { SITE_NAME, SITE_URL, DEFAULT_DESCRIPTION, DEFAULT_OG_IMAGE } from "@/libs/site";
+
+/**
+ * Self-hosted Inter (no runtime request to Google). `latin-ext` + `vietnamese`
+ * subsets cover Vietnamese diacritics; the CSS variable is consumed by
+ * `--font-sans` in `global.css`.
+ */
+const inter = Inter({
+  subsets: ["latin", "latin-ext", "vietnamese"],
+  display: "swap",
+  variable: "--font-inter",
+});
 
 export const metadata: Metadata = {
-  title: "PrimeSeat",
-  description: "A movie ticket booking system",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: `${SITE_NAME} — Book Movie Tickets Online`,
+    template: `%s | ${SITE_NAME}`,
+  },
+  description: DEFAULT_DESCRIPTION,
+  applicationName: SITE_NAME,
+  keywords: ["movie tickets", "cinema", "booking", "PrimeSeat", "movie showtimes"],
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    title: `${SITE_NAME} — Book Movie Tickets Online`,
+    description: DEFAULT_DESCRIPTION,
+    url: SITE_URL,
+    images: [{ url: DEFAULT_OG_IMAGE, width: 1200, height: 630, alt: SITE_NAME }],
+    locale: "en_US",
+    alternateLocale: "vi_VN",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${SITE_NAME} — Book Movie Tickets Online`,
+    description: DEFAULT_DESCRIPTION,
+    images: [DEFAULT_OG_IMAGE],
+  },
+  robots: { index: true, follow: true },
+  icons: { icon: "/favicon.ico" },
 };
 
 export const viewport: Viewport = {
@@ -16,19 +52,20 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-export default async function RootLayout({
+/**
+ * No `cookies()` here on purpose: reading them would force every route dynamic.
+ * SSR always renders the default locale (EN); `LocaleProvider` applies the
+ * visitor's saved choice (localStorage → cookie) right after hydration.
+ */
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const cookieStore = await cookies();
-  const localeCookie = cookieStore.get("locale")?.value;
-  const initialLocale: Locale = localeCookie === "vn" ? "vn" : "en";
-
   return (
-    <html lang={initialLocale === "vn" ? "vi" : "en"} data-scroll-behavior="smooth">
+    <html lang="en" className={inter.variable} data-scroll-behavior="smooth">
       <body className="min-h-dvh flex flex-col">
-        <LocaleProvider initialLocale={initialLocale}>
+        <LocaleProvider>
           <AuthProvider>
             <WishlistProvider>{children}</WishlistProvider>
           </AuthProvider>

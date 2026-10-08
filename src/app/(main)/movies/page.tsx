@@ -18,6 +18,14 @@ import {
 } from "@/features/movies/url";
 import { toApiResponse } from "@/libs/api";
 import type { CatalogOption, FilterOptions } from "@/features/movies/types";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Now Showing & Coming Soon Movies",
+  description:
+    "Browse now showing and coming soon movies, search by title and filter by genre, format, rating and release date.",
+  alternates: { canonical: "/movies" },
+};
 
 // Mobile
 import Tabs from "./components/mobile/Tabs";
