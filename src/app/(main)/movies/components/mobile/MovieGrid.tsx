@@ -1,9 +1,9 @@
-﻿"use client";
+"use client";
 
-import { useRef, useEffect, useState } from "react";
 import { Search } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useMovieList } from "@/features/movies/context";
+import { useAppendReveal } from "@/hooks/useAppendReveal";
 import MovieCard from "@/components/ui/MovieCard";
 import SectionFallback from "@/components/ui/SectionFallback";
 
@@ -25,33 +25,11 @@ export default function MovieGrid() {
   } = useMovieList();
 
   /* â”€â”€ Hooks must run before any early return â”€â”€ */
-  const gridRef = useRef<HTMLDivElement>(null);
-  const prevLoadedCountRef = useRef(movies.length);
-  const prevRenderedCountRef = useRef(movies.length);
-  const prevTabRef = useRef(activeTab);
-  const [animThreshold, setAnimThreshold] = useState(movies.length);
-
-  useEffect(() => {
-    const tabChanged = activeTab !== prevTabRef.current;
-    const loadedGrew = movies.length > prevLoadedCountRef.current;
-    const renderedGrew = movies.length > prevRenderedCountRef.current;
-
-    if (!tabChanged && loadedGrew && renderedGrew) {
-      const grid = gridRef.current;
-      if (grid) {
-        const cards = grid.querySelectorAll<HTMLElement>("[data-movie-card]");
-        const firstNew = cards[prevRenderedCountRef.current];
-        if (firstNew) {
-          firstNew.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
-      }
-      setAnimThreshold(prevRenderedCountRef.current);
-    }
-
-    prevLoadedCountRef.current = movies.length;
-    prevRenderedCountRef.current = movies.length;
-    prevTabRef.current = activeTab;
-  }, [activeTab, movies.length]);
+  const { containerRef: gridRef, animThreshold } = useAppendReveal<HTMLDivElement>({
+    count: movies.length,
+    cardSelector: "[data-movie-card]",
+    swapKey: activeTab,
+  });
 
   const showResultsCount = activeFilterCount > 0 || appliedQuery;
 
@@ -99,7 +77,11 @@ export default function MovieGrid() {
                 index >= animThreshold ? "animate-fade-in" : ""
               }`}
             >
-              <MovieCard movie={movie} minLabel={translate("common.min")} />
+              <MovieCard
+                movie={movie}
+                minLabel={translate("common.min")}
+                sizes="(max-width: 767px) calc(50vw - 22px), 130px"
+              />
             </div>
           ))}
         </div>
@@ -123,7 +105,7 @@ export default function MovieGrid() {
         )
       )}
 
-      {/* Load More â€” appends the next server page of the SAME query */}
+      {/* Load More — appends the next server page of the SAME query */}
       {hasMore && (
         <div className="px-(--space-md)">
           <button

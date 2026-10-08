@@ -1,7 +1,8 @@
 "use client";
 
-import { useRef, useEffect, useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { useTickets } from "@/features/tickets/context";
+import { useAppendReveal } from "@/hooks/useAppendReveal";
 import EmptyState from "@/app/(main)/tickets/components/mobile/EmptyState";
 
 interface TicketListProps<T extends { id: string | number }> {
@@ -34,24 +35,10 @@ export default function TicketList<T extends { id: string | number }>({
 
   const hasMore = tickets.length > visibleCount;
 
-  const listRef = useRef<HTMLDivElement>(null);
-  const prevCountRef = useRef(visibleCount);
-  const [animThreshold, setAnimThreshold] = useState(visibleCount);
-
-  useEffect(() => {
-    if (visibleCount > prevCountRef.current) {
-      const list = listRef.current;
-      if (list) {
-        const cards = list.querySelectorAll<HTMLElement>("[data-ticket-card]");
-        const firstNew = cards[prevCountRef.current];
-        if (firstNew) {
-          firstNew.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
-      }
-      setAnimThreshold(prevCountRef.current);
-    }
-    prevCountRef.current = visibleCount;
-  }, [visibleCount]);
+  const { containerRef: listRef, animThreshold } = useAppendReveal<HTMLDivElement>({
+    count: visibleCount,
+    cardSelector: "[data-ticket-card]",
+  });
 
   if (activeTab !== tab) return null;
 

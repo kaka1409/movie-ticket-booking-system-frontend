@@ -6,6 +6,7 @@ import { searchRecipients } from "@/features/tickets/api";
 import type { Recipient } from "@/features/tickets/types";
 import { useTransfer } from "@/features/tickets/contexts/TransferContext";
 import { useLocale } from "@/contexts/LocaleContext";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import SearchBar from "@/components/ui/SearchBar";
 
 export default function RecipientInput() {
@@ -15,12 +16,19 @@ export default function RecipientInput() {
   const [isOpen, setIsOpen] = useState(false);
   const [results, setResults] = useState<Recipient[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
+  const debouncedQuery = useDebouncedValue(query);
+  const requestSequenceRef = useRef(0);
 
   useEffect(() => {
-    searchRecipients(query)
-      .then(setResults)
-      .catch(() => setResults([]));
-  }, [query]);
+    const requestSequence = ++requestSequenceRef.current;
+    searchRecipients(debouncedQuery)
+      .then((found) => {
+        if (requestSequence === requestSequenceRef.current) setResults(found);
+      })
+      .catch(() => {
+        if (requestSequence === requestSequenceRef.current) setResults([]);
+      });
+  }, [debouncedQuery]);
 
   // Close dropdown on click outside
   useEffect(() => {

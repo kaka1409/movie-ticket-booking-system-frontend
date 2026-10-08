@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Star } from "lucide-react";
@@ -22,13 +22,22 @@ export default function HeroBanner({
   const [index, setIndex] = useState(0);
   const [fading, setFading] = useState(false);
   const touchStart = useRef<{ x: number; y: number } | null>(null);
+  const slideTimersRef = useRef<number[]>([]);
+
+  useEffect(() => {
+    return () => {
+      slideTimersRef.current.forEach((timerId) => clearTimeout(timerId));
+    };
+  }, []);
 
   const navigateToSlide = useCallback(
     (nextIndex: number) => {
       if (fading || movies.length === 0) return;
       setFading(true);
-      setTimeout(() => setIndex(nextIndex), 150);
-      setTimeout(() => setFading(false), 300);
+      slideTimersRef.current = [
+        window.setTimeout(() => setIndex(nextIndex), 150),
+        window.setTimeout(() => setFading(false), 300),
+      ];
     },
     [fading, movies.length],
   );

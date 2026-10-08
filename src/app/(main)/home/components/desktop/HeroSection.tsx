@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Star, Play, ChevronLeft, ChevronRight } from "lucide-react";
@@ -22,13 +22,22 @@ export default function HeroSection({
   const [isPaused, setIsPaused] = useState(false);
   const [isTrailerOpen, setIsTrailerOpen] = useState(false);
   const { translate } = useLocale();
+  const slideTimersRef = useRef<number[]>([]);
+
+  useEffect(() => {
+    return () => {
+      slideTimersRef.current.forEach((timerId) => clearTimeout(timerId));
+    };
+  }, []);
 
   const goTo = useCallback(
     (nextIndex: number) => {
       if (fading) return;
       setFading(true);
-      setTimeout(() => setIndex(nextIndex), 150);
-      setTimeout(() => setFading(false), 300);
+      slideTimersRef.current = [
+        window.setTimeout(() => setIndex(nextIndex), 150),
+        window.setTimeout(() => setFading(false), 300),
+      ];
     },
     [fading],
   );

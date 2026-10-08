@@ -2,20 +2,15 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
 import { Ticket } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
+import { useMounted } from "@/hooks/useMounted";
 
 export default function SuccessActions() {
   const params = useParams();
   const id = params.id as string;
   const { translate } = useLocale();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    const mountTimer = setTimeout(() => setMounted(true), 80);
-    return () => clearTimeout(mountTimer);
-  }, []);
+  const mounted = useMounted();
 
   return (
     <div

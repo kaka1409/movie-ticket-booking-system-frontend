@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import type { FilterKey } from "@/features/reviews/mock";
 import type { Movie } from "@/features/movies/types";
+import { useAppendReveal } from "@/hooks/useAppendReveal";
 import FilterBar from "./FilterBar";
 import ReviewCard from "./ReviewCard";
 import LoadMoreButton from "./LoadMoreButton";
@@ -26,24 +27,10 @@ export default function ReviewList({
   const visible = sortedMovies.slice(0, visibleCount);
   const hasMore = sortedMovies.length > visibleCount;
 
-  const listRef = useRef<HTMLDivElement>(null);
-  const prevCountRef = useRef(visibleCount);
-  const [animThreshold, setAnimThreshold] = useState(visibleCount);
-
-  useEffect(() => {
-    if (visibleCount > prevCountRef.current) {
-      const list = listRef.current;
-      if (list) {
-        const cards = list.querySelectorAll<HTMLElement>("[data-review-card]");
-        const firstNew = cards[prevCountRef.current];
-        if (firstNew) {
-          firstNew.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
-      }
-      setAnimThreshold(prevCountRef.current);
-    }
-    prevCountRef.current = visibleCount;
-  }, [visibleCount]);
+  const { containerRef: listRef, animThreshold } = useAppendReveal<HTMLDivElement>({
+    count: visibleCount,
+    cardSelector: "[data-review-card]",
+  });
 
   const handleFilterChange = (key: FilterKey) => {
     setActiveFilter(key);

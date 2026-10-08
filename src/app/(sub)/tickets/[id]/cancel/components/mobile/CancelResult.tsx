@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Check, AlertCircle, Home, HeadphonesIcon } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { formatVND } from "@/libs/utils";
+import { useMounted } from "@/hooks/useMounted";
 
 export default function CancelResult({
   status,
@@ -21,12 +21,7 @@ export default function CancelResult({
   const router = useRouter();
   const id = params.id as string;
   const { translate } = useLocale();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    const mountTimer = setTimeout(() => setMounted(true), 80);
-    return () => clearTimeout(mountTimer);
-  }, []);
+  const mounted = useMounted();
 
   if (status === "success") {
     return (

@@ -1,17 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Check } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
+import { useMounted } from "@/hooks/useMounted";
 
 export default function SuccessIcon() {
   const { translate } = useLocale();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    const mountTimer = setTimeout(() => setMounted(true), 80);
-    return () => clearTimeout(mountTimer);
-  }, []);
+  const mounted = useMounted();
 
   return (
     <section className="flex flex-col items-center text-center px-6 gap-4">

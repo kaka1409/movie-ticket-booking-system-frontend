@@ -4,7 +4,16 @@ import Link from "next/link";
 import { Star, Clock } from "lucide-react";
 import type { Movie } from "@/features/movies/types";
 
-const MovieCard: React.FC<{ movie: Movie; minLabel?: string }> = ({ movie, minLabel = "min" }) => (
+/**
+ * `sizes` tells the browser the rendered width so it doesn't pick the 100vw
+ * default candidate — pass it whenever the card renders wider than its
+ * intrinsic 130px (e.g. the 2-column /movies grid).
+ */
+const MovieCard: React.FC<{ movie: Movie; minLabel?: string; sizes?: string }> = ({
+  movie,
+  minLabel = "min",
+  sizes = "130px",
+}) => (
   <Link href={`/movies/${movie.slug}`} className="block w-[130px]">
     <article className="cursor-pointer">
       <div className="relative aspect-[2/3] overflow-hidden rounded-(--radius-lg) bg-(--color-surface-2)">
@@ -13,6 +22,7 @@ const MovieCard: React.FC<{ movie: Movie; minLabel?: string }> = ({ movie, minLa
           alt={movie.title}
           width={130}
           height={195}
+          sizes={sizes}
           className="h-full w-full object-cover"
         />
         {(movie.rating > 0 || movie.duration > 0) && (
