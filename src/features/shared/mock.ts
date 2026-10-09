@@ -187,7 +187,8 @@ export const SEAT_ROWS: SeatRow[] = [
   sweetBoxRow("J", ["J-5-6", "J-7-8"]),
 ];
 
-export const COUNTDOWN_SECONDS = 5 * 60 + 59; // 5m59s
+/** Countdown window — matches the backend seat-hold TTL (10 min) and the static preview shown before the hold starts. */
+export const COUNTDOWN_SECONDS = 10 * 60;
 export const MAX_SEATS_PER_BOOKING = 8;
 export const SEAT_MAP_COLS = 10;
 

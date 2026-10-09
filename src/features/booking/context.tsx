@@ -4,7 +4,7 @@ import { createContext, useContext, useReducer, useCallback, useMemo, type React
 
 /* ─── Types ─────────────────────────────────────────────── */
 
-import type { SelectedCombo, SelectedFood, CinemaDraft, Seat, SeatRow } from "./types";
+import type { SelectedCombo, SelectedFood, CinemaDraft, BookingMovie, Seat, SeatRow } from "./types";
 import type { BookingState } from "./reducer";
 import { bookingReducer, INITIAL_BOOKING_STATE } from "./reducer";
 import { useLocale } from "@/contexts/LocaleContext";
@@ -21,6 +21,7 @@ interface BookingContextType extends BookingState {
   setCinemaQuery: (query: string) => void;
   setCinemaDate: (date: string) => void;
   clearCinemaSlot: () => void;
+  adoptMovie: (movie: BookingMovie) => void;
   adoptSeatGrid: (rows: SeatRow[], maxSeats: number) => void;
   setSeatGrid: (rows: SeatRow[], maxSeats: number) => void;
   selectHoldCells: (seatIds: string[]) => void;
@@ -30,6 +31,8 @@ interface BookingContextType extends BookingState {
   setPayment: (methodId: string, methodName: string) => void;
   setCredentials: (name: string, email: string, phone: string, countryCode: string) => void;
   setHoldExpiresAt: (deadline: number | null) => void;
+  /** Starts the booking countdown — dispatched when the user commits at the seats-step CTA. */
+  startCountdown: () => void;
   resetBooking: () => void;
 }
 
@@ -39,7 +42,7 @@ const BookingContext = createContext<BookingContextType | null>(null);
 
 export function BookingProvider({
   children,
-  initialCountdownSeconds = 359,
+  initialCountdownSeconds = 600,
 }: {
   children: ReactNode;
   initialCountdownSeconds?: number;
@@ -63,16 +66,20 @@ export function BookingProvider({
     dispatch({ type: "CLEAR_CINEMA_SLOT" });
   }, []);
 
+  const adoptMovie = useCallback((movie: BookingMovie) => {
+    dispatch({ type: "ADOPT_MOVIE", movie });
+  }, []);
+
   const adoptSeatGrid = useCallback((rows: SeatRow[], maxSeats: number) => {
-    dispatch({ type: "ADOPT_SEAT_GRID", rows, maxSeats, now: Date.now() });
+    dispatch({ type: "ADOPT_SEAT_GRID", rows, maxSeats });
   }, []);
 
   const setSeatGrid = useCallback((rows: SeatRow[], maxSeats: number) => {
-    dispatch({ type: "SET_SEAT_GRID", rows, maxSeats, now: Date.now() });
+    dispatch({ type: "SET_SEAT_GRID", rows, maxSeats });
   }, []);
 
   const selectHoldCells = useCallback((seatIds: string[]) => {
-    dispatch({ type: "SELECT_HOLD_CELLS", seatIds, now: Date.now() });
+    dispatch({ type: "SELECT_HOLD_CELLS", seatIds });
   }, []);
 
   const clearSeatSelection = useCallback(() => {
@@ -80,7 +87,7 @@ export function BookingProvider({
   }, []);
 
   const toggleSeat = useCallback((rowLabel: string, seat: Seat) => {
-    dispatch({ type: "TOGGLE_SEAT", rowLabel, seat, now: Date.now() });
+    dispatch({ type: "TOGGLE_SEAT", rowLabel, seat });
   }, []);
 
   const setSnacks = useCallback(
@@ -103,6 +110,10 @@ export function BookingProvider({
 
   const setHoldExpiresAt = useCallback((deadline: number | null) => {
     dispatch({ type: "SET_HOLD", deadline });
+  }, []);
+
+  const startCountdown = useCallback(() => {
+    dispatch({ type: "START_COUNTDOWN", now: Date.now() });
   }, []);
 
   const resetBooking = useCallback(() => {
@@ -136,6 +147,7 @@ export function BookingProvider({
       setCinemaQuery,
       setCinemaDate,
       clearCinemaSlot,
+      adoptMovie,
       adoptSeatGrid,
       setSeatGrid,
       selectHoldCells,
@@ -145,6 +157,7 @@ export function BookingProvider({
       setCredentials,
       setPayment,
       setHoldExpiresAt,
+      startCountdown,
       resetBooking,
     };
   }, [
@@ -155,6 +168,7 @@ export function BookingProvider({
     setCinemaQuery,
     setCinemaDate,
     clearCinemaSlot,
+    adoptMovie,
     adoptSeatGrid,
     setSeatGrid,
     selectHoldCells,
@@ -164,6 +178,7 @@ export function BookingProvider({
     setCredentials,
     setPayment,
     setHoldExpiresAt,
+    startCountdown,
     resetBooking,
   ]);
 

@@ -1,5 +1,4 @@
-import { notFound, redirect } from "next/navigation";
-import { getMovieDetail } from "@/features/movies/api";
+import { redirect } from "next/navigation";
 import { getShowtimeById } from "@/features/showtimes/api";
 import { getSeatMap } from "@/features/booking/api";
 import { adaptSeatMap } from "@/features/booking/utils/seatMap";
@@ -27,14 +26,6 @@ export default async function SelectSeatPage({
 
   // The seat map is keyed by showtime — a deep link without one goes back to step 1.
   if (!showtimeId) redirect(`/booking/${slug}/cinema`);
-
-  const movieResult = await getMovieDetail(slug);
-
-  if ("error" in movieResult) {
-    if (movieResult.error.status === 404) notFound();
-
-    return <PageError error={movieResult.error} />;
-  }
 
   // The selected showtime drives the room, cinema and seat map of this step.
   const [seatMapResult, showtimeResult] = await Promise.all([

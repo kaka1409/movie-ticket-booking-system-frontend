@@ -1,4 +1,11 @@
-import type { Seat, SeatRow, SelectedSeat, SelectedCombo, SelectedFood } from "./types";
+import type {
+  BookingMovie,
+  Seat,
+  SeatRow,
+  SelectedSeat,
+  SelectedCombo,
+  SelectedFood,
+} from "./types";
 import {
   clearGridSelection,
   getSeatLabel,
@@ -21,6 +28,8 @@ export interface BookingState {
   location: string;
   /** Search box on the cinema step — transient UI state, reset on adoption. */
   cinemaQuery: string;
+  /** Slim movie snapshot adopted at the cinema step — feeds the OrderSummary panels downstream. */
+  movie: BookingMovie | null;
 
   // Seats
   selectedSeats: SelectedSeat[];
@@ -63,15 +72,17 @@ export type BookingAction =
   | { type: "SET_CINEMA_QUERY"; query: string }
   | { type: "SET_CINEMA_DATE"; date: string }
   | { type: "CLEAR_CINEMA_SLOT" }
-  | { type: "ADOPT_SEAT_GRID"; rows: SeatRow[]; maxSeats: number; now: number }
-  | { type: "SET_SEAT_GRID"; rows: SeatRow[]; maxSeats: number; now: number }
-  | { type: "SELECT_HOLD_CELLS"; seatIds: string[]; now: number }
+  | { type: "ADOPT_MOVIE"; movie: BookingMovie }
+  | { type: "ADOPT_SEAT_GRID"; rows: SeatRow[]; maxSeats: number }
+  | { type: "SET_SEAT_GRID"; rows: SeatRow[]; maxSeats: number }
+  | { type: "SELECT_HOLD_CELLS"; seatIds: string[] }
   | { type: "CLEAR_SEAT_SELECTION" }
-  | { type: "TOGGLE_SEAT"; rowLabel: string; seat: Seat; now: number }
+  | { type: "TOGGLE_SEAT"; rowLabel: string; seat: Seat }
   | { type: "SET_SNACKS"; combos: SelectedCombo[]; foods: SelectedFood[] }
   | { type: "SET_CONTACT"; name: string; email: string; phone: string; countryCode: string }
   | { type: "SET_PAYMENT"; methodId: string; methodName: string }
   | { type: "SET_HOLD"; deadline: number | null }
+  | { type: "START_COUNTDOWN"; now: number }
   | { type: "RESET" };
 
 export const INITIAL_BOOKING_STATE: BookingState = {
@@ -84,6 +95,7 @@ export const INITIAL_BOOKING_STATE: BookingState = {
   room: "",
   location: "",
   cinemaQuery: "",
+  movie: null,
 
   // Seats
   selectedSeats: [],
@@ -122,13 +134,6 @@ function collectSelectedSeats(rows: SeatRow[]): SelectedSeat[] {
         })),
     ),
   );
-}
-
-/** The countdown starts on the FIRST seat selection — later changes never reset it.
- *  `now` arrives in the action payload so the reducer stays a pure (state, action) function. */
-function countdownStart(state: BookingState, hasSelection: boolean, now: number) {
-  if (!hasSelection || state.countdownStarted) return {};
-  return { countdownStarted: true, countdownStartTime: now };
 }
 
 /** Pure transition — no side effects, navigation stays in event handlers. */
@@ -174,41 +179,42 @@ export function bookingReducer(state: BookingState, action: BookingAction): Book
         showtimeId: "",
       };
 
+    case "ADOPT_MOVIE":
+      // The cinema page is the URL-resolved source of truth for its slug;
+      // skipping the swap for the same slug keeps the draft reference stable
+      // across back-navigation remounts.
+      if (state.movie?.slug === action.movie.slug) return state;
+      return { ...state, movie: action.movie };
+
     case "ADOPT_SEAT_GRID": {
       // Fresh server map + seats saved in the draft: re-mark the saved labels
       // (a SEAT_TAKEN bounce leaves stolen cells occupied, never selected).
       const restored = restoreSelectedSeats(action.rows, state.selectedSeats);
-      const selectedSeats = collectSelectedSeats(restored);
       return {
         ...state,
         seatGrid: restored,
         maxSeats: action.maxSeats,
-        selectedSeats,
-        ...countdownStart(state, selectedSeats.length > 0, action.now),
+        selectedSeats: collectSelectedSeats(restored),
       };
     }
 
     case "SET_SEAT_GRID": {
       // External replace (409 recovery) — cells arrive already resolved.
-      const selectedSeats = collectSelectedSeats(action.rows);
       return {
         ...state,
         seatGrid: action.rows,
         maxSeats: action.maxSeats,
-        selectedSeats,
-        ...countdownStart(state, selectedSeats.length > 0, action.now),
+        selectedSeats: collectSelectedSeats(action.rows),
       };
     }
 
     case "SELECT_HOLD_CELLS": {
       if (!state.seatGrid) return state;
       const nextRows = selectCellsByIds(state.seatGrid, new Set(action.seatIds));
-      const selectedSeats = collectSelectedSeats(nextRows);
       return {
         ...state,
         seatGrid: nextRows,
-        selectedSeats,
-        ...countdownStart(state, selectedSeats.length > 0, action.now),
+        selectedSeats: collectSelectedSeats(nextRows),
       };
     }
 
@@ -265,7 +271,6 @@ export function bookingReducer(state: BookingState, action: BookingAction): Book
         ...state,
         seatGrid: nextRows,
         selectedSeats,
-        ...countdownStart(state, selectedSeats.length > 0, action.now),
       };
     }
 
@@ -286,6 +291,11 @@ export function bookingReducer(state: BookingState, action: BookingAction): Book
 
     case "SET_HOLD":
       return { ...state, holdExpiresAt: action.deadline };
+
+    case "START_COUNTDOWN":
+      // The countdown begins only when the user commits at the seats-step CTA.
+      if (state.countdownStarted) return state;
+      return { ...state, countdownStarted: true, countdownStartTime: action.now };
 
     case "RESET":
       return INITIAL_BOOKING_STATE;

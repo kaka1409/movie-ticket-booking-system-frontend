@@ -1,4 +1,6 @@
 import type { SeatMapCell, SeatMapResponse, SeatMapRow, Seat, SeatRow, SeatPrice } from "../types";
+import { getSeatMap } from "../api";
+import { selectCellsByIds } from "./seat";
 
 export interface AdaptedSeatMap {
   rows: SeatRow[];
@@ -57,4 +59,21 @@ export function adaptSeatMap(response: SeatMapResponse): AdaptedSeatMap {
     maxSeats: response.maxSeatsPerBooking,
     holdTtlSeconds: response.holdTtlSeconds,
   };
+}
+
+/**
+ * `409 SEAT_TAKEN` recovery: another user holds/owns part of the wanted seats.
+ * Refetch the map — the taken cells come back `occupied`, the survivors are
+ * re-marked `selected` so they re-hold on the next attempt.
+ */
+export async function recoverSeatMap(
+  showtimeId: string,
+  wantedSeatIds: string[],
+  setSeatGrid: (rows: SeatRow[], maxSeats: number) => void,
+): Promise<void> {
+  const result = await getSeatMap(showtimeId);
+  if ("error" in result) return;
+
+  const adapted = adaptSeatMap(result.data);
+  setSeatGrid(selectCellsByIds(adapted.rows, new Set(wantedSeatIds)), adapted.maxSeats);
 }

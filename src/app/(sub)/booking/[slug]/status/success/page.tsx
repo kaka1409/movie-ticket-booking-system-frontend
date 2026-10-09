@@ -4,7 +4,7 @@ import { getRequestCookie, redirectIfUnauthorized } from "@/libs/session";
 import PaidBookingReset from "@/features/booking/components/PaidBookingReset";
 
 // Mobile components
-import SuccessIcon from "./components/mobile/SuccessIcon";
+import SuccessIcon from "@/components/shared/SuccessIcon";
 import TicketCard from "./components/mobile/TicketCard";
 import SuccessActions from "./components/mobile/SuccessActions";
 
@@ -21,7 +21,9 @@ export default async function SuccessPage({
   const [{ slug }, query] = await Promise.all([params, searchParams]);
 
   const [movieResult, bookingResult] = await Promise.all([
-    getMovieDetail(slug),
+    // Real flow always carries `?bookingId=` (submit redirects with it) — the
+    // booking payload already carries the movie, so no detail fetch there.
+    query.bookingId ? Promise.resolve(null) : getMovieDetail(slug),
     query.bookingId
       ? getBookingById(query.bookingId, await getRequestCookie())
       : Promise.resolve(null),
@@ -29,7 +31,8 @@ export default async function SuccessPage({
 
   if (bookingResult) redirectIfUnauthorized(bookingResult, `/booking/${slug}/status/success`);
 
-  const movie = "error" in movieResult ? undefined : movieResult.data;
+  const movie =
+    movieResult === null || "error" in movieResult ? undefined : movieResult.data;
   const booking = bookingResult && !("error" in bookingResult) ? bookingResult.data : null;
   // Payment gateways may return their own reference; the fetched booking wins
   // over the raw URL param only when the param is absent.
@@ -44,7 +47,10 @@ export default async function SuccessPage({
         <div className="min-h-dvh max-w-md mx-auto flex flex-col bg-(--color-bg)">
           {/* Scrollable body */}
           <main className="flex-1 overflow-y-auto pb-8 pt-4 space-y-6">
-            <SuccessIcon />
+            <SuccessIcon
+              titleKey="booking.status.success.title"
+              messageKey="booking.status.success.message"
+            />
             <TicketCard movie={movie} booking={booking} transactionId={transactionId} />
             <SuccessActions />
           </main>

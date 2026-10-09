@@ -25,7 +25,6 @@ export default function SeatMapWrapper({
     showtimeId: bookingShowtimeId,
     setCinema,
     adoptSeatGrid,
-    setSeatGrid,
     selectHoldCells,
     clearSeatSelection,
     toggleSeat,
@@ -63,7 +62,6 @@ export default function SeatMapWrapper({
 
   useSeatHolds({
     rows: seatGrid ?? initialRows,
-    setSeatGrid,
     selectHoldCells,
     clearSeatSelection,
     showtimeId,

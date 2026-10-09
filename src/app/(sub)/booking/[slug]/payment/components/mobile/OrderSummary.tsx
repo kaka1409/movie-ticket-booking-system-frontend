@@ -7,11 +7,10 @@ import { useLocale } from "@/contexts/LocaleContext";
 import DetailRow from "@/app/(sub)/booking/components/mobile/DetailRow";
 import PriceBreakdown from "@/app/(sub)/booking/components/mobile/PriceBreakdown";
 import TearLine from "@/components/ui/TearLine";
-import type { Movie } from "@/features/movies/types";
 
-export default function OrderSummary({ movie }: { movie: Movie }) {
+export default function OrderSummary() {
   const { translate } = useLocale();
-  const { cinemaName, room, location, date, time, selectedSeats, combos, foods, total } =
+  const { movie, cinemaName, room, location, date, time, selectedSeats, combos, foods, total } =
     useBooking();
 
   return (
@@ -34,9 +33,11 @@ export default function OrderSummary({ movie }: { movie: Movie }) {
             <h3 className="font-bold text-base text-(--color-text-primary) leading-snug mb-1">
               {movie?.title ?? "—"}
             </h3>
-            <p className="text-xs text-(--color-text-muted)">
-              {movie?.genre} • {movie?.duration} min
-            </p>
+            {movie && (
+              <p className="text-xs text-(--color-text-muted)">
+                {movie.genre} • {movie.duration} min
+              </p>
+            )}
           </div>
         </div>
         {movie?.ageRating && (

@@ -96,6 +96,7 @@ export default async function CinemaShowtimePage({
   return (
     <>
       <CinemaAdopt
+        movie={movie}
         cinemas={cinemas}
         dates={dates}
         initialCinemaId={query.cinema ?? null}

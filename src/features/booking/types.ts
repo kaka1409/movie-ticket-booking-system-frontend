@@ -14,6 +14,15 @@ export type {
   PaymentMethod,
 } from "@/features/shared/types";
 
+import type { Movie } from "@/types";
+
+/**
+ * Slim movie snapshot adopted at the cinema step — the only movie data the
+ * downstream OrderSummary panels need, so credentials/payment stop refetching
+ * `GET /movies/:slug` on every entry (see the booking movie-adopt flow).
+ */
+export type BookingMovie = Pick<Movie, "slug" | "title" | "src" | "genre" | "duration" | "ageRating">;
+
 /* ─── Selected Items (used across booking steps) ────────── */
 
 /** One cinema/showtime selection written into the booking draft as a unit. */

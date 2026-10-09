@@ -401,7 +401,9 @@
       "sweetbox": "SweetBox",
       "seat_label": "Seat",
       "standard": "Standard",
-      "continue_snacks": "Continue to Snacks"
+      "continue_snacks": "Continue to Snacks",
+      "hold_taken": "Some of those seats were just taken — pick another one.",
+      "hold_failed": "Couldn't reserve your seats. Please try again."
     },
     "snack": {
       "title": "Food & Drinks",

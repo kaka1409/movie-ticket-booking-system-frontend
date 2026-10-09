@@ -1,6 +1,5 @@
-import { notFound } from "next/navigation";
-import { getMovieDetail } from "@/features/movies/api";
 import { getPaymentMethods } from "@/features/booking/api";
+import RequireDraft from "@/features/booking/components/RequireDraft";
 
 // Mobile components
 import StepBar from "@/app/(sub)/booking/components/mobile/StepBar";
@@ -18,33 +17,23 @@ import DesktopPaymentContent from "./components/desktop/PaymentContent";
 
 export default async function PaymentPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const [movieResult, methodsResult] = await Promise.all([
-    getMovieDetail(slug),
-    getPaymentMethods(),
-  ]);
-
-  if ("error" in movieResult) {
-    if (movieResult.error.status === 404) notFound();
-
-    return <PageError error={movieResult.error} />;
-  }
+  const methodsResult = await getPaymentMethods();
 
   if ("error" in methodsResult) {
     return <PageError error={methodsResult.error} />;
   }
 
-  const movie = movieResult.data;
   const paymentMethods = methodsResult.data;
 
   return (
-    <>
+    <RequireDraft slug={slug}>
       {/* Mobile */}
       <div className="block md:hidden">
         <div className="flex flex-col min-h-dvh">
           <StepBar current={5} />
           <main className="flex-1 overflow-y-auto pb-5 pt-1 space-y-5">
             <CountdownBanner />
-            <OrderSummary movie={movie} />
+            <OrderSummary />
             <section className="px-4 space-y-3">
               <PaymentHeader />
               <div className="space-y-2.5">
@@ -64,6 +53,6 @@ export default async function PaymentPage({ params }: { params: Promise<{ slug: 
       <div className="hidden md:block">
         <DesktopPaymentContent />
       </div>
-    </>
+    </RequireDraft>
   );
 }

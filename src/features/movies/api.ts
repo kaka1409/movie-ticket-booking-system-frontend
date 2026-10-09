@@ -67,8 +67,15 @@ function toReleaseWindow(release?: string): { from: string; to: string } | null 
 
 /* ─── Movies ─────────────────────────────────────────────── */
 
-/** Data-cache policy for static-ish catalog reads (movies, genres, movie detail). */
+/** Data-cache policy for static-ish catalog reads (genres, formats, featured). */
 export const REVALIDATE_60 = { next: { revalidate: 60 } } as const;
+
+/**
+ * Movie detail changes rarely and is adopted into the booking draft, so it
+ * gets a much longer TTL — this is the main lever keeping `/movies/:slug`
+ * hits off the backend during the booking flow.
+ */
+export const REVALIDATE_MOVIE_DETAIL = { next: { revalidate: 3600 } } as const;
 
 export async function getFeaturedMovies(): Promise<ApiResponse<FeaturedMovie[]>> {
   const result = await apiFetch<FeaturedMovieResponse[]>("/movies?featured=true", REVALIDATE_60);
@@ -161,7 +168,7 @@ export async function getMovieBySlug(slug: string): Promise<Movie | undefined> {
 
 /** LIVE — `GET /movies/:slug` returning the union (`{ data }` or `{ error }`). */
 export function getMovieDetail(slug: string): Promise<ApiResponse<Movie>> {
-  return apiFetch<Movie>(`/movies/${encodeURIComponent(slug)}`, REVALIDATE_60);
+  return apiFetch<Movie>(`/movies/${encodeURIComponent(slug)}`, REVALIDATE_MOVIE_DETAIL);
 }
 
 /* ─── Catalog endpoints (filter options) ─────────────────── */

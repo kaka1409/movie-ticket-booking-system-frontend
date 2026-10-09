@@ -401,7 +401,9 @@
       "sweetbox": "SweetBox",
       "seat_label": "Ghế",
       "standard": "Tiêu Chuẩn",
-      "continue_snacks": "Tiếp Tục Chọn Đồ Ăn"
+      "continue_snacks": "Tiếp Tục Chọn Đồ Ăn",
+      "hold_taken": "Một số ghế bạn chọn vừa có người khác giữ — hãy chọn ghế khác.",
+      "hold_failed": "Không thể giữ ghế. Vui lòng thử lại."
     },
     "snack": {
       "title": "Đồ Ăn & Thức Uống",

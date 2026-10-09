@@ -23,7 +23,9 @@ export default async function FailPage({
   const [{ slug }, query] = await Promise.all([params, searchParams]);
 
   const [movieResult, bookingResult] = await Promise.all([
-    getMovieDetail(slug),
+    // Real flow always carries `?bookingId=` (submit redirects with it) — the
+    // booking payload already carries the movie, so no detail fetch there.
+    query.bookingId ? Promise.resolve(null) : getMovieDetail(slug),
     query.bookingId
       ? getBookingById(query.bookingId, await getRequestCookie())
       : Promise.resolve(null),
@@ -31,7 +33,8 @@ export default async function FailPage({
 
   if (bookingResult) redirectIfUnauthorized(bookingResult, `/booking/${slug}/status/failed`);
 
-  const movie = "error" in movieResult ? undefined : movieResult.data;
+  const movie =
+    movieResult === null || "error" in movieResult ? undefined : movieResult.data;
   const booking = bookingResult && !("error" in bookingResult) ? bookingResult.data : null;
   // URL param first (explicit gateway failure), then the persisted payment
   // reason on the fetched booking.

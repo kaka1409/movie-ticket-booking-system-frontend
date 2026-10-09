@@ -141,7 +141,7 @@ function toErrorUnion(error: unknown): ErrorResponse {
   };
 }
 
-/** LIVE - `PUT /seat-holds` (contract §4.6) — debounced set-replacement, TTL 360s. */
+/** LIVE - `PUT /seat-holds` (contract §4.6) — set-replacement created at the seats-step CTA, TTL 600s. */
 export async function putSeatHolds(
   showtimeId: string,
   seatIds: string[],
@@ -196,8 +196,8 @@ export async function getSeatPrices(): Promise<SeatPrice> {
   return SEAT_PRICES;
 }
 
-// MOCK - the seats-page countdown starts at this value and is then driven by
-// the live `PUT /seat-holds` `expiresAt` (360s = contract `holdTtlSeconds`).
+// MOCK - the booking countdown seeds at this value (static 10:00 before the hold exists)
+// and then follows the live `PUT /seat-holds` `expiresAt` (600s = contract `holdTtlSeconds`).
 export async function getCountdownSeconds(): Promise<number> {
   return COUNTDOWN_SECONDS;
 }
