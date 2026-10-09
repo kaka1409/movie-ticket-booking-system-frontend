@@ -44,3 +44,5 @@ next-env.d.ts
 .playwright-mcp/
 
 *.txt
+*.err
+*.log

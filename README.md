@@ -46,10 +46,11 @@ Copy the template, then adjust values in `.env.local` (gitignored; `.env.example
 cp .env.example .env.local
 ```
 
-| Variable      | Default                 | Description                                                                                                                                                        |
-| ------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `BACKEND_URL` | `http://localhost:8080` | Backend origin. Read server-side by `src/libs/api.ts` **and evaluated at build time** by `next.config.ts` `rewrites()` — set it before `pnpm build` when deploying |
-| `API_PREFIX`  | `/api/v1`               | API path prefix                                                                                                                                                    |
+| Variable               | Default                 | Description                                                                                                                                                        |
+| ---------------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `BACKEND_URL`          | `http://localhost:8080` | Backend origin. Read server-side by `src/libs/api.ts` **and evaluated at build time** by `next.config.ts` `rewrites()` — set it before `pnpm build` when deploying |
+| `API_PREFIX`           | `/api/v1`               | API path prefix                                                                                                                                                    |
+| `NEXT_PUBLIC_SITE_URL` | `http://localhost:3000` | Public site origin for SEO metadata (`metadataBase`, OG/Twitter URLs, `robots.ts`, `sitemap.ts`) — **set to the real domain before `pnpm build`**                  |
 
 ### Other Commands
 
@@ -86,9 +87,9 @@ src/
 │   ├── auth/         # Types, API, schema, context for authentication
 │   ├── movies/       # Movie data, constants, types
 │   ├── tickets/      # Ticket data, constants, types
-│   ├── booking/      # Booking data, context, step contexts
+│   ├── booking/      # Booking data, reducer, effect-only helpers
 │   └── ...
-├── hooks/            # Shared custom hooks (useDevice)
+├── hooks/            # Shared custom hooks (useDevice, useMounted, useAppendReveal, useDebouncedValue)
 ├── libs/             # Constants, utilities (apiFetch, formatVND, etc.)
 ├── locales/          # en.json, vn.json
 ├── store/            # Redux store
