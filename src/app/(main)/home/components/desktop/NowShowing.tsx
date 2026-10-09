@@ -58,7 +58,7 @@ export default function NowShowing({
               className="relative block aspect-[2/3] w-full overflow-hidden bg-(--color-surface-2)"
             >
               <Image
-                src={movie.src || "/images/movie-poster-placholder.jpg"}
+                src={movie.src || "/images/movie-poster-placeholder.jpg"}
                 alt={movie.title}
                 fill
                 sizes="(max-width: 1200px) 25vw, 300px"

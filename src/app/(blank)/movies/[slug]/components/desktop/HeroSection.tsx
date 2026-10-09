@@ -80,7 +80,7 @@ export default function HeroSection() {
           <div className="hidden w-32 shrink-0 overflow-hidden rounded-(--radius-lg) border border-white/15 shadow-(--shadow-card) md:block">
             <div className="relative aspect-2/3 w-full">
               <Image
-                src={movie.src || "/images/movie-poster-placholder.jpg"}
+                src={movie.src || "/images/movie-poster-placeholder.jpg"}
                 alt={movie.title}
                 fill
                 sizes="128px"

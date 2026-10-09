@@ -18,7 +18,7 @@ const MovieCard: React.FC<{ movie: Movie; minLabel?: string; sizes?: string }> =
     <article className="cursor-pointer">
       <div className="relative aspect-[2/3] overflow-hidden rounded-(--radius-lg) bg-(--color-surface-2)">
         <Image
-          src={movie.src || "/images/movie-poster-placholder.jpg"}
+          src={movie.src || "/images/movie-poster-placeholder.jpg"}
           alt={movie.title}
           width={130}
           height={195}

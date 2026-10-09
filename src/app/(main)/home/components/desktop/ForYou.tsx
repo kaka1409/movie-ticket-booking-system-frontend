@@ -58,7 +58,7 @@ export default function ForYou({ movies }: { movies: Movie[] }) {
                 {/* Poster */}
                 <div className="relative mb-2.5 aspect-[2/3] w-full overflow-hidden rounded-(--radius-md) border border-(--color-border) bg-(--color-surface-2) transition-all duration-300 group-hover:-translate-y-1 group-hover:border-(--color-gold)/50 group-hover:shadow-lg">
                   <Image
-                    src={movie.src || "/images/movie-poster-placholder.jpg"}
+                    src={movie.src || "/images/movie-poster-placeholder.jpg"}
                     alt={movie.title}
                     fill
                     sizes="(max-width: 1200px) 20vw, 220px"

@@ -17,7 +17,7 @@ export default function HeroSection() {
   return (
     <section className="relative w-full h-85">
       <Image
-        src={movie.src || "/images/movie-poster-placholder.jpg"}
+        src={movie.src || "/images/movie-poster-placeholder.jpg"}
         alt={movie.title}
         fill
         sizes="100vw"
@@ -68,7 +68,7 @@ export default function HeroSection() {
       <div className="absolute bottom-0 left-0 right-0 flex items-end gap-3 px-4">
         <div className="w-20 h-28 rounded-xl shrink-0 border border-(--color-border) overflow-hidden">
           <Image
-            src={movie.src || "/images/movie-poster-placholder.jpg"}
+            src={movie.src || "/images/movie-poster-placeholder.jpg"}
             alt={movie.title}
             width={200}
             height={280}
