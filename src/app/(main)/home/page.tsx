@@ -2,9 +2,17 @@ import { getMovies, getFeaturedMovies } from "@/features/movies/api";
 import { MOVIES_PAGE_SIZE } from "@/features/movies/constants";
 import { getCinemas, getDates } from "@/features/booking/api";
 import { toApiResponse } from "@/libs/api";
+import { SITE_NAME } from "@/libs/site";
+import type { Metadata } from "next";
 
 /** Static shell rebuilt every 60s so catalog edits show up without a redeploy. */
 export const revalidate = 60;
+
+export const metadata: Metadata = {
+  title: `${SITE_NAME} - Book Movie Tickets Online | Premium Cinema Experience`,
+  description: "Book movie tickets online with PrimeSeat. Browse now showing and coming soon films, pick your showtime, choose your seats, and enjoy premium cinema experience. Easy booking in minutes.",
+  alternates: { canonical: "/" },
+};
 
 // Desktop
 import HeroSection from "@/app/(main)/home/components/desktop/HeroSection";

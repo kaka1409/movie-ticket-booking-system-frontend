@@ -26,6 +26,12 @@ export const metadata: Metadata = {
   description: DEFAULT_DESCRIPTION,
   applicationName: SITE_NAME,
   keywords: ["movie tickets", "cinema", "booking", "PrimeSeat", "movie showtimes"],
+  alternates: {
+    languages: {
+      "en-US": "/",
+      "vi-VN": "/",
+    },
+  },
   openGraph: {
     type: "website",
     siteName: SITE_NAME,
@@ -43,7 +49,12 @@ export const metadata: Metadata = {
     images: [DEFAULT_OG_IMAGE],
   },
   robots: { index: true, follow: true },
-  icons: { icon: "/favicon.ico" },
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/favicon.ico",
+  },
+  manifest: "/manifest.json",
 };
 
 export const viewport: Viewport = {

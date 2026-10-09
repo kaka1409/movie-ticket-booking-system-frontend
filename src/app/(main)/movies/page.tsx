@@ -19,6 +19,7 @@ import {
 import { toApiResponse } from "@/libs/api";
 import type { CatalogOption, FilterOptions } from "@/features/movies/types";
 import type { Metadata } from "next";
+import { SITE_URL } from "@/libs/site";
 
 export const metadata: Metadata = {
   title: "Now Showing & Coming Soon Movies",
@@ -79,8 +80,29 @@ export default async function MoviesPage({
     ageRatings: toCatalog(ageRatingsSettled, FALLBACK_AGE_RATINGS),
   };
 
+  // Build ItemList structured data for SEO
+  const itemListSchema = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: activeList.map((movie, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      url: `${SITE_URL}/movies/${movie.slug}`,
+      name: movie.title,
+      image: movie.src,
+      datePublished: movie.releaseDate,
+    })),
+  };
+
   return (
     <>
+      {/* JSON-LD structured data for search engines (ItemList of movies). */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(itemListSchema).replace(/</g, "\\u003c"),
+        }}
+      />
       <MovieListProvider
         initialMovies={activeList}
         initialMeta={activeMeta}

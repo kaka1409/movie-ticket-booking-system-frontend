@@ -151,6 +151,32 @@ export default async function MovieDetailPage({ params }: { params: Promise<{ sl
   const reviewsData = "error" in reviewsResult ? null : reviewsResult.data;
   const reviewsError = "error" in reviewsResult ? reviewsResult.error.message : null;
 
+  // Build BreadcrumbList structured data for SEO
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: SITE_URL,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Movies",
+        item: `${SITE_URL}/movies`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: movie.title,
+        item: `${SITE_URL}/movies/${movie.slug}`,
+      },
+    ],
+  };
+
   return (
     <MovieDetailProvider movie={movie}>
       <MovieSelectionProvider>
@@ -162,7 +188,14 @@ export default async function MovieDetailPage({ params }: { params: Promise<{ sl
           initialCinemas={showtimeCinemas}
           initialError={showtimesError}
         >
-          {/* JSON-LD structured data for search engines (Movie + aggregate rating).
+          {/* JSON-LD structured data for search engines (BreadcrumbList). */}
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify(breadcrumbSchema).replace(/</g, "\\u003c"),
+            }}
+          />
+          {/* JSON-LD structured data for search engines (Movie + aggregate rating + reviews).
               JSON.stringify output is safe for script content; `<` is escaped so
               the payload can never break out of the script element. */}
           <script
@@ -190,6 +223,21 @@ export default async function MovieDetailPage({ params }: { params: Promise<{ sl
                         bestRating: 10,
                         worstRating: 1,
                       },
+                      review: reviewsData.reviews.slice(0, 10).map((review) => ({
+                        "@type": "Review",
+                        author: {
+                          "@type": "Person",
+                          name: review.user.name,
+                        },
+                        reviewRating: {
+                          "@type": "Rating",
+                          ratingValue: review.rating,
+                          bestRating: 10,
+                          worstRating: 1,
+                        },
+                        reviewBody: review.comment,
+                        datePublished: review.createdAt,
+                      })),
                     }
                   : {}),
               }).replace(/</g, "\\u003c"),
