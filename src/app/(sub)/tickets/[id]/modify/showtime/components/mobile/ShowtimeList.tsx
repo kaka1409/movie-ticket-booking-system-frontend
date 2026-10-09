@@ -3,6 +3,7 @@
 import { useLocale } from "@/contexts/LocaleContext";
 import { useModification } from "@/features/tickets/contexts/ModificationContext";
 import CinemaCard from "@/components/ui/CinemaCard";
+import MicroLabel from "@/components/ui/MicroLabel";
 import type { Cinema } from "@/features/booking/types";
 import type { EligibleShowtime } from "@/features/tickets/types";
 
@@ -96,9 +97,9 @@ export default function ShowtimeList() {
 
   return (
     <section className="space-y-4">
-      <p className="text-[9px] font-black tracking-[0.16em] uppercase text-(--color-text-muted)">
+      <MicroLabel className="text-(--color-text-muted)">
         {translate("tickets.modify.showtime.available_showtimes")}
-      </p>
+      </MicroLabel>
       <div className="space-y-3">
         {cinemas.map((cinema) => (
           <CinemaCard

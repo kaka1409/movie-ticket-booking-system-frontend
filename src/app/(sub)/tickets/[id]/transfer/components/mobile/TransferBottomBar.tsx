@@ -36,7 +36,7 @@ export default function TransferBottomBar() {
         disabled={!isValid}
         className={`flex items-center justify-center gap-2.5 w-full py-4 rounded-2xl font-extrabold text-sm tracking-widest uppercase transition-all duration-150 active:scale-[0.98] ${
           isValid
-            ? "bg-(--color-gold) text-[#0F0F0F] shadow-[0_0_20px_rgba(255,204,77,0.25)]"
+            ? "bg-(--color-gold) text-(--color-bg) shadow-(--shadow-glow)"
             : "bg-(--color-surface) text-(--color-text-muted) border border-(--color-border) cursor-not-allowed"
         }`}
       >

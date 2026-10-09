@@ -5,6 +5,8 @@ import { Check, AlertCircle, Home, HeadphonesIcon } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { formatVND } from "@/libs/utils";
 import { useMounted } from "@/hooks/useMounted";
+import Button from "@/components/ui/Button";
+import MicroLabel from "@/components/ui/MicroLabel";
 
 export default function CancelResult({
   status,
@@ -77,9 +79,9 @@ export default function CancelResult({
           </div>
 
           <div className="border-t border-(--color-border) pt-4 space-y-2">
-            <p className="text-[9px] font-black tracking-[0.16em] uppercase text-(--color-text-muted)">
+            <MicroLabel className="text-(--color-text-muted)">
               {translate("tickets.cancel.success_refund_to")}
-            </p>
+            </MicroLabel>
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-(--color-surface-2) flex items-center justify-center">
                 <span className="text-xs font-bold text-(--color-text-muted)">
@@ -111,25 +113,23 @@ export default function CancelResult({
             mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
           }`}
         >
-          <button
-            type="button"
+          <Button
             onClick={() => {
               router.replace(`/tickets/${id}`);
               router.refresh();
             }}
-            className="w-full flex items-center justify-center gap-2.5 py-4 rounded-2xl font-extrabold text-sm tracking-widest uppercase bg-(--color-gold) text-[#0F0F0F] shadow-[0_0_20px_rgba(255,204,77,0.25)] active:scale-[0.98] transition-all duration-150"
           >
             {translate("tickets.cancel.success_view_ticket")}
-          </button>
+          </Button>
 
-          <button
-            type="button"
+          <Button
+            variant="outline"
+            icon={Home}
+            iconPosition="left"
             onClick={() => router.push("/")}
-            className="w-full flex items-center justify-center gap-2.5 py-4 rounded-2xl font-extrabold text-sm tracking-widest uppercase border border-(--color-gold) text-(--color-gold) bg-transparent active:scale-[0.98] transition-all duration-150"
           >
-            <Home size={17} />
             {translate("tickets.cancel.success_back_home")}
-          </button>
+          </Button>
         </div>
       </main>
     );
@@ -185,9 +185,9 @@ export default function CancelResult({
         </div>
 
         <div className="border-t border-(--color-border) pt-4 space-y-2">
-          <p className="text-[9px] font-black tracking-[0.16em] uppercase text-(--color-text-muted)">
+          <MicroLabel className="text-(--color-text-muted)">
             {translate("tickets.cancel.failed_status")}
-          </p>
+          </MicroLabel>
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold tracking-wide uppercase bg-red-500/10 text-red-400 border border-red-500/20">
             <AlertCircle size={10} />
             {translate("tickets.cancel.failed_status")}
@@ -205,13 +205,7 @@ export default function CancelResult({
           mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
         }`}
       >
-        <button
-          type="button"
-          onClick={onRetry}
-          className="w-full flex items-center justify-center gap-2.5 py-4 rounded-2xl font-extrabold text-sm tracking-widest uppercase bg-(--color-gold) text-[#0F0F0F] shadow-[--shadow-glow] active:scale-[0.98] transition-all duration-150"
-        >
-          {translate("tickets.cancel.failed_retry")}
-        </button>
+        <Button onClick={onRetry}>{translate("tickets.cancel.failed_retry")}</Button>
 
         <button
           type="button"

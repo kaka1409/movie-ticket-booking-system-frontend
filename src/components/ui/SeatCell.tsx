@@ -33,7 +33,7 @@ export default function SeatCell({
           occupied
             ? "bg-(--color-surface-2) border border-(--color-border) text-(--color-text-muted) line-through cursor-not-allowed"
             : selected
-              ? "bg-(--color-gold) text-[#0F0F0F] shadow-[0_0_10px_rgba(255,204,77,0.35)]"
+              ? "bg-(--color-gold) text-(--color-bg) shadow-[0_0_10px_rgba(255,204,77,0.35)]"
               : "bg-pink-500 text-white hover:brightness-110"
         }`}
       >
@@ -46,7 +46,7 @@ export default function SeatCell({
     "bg-(--color-surface-2) border border-(--color-border) text-(--color-text-secondary) hover:border-(--color-gold)/50";
   const baseOcc =
     "bg-(--color-surface-2) border border-(--color-border) text-(--color-text-muted) cursor-not-allowed";
-  const baseSel = "bg-(--color-gold) text-[#0F0F0F] shadow-[0_0_8px_rgba(255,204,77,0.3)]";
+  const baseSel = "bg-(--color-gold) text-(--color-bg) shadow-[0_0_8px_rgba(255,204,77,0.3)]";
   const baseVip = "bg-amber-700 text-white hover:brightness-110";
 
   let cls = "";

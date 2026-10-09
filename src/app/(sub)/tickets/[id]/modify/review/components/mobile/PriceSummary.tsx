@@ -4,6 +4,7 @@ import { useLocale } from "@/contexts/LocaleContext";
 import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext";
 import { useModification } from "@/features/tickets/contexts/ModificationContext";
 import { formatVND } from "@/libs/utils";
+import MicroLabel from "@/components/ui/MicroLabel";
 
 export default function PriceSummary() {
   const { translate } = useLocale();
@@ -31,9 +32,9 @@ export default function PriceSummary() {
   return (
     <section className="px-4">
       <div className="p-4 rounded-2xl bg-(--color-surface) border border-(--color-border)">
-        <p className="text-[9px] font-black tracking-[0.16em] uppercase text-(--color-text-muted) mb-3">
+        <MicroLabel className="text-(--color-text-muted) mb-3">
           {translate("tickets.modify.review.price_adjustment")}
-        </p>
+        </MicroLabel>
 
         <div className="space-y-2">
           {showShowtime && (

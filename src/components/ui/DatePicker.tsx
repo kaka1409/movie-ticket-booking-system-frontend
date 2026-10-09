@@ -29,14 +29,14 @@ export default function DatePicker({
           >
             <span
               className={`text-[9px] font-bold tracking-widest uppercase ${
-                active ? "text-[#0F0F0F]" : "text-(--color-text-muted)"
+                active ? "text-(--color-bg)" : "text-(--color-text-muted)"
               }`}
             >
               {d.weekday}
             </span>
             <span
               className={`text-2xl font-extrabold leading-tight ${
-                active ? "text-[#0F0F0F]" : "text-(--color-text-primary)"
+                active ? "text-(--color-bg)" : "text-(--color-text-primary)"
               }`}
             >
               {d.day}

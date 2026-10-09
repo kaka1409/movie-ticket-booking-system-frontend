@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowRight, Clock, Loader2 } from "lucide-react";
+import { Clock } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext";
@@ -10,6 +10,8 @@ import { useModification } from "@/features/tickets/contexts/ModificationContext
 import { PAYMENT_METHODS } from "@/features/booking/mock";
 import { formatVND } from "@/libs/utils";
 import { modifyTicket } from "@/features/tickets/action";
+import BookingBottomBar from "@/components/shared/BookingBottomBar";
+import MicroLabel from "@/components/ui/MicroLabel";
 import Image from "next/image";
 
 export default function PaymentContent() {
@@ -82,9 +84,9 @@ export default function PaymentContent() {
             {/* Amount to pay */}
             <section className="px-4">
               <div className="p-5 rounded-2xl bg-(--color-surface) border border-(--color-border) text-center">
-                <p className="text-[9px] font-black tracking-[0.16em] uppercase text-(--color-text-muted) mb-2">
+                <MicroLabel className="text-(--color-text-muted) mb-2">
                   {translate("tickets.modify.payment.pay_difference")}
-                </p>
+                </MicroLabel>
                 <p className="font-extrabold text-3xl text-(--color-gold)">
                   {formatVND(difference)}
                 </p>
@@ -93,9 +95,9 @@ export default function PaymentContent() {
 
             {/* Payment methods */}
             <section className="px-4 space-y-3">
-              <p className="text-[9px] font-black tracking-[0.16em] uppercase text-(--color-text-muted)">
+              <MicroLabel className="text-(--color-text-muted)">
                 {translate("booking.payment.select_method")}
-              </p>
+              </MicroLabel>
               {PAYMENT_METHODS.map((method) => {
                 const selected = selectedMethod === method.id;
                 return (
@@ -152,27 +154,16 @@ export default function PaymentContent() {
           </main>
 
           {/* Bottom bar */}
-          <div className="sticky bottom-0 z-50 bg-(--color-bg) border-t border-(--color-border) px-4 pb-6 pt-3">
-            <button
-              type="button"
-              onClick={handleConfirm}
-              disabled={!canPay}
-              className={`flex items-center justify-center gap-2.5 w-full py-4 rounded-2xl font-extrabold text-sm tracking-widest uppercase transition-all duration-150 ${
-                canPay
-                  ? "bg-(--color-gold) text-[#0F0F0F] shadow-[0_0_20px_rgba(255,204,77,0.25)] active:scale-[0.98]"
-                  : "bg-(--color-surface) text-(--color-text-muted) cursor-not-allowed border border-(--color-border)"
-              }`}
-            >
-              {isPending
+          <BookingBottomBar
+            canProceed={canPay}
+            ctaText={
+              isPending
                 ? translate("booking.payment.processing")
-                : translate("tickets.modify.payment.confirm_cta")}
-              {isPending ? (
-                <Loader2 size={17} className="animate-spin" />
-              ) : (
-                <ArrowRight size={17} />
-              )}
-            </button>
-          </div>
+                : translate("tickets.modify.payment.confirm_cta")
+            }
+            isLoading={isPending}
+            onCtaClick={handleConfirm}
+          />
         </div>
       </div>
 

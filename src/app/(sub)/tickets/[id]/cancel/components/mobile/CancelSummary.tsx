@@ -5,6 +5,8 @@ import { ChevronRight, CreditCard } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { formatVND } from "@/libs/utils";
 import TearLine from "@/components/ui/TearLine";
+import Button from "@/components/ui/Button";
+import MicroLabel from "@/components/ui/MicroLabel";
 import { CANCELLATION_FEE } from "@/features/tickets/constants";
 import type { UpcomingTicket } from "@/features/tickets/types";
 
@@ -49,9 +51,9 @@ export default function CancelSummary({
 
         {/* Seats */}
         <div className="px-4 pb-4 space-y-1.5">
-          <p className="text-[9px] font-black tracking-[0.16em] uppercase text-white/60">
+          <MicroLabel className="text-white/60">
             {translate("tickets.cancel.seats_label")}
-          </p>
+          </MicroLabel>
           <p className="text-sm font-bold text-(--color-text-primary)">
             {ticket.seatItems.map((seat) => seat.label).join(", ")}
           </p>
@@ -111,9 +113,7 @@ export default function CancelSummary({
 
         {/* Refund to */}
         <div className="px-4 pb-4 space-y-1.5">
-          <p className="text-[9px] font-black tracking-[0.16em] uppercase text-white/60">
-            {translate("tickets.cancel.refund_to")}
-          </p>
+          <MicroLabel className="text-white/60">{translate("tickets.cancel.refund_to")}</MicroLabel>
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-(--color-surface-2) flex items-center justify-center">
               <CreditCard size={14} className="text-white/60" />
@@ -144,13 +144,7 @@ export default function CancelSummary({
 
       {/* Continue button */}
       <div className="mt-4">
-        <button
-          type="button"
-          onClick={onContinue}
-          className="w-full py-4 rounded-2xl font-extrabold text-sm tracking-widest uppercase bg-(--color-gold) text-[#0F0F0F] shadow-[--shadow-glow] active:scale-[0.98] transition-all duration-150"
-        >
-          {translate("tickets.cancel.continue")}
-        </button>
+        <Button onClick={onContinue}>{translate("tickets.cancel.continue")}</Button>
       </div>
     </main>
   );

@@ -22,7 +22,7 @@ export default function TicketActions() {
       {!isTransferPending && (
         <button
           type="button"
-          className="w-full flex items-center justify-center gap-2.5 py-4 rounded-xl font-extrabold text-sm tracking-wide transition-all duration-150 active:scale-[0.98] bg-(--color-gold) text-[#0F0F0F] shadow-(--shadow-glow)"
+          className="w-full flex items-center justify-center gap-2.5 py-4 rounded-xl font-extrabold text-sm tracking-wide transition-all duration-150 active:scale-[0.98] bg-(--color-gold) text-(--color-bg) shadow-(--shadow-glow)"
         >
           <Download size={18} />
           {translate("tickets.detail.download_ticket")}

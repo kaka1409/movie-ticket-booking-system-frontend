@@ -1,12 +1,18 @@
 "use client";
 
 import { Check } from "lucide-react";
-import { useLocale } from "@/contexts/LocaleContext";
 import { useMounted } from "@/hooks/useMounted";
+import { useLocale } from "@/contexts/LocaleContext";
 
-export default function SuccessIcon() {
-  const { translate } = useLocale();
+export default function SuccessIcon({
+  titleKey,
+  messageKey,
+}: {
+  titleKey: string;
+  messageKey: string;
+}) {
   const mounted = useMounted();
+  const { translate } = useLocale();
 
   return (
     <section className="flex flex-col items-center text-center px-6 gap-4">
@@ -34,10 +40,10 @@ export default function SuccessIcon() {
         }`}
       >
         <h1 className="font-extrabold text-3xl text-white leading-tight mb-2">
-          {translate("tickets.modify.success.title")}
+          {translate(titleKey)}
         </h1>
         <p className="text-sm text-white/60 leading-relaxed max-w-xs mx-auto">
-          {translate("tickets.modify.success.message")}
+          {translate(messageKey)}
         </p>
       </div>
     </section>

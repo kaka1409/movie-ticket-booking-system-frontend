@@ -20,7 +20,7 @@ export default function SuccessActions() {
     >
       <Link
         href={`/tickets/${id}`}
-        className="w-full flex items-center justify-center gap-2.5 py-4 rounded-2xl font-extrabold text-sm tracking-widest uppercase bg-(--color-gold) text-[#0F0F0F] shadow-[0_0_20px_rgba(255,204,77,0.25)] active:scale-[0.98] transition-all duration-150"
+        className="w-full flex items-center justify-center gap-2.5 py-4 rounded-2xl font-extrabold text-sm tracking-widest uppercase bg-(--color-gold) text-(--color-bg) shadow-(--shadow-glow) active:scale-[0.98] transition-all duration-150"
       >
         <Ticket size={17} />
         {translate("tickets.modify.success.view_ticket")}

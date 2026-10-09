@@ -1,5 +1,7 @@
 "use client";
 
+import MicroLabel from "@/components/ui/MicroLabel";
+
 export default function DetailRow({
   icon: Icon,
   label,
@@ -15,12 +17,10 @@ export default function DetailRow({
 }) {
   return (
     <div className="space-y-1">
-      <p
-        className={`flex items-center gap-1.5 text-[9px] font-black tracking-[0.16em] uppercase text-white/60 ${labelClass ?? ""}`}
-      >
+      <MicroLabel className={`flex items-center gap-1.5 text-white/60 ${labelClass ?? ""}`}>
         <Icon size={10} />
         {label}
-      </p>
+      </MicroLabel>
       <div className={`font-bold text-sm leading-snug ${valueClass}`}>{value}</div>
     </div>
   );

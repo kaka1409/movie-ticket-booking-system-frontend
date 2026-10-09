@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, X } from "lucide-react";
+import { ArrowRight, Loader2, X } from "lucide-react";
 import { formatVND } from "@/libs/utils";
 import { useLocale } from "@/contexts/LocaleContext";
 
@@ -20,6 +20,8 @@ interface TotalInfo {
 }
 
 interface BookingBottomBarProps {
+  /** Micro-label line above the CTA (e.g. "3 seats selected" on the modify seats step). */
+  hintText?: string;
   selectionInfo?: SelectionInfo;
   totalInfo?: TotalInfo;
   canProceed: boolean;
@@ -34,6 +36,7 @@ interface BookingBottomBarProps {
 }
 
 export default function BookingBottomBar({
+  hintText,
   selectionInfo,
   totalInfo,
   canProceed,
@@ -53,12 +56,12 @@ export default function BookingBottomBar({
     const buttonContent = (
       <>
         {ctaText}
-        {!isLoading && <ArrowRight size={17} />}
+        {isLoading ? <Loader2 size={17} className="animate-spin" /> : <ArrowRight size={17} />}
       </>
     );
 
     const activeClasses =
-      "flex items-center justify-center gap-2.5 w-full py-4 rounded-2xl font-extrabold text-sm tracking-widest uppercase transition-all duration-150 active:scale-[0.98] bg-(--color-gold) text-[#0F0F0F] shadow-[0_0_20px_rgba(255,204,77,0.25)]";
+      "flex items-center justify-center gap-2.5 w-full py-4 rounded-2xl font-extrabold text-sm tracking-widest uppercase transition-all duration-150 active:scale-[0.98] bg-(--color-gold) text-(--color-bg) shadow-(--shadow-glow)";
 
     const disabledClasses =
       "flex items-center justify-center gap-2.5 w-full py-4 rounded-2xl font-extrabold text-sm tracking-widest uppercase bg-(--color-surface) text-(--color-text-muted) border border-(--color-border) cursor-not-allowed";
@@ -102,6 +105,15 @@ export default function BookingBottomBar({
     <div className="sticky bottom-0 z-50 px-4 pb-6 pt-3 bg-(--color-bg) border-t border-(--color-border)">
       {errorText && (
         <p className="mb-3 px-1 text-xs font-medium text-red-400 leading-relaxed">{errorText}</p>
+      )}
+
+      {/* Hint (micro-label above the CTA) */}
+      {hintText && (
+        <div className="flex items-end justify-between mb-3 min-h-[40px]">
+          <p className="text-[9px] font-bold tracking-widest uppercase text-(--color-text-muted) mb-0.5">
+            {hintText}
+          </p>
+        </div>
       )}
 
       {/* Selection Info */}

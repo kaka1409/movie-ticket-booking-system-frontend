@@ -2,13 +2,13 @@
 
 import { useActionState } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useAuth } from "@/contexts/AuthContext";
 import type { Recipient } from "@/features/tickets/types";
 import { createTransfer } from "@/features/tickets/action";
 import type { TransferActionResult } from "@/features/tickets/action";
 import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext";
+import Button from "@/components/ui/Button";
 
 interface ConfirmBottomBarProps {
   seatLabels: string[];
@@ -60,15 +60,9 @@ export default function ConfirmBottomBar({
         >
           {translate("tickets.transfer.cancel")}
         </button>
-        <button
-          type="button"
-          onClick={handleConfirm}
-          disabled={isPending}
-          className="flex-1 flex items-center justify-center gap-2 py-4 rounded-2xl font-extrabold text-sm tracking-widest uppercase transition-all duration-150 active:scale-[0.98] bg-(--color-gold) text-[#0F0F0F] shadow-[0_0_20px_rgba(255,204,77,0.25)] disabled:opacity-40"
-        >
-          {isPending && <Loader2 size={16} className="animate-spin" />}
+        <Button fullWidth={false} className="flex-1" loading={isPending} onClick={handleConfirm}>
           {translate("tickets.transfer.confirm_cta")}
-        </button>
+        </Button>
       </div>
     </div>
   );

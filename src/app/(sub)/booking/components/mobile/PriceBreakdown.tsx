@@ -5,6 +5,7 @@ import { Armchair, CreditCard, Popcorn } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { formatVND } from "@/libs/utils";
 import DetailRow from "./DetailRow";
+import MicroLabel from "@/components/ui/MicroLabel";
 
 interface BreakdownSeat {
   label: string;
@@ -61,9 +62,9 @@ export default function PriceBreakdown({
 
   const totalBlock = (
     <div className="text-right">
-      <p className="flex items-center justify-end gap-1.5 text-[9px] font-black tracking-[0.16em] uppercase text-white/60">
+      <MicroLabel className="flex items-center justify-end gap-1.5 text-white/60">
         {translate("booking.common.total_price")}
-      </p>
+      </MicroLabel>
       <p className={`font-bold text-base ${totalClassName}`}>
         {total != null ? formatVND(total) : totalFallback}
       </p>
@@ -74,14 +75,14 @@ export default function PriceBreakdown({
     <>
       {/* Seats grouped by type */}
       <div className="space-y-3">
-        <p className="flex items-center gap-1.5 text-[9px] font-black tracking-[0.16em] uppercase text-white/60">
+        <MicroLabel className="flex items-center gap-1.5 text-white/60">
           <Armchair size={10} />
           {seatsHeaderText ?? (
             <>
               {translate("booking.common.seats")} ({seats.length})
             </>
           )}
-        </p>
+        </MicroLabel>
         {Object.entries(seatsByType).map(([type, typeSeats]) => (
           <div key={type} className="space-y-1">
             <p className="text-sm font-bold text-white">
@@ -102,10 +103,10 @@ export default function PriceBreakdown({
       {/* Snacks */}
       {snacks.length > 0 && (
         <div className="space-y-2">
-          <p className="flex items-center gap-1.5 text-[9px] font-black tracking-[0.16em] uppercase text-white/60">
+          <MicroLabel className="flex items-center gap-1.5 text-white/60">
             <Popcorn size={10} />
             {translate("booking.common.snacks_combos")}
-          </p>
+          </MicroLabel>
           <div className="space-y-1">
             {snacks.map((snack, index) => (
               <div

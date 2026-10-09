@@ -7,6 +7,7 @@ import { useLocale } from "@/contexts/LocaleContext";
 import DetailRow from "@/app/(sub)/booking/components/mobile/DetailRow";
 import PriceBreakdown from "@/app/(sub)/booking/components/mobile/PriceBreakdown";
 import TearLine from "@/components/ui/TearLine";
+import MicroLabel from "@/components/ui/MicroLabel";
 import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext";
 
 interface ConfirmCardProps {
@@ -97,10 +98,10 @@ export default function ConfirmCard({
 
         {/* Recipient */}
         <div className="px-4 py-4 space-y-3">
-          <p className="flex items-center gap-1.5 text-[9px] font-black tracking-[0.16em] uppercase text-white/60">
+          <MicroLabel className="flex items-center gap-1.5 text-white/60">
             <User size={10} />
             {translate("tickets.transfer.confirm_recipient_label")}
-          </p>
+          </MicroLabel>
           <div className="flex items-center gap-3.5">
             <Image
               src={recipient.avatar}

@@ -39,7 +39,7 @@ export default function ComboCard({ item }: { item: ComboItem }) {
           )}
 
           {item.tag && (
-            <span className="absolute top-2 left-0 right-0 mx-auto w-fit px-2 py-0.5 rounded-full text-[8px] font-black tracking-widest uppercase bg-(--color-gold) text-[#0F0F0F]">
+            <span className="absolute top-2 left-0 right-0 mx-auto w-fit px-2 py-0.5 rounded-full text-[8px] font-black tracking-widest uppercase bg-(--color-gold) text-(--color-bg)">
               {item.tag}
             </span>
           )}

@@ -69,7 +69,7 @@ export default function SeatSelector() {
                   isSelected ? "border-(--color-gold) bg-(--color-gold)" : "border-(--color-border)"
                 }`}
               >
-                {isSelected && <Check size={12} className="text-[#0F0F0F]" />}
+                {isSelected && <Check size={12} className="text-(--color-bg)" />}
               </span>
 
               <span className="font-extrabold text-sm text-(--color-text-primary)">
@@ -104,7 +104,7 @@ export default function SeatSelector() {
               transferSnacks ? "border-(--color-gold) bg-(--color-gold)" : "border-(--color-border)"
             }`}
           >
-            {transferSnacks && <Check size={12} className="text-[#0F0F0F]" />}
+            {transferSnacks && <Check size={12} className="text-(--color-bg)" />}
           </span>
           <span className="flex flex-col gap-0.5 min-w-0">
             <span className="flex items-center gap-1.5 text-sm font-bold text-(--color-text-primary)">

@@ -2,6 +2,7 @@
 
 import { useLocale } from "@/contexts/LocaleContext";
 import ActionSheet from "@/components/ui/ActionSheet";
+import Button from "@/components/ui/Button";
 
 export default function CancellationPolicySheet({
   open,
@@ -38,13 +39,9 @@ export default function CancellationPolicySheet({
           ))}
         </ul>
 
-        <button
-          type="button"
-          onClick={onClose}
-          className="w-full py-3.5 rounded-2xl font-extrabold text-sm tracking-widest uppercase bg-(--color-gold) text-[#0F0F0F] shadow-[--shadow-glow] active:scale-[0.98] transition-all duration-150"
-        >
+        <Button size="md" onClick={onClose}>
           {translate("tickets.cancel.done")}
-        </button>
+        </Button>
       </div>
     </ActionSheet>
   );

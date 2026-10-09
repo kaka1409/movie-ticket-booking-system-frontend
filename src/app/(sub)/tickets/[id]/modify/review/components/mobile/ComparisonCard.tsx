@@ -5,6 +5,7 @@ import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext
 import { useModification } from "@/features/tickets/contexts/ModificationContext";
 import { formatVND } from "@/libs/utils";
 import { CalendarDays, Armchair, ArrowRightLeft } from "lucide-react";
+import MicroLabel from "@/components/ui/MicroLabel";
 
 export default function ComparisonCard() {
   const { translate } = useLocale();
@@ -19,9 +20,9 @@ export default function ComparisonCard() {
 
   return (
     <section className="px-4 space-y-4">
-      <p className="text-[9px] font-black tracking-[0.16em] uppercase text-(--color-text-muted)">
+      <MicroLabel className="text-(--color-text-muted)">
         {translate("tickets.modify.review.changes_summary")}
-      </p>
+      </MicroLabel>
 
       {/* Showtime comparison */}
       {showShowtime && selectedShowtime && (

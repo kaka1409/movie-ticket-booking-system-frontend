@@ -2,6 +2,7 @@
 
 import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext";
 import { useLocale } from "@/contexts/LocaleContext";
+import MicroLabel from "@/components/ui/MicroLabel";
 
 export default function CurrentShowtime() {
   const { ticket } = useTicketDetail();
@@ -9,9 +10,9 @@ export default function CurrentShowtime() {
 
   return (
     <section>
-      <p className="text-[9px] font-black tracking-[0.16em] uppercase text-(--color-text-muted) mb-2">
+      <MicroLabel className="text-(--color-text-muted) mb-2">
         {translate("tickets.modify.showtime.current_showtime")}
-      </p>
+      </MicroLabel>
       <div className="flex items-center gap-3 p-3 rounded-xl bg-(--color-surface) border border-(--color-border)">
         <div className="flex-1 min-w-0">
           <p className="font-bold text-sm text-(--color-text-primary) truncate">{ticket.cinema}</p>
