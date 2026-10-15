@@ -4,7 +4,14 @@ import { createContext, useContext, useReducer, useCallback, useMemo, type React
 
 /* ─── Types ─────────────────────────────────────────────── */
 
-import type { SelectedCombo, SelectedFood, CinemaDraft, BookingMovie, Seat, SeatRow } from "./types";
+import type {
+  SelectedCombo,
+  SelectedFood,
+  CinemaDraft,
+  BookingMovie,
+  Seat,
+  SeatRow,
+} from "./types";
 import type { BookingState } from "./reducer";
 import { bookingReducer, INITIAL_BOOKING_STATE } from "./reducer";
 import { useLocale } from "@/contexts/LocaleContext";
@@ -33,12 +40,37 @@ interface BookingContextType extends BookingState {
   setHoldExpiresAt: (deadline: number | null) => void;
   /** Starts the booking countdown — dispatched when the user commits at the seats-step CTA. */
   startCountdown: () => void;
+  /** Ends the 10-minute session early release-side: drops the session clock, keeps the draft. */
+  expireSession: () => void;
   resetBooking: () => void;
 }
 
 /* ─── Context ───────────────────────────────────────────── */
 
 const BookingContext = createContext<BookingContextType | null>(null);
+
+/** Tab-scoped session start (epoch ms) — survives a refresh, dies with the tab. */
+const SESSION_START_KEY = "booking:countdownStart";
+
+function readSessionStart(): number | null {
+  if (typeof window === "undefined") return null;
+  const raw = window.sessionStorage.getItem(SESSION_START_KEY);
+  const parsed = raw === null ? NaN : Number(raw);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+}
+
+function writeSessionStart(now: number): void {
+  if (typeof window === "undefined") return;
+  // First start wins — a re-press must never move the session.
+  if (window.sessionStorage.getItem(SESSION_START_KEY) === null) {
+    window.sessionStorage.setItem(SESSION_START_KEY, String(now));
+  }
+}
+
+function clearSessionStart(): void {
+  if (typeof window === "undefined") return;
+  window.sessionStorage.removeItem(SESSION_START_KEY);
+}
 
 export function BookingProvider({
   children,
@@ -48,7 +80,14 @@ export function BookingProvider({
   initialCountdownSeconds?: number;
 }) {
   const { translate } = useLocale();
-  const [state, dispatch] = useReducer(bookingReducer, INITIAL_BOOKING_STATE);
+  // A refresh wipes the reducer but not sessionStorage — restore the session
+  // clock so the countdown continues from the first CTA instead of restarting.
+  const [state, dispatch] = useReducer(bookingReducer, INITIAL_BOOKING_STATE, (initial) => {
+    const restored = readSessionStart();
+    return restored === null
+      ? initial
+      : { ...initial, countdownStarted: true, countdownStartTime: restored };
+  });
 
   const setCinema = useCallback((draft: CinemaDraft) => {
     dispatch({ type: "SET_CINEMA", ...draft, showtimeId: draft.showtimeId ?? "" });
@@ -113,10 +152,18 @@ export function BookingProvider({
   }, []);
 
   const startCountdown = useCallback(() => {
-    dispatch({ type: "START_COUNTDOWN", now: Date.now() });
+    const now = Date.now();
+    dispatch({ type: "START_COUNTDOWN", now });
+    writeSessionStart(now);
+  }, []);
+
+  const expireSession = useCallback(() => {
+    clearSessionStart();
+    dispatch({ type: "EXPIRE_SESSION" });
   }, []);
 
   const resetBooking = useCallback(() => {
+    clearSessionStart();
     dispatch({ type: "RESET" });
   }, []);
 
@@ -158,6 +205,7 @@ export function BookingProvider({
       setPayment,
       setHoldExpiresAt,
       startCountdown,
+      expireSession,
       resetBooking,
     };
   }, [
@@ -179,6 +227,7 @@ export function BookingProvider({
     setPayment,
     setHoldExpiresAt,
     startCountdown,
+    expireSession,
     resetBooking,
   ]);
 

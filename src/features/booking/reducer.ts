@@ -83,6 +83,7 @@ export type BookingAction =
   | { type: "SET_PAYMENT"; methodId: string; methodName: string }
   | { type: "SET_HOLD"; deadline: number | null }
   | { type: "START_COUNTDOWN"; now: number }
+  | { type: "EXPIRE_SESSION" }
   | { type: "RESET" };
 
 export const INITIAL_BOOKING_STATE: BookingState = {
@@ -296,6 +297,12 @@ export function bookingReducer(state: BookingState, action: BookingAction): Book
       // The countdown begins only when the user commits at the seats-step CTA.
       if (state.countdownStarted) return state;
       return { ...state, countdownStarted: true, countdownStartTime: action.now };
+
+    case "EXPIRE_SESSION":
+      // The 10-minute session lapsed: drop the session clock so a re-pick +
+      // CTA starts a brand-new session. Everything else (cinema, snacks,
+      // contact) survives — the caller clears the seats + releases the hold.
+      return { ...state, countdownStarted: false, countdownStartTime: 0 };
 
     case "RESET":
       return INITIAL_BOOKING_STATE;

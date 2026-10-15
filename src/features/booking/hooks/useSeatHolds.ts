@@ -29,8 +29,10 @@ interface SeatHoldOptions {
  * `BottomBar`), so while the user is still picking seats nothing is written to
  * the server. This hook covers the surrounding lifecycle instead:
  * `GET /seat-holds` restore on mount, a release when the selection empties,
- * and a 1 s expiry interval that clears the phantom selection once the backend
- * lets the hold lapse. All grid writes go through the booking reducer.
+ * and a 1 s interval that clears the phantom selection if the backend drops
+ * the hold early. The 10-minute session deadline itself is enforced by
+ * `SessionExpiryWatcher` (layout-level, so it fires on every step) — the
+ * banner counts from the first CTA and re-presses never extend it.
  */
 export function useSeatHolds({
   rows,
@@ -73,8 +75,9 @@ export function useSeatHolds({
     void releaseSeatHolds(showtimeId, token);
   }, [rows, token, showtimeId, holdExpiresAt, setHoldExpiresAt]);
 
-  // Hold expiry: the backend releases our seats — drop the phantom selection
-  // so the grid reflects reality (re-selecting re-holds with a fresh TTL).
+  // Hold expiry: the backend dropped our hold early (the normal session end
+  // is handled by SessionExpiryWatcher) — drop the phantom selection so the
+  // grid reflects reality, then re-picking + CTA re-holds.
   useEffect(() => {
     if (holdExpiresAt === null) return;
 

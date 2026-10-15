@@ -15,21 +15,27 @@ export default function CountdownBanner() {
 
   // Seed from wall-clock time rather than tick counts: background tabs
   // throttle setInterval, and an absolute deadline stays correct there.
-  // `holdExpiresAt` (BE) wins over the local first-selection fallback.
-  const initialDeadline =
-    holdExpiresAt ?? (countdownStarted ? countdownStartTime + countdownSeconds * 1000 : null);
+  // The session deadline (first CTA + 10 min) wins over the hold deadline —
+  // re-pressing the CTA refreshes the hold TTL but never extends the session.
+  // `holdExpiresAt` is only a fallback for a session the tab forgot (storage
+  // cleared mid-flow), and the static value covers the pre-CTA seats step.
+  const initialDeadline = countdownStarted
+    ? countdownStartTime + countdownSeconds * 1000
+    : (holdExpiresAt ?? null);
 
-  const [remaining, setRemaining] = useState(() =>
-    initialDeadline === null ? countdownSeconds : secondsUntil(initialDeadline),
-  );
+  // Ticks only drive re-renders — the displayed value derives from the
+  // absolute deadline, so a cleared session (deadline back to null) falls
+  // back to the static full duration instead of a stuck 00:00.
+  const [, forceTick] = useState(0);
 
   useEffect(() => {
     if (initialDeadline === null) return;
 
-    const tick = () => setRemaining(secondsUntil(initialDeadline));
-    const id = setInterval(tick, 1000);
+    const id = setInterval(() => forceTick((tick) => tick + 1), 1000);
     return () => clearInterval(id);
   }, [initialDeadline]);
+
+  const remaining = initialDeadline === null ? countdownSeconds : secondsUntil(initialDeadline);
 
   const minutes = String(Math.floor(remaining / 60)).padStart(2, "0");
   const seconds = String(remaining % 60).padStart(2, "0");
