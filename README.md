@@ -82,7 +82,7 @@ src/
 │   ├── sub/          # Detail pages (back button + title)
 │   ├── auth/         # Login, register
 │   └── blank/        # Full-screen pages (no chrome)
-├── contexts/         # LocaleContext, AuthContext (cross-cutting)
+├── contexts/         # DeviceContext, LocaleContext, AuthContext (cross-cutting)
 ├── features/         # Feature modules
 │   ├── auth/         # Types, API, schema, context for authentication
 │   ├── movies/       # Movie data, constants, types
@@ -99,16 +99,16 @@ src/
 
 ## Notes
 
-- Responsive layout: `LayoutProvider` selects layout type (main/auth/sub/blank), each layout's `index.tsx` uses `useDevice()` hook to switch between mobile/desktop variants via `matchMedia`
+- Responsive layout: `LayoutProvider` selects layout type (main/auth/sub/blank), each layout's `index.tsx` uses `useDevice()` hook to switch between mobile/desktop variants — seeded from the server UA guess (`DeviceProvider`) so first paint never flashes, `matchMedia` corrects on resize
 - Brand theme uses CSS variables (gold/black palette) in `global.css`
 - Movie poster images configured in `next.config.ts` `images.remotePatterns`
-- API layer (`features/*/api.ts`): movie/booking/notification APIs return mock data (commented-out fetch ready for backend). Auth mutations (`features/auth/action.ts`) connect to real backend via `apiMutation()` with cookies.
-- Server components: all `page.tsx` files are server components that fetch data via API layer (`await`) and pass props to client components. Protected pages (`/tickets`, `/profile`, `(sub)/*`) are wrapped with `<ProtectedRoute>` client component.
+- API layer (`features/*/api.ts`): movies, booking flow (seat map/holds/catalogs/create/pay/detail), tickets listing/detail and reviews list are LIVE against the backend; remaining mocks are ticket recipients/eligible-showtimes, notifications, wishlist, and ticket-modify screens (each marked `MOCK`/`TODO(api)` at the function). Auth mutations (`features/auth/action.ts`) connect to real backend via `apiMutation()` with cookies.
+- Server components: `page.tsx` files are server components that fetch data via API layer (`await`) and pass props to client components (`tickets/[id]/cancel` is a client state machine by design). Protected pages (`/tickets`, `/profile`, `(sub)/*`) are gated server-side (`hasSession()` → `LoginPrompt`) plus the `<ProtectedRoute>` client fallback.
 - Auth system: RAM-only access token, HttpOnly cookie refresh token, automatic session restore on mount via `/api/v1/auth/refresh`
 - Protected routes: `/tickets`, `/profile`, and all `(sub)/*` routes require authentication. Unauthenticated users see a login prompt with CTA.
 - Movie detail review form is gated by auth — unauthenticated users see "Sign in to write a review" prompt, but review list remains public.
 - Complete booking flow: cinema → seats → snack → credentials → payment → status/success or status/failed (6 pages, BookingContext persists state across steps)
-- Payment step simulates external gateway: 2s loading → random 50/50 redirect to success or fail
+- Payment step calls the real backend: `createBookingAction` then `payBookingAction` (the BE payment itself is still a simulated gateway) → success or failed status page
 - Edit profile page with field validation (full name, phone, DOB as date picker) — SAVE CHANGES button only active when changes detected
 - Change password page with 4 requirement checks (8+ chars, uppercase, number, special char), errors shown on submit
 - Wishlist page with persistent WishlistContext at root layout, heart toggle on movie detail
