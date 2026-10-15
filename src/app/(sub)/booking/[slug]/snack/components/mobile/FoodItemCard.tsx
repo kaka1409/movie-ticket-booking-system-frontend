@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { FoodItem } from "@/features/booking/types";
 import Stepper from "./Stepper";
+import { useLocale } from "@/contexts/LocaleContext";
 import { formatVND } from "@/libs/utils";
 
 export default function FoodItemCard({
@@ -16,6 +17,7 @@ export default function FoodItemCard({
   onDecrement: () => void;
   onIncrement: () => void;
 }) {
+  const { locale } = useLocale();
   const isSelected = qty > 0;
 
   return (
@@ -48,7 +50,7 @@ export default function FoodItemCard({
           {item.name}
         </h4>
         <p className="font-extrabold text-sm text-(--color-gold-light) mt-0.5">
-          {formatVND(item.price)}
+          {formatVND(item.price, locale)}
         </p>
       </div>
 

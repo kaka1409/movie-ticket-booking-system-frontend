@@ -1,7 +1,11 @@
 import { notFound } from "next/navigation";
 import { getMovieDetail } from "@/features/movies/api";
 import { getShowtimeDates, getShowtimes } from "@/features/showtimes/api";
+import { toShowtimeDateChips } from "@/features/showtimes/utils";
 import type { ShowtimeDateOption, ShowtimesResponse } from "@/features/showtimes/types";
+import { getRequestLocale } from "@/libs/session";
+import enMessages from "@/locales/en.json";
+import vnMessages from "@/locales/vn.json";
 import CinemaAdopt from "@/features/booking/components/CinemaAdopt";
 import type { Cinema, DateOption } from "@/features/booking/types";
 
@@ -27,19 +31,22 @@ function todayISO(): string {
   });
 }
 
-/* Backend returns one record per date that has showtimes. */
-function toDateOptions(records: ShowtimeDateOption[], today: string): DateOption[] {
-  return records.map((record) => {
-    const [year, month, day] = record.date.split("-").map(Number);
-    const parsed = new Date(year, month - 1, day);
-
-    return {
-      value: record.date,
-      day: record.day,
-      month: parsed.toLocaleDateString("en", { month: "short" }).toUpperCase(),
-      weekday: record.date === today ? "TODAY" : record.dayOfWeek.toUpperCase(),
-    };
-  });
+/* Backend returns one record per date that has showtimes. Chips render the
+   localized weekday (`dayOfWeek` already arrives in the request locale);
+   today's chip shows the translated "today" word instead of the weekday. */
+function toDateOptions(
+  records: ShowtimeDateOption[],
+  today: string,
+  locale: "en" | "vn",
+): DateOption[] {
+  const todayWord = (locale === "vn" ? vnMessages : enMessages).common.today.toUpperCase();
+  const byDate = new Map(records.map((record) => [record.date, record]));
+  return toShowtimeDateChips(records, locale).map((chip) => ({
+    value: chip.value,
+    day: byDate.get(chip.value)?.day ?? Number(chip.day),
+    month: chip.label,
+    weekday: chip.value === today ? todayWord : (chip.weekday ?? ""),
+  }));
 }
 
 type ShowtimeGroups = ShowtimesResponse["cinemas"];
@@ -74,7 +81,8 @@ export default async function CinemaShowtimePage({
   }>;
 }) {
   const [{ slug }, query] = await Promise.all([params, searchParams]);
-  const movieResult = await getMovieDetail(slug);
+  const locale = await getRequestLocale();
+  const movieResult = await getMovieDetail(slug, locale);
 
   if ("error" in movieResult) {
     if (movieResult.error.status === 404) notFound();
@@ -85,8 +93,8 @@ export default async function CinemaShowtimePage({
   const movie = movieResult.data;
   const today = todayISO();
 
-  const datesResult = await getShowtimeDates(slug);
-  const dates = "error" in datesResult ? [] : toDateOptions(datesResult.data, today);
+  const datesResult = await getShowtimeDates(slug, locale);
+  const dates = "error" in datesResult ? [] : toDateOptions(datesResult.data, today, locale);
   const resolvedDate =
     query.date && DATE_PATTERN.test(query.date) ? query.date : (dates[0]?.value ?? today);
 

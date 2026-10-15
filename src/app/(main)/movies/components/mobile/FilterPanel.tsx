@@ -5,7 +5,9 @@ import { useLocale } from "@/contexts/LocaleContext";
 import { useMovieList } from "@/features/movies/context";
 import {
   RELEASE_OPTIONS,
+  RELEASE_LABEL_KEYS,
   LENGTH_OPTIONS,
+  LENGTH_LABEL_KEYS,
   RATING_MIN,
   RATING_MAX,
   RATING_STEP,
@@ -95,7 +97,7 @@ export default function FilterPanel() {
                 {RELEASE_OPTIONS.map((option) => (
                   <FilterChip
                     key={option.token}
-                    label={option.label}
+                    label={translate(RELEASE_LABEL_KEYS[option.token])}
                     active={filters.releaseDate === option.token}
                     onClick={() =>
                       setFilters({
@@ -161,7 +163,7 @@ export default function FilterPanel() {
                   {LENGTH_OPTIONS.map((option) => (
                     <FilterCheckRow
                       key={option}
-                      label={option}
+                      label={translate(LENGTH_LABEL_KEYS[option])}
                       checked={filters.length === option}
                       onChange={() => toggleSingle("length")(option)}
                     />

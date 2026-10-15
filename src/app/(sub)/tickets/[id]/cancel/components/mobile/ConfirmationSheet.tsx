@@ -15,7 +15,7 @@ export default function ConfirmationSheet({
   onConfirm: () => void;
   onCancel: () => void;
 }) {
-  const { translate } = useLocale();
+  const { translate, locale } = useLocale();
 
   return (
     <ActionSheet open={open} onClose={onCancel}>
@@ -32,7 +32,9 @@ export default function ConfirmationSheet({
           <p className="text-xs text-(--color-text-muted) mb-2">
             {translate("tickets.cancel.confirm_you_receive")}
           </p>
-          <p className="text-3xl font-extrabold text-(--color-gold)">{formatVND(refundAmount)}</p>
+          <p className="text-3xl font-extrabold text-(--color-gold)">
+            {formatVND(refundAmount, locale)}
+          </p>
           <p className="text-xs text-(--color-text-muted) mt-2">
             {translate("tickets.cancel.confirm_refund_text")}
           </p>

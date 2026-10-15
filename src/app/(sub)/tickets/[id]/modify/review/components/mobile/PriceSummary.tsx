@@ -7,7 +7,7 @@ import { formatVND } from "@/libs/utils";
 import MicroLabel from "@/components/ui/MicroLabel";
 
 export default function PriceSummary() {
-  const { translate } = useLocale();
+  const { translate, locale } = useLocale();
   const { ticket } = useTicketDetail();
   const { modificationType, selectedSeats } = useModification();
 
@@ -43,7 +43,7 @@ export default function PriceSummary() {
                 {translate("tickets.modify.change_showtime")}
               </span>
               <span className="font-medium text-(--color-text-primary)">
-                {formatVND(showtimeFee)}
+                {formatVND(showtimeFee, locale)}
               </span>
             </div>
           )}
@@ -52,7 +52,9 @@ export default function PriceSummary() {
               <span className="text-(--color-text-secondary)">
                 {translate("tickets.modify.change_seats")}
               </span>
-              <span className="font-medium text-(--color-text-primary)">{formatVND(seatsFee)}</span>
+              <span className="font-medium text-(--color-text-primary)">
+                {formatVND(seatsFee, locale)}
+              </span>
             </div>
           )}
 
@@ -69,7 +71,9 @@ export default function PriceSummary() {
                     : "text-(--color-text-primary)"
               }`}
             >
-              {isRefund ? `+${formatVND(Math.abs(difference))}` : formatVND(difference)}
+              {isRefund
+                ? `+${formatVND(Math.abs(difference), locale)}`
+                : formatVND(difference, locale)}
             </span>
           </div>
 

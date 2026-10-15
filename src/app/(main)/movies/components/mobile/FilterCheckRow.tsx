@@ -38,7 +38,7 @@ export default function CheckRow({
           </svg>
         )}
       </span>
-      <span className={`text-sm font-medium transition-colors`}>{label}</span>
+      <span className={`text-xs text-left font-medium transition-colors`}>{label}</span>
     </button>
   );
 }

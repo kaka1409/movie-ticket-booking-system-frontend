@@ -1,5 +1,5 @@
 import type { ShowtimeDateOption } from "./types";
-import { formatDateOnly } from "@/libs/date";
+import { formatDateOnly, formatDayOfMonth } from "@/libs/date";
 import { DATE_STRIP_DAYS } from "./constants";
 
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
@@ -55,7 +55,7 @@ export function toShowtimeDateChips(
 
     return {
       label: toMonthLabel(new Date(year, month - 1, day), locale),
-      day: String(record.day),
+      day: formatDayOfMonth(record.day),
       weekday: (
         record.dayOfWeek || toWeekdayLabel(new Date(year, month - 1, day), locale)
       ).toUpperCase(),
@@ -78,7 +78,7 @@ export function buildFallbackDateChips(
 
     return {
       label: toMonthLabel(date, locale),
-      day: String(date.getDate()),
+      day: formatDayOfMonth(date.getDate()),
       weekday: toWeekdayLabel(date, locale),
       value: formatDateOnly(date),
     };

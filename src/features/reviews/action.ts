@@ -2,6 +2,7 @@
 
 import { updateTag } from "next/cache";
 import { apiMutation } from "@/libs/api";
+import { getRequestLocale } from "@/libs/session";
 import { getReviews } from "./api";
 import type { ReviewsResponse } from "./types";
 
@@ -26,7 +27,8 @@ async function fetchReviews(input: {
   limit: number;
 }): Promise<ActionResult<ReviewsResponse>> {
   try {
-    const result = await getReviews(input);
+    // Server action: locale comes from the request cookie (no React state here).
+    const result = await getReviews(input, await getRequestLocale());
     if ("error" in result) {
       return {
         success: false,

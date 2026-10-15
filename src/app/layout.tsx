@@ -1,7 +1,10 @@
 import type { Metadata, Viewport } from "next";
+import { cookies, headers } from "next/headers";
 import { Inter } from "next/font/google";
 import "@/styles/global.css";
-import { LocaleProvider } from "@/contexts/LocaleContext";
+import { LocaleProvider, type Locale } from "@/contexts/LocaleContext";
+import { DeviceProvider } from "@/contexts/DeviceContext";
+import type { Device } from "@/types";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { WishlistProvider } from "@/features/wishlist/context";
 import { SITE_NAME, SITE_URL, DEFAULT_DESCRIPTION, DEFAULT_OG_IMAGE } from "@/libs/site";
@@ -64,23 +67,65 @@ export const viewport: Viewport = {
 };
 
 /**
- * No `cookies()` here on purpose: reading them would force every route dynamic.
- * SSR always renders the default locale (EN); `LocaleProvider` applies the
- * visitor's saved choice (localStorage → cookie) right after hydration.
+ * Server-side locale resolution: saved `locale` cookie first, then the
+ * browser's `Accept-Language` (any `vi*` primary tag → VN), EN fallback.
+ * Reading cookies/headers opts the app out of static prerendering, but that
+ * cost was already paid — every catalog page threads the locale cookie for
+ * `?lang=` (see Catalog Localization in AGENTS.md) — while the 60s fetch
+ * cache keeps backend load flat. The payoff: SSR paints the visitor's
+ * language on the first byte, so hydration corrects nothing and never
+ * flashes (returning VN users) or mis-defaults (first-time vi browsers).
  */
-export default function RootLayout({
+async function resolveRequestLocale(): Promise<Locale> {
+  const cookieStore = await cookies();
+  const saved = cookieStore.get("locale")?.value;
+  if (saved === "vn" || saved === "en") return saved;
+
+  const headerStore = await headers();
+  const primaryTag = headerStore.get("accept-language")?.split(",")[0]?.trim().toLowerCase();
+  if (primaryTag === "vi" || primaryTag?.startsWith("vi-")) return "vn";
+  return "en";
+}
+
+/**
+ * Server-side device guess from the request User-Agent — feeds `DeviceProvider`
+ * so SSR paints the right layout variant on the first byte (no mobile→desktop
+ * flash, no hydration correction). Reading headers costs no extra static
+ * generation: this layout already reads cookies/headers for the locale.
+ * Misclassified UAs (e.g. iPadOS reporting desktop Safari) are corrected
+ * client-side by the `matchMedia` effect in `useDevice`.
+ */
+async function resolveInitialDevice(): Promise<Device> {
+  const headerStore = await headers();
+  const userAgent = headerStore.get("user-agent") ?? "";
+  return /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile|tablet/i.test(
+    userAgent,
+  )
+    ? "mobile"
+    : "desktop";
+}
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const initialLocale = await resolveRequestLocale();
+  const initialDevice = await resolveInitialDevice();
   return (
-    <html lang="en" className={inter.variable} data-scroll-behavior="smooth">
+    <html
+      lang={initialLocale === "vn" ? "vi" : "en"}
+      className={inter.variable}
+      data-scroll-behavior="smooth"
+    >
       <body className="min-h-dvh flex flex-col">
-        <LocaleProvider>
-          <AuthProvider>
-            <WishlistProvider>{children}</WishlistProvider>
-          </AuthProvider>
-        </LocaleProvider>
+        <DeviceProvider initialDevice={initialDevice}>
+          <LocaleProvider initialLocale={initialLocale}>
+            <AuthProvider>
+              <WishlistProvider>{children}</WishlistProvider>
+            </AuthProvider>
+          </LocaleProvider>
+        </DeviceProvider>
       </body>
     </html>
   );

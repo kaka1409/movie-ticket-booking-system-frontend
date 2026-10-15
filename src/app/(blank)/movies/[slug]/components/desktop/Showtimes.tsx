@@ -28,7 +28,8 @@ export default function Showtimes() {
   const { translate, locale } = useLocale();
   const movie = useMovieDetail();
   const { selectedShowtime, setSelectedShowtime } = useMovieSelection();
-  const { activeDate, cinemas, error, isPending, dates, today, selectDate, retry } = useShowtimes();
+  const { activeDate, cinemas, error, isPending, dates, today, hasDateOptions, selectDate, retry } =
+    useShowtimes();
 
   const dateChips = useMemo(
     () =>
@@ -37,6 +38,11 @@ export default function Showtimes() {
         : buildFallbackDateChips(today, locale, DATE_STRIP_DAYS),
     [dates, today, locale],
   );
+
+  // A movie with genuinely no showtime days renders no chips at all — just
+  // the empty state below. The local fallback chips stay for dates-API
+  // failures only, where picking a day can still recover showtimes.
+  const showDateStrip = dates.length > 0 || !hasDateOptions;
 
   const selectTime = (cinema: GroupedShowtimeCinema, showtimeId: string, time: string) => {
     const isSameSlot = selectedShowtime?.showtimeId === showtimeId;
@@ -68,7 +74,8 @@ export default function Showtimes() {
 
         <div className="space-y-4 p-4">
           {/* Date chips */}
-          <div className="flex flex-wrap gap-2">
+          {showDateStrip && (
+            <div className="flex flex-wrap gap-2">
             {dateChips.map((chip) => {
               const active = chip.value === activeDate;
 
@@ -106,12 +113,13 @@ export default function Showtimes() {
                       active ? "text-black/60" : "text-(--color-text-muted)"
                     }`}
                   >
-                    {chip.value === today ? "TODAY" : chip.weekday}
+                    {chip.value === today ? translate("common.today").toUpperCase() : chip.weekday}
                   </span>
                 </button>
               );
             })}
-          </div>
+            </div>
+          )}
 
           {error && (
             <div className="flex flex-col items-center gap-2 rounded-(--radius-md) border border-(--color-border) bg-(--color-surface-2) px-4 py-6 text-center">

@@ -19,7 +19,7 @@ export default function CancelSummary({
   onContinue: () => void;
   onPolicyClick: () => void;
 }) {
-  const { translate } = useLocale();
+  const { translate, locale } = useLocale();
 
   const totalPrice = ticket.totalPrice ?? 0;
   const totalSnackPrice = ticket.totalSnackPrice ?? 0;
@@ -66,14 +66,14 @@ export default function CancelSummary({
           <div className="flex justify-between text-sm">
             <span className="text-white/60">{translate("tickets.cancel.ticket_price")}</span>
             <span className="font-medium text-(--color-text-primary)">
-              {totalSeatPrice > 0 ? formatVND(totalSeatPrice) : "\u20AB0"}
+              {totalSeatPrice > 0 ? formatVND(totalSeatPrice, locale) : formatVND(0, locale)}
             </span>
           </div>
           {totalSnackPrice > 0 && (
             <div className="flex justify-between text-sm">
               <span className="text-white/60">{translate("tickets.cancel.snack_price")}</span>
               <span className="font-medium text-(--color-text-primary)">
-                {formatVND(totalSnackPrice)}
+                {formatVND(totalSnackPrice, locale)}
               </span>
             </div>
           )}
@@ -87,12 +87,12 @@ export default function CancelSummary({
             <span className="text-(--color-text-primary)">
               {translate("tickets.cancel.total_paid")}
             </span>
-            <span className="text-(--color-text-primary)">{formatVND(totalPrice)}</span>
+            <span className="text-(--color-text-primary)">{formatVND(totalPrice, locale)}</span>
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-white/60">{translate("tickets.cancel.cancellation_fee")}</span>
             <span className="text-(--color-text-primary) font-bold">
-              {formatVND(CANCELLATION_FEE)}
+              {formatVND(CANCELLATION_FEE, locale)}
             </span>
           </div>
         </div>
@@ -106,7 +106,7 @@ export default function CancelSummary({
               {translate("tickets.cancel.refund_amount")}
             </span>
             <span className="text-lg font-extrabold text-(--color-gold)">
-              {formatVND(refundAmount)}
+              {formatVND(refundAmount, locale)}
             </span>
           </div>
         </div>

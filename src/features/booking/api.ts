@@ -1,4 +1,4 @@
-import { apiFetch, apiMutation, type ApiResponse, type ErrorResponse } from "@/libs/api";
+import { apiFetch, apiMutation, withLang, type ApiResponse, type ErrorResponse } from "@/libs/api";
 import type {
   Cinema,
   DateOption,
@@ -48,8 +48,8 @@ const PAYMENT_IMAGES: Record<PaymentMethodOption["id"], string> = {
 const CATALOG_CACHE = { next: { revalidate: 60 } } as const;
 
 /** LIVE - `GET /combos` (contract §4.2). */
-export async function getCombos(): Promise<ApiResponse<ComboItem[]>> {
-  const result = await apiFetch<WireCombo[]>("/combos", CATALOG_CACHE);
+export async function getCombos(locale: "en" | "vn" = "en"): Promise<ApiResponse<ComboItem[]>> {
+  const result = await apiFetch<WireCombo[]>(withLang("/combos", locale), CATALOG_CACHE);
   if ("error" in result) return result;
 
   return {
@@ -63,8 +63,8 @@ export async function getCombos(): Promise<ApiResponse<ComboItem[]>> {
 }
 
 /** LIVE - `GET /food-items` (contract §4.3). */
-export async function getFoodItems(): Promise<ApiResponse<FoodItem[]>> {
-  const result = await apiFetch<WireFoodItem[]>("/food-items", CATALOG_CACHE);
+export async function getFoodItems(locale: "en" | "vn" = "en"): Promise<ApiResponse<FoodItem[]>> {
+  const result = await apiFetch<WireFoodItem[]>(withLang("/food-items", locale), CATALOG_CACHE);
   if ("error" in result) return result;
 
   return {
@@ -73,13 +73,23 @@ export async function getFoodItems(): Promise<ApiResponse<FoodItem[]>> {
 }
 
 /** LIVE - `GET /food-categories` (contract §4.4). */
-export function getFoodCategories(): Promise<ApiResponse<{ id: FoodCategory; label: string }[]>> {
-  return apiFetch<{ id: FoodCategory; label: string }[]>("/food-categories", CATALOG_CACHE);
+export function getFoodCategories(
+  locale: "en" | "vn" = "en",
+): Promise<ApiResponse<{ id: FoodCategory; label: string }[]>> {
+  return apiFetch<{ id: FoodCategory; label: string }[]>(
+    withLang("/food-categories", locale),
+    CATALOG_CACHE,
+  );
 }
 
 /** LIVE - `GET /payment-methods` (contract §4.5) — maps `imageSrc` from a local brand map. */
-export async function getPaymentMethods(): Promise<ApiResponse<PaymentMethod[]>> {
-  const result = await apiFetch<PaymentMethodOption[]>("/payment-methods", CATALOG_CACHE);
+export async function getPaymentMethods(
+  locale: "en" | "vn" = "en",
+): Promise<ApiResponse<PaymentMethod[]>> {
+  const result = await apiFetch<PaymentMethodOption[]>(
+    withLang("/payment-methods", locale),
+    CATALOG_CACHE,
+  );
   if ("error" in result) return result;
 
   return {
@@ -176,9 +186,9 @@ export async function releaseSeatHolds(
 
 /* ─── Out-of-scope mocks (still used outside the booking flow) ─ */
 
-// MOCK - home page carousel + ticket-modify screens; the booking flow itself
-// no longer reads these. TODO(api): switch home to `GET /cinemas` and the
-// ticket-modify screens to live seat maps when those batches start.
+// MOCK - ticket-modify screens only (home went live); the booking flow itself
+// no longer reads these. TODO(api): switch the ticket-modify screens to live
+// seat maps when that batch starts.
 
 export async function getCinemas(): Promise<Cinema[]> {
   return CINEMAS;

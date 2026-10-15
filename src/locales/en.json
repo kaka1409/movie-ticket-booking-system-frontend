@@ -58,7 +58,8 @@
       "date": "Date",
       "showtime": "Showtime",
       "cinema": "Cinema",
-      "book": "QUICK BOOK"
+      "book": "QUICK BOOK",
+      "sold_out": "Sold out"
     },
     "desktop": {
       "book_now": "Book Now",
@@ -85,7 +86,16 @@
       "coming_soon_section": "Coming Soon Movies",
       "prev_coming_soon": "Previous coming soon movies",
       "next_coming_soon": "Next coming soon movies",
-      "notify_me": "Notify me about"
+      "notify_me": "Notify me about",
+      "preview_director": "Director",
+      "preview_cast": "Top Cast",
+      "preview_release_date": "Release Date",
+      "preview_language": "Language",
+      "preview_watch_trailer": "Watch Trailer",
+      "preview_book_now": "Book Now",
+      "preview_details": "Details",
+      "preview_add_wishlist": "Add to Wishlist",
+      "preview_remove_wishlist": "Remove from Wishlist"
     }
   },
   "movies": {
@@ -107,6 +117,26 @@
     "length": "Length",
     "format": "Format",
     "age_rating": "Age Rating",
+    "filter_release": {
+      "today": "Today",
+      "week": "This Week",
+      "month": "This Month"
+    },
+    "filter_length": {
+      "short": "< 90 min",
+      "medium": "90-120 min",
+      "long": "> 120 min"
+    },
+    "genre_name": {
+      "action": "Action",
+      "adventure": "Adventure",
+      "comedy": "Comedy",
+      "drama": "Drama",
+      "horror": "Horror",
+      "romance": "Romance",
+      "scifi": "Sci-Fi",
+      "thriller": "Thriller"
+    },
     "not_found": "Movie not found",
     "detail": {
       "min": "min",
@@ -536,8 +566,17 @@
     "try_again": "Try Again",
     "back_home": "Back to Home"
   },
+  "reviews": {
+    "filters": {
+      "recent": "Recent",
+      "highest": "Highest Rated",
+      "lowest": "Lowest Rated"
+    }
+  },
   "common": {
     "min": "min",
+    "today": "Today",
+    "via": "Via",
     "ticket": "Ticket",
     "tickets": "Tickets",
     "loading": "Loading...",

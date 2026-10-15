@@ -116,7 +116,7 @@ export default function HeroSection() {
               {movie.duration > 0 && (
                 <span className="flex items-center gap-1.5 text-sm text-(--color-text-muted)">
                   <Clock size={13} />
-                  {Math.floor(movie.duration / 60)}h {movie.duration % 60}m
+                  {movie.duration} {translate("movies.detail.min")}
                 </span>
               )}
 

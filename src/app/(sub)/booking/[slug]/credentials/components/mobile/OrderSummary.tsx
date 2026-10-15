@@ -31,7 +31,7 @@ export default function OrderSummary() {
             </h3>
             {movie && (
               <p className="text-xs text-(--color-text-secondary)">
-                {movie.genre} • {movie.duration} min
+                {movie.genre} • {movie.duration} {translate("booking.min")}
               </p>
             )}
           </div>

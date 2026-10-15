@@ -4,10 +4,12 @@ import Image from "next/image";
 import type { ComboItem } from "@/features/booking/types";
 import Stepper from "./Stepper";
 import { useBooking } from "@/features/booking/context";
+import { useLocale } from "@/contexts/LocaleContext";
 import { withItemQty } from "@/features/booking/utils/snack";
 import { formatVND } from "@/libs/utils";
 
 export default function ComboCard({ item }: { item: ComboItem }) {
+  const { locale } = useLocale();
   const { combos, foods, setSnacks } = useBooking();
   const qty = combos.find((entry) => entry.id === item.id)?.qty ?? 0;
   const isSelected = qty > 0;
@@ -55,7 +57,7 @@ export default function ComboCard({ item }: { item: ComboItem }) {
 
           <div className="flex items-center justify-between">
             <span className="font-extrabold text-lg text-(--color-gold-light) tracking-tight">
-              {formatVND(item.price)}
+              {formatVND(item.price, locale)}
             </span>
             <Stepper
               value={qty}

@@ -1,49 +1,168 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, RotateCcw } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import type { Movie } from "@/features/movies/types";
-import type { Cinema, DateOption } from "@/features/booking/types";
+import type { GroupedShowtimeCinema, ShowtimeDateOption } from "@/features/showtimes/types";
+import { getShowtimeDates, getShowtimes } from "@/features/showtimes/api";
+import { toShowtimeDateChips } from "@/features/showtimes/utils";
 import type { ErrorResponse } from "@/libs/api";
+import { formatDateOnly } from "@/libs/date";
 import SectionFallback from "@/components/ui/SectionFallback";
 
+/** Small inline failure with retry — used per dependent block, not full-section. */
+function InlineError({ onRetry }: { onRetry: () => void }) {
+  const { translate } = useLocale();
+  return (
+    <div className="flex items-center gap-2">
+      <p className="text-xs text-(--color-text-muted)">{translate("common.error")}</p>
+      <button
+        type="button"
+        onClick={onRetry}
+        className="flex items-center gap-1 text-xs font-bold text-(--color-gold)"
+      >
+        <RotateCcw size={12} /> {translate("common.try_again")}
+      </button>
+    </div>
+  );
+}
+
+/**
+ * Quick ticket finder — live data all the way down: dates come from
+ * `GET /showtimes/dates` for the picked movie, slots from
+ * `GET /showtimes?movieSlug&date`, cinemas are whatever plays that day.
+ * Fetched lists are keyed by their request (movie+locale / movie+date), so a
+ * slow response can never overwrite a newer one and no synchronous reset
+ * effect is needed; the CTA carries the exact `showtimeId` instead of a
+ * matchable time string.
+ */
 export default function QuickBooking({
   movies,
-  cinemas,
-  dates,
   error,
 }: {
   movies: Movie[];
-  cinemas: Cinema[];
-  dates: DateOption[];
   error?: ErrorResponse["error"] | null;
 }) {
-  const { translate } = useLocale();
+  const { translate, locale } = useLocale();
+  const today = useMemo(() => formatDateOnly(new Date()), []);
 
   const [selectedMovieSlug, setSelectedMovieSlug] = useState("");
-  const [selectedCinemaId, setSelectedCinemaId] = useState(cinemas[0]?.id ?? "");
-  const [selectedDate, setSelectedDate] = useState(dates[0]?.value ?? "");
-  const [selectedTime, setSelectedTime] = useState("");
+  const [datesState, setDatesState] = useState<{
+    key: string;
+    data: ShowtimeDateOption[];
+  } | null>(null);
+  const [datesFailedKey, setDatesFailedKey] = useState<string | null>(null);
+  const [dateSel, setDateSel] = useState<{ key: string; value: string } | null>(null);
+  const [slotsState, setSlotsState] = useState<{
+    key: string;
+    data: GroupedShowtimeCinema[];
+  } | null>(null);
+  const [slotsFailedKey, setSlotsFailedKey] = useState<string | null>(null);
+  const [selectedCinemaId, setSelectedCinemaId] = useState("");
+  const [selectedSlotId, setSelectedSlotId] = useState("");
   const [isExpanded, setIsExpanded] = useState(true);
+  const [retryNonce, setRetryNonce] = useState(0);
 
-  const effectiveMovieSlug = selectedMovieSlug || (movies[0]?.slug ?? "");
+  // A previously picked slug that left the list falls back to the first movie.
+  const effectiveMovieSlug =
+    selectedMovieSlug && movies.some((movie) => movie.slug === selectedMovieSlug)
+      ? selectedMovieSlug
+      : (movies[0]?.slug ?? "");
 
-  const selectedCinema = useMemo(
-    () => cinemas.find((cinema) => cinema.id === selectedCinemaId),
-    [cinemas, selectedCinemaId],
+  const datesKey = `${effectiveMovieSlug}|${locale}|${retryNonce}`;
+  const shownDates = datesState && datesState.key === datesKey ? datesState.data : null;
+  const datesFailed = datesFailedKey === datesKey;
+  const activeDate = dateSel && dateSel.key === datesKey ? dateSel.value : "";
+
+  const slotsKey = `${effectiveMovieSlug}|${activeDate}|${retryNonce}`;
+  const shownCinemas = slotsState && slotsState.key === slotsKey ? slotsState.data : null;
+  const slotsFailed = slotsFailedKey === slotsKey;
+
+  // Dates follow the movie (and the UI language for weekday labels).
+  useEffect(() => {
+    if (!effectiveMovieSlug) return;
+    let cancelled = false;
+
+    void (async () => {
+      const result = await getShowtimeDates(effectiveMovieSlug, locale);
+      if (cancelled) return;
+      if ("error" in result) {
+        setDatesFailedKey(datesKey);
+        return;
+      }
+      setDatesState({ key: datesKey, data: result.data });
+      // Functional update (no dateSel dep → no refetch loop): keep the picked
+      // day when it still shows, otherwise fall back to the first one.
+      setDateSel((previous) => {
+        const first = result.data.find((option) => option.hasShowtimes) ?? result.data[0];
+        const nextValue =
+          previous &&
+          result.data.some((option) => option.date === previous.value && option.hasShowtimes)
+            ? previous.value
+            : (first?.date ?? "");
+        if (!nextValue || (previous && previous.key === datesKey && previous.value === nextValue))
+          return previous;
+        return { key: datesKey, value: nextValue };
+      });
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [datesKey, effectiveMovieSlug, locale]);
+
+  // Slots follow the date; the cinema list is whatever plays that day.
+  useEffect(() => {
+    if (!effectiveMovieSlug || !activeDate) return;
+    let cancelled = false;
+
+    void (async () => {
+      const result = await getShowtimes(effectiveMovieSlug, activeDate);
+      if (cancelled) return;
+      if ("error" in result) {
+        setSlotsFailedKey(slotsKey);
+        return;
+      }
+      const list = result.data.cinemas;
+      setSlotsState({ key: slotsKey, data: list });
+      setSelectedCinemaId((previous) => {
+        if (previous && list.some((cinema) => cinema.id === previous)) return previous;
+        const withAvailability =
+          list.find((cinema) => cinema.showtimes.some((slot) => slot.isAvailable)) ?? list[0];
+        return withAvailability ? withAvailability.id : "";
+      });
+      setSelectedSlotId((previous) =>
+        previous &&
+        list.some((cinema) =>
+          cinema.showtimes.some((slot) => slot.id === previous && slot.isAvailable),
+        )
+          ? previous
+          : "",
+      );
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [slotsKey, effectiveMovieSlug, activeDate]);
+
+  const dateChips = useMemo(
+    () => (shownDates ? toShowtimeDateChips(shownDates, locale) : []),
+    [shownDates, locale],
   );
-
-  const availableShowtimes = useMemo(() => selectedCinema?.showtimes ?? [], [selectedCinema]);
+  const selectedCinema = useMemo(
+    () => shownCinemas?.find((cinema) => cinema.id === selectedCinemaId),
+    [shownCinemas, selectedCinemaId],
+  );
+  const slots = selectedCinema?.showtimes ?? [];
+  const selectedSlot = slots.find((slot) => slot.id === selectedSlotId);
+  const canBook = !!effectiveMovieSlug && !!selectedSlot && selectedSlot.isAvailable;
 
   if (error) return <SectionFallback error={error} />;
 
   if (movies.length === 0) return null;
 
-  const firstThreeDates = dates.slice(0, 3);
-
-  const canBook = !!effectiveMovieSlug && !!selectedCinemaId && !!selectedDate && !!selectedTime;
+  const retry = () => setRetryNonce((nonce) => nonce + 1);
 
   return (
     <section
@@ -83,7 +202,11 @@ export default function QuickBooking({
                 id="qb-movie"
                 className="w-full rounded-(--radius-sm) bg-(--color-surface) px-3 py-2.5 text-sm text-white outline-none border border-(--color-border)"
                 value={effectiveMovieSlug}
-                onChange={(event) => setSelectedMovieSlug(event.target.value)}
+                onChange={(event) => {
+                  setSelectedMovieSlug(event.target.value);
+                  setSelectedCinemaId("");
+                  setSelectedSlotId("");
+                }}
               >
                 {movies.map((movie) => (
                   <option key={movie.id} value={movie.slug}>
@@ -98,23 +221,51 @@ export default function QuickBooking({
               <span className="mb-(--space-xs) block text-xs font-semibold text-(--color-text-secondary)">
                 {translate("home.quick_booking.date")}
               </span>
-              <div className="flex gap-(--space-sm)">
-                {firstThreeDates.map((dateOption) => (
-                  <button
-                    type="button"
-                    key={dateOption.value}
-                    className={`rounded-(--radius-sm) px-(--space-md) py-1.5 text-xs font-semibold transition-colors ${
-                      selectedDate === dateOption.value
-                        ? "border border-(--color-gold) bg-(--color-bg) text-(--color-gold)"
-                        : "border border-transparent bg-(--color-surface) text-white"
-                    }`}
-                    onClick={() => setSelectedDate(dateOption.value)}
-                    aria-pressed={selectedDate === dateOption.value}
-                  >
-                    {dateOption.weekday} {dateOption.day} {dateOption.month}
-                  </button>
-                ))}
-              </div>
+              {datesFailed ? (
+                <InlineError onRetry={retry} />
+              ) : shownDates === null ? (
+                <div className="flex gap-(--space-sm)" aria-hidden>
+                  {[0, 1, 2].map((placeholder) => (
+                    <div
+                      key={placeholder}
+                      className="rounded-(--radius-sm) px-(--space-md) py-1.5 text-xs bg-(--color-surface-2) opacity-40"
+                    >
+                      …
+                    </div>
+                  ))}
+                </div>
+              ) : shownDates.length === 0 ? (
+                <p className="text-xs text-(--color-text-muted)">
+                  {translate("movies.detail.no_showtimes")}
+                </p>
+              ) : (
+                <div className="flex gap-(--space-sm) overflow-x-auto scrollbar-hide pb-1">
+                  {dateChips.map((chip) => (
+                    <button
+                      type="button"
+                      key={chip.value}
+                      disabled={chip.disabled}
+                      className={`shrink-0 rounded-(--radius-sm) px-(--space-md) py-1.5 text-xs font-semibold transition-colors ${
+                        activeDate === chip.value
+                          ? "border border-(--color-gold) bg-(--color-bg) text-(--color-gold)"
+                          : chip.disabled
+                            ? "border border-transparent bg-transparent text-(--color-text-muted) line-through opacity-40 cursor-not-allowed"
+                            : "border border-transparent bg-(--color-surface) text-white"
+                      }`}
+                      onClick={() => {
+                        setDateSel({ key: datesKey, value: chip.value });
+                        setSelectedSlotId("");
+                      }}
+                      aria-pressed={activeDate === chip.value}
+                    >
+                      {chip.value === today
+                        ? translate("common.today").toUpperCase()
+                        : chip.weekday}{" "}
+                      {chip.day} {chip.label}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Cinema */}
@@ -127,18 +278,23 @@ export default function QuickBooking({
               </label>
               <select
                 id="qb-cinema"
-                className="w-full rounded-(--radius-sm) bg-(--color-surface) px-3 py-2.5 text-sm text-white outline-none border border-(--color-border)"
+                className="w-full rounded-(--radius-sm) bg-(--color-surface) px-3 py-2.5 text-sm text-white outline-none border border-(--color-border) disabled:opacity-40"
                 value={selectedCinemaId}
+                disabled={shownCinemas === null}
                 onChange={(event) => {
                   setSelectedCinemaId(event.target.value);
-                  setSelectedTime("");
+                  setSelectedSlotId("");
                 }}
               >
-                {cinemas.map((cinema) => (
-                  <option key={cinema.id} value={cinema.id}>
-                    {cinema.name}
-                  </option>
-                ))}
+                {shownCinemas === null ? (
+                  <option value="">…</option>
+                ) : (
+                  shownCinemas.map((cinema) => (
+                    <option key={cinema.id} value={cinema.id}>
+                      {cinema.name}
+                    </option>
+                  ))
+                )}
               </select>
             </div>
 
@@ -147,32 +303,52 @@ export default function QuickBooking({
               <span className="mb-(--space-xs) block text-xs font-semibold text-(--color-text-secondary)">
                 {translate("home.quick_booking.showtime")}
               </span>
-              <div className="flex flex-wrap gap-(--space-sm)">
-                {availableShowtimes.map((showtime) => (
-                  <button
-                    type="button"
-                    key={showtime.time}
-                    disabled={!showtime.available}
-                    className={`rounded-(--radius-sm) px-(--space-md) py-1.5 text-xs font-semibold transition-colors ${
-                      !showtime.available
-                        ? "border border-transparent bg-(--color-surface) text-(--color-text-muted) cursor-not-allowed opacity-40"
-                        : selectedTime === showtime.time
-                          ? "border border-(--color-gold) bg-(--color-bg) text-(--color-gold)"
-                          : "border border-transparent bg-(--color-surface) text-white"
-                    }`}
-                    onClick={() => showtime.available && setSelectedTime(showtime.time)}
-                    aria-pressed={selectedTime === showtime.time}
-                  >
-                    {showtime.time}
-                  </button>
-                ))}
-              </div>
+              {slotsFailed ? (
+                <InlineError onRetry={retry} />
+              ) : shownCinemas === null ? (
+                <div className="flex flex-wrap gap-(--space-sm)" aria-hidden>
+                  {[0, 1, 2].map((placeholder) => (
+                    <div
+                      key={placeholder}
+                      className="rounded-(--radius-sm) px-(--space-md) py-1.5 text-xs bg-(--color-surface-2) opacity-40"
+                    >
+                      …
+                    </div>
+                  ))}
+                </div>
+              ) : slots.length === 0 ? (
+                <p className="text-xs text-(--color-text-muted)">
+                  {translate("movies.detail.no_showtimes")}
+                </p>
+              ) : (
+                <div className="flex flex-wrap gap-(--space-sm)">
+                  {slots.map((slot) => (
+                    <button
+                      type="button"
+                      key={slot.id}
+                      disabled={!slot.isAvailable}
+                      className={`rounded-(--radius-sm) px-(--space-md) py-1.5 text-xs font-semibold transition-colors ${
+                        !slot.isAvailable
+                          ? "border border-transparent bg-(--color-surface) text-(--color-text-muted) cursor-not-allowed opacity-40"
+                          : selectedSlotId === slot.id
+                            ? "border border-(--color-gold) bg-(--color-bg) text-(--color-gold)"
+                            : "border border-transparent bg-(--color-surface) text-white"
+                      }`}
+                      onClick={() => slot.isAvailable && setSelectedSlotId(slot.id)}
+                      aria-pressed={selectedSlotId === slot.id}
+                      title={slot.roomName}
+                    >
+                      {slot.startTime}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* CTA */}
-            {canBook ? (
+            {canBook && selectedSlot ? (
               <Link
-                href={`/booking/${effectiveMovieSlug}/cinema?cinema=${selectedCinemaId}&time=${selectedTime}&date=${selectedDate}`}
+                href={`/booking/${effectiveMovieSlug}/cinema?showtimeId=${selectedSlot.id}`}
                 className="block w-full rounded-(--radius-sm) bg-(--color-gold) py-3 text-center text-sm font-bold tracking-widest text-black transition-opacity hover:opacity-90"
               >
                 {translate("home.quick_booking.book")}

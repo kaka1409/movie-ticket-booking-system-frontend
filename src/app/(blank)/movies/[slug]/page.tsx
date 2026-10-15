@@ -6,6 +6,7 @@ import { getReviews } from "@/features/reviews/api";
 import SectionFallback from "@/components/ui/SectionFallback";
 import { REVIEWS_PAGE_SIZE } from "@/features/reviews/constants";
 import { MovieDetailProvider, MovieSelectionProvider } from "@/features/movies/context";
+import { getRequestLocale } from "@/libs/session";
 import { SITE_NAME, SITE_URL } from "@/libs/site";
 import type { Metadata } from "next";
 
@@ -113,19 +114,25 @@ export async function generateMetadata({
 export default async function MovieDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const today = todayISO();
+  // Cookie locale → per-request rendering (see home/page.tsx); build-time
+  // generateStaticParams/generateMetadata above stay on the EN default.
+  const locale = await getRequestLocale();
 
   /* One parallel round trip: the usual case resolves the default day to
      `today`, so no waterfall — a second fetch only runs when today has no
      sessions and the strip jumps to the first available day. */
   const [movieResult, showtimeDatesResult, reviewsResult, todayShowtimesResult] = await Promise.all(
     [
-      getMovieDetail(slug),
-      getShowtimeDates(slug),
-      getReviews({
-        movieSlug: slug,
-        skip: 0,
-        limit: REVIEWS_PAGE_SIZE,
-      }),
+      getMovieDetail(slug, locale),
+      getShowtimeDates(slug, locale),
+      getReviews(
+        {
+          movieSlug: slug,
+          skip: 0,
+          limit: REVIEWS_PAGE_SIZE,
+        },
+        locale,
+      ),
       getShowtimes(slug, today),
     ],
   );
@@ -143,6 +150,9 @@ export default async function MovieDetailPage({ params }: { params: Promise<{ sl
 
   const movie = movieResult.data;
   const dateOptions = "error" in showtimeDatesResult ? [] : showtimeDatesResult.data;
+  // True when the dates API answered (even with zero days) — lets the UI tell
+  // "no showtimes at all" apart from "dates fetch failed, use fallback chips".
+  const datesAvailable = !("error" in showtimeDatesResult);
   const date = resolveDate(toAvailableDates(dateOptions), today);
 
   const showtimesResult = date === today ? todayShowtimesResult : await getShowtimes(slug, date);
@@ -184,6 +194,7 @@ export default async function MovieDetailPage({ params }: { params: Promise<{ sl
           movieSlug={slug}
           initialDate={date}
           dates={dateOptions}
+          datesAvailable={datesAvailable}
           today={today}
           initialCinemas={showtimeCinemas}
           initialError={showtimesError}

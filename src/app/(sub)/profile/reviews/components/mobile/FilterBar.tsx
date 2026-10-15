@@ -1,5 +1,6 @@
 "use client";
 
+import { useLocale } from "@/contexts/LocaleContext";
 import type { FilterKey } from "@/features/reviews/mock";
 
 export default function FilterBar({
@@ -11,6 +12,9 @@ export default function FilterBar({
   active: FilterKey;
   onChange: (key: FilterKey) => void;
 }) {
+  // Labels come from `reviews.filters.<key>` so the BE-localized `label`
+  // payload and the EN mock fallback both render in the UI locale.
+  const { translate } = useLocale();
   return (
     <nav className="flex items-center gap-3 overflow-x-auto py-2 text-sm">
       {filters.map((f) => {
@@ -26,7 +30,7 @@ export default function FilterBar({
                 : "border border-transparent text-(--color-text-muted)"
             }`}
           >
-            {f.label}
+            {translate(`reviews.filters.${f.key}`)}
           </button>
         );
       })}

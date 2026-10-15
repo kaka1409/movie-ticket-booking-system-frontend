@@ -1,4 +1,4 @@
-import { apiFetch, type ApiResponse } from "@/libs/api";
+import { apiFetch, withLang, type ApiResponse } from "@/libs/api";
 import type { ShowtimesResponse, ShowtimeDateOption, ShowtimeDetail } from "./types";
 
 /**
@@ -19,13 +19,18 @@ export function getShowtimes(
     query.set("cinemaId", cinemaId);
   }
 
+  // No `?lang=`: slot lists carry no localizable content (canonical titles,
+  // proper nouns, times) — only `/showtimes/dates` localizes `dayOfWeek`.
   return apiFetch<ShowtimesResponse>(`/showtimes?${query.toString()}`);
 }
 
 /** Date options come from the published schedule — safe to serve for 60s. */
-export function getShowtimeDates(movieSlug: string): Promise<ApiResponse<ShowtimeDateOption[]>> {
+export function getShowtimeDates(
+  movieSlug: string,
+  locale: "en" | "vn" = "en",
+): Promise<ApiResponse<ShowtimeDateOption[]>> {
   return apiFetch<ShowtimeDateOption[]>(
-    `/showtimes/dates?movieSlug=${encodeURIComponent(movieSlug)}`,
+    withLang(`/showtimes/dates?movieSlug=${encodeURIComponent(movieSlug)}`, locale),
     { next: { revalidate: 60 } },
   );
 }

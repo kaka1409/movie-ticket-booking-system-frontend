@@ -1,5 +1,6 @@
 import { getPaymentMethods } from "@/features/booking/api";
 import RequireDraft from "@/features/booking/components/RequireDraft";
+import { getRequestLocale } from "@/libs/session";
 
 // Mobile components
 import StepBar from "@/app/(sub)/booking/components/mobile/StepBar";
@@ -17,7 +18,7 @@ import DesktopPaymentContent from "./components/desktop/PaymentContent";
 
 export default async function PaymentPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const methodsResult = await getPaymentMethods();
+  const methodsResult = await getPaymentMethods(await getRequestLocale());
 
   if ("error" in methodsResult) {
     return <PageError error={methodsResult.error} />;

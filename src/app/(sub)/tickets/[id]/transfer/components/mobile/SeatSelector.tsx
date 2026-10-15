@@ -11,7 +11,7 @@ export default function SeatSelector() {
   const { ticket } = useTicketDetail();
   const { selectedSeats, setSelectedSeats, toggleSeat, transferSnacks, setTransferSnacks } =
     useTransfer();
-  const { translate } = useLocale();
+  const { translate, locale } = useLocale();
 
   const seatItems = ticket.seatItems;
   const total = seatItems.length;
@@ -80,7 +80,7 @@ export default function SeatSelector() {
               </span>
 
               <span className="ml-auto text-sm font-medium text-(--color-text-secondary)">
-                {formatVND(seat.price)}
+                {formatVND(seat.price, locale)}
               </span>
             </button>
           );

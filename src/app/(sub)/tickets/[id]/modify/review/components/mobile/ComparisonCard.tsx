@@ -8,7 +8,7 @@ import { CalendarDays, Armchair, ArrowRightLeft } from "lucide-react";
 import MicroLabel from "@/components/ui/MicroLabel";
 
 export default function ComparisonCard() {
-  const { translate } = useLocale();
+  const { translate, locale } = useLocale();
   const { ticket } = useTicketDetail();
   const { modificationType, selectedShowtime, selectedSeats } = useModification();
 
@@ -83,7 +83,9 @@ export default function ComparisonCard() {
                 <p className="text-sm text-(--color-text-primary)">
                   {ticket.seatItems.map((s) => s.label).join(", ")}
                 </p>
-                <p className="text-xs text-(--color-text-muted)">{formatVND(currentSeatsTotal)}</p>
+                <p className="text-xs text-(--color-text-muted)">
+                  {formatVND(currentSeatsTotal, locale)}
+                </p>
               </div>
             </div>
             <div className="flex justify-center">
@@ -97,7 +99,9 @@ export default function ComparisonCard() {
                 <p className="text-sm font-bold text-(--color-gold)">
                   {selectedSeats.map((s) => s.label).join(", ")}
                 </p>
-                <p className="text-xs text-(--color-text-muted)">{formatVND(newSeatsTotal)}</p>
+                <p className="text-xs text-(--color-text-muted)">
+                  {formatVND(newSeatsTotal, locale)}
+                </p>
               </div>
             </div>
           </div>

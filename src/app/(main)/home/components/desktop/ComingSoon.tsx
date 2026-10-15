@@ -10,6 +10,7 @@ import { formatDate } from "@/libs/utils";
 import type { Movie } from "@/features/movies/types";
 import type { ErrorResponse } from "@/libs/api";
 import SectionFallback from "@/components/ui/SectionFallback";
+import { useMoviePreview } from "./MoviePreviewContext";
 
 const ITEMS_PER_PAGE = 3;
 
@@ -20,14 +21,19 @@ export default function ComingSoon({
   movies: Movie[];
   error?: ErrorResponse["error"] | null;
 }) {
-  const { translate } = useLocale();
+  const { translate, locale } = useLocale();
   const { isWishlisted, toggleWishlist } = useWishlist();
+  const { handleCardMouseEnter, handleCardMouseMove, handleCardMouseLeave } = useMoviePreview();
   const [startIndex, setStartIndex] = useState(0);
 
   if (error) return <SectionFallback error={error} />;
   if (movies.length === 0) return null;
 
   const maxIndex = Math.max(0, movies.length - ITEMS_PER_PAGE);
+
+  // The list can shrink under us (locale refetch) — clamp on read so the
+  // slice never renders short (writes already clamp via prev/next).
+  const safeStart = Math.min(startIndex, maxIndex);
 
   const prev = () => {
     setStartIndex((current) => Math.max(0, current - 1));
@@ -37,7 +43,7 @@ export default function ComingSoon({
     setStartIndex((current) => Math.min(maxIndex, current + 1));
   };
 
-  const visibleMovies = movies.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  const visibleMovies = movies.slice(safeStart, safeStart + ITEMS_PER_PAGE);
 
   return (
     <section
@@ -45,7 +51,7 @@ export default function ComingSoon({
       aria-label={translate("home.desktop.coming_soon_section")}
     >
       {/* Section Header */}
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <h2 className="flex items-center gap-2.5 text-[26px] font-black tracking-tight text-white">
             <span className="inline-block h-[26px] w-1 rounded-sm bg-(--color-gold)" />
@@ -90,13 +96,16 @@ export default function ComingSoon({
       </div>
 
       {/* Cards Slider / Grid */}
-      <div className="mb-8 grid grid-cols-3 gap-5">
+      <div className="mb-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {visibleMovies.map((movie) => {
           const wished = isWishlisted(movie.id);
 
           return (
             <article
               key={movie.id}
+              onMouseEnter={(e) => handleCardMouseEnter(movie, e)}
+              onMouseMove={handleCardMouseMove}
+              onMouseLeave={handleCardMouseLeave}
               className="group relative overflow-hidden rounded-(--radius-lg) border border-(--color-border) bg-(--color-surface) transition-all duration-300 hover:-translate-y-1 hover:border-(--color-gold)/40"
             >
               <div className="relative aspect-[16/10] w-full overflow-hidden bg-(--color-surface-2)">
@@ -113,7 +122,7 @@ export default function ComingSoon({
                 {/* Release Date Pill */}
                 <div className="absolute top-3 left-3">
                   <span className="rounded-(--radius-sm) bg-(--color-gold) px-2.5 py-1 text-[11px] font-extrabold tracking-wider uppercase text-black shadow">
-                    {formatDate(movie.releaseDate)}
+                    {formatDate(movie.releaseDate, locale)}
                   </span>
                 </div>
 

@@ -1,10 +1,14 @@
 import { getAllMovies } from "@/features/movies/api";
 import { getReviewFilters } from "@/features/reviews/api";
+import { getRequestLocale } from "@/libs/session";
 import ReviewList from "./components/mobile/ReviewList";
 import DesktopReviewContent from "./components/desktop/ReviewContent";
 
 export default async function ReviewPage() {
-  const [allMovies, filters] = await Promise.all([getAllMovies(), getReviewFilters()]);
+  const [allMovies, filters] = await Promise.all([
+    getAllMovies(),
+    getReviewFilters(await getRequestLocale()),
+  ]);
 
   return (
     <>

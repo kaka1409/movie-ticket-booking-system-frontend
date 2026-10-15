@@ -1,4 +1,5 @@
 ﻿import { getCombos, getFoodItems, getFoodCategories } from "@/features/booking/api";
+import { getRequestLocale } from "@/libs/session";
 
 // Shared
 import StepBar from "@/app/(sub)/booking/components/mobile/StepBar";
@@ -16,10 +17,11 @@ import BottomBar from "./components/mobile/BottomBar";
 import DesktopSnackContent from "./components/desktop/SnackContent";
 
 export default async function CombosPage() {
+  const locale = await getRequestLocale();
   const [combosResult, foodItemsResult, foodCategoriesResult] = await Promise.all([
-    getCombos(),
-    getFoodItems(),
-    getFoodCategories(),
+    getCombos(locale),
+    getFoodItems(locale),
+    getFoodCategories(locale),
   ]);
 
   if ("error" in combosResult) return <PageError error={combosResult.error} />;

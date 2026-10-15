@@ -22,7 +22,7 @@ export default function CancelResult({
   const params = useParams();
   const router = useRouter();
   const id = params.id as string;
-  const { translate } = useLocale();
+  const { translate, locale } = useLocale();
   const mounted = useMounted();
 
   if (status === "success") {
@@ -75,7 +75,9 @@ export default function CancelResult({
             <p className="text-xs text-(--color-text-muted) uppercase tracking-wider font-bold">
               {translate("tickets.cancel.refund_amount")}
             </p>
-            <p className="text-3xl font-extrabold text-(--color-gold)">{formatVND(refundAmount)}</p>
+            <p className="text-3xl font-extrabold text-(--color-gold)">
+              {formatVND(refundAmount, locale)}
+            </p>
           </div>
 
           <div className="border-t border-(--color-border) pt-4 space-y-2">
@@ -85,9 +87,11 @@ export default function CancelResult({
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-(--color-surface-2) flex items-center justify-center">
                 <span className="text-xs font-bold text-(--color-text-muted)">
-                  {paymentMethod?.includes("VNPay")
+                  {/* Branch on the gateway id (case-insensitive) — the display
+                      label is localized (`Via…`/`Qua…`) and must not be parsed. */}
+                  {paymentMethod?.toLowerCase().includes("vnpay")
                     ? "VNP"
-                    : paymentMethod?.includes("MoMo")
+                    : paymentMethod?.toLowerCase().includes("momo")
                       ? "MM"
                       : "—"}
                 </span>
@@ -181,7 +185,9 @@ export default function CancelResult({
           <p className="text-xs text-(--color-text-muted) uppercase tracking-wider font-bold">
             {translate("tickets.cancel.failed_refund_amount")}
           </p>
-          <p className="text-3xl font-extrabold text-(--color-gold)">{formatVND(refundAmount)}</p>
+          <p className="text-3xl font-extrabold text-(--color-gold)">
+            {formatVND(refundAmount, locale)}
+          </p>
         </div>
 
         <div className="border-t border-(--color-border) pt-4 space-y-2">

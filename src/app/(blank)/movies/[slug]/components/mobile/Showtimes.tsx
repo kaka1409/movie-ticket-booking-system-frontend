@@ -22,7 +22,8 @@ function badgeColor(badge: string): string {
 }
 
 export default function Showtimes() {
-  const { activeDate, cinemas, error, isPending, dates, today, selectDate, retry } = useShowtimes();
+  const { activeDate, cinemas, error, isPending, dates, today, hasDateOptions, selectDate, retry } =
+    useShowtimes();
   const { selectedShowtime, setSelectedShowtime } = useMovieSelection();
   const { translate, locale } = useLocale();
 
@@ -33,6 +34,11 @@ export default function Showtimes() {
         : buildFallbackDateChips(today, locale, DATE_STRIP_DAYS),
     [dates, today, locale],
   );
+
+  // A movie with genuinely no showtime days renders no strip at all — just
+  // the empty state below. The local fallback chips stay for dates-API
+  // failures only, where picking a day can still recover showtimes.
+  const showDateStrip = dates.length > 0 || !hasDateOptions;
 
   // Cinema section's states
   const [showAll, setShowAll] = useState(false);
@@ -92,8 +98,9 @@ export default function Showtimes() {
     <section className="px-4">
       <SectionHeader variant="goldBar">{translate("movies.detail.showtimes")}</SectionHeader>
 
-      <div className="flex gap-2 mb-5 overflow-x-auto scrollbar-hide pb-1">
-        {dateOptions.map((option) => {
+      {showDateStrip && (
+        <div className="flex gap-2 mb-5 overflow-x-auto scrollbar-hide pb-1">
+          {dateOptions.map((option) => {
           const active = option.value === activeDate;
           return (
             <button
@@ -138,8 +145,9 @@ export default function Showtimes() {
               </span>
             </button>
           );
-        })}
-      </div>
+          })}
+        </div>
+      )}
 
       {error && (
         <div className="rounded-2xl bg-(--color-surface) border border-(--color-border) p-4 flex flex-col items-center gap-3 text-center">

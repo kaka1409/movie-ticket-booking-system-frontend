@@ -1,6 +1,7 @@
 "use client";
 
 import type { DateOption } from "@/features/booking/types";
+import { formatDayOfMonth } from "@/libs/date";
 
 export default function DatePicker({
   dates,
@@ -39,7 +40,7 @@ export default function DatePicker({
                 active ? "text-(--color-bg)" : "text-(--color-text-primary)"
               }`}
             >
-              {d.day}
+              {formatDayOfMonth(d.day)}
             </span>
             <span
               className={`text-[9px] font-semibold tracking-widest ${

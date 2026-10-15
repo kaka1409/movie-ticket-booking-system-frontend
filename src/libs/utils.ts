@@ -10,9 +10,12 @@ export function slugify(text: string): string {
     .replace(/^-|-$/g, "");
 }
 
-/** Vietnamese-formatted amount with the ₫ suffix (e.g. `120,000₫`). */
-export function formatVND(amount: number): string {
-  return `${amount.toLocaleString("vi-VN")}₫`;
+/**
+ * Locale-formatted amount with the ₫ suffix (`120,000₫` in EN, `120.000₫`
+ * in VN). The suffix stays ₫ in both locales — the amount is always VND.
+ */
+export function formatVND(amount: number, locale: "en" | "vn"): string {
+  return `${amount.toLocaleString(locale === "vn" ? "vi-VN" : "en-US")}₫`;
 }
 
 /**
@@ -40,10 +43,10 @@ export function getSafeReturnUrl(rawReturnUrl: string | null | undefined): strin
   return rawReturnUrl;
 }
 
-/** Short absolute date, e.g. `Oct 4, 2026`. */
-export function formatDate(dateStr: string): string {
+/** Short absolute date (`Oct 4, 2026` in EN, `4 thg 10, 2026` in VN). */
+export function formatDate(dateStr: string, locale: "en" | "vn"): string {
   const d = new Date(dateStr);
-  return d.toLocaleDateString("en-US", {
+  return d.toLocaleDateString(locale === "vn" ? "vi-VN" : "en-US", {
     month: "short",
     day: "numeric",
     year: "numeric",

@@ -1,6 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import type { Movie } from "@/features/movies/types";
+import { useLocale } from "@/contexts/LocaleContext";
 import { formatDate } from "@/libs/utils";
 import StarRating from "./StarRating";
 
@@ -11,6 +14,8 @@ export default function ReviewCard({
   movie: Movie;
   className?: string;
 }) {
+  // Client-rendered so the release date follows the UI locale.
+  const { locale } = useLocale();
   return (
     <Link href={`/movies/${movie.slug}`}>
       <article
@@ -27,7 +32,7 @@ export default function ReviewCard({
           <div className="flex items-start justify-between gap-2">
             <h2 className="text-lg font-semibold text-(--color-text-primary)">{movie.title}</h2>
             <span className="shrink-0 text-xs text-(--color-text-muted)">
-              {formatDate(movie.releaseDate)}
+              {formatDate(movie.releaseDate, locale)}
             </span>
           </div>
 

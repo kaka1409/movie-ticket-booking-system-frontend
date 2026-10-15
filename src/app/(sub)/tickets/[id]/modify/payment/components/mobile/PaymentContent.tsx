@@ -18,7 +18,7 @@ export default function PaymentContent() {
   const params = useParams();
   const router = useRouter();
   const id = params.id as string;
-  const { translate } = useLocale();
+  const { translate, locale } = useLocale();
   const { ticket } = useTicketDetail();
   const { token } = useAuth();
   const { modificationType, selectedShowtime, selectedSeats } = useModification();
@@ -88,7 +88,7 @@ export default function PaymentContent() {
                   {translate("tickets.modify.payment.pay_difference")}
                 </MicroLabel>
                 <p className="font-extrabold text-3xl text-(--color-gold)">
-                  {formatVND(difference)}
+                  {formatVND(difference, locale)}
                 </p>
               </div>
             </section>

@@ -24,7 +24,7 @@ export default function MovieGrid() {
     retryFetch,
   } = useMovieList();
 
-  /* â”€â”€ Hooks must run before any early return â”€â”€ */
+  /* Hooks must run before any early return*/
   const { containerRef: gridRef, animThreshold } = useAppendReveal<HTMLDivElement>({
     count: movies.length,
     cardSelector: "[data-movie-card]",

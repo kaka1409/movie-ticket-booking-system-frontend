@@ -11,12 +11,15 @@ import {
   FALLBACK_FORMATS,
   FALLBACK_AGE_RATINGS,
 } from "@/features/movies/constants";
+import enMessages from "@/locales/en.json";
+import vnMessages from "@/locales/vn.json";
 import {
   readTabFromParams,
   readFiltersFromParams,
   readQueryFromParams,
 } from "@/features/movies/url";
 import { toApiResponse } from "@/libs/api";
+import { getRequestLocale } from "@/libs/session";
 import type { CatalogOption, FilterOptions } from "@/features/movies/types";
 import type { Metadata } from "next";
 import { SITE_URL } from "@/libs/site";
@@ -40,10 +43,11 @@ import DesktopMovieGrid from "./components/desktop/MovieGrid";
 function toCatalog(
   settled: PromiseSettledResult<Awaited<ReturnType<typeof getGenres>>>,
   fallback: readonly string[],
+  labelOf: (name: string) => string = (name) => name,
 ): CatalogOption[] {
   const result = toApiResponse(settled);
   if ("error" in result || result.data.length === 0) {
-    return fallback.map((name) => ({ id: name, name }));
+    return fallback.map((name) => ({ id: name, name: labelOf(name) }));
   }
   return result.data;
 }
@@ -61,21 +65,31 @@ export default async function MoviesPage({
   const initialTab = readTabFromParams(normalizedSearchParams);
   const initialQuery = readQueryFromParams(normalizedSearchParams);
   const initialFilters = readFiltersFromParams(normalizedSearchParams);
+  // See home/page.tsx: the locale cookie forces per-request rendering; the
+  // fetch cache (keyed per ?lang= URL) still shields the backend.
+  const locale = await getRequestLocale();
 
   const [moviesSettled, genresSettled, formatsSettled, ageRatingsSettled] =
     await Promise.allSettled([
-      getMovies(buildMovieQuery(initialTab, initialQuery, initialFilters, 1)),
-      getGenres(),
-      getFormats(),
-      getAgeRatings(),
+      getMovies(buildMovieQuery(initialTab, initialQuery, initialFilters, 1), locale),
+      getGenres(locale),
+      getFormats(locale),
+      getAgeRatings(locale),
     ]);
 
   const activeResult = toApiResponse(moviesSettled);
   const activeList = "error" in activeResult ? [] : activeResult.data;
   const activeMeta = "error" in activeResult ? undefined : activeResult.meta;
 
+  const genreLabels = (locale === "vn" ? vnMessages : enMessages).movies.genre_name as Record<
+    string,
+    string
+  >;
+  // Canonical "Sci-Fi" → `genre_name.scifi`, "Action" → `genre_name.action`.
+  const genreLabelOf = (name: string): string =>
+    genreLabels[name.toLowerCase().replace(/[^a-z]/g, "")] ?? name;
   const filterOptions: FilterOptions = {
-    genres: toCatalog(genresSettled, FALLBACK_GENRES),
+    genres: toCatalog(genresSettled, FALLBACK_GENRES, genreLabelOf),
     formats: toCatalog(formatsSettled, FALLBACK_FORMATS),
     ageRatings: toCatalog(ageRatingsSettled, FALLBACK_AGE_RATINGS),
   };

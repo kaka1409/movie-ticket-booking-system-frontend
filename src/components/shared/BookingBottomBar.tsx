@@ -48,7 +48,7 @@ export default function BookingBottomBar({
   alwaysEnabled = false,
   errorText,
 }: BookingBottomBarProps) {
-  const { translate } = useLocale();
+  const { translate, locale } = useLocale();
   const hasSelection = selectionInfo?.label || selectionInfo?.subLabel;
   const hasTotal = totalInfo?.amount !== undefined;
 
@@ -175,7 +175,7 @@ export default function BookingBottomBar({
               hasTotal ? "text-(--color-gold)" : "text-(--color-text-muted)"
             }`}
           >
-            {totalInfo.amount !== undefined ? formatVND(totalInfo.amount) : "—"}
+            {totalInfo.amount !== undefined ? formatVND(totalInfo.amount, locale) : "—"}
           </p>
         </div>
       )}

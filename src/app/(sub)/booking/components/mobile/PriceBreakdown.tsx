@@ -53,7 +53,7 @@ export default function PriceBreakdown({
   totalClassName = "text-(--color-gold)",
   hideTotal = false,
 }: PriceBreakdownProps) {
-  const { translate } = useLocale();
+  const { translate, locale } = useLocale();
 
   const seatsByType = seats.reduce<Record<string, BreakdownSeat[]>>((acc, seat) => {
     (acc[seat.type] ??= []).push(seat);
@@ -66,7 +66,7 @@ export default function PriceBreakdown({
         {translate("booking.common.total_price")}
       </MicroLabel>
       <p className={`font-bold text-base ${totalClassName}`}>
-        {total != null ? formatVND(total) : totalFallback}
+        {total != null ? formatVND(total, locale) : totalFallback}
       </p>
     </div>
   );
@@ -93,7 +93,7 @@ export default function PriceBreakdown({
                 {type} {translate("booking.common.ticket")}
               </span>
               <span className="font-medium text-white">
-                {typeSeats.length}× {formatVND(typeSeats[0].price)}
+                {typeSeats.length}× {formatVND(typeSeats[0].price, locale)}
               </span>
             </div>
           </div>
@@ -115,7 +115,7 @@ export default function PriceBreakdown({
               >
                 <span className="text-white">{snack.name}</span>
                 <span className="font-medium text-white">
-                  {snack.qty}× {formatVND(snack.qty * snack.price)}
+                  {snack.qty}× {formatVND(snack.qty * snack.price, locale)}
                 </span>
               </div>
             ))}

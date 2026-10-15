@@ -58,7 +58,8 @@
       "date": "Ngày",
       "showtime": "Suất Chiếu",
       "cinema": "Rạp",
-      "book": "ĐẶT VÉ"
+      "book": "ĐẶT VÉ",
+      "sold_out": "Hết vé"
     },
     "desktop": {
       "book_now": "Đặt Ngay",
@@ -85,7 +86,16 @@
       "coming_soon_section": "Phim Sắp Chiếu",
       "prev_coming_soon": "Phim sắp chiếu trước",
       "next_coming_soon": "Phim sắp chiếu tiếp",
-      "notify_me": "Nhận thông báo về"
+      "notify_me": "Nhận thông báo về",
+      "preview_director": "Đạo diễn",
+      "preview_cast": "Diễn viên",
+      "preview_release_date": "Khởi chiếu",
+      "preview_language": "Ngôn ngữ",
+      "preview_watch_trailer": "Xem Trailer",
+      "preview_book_now": "Đặt Vé Ngay",
+      "preview_details": "Chi Tiết",
+      "preview_add_wishlist": "Thêm vào yêu thích",
+      "preview_remove_wishlist": "Xoá khỏi yêu thích"
     }
   },
   "movies": {
@@ -107,6 +117,26 @@
     "length": "Thời Lượng",
     "format": "Định Dạng",
     "age_rating": "Phân Loại Tuổi",
+    "filter_release": {
+      "today": "Hôm nay",
+      "week": "Tuần này",
+      "month": "Tháng này"
+    },
+    "filter_length": {
+      "short": "< 90 phút",
+      "medium": "90-120 phút",
+      "long": "> 120 phút"
+    },
+    "genre_name": {
+      "action": "Hành Động",
+      "adventure": "Phiêu Lưu",
+      "comedy": "Hài",
+      "drama": "Tâm Lý",
+      "horror": "Kinh Dị",
+      "romance": "Tình Cảm",
+      "scifi": "Khoa Học Viễn Tưởng",
+      "thriller": "Giật Gân"
+    },
     "not_found": "Không tìm thấy phim",
     "detail": {
       "min": "phút",
@@ -536,8 +566,17 @@
     "try_again": "Thử Lại",
     "back_home": "Về Trang Chủ"
   },
+  "reviews": {
+    "filters": {
+      "recent": "Gần đây",
+      "highest": "Đánh giá cao nhất",
+      "lowest": "Đánh giá thấp nhất"
+    }
+  },
   "common": {
     "min": "phút",
+    "today": "Hôm nay",
+    "via": "Qua",
     "ticket": "Vé",
     "tickets": "Vé",
     "loading": "Đang tải...",

@@ -10,6 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { useLocale } from "@/contexts/LocaleContext";
 import { DEFAULT_FILTERS } from "./constants";
 import { buildMovieQuery, getMovies } from "./api";
 import { writeParamsFromState } from "./url";
@@ -62,8 +63,9 @@ interface MovieListState {
 
 const SEARCH_DEBOUNCE_MS = 300;
 
-function keyOf(query: string, filters: Filters): string {
+function keyOf(query: string, filters: Filters, locale: "en" | "vn"): string {
   return JSON.stringify([
+    locale,
     query,
     filters.genres,
     filters.rating,
@@ -93,8 +95,9 @@ export function MovieListProvider({
 }) {
   const pathname = usePathname();
   const router = useRouter();
+  const { locale } = useLocale();
 
-  const initialKey = keyOf(initialQuery, initialFilters);
+  const initialKey = keyOf(initialQuery, initialFilters, locale);
 
   /* ── State ── */
   const [activeTab, setActiveTabState] = useState<Tab>(initialTab);
@@ -138,7 +141,7 @@ export function MovieListProvider({
 
   /* ── Page-1 fetch: replace the active tab's list whenever the
         committed query/filters change (or on explicit retry) ── */
-  const currentKey = keyOf(appliedQuery, appliedFilters);
+  const currentKey = keyOf(appliedQuery, appliedFilters, locale);
 
   useEffect(() => {
     const entry = lists[activeTab];
@@ -147,7 +150,7 @@ export function MovieListProvider({
     const seq = ++seqRef.current;
     let cancelled = false;
 
-    getMovies(buildMovieQuery(activeTab, appliedQuery, appliedFilters, 1))
+    getMovies(buildMovieQuery(activeTab, appliedQuery, appliedFilters, 1), locale)
       .then((result) => {
         if (cancelled || seq !== seqRef.current) return; // stale response
         if ("error" in result) {
@@ -189,7 +192,7 @@ export function MovieListProvider({
     };
     // `lists` is intentionally included: after a successful fetch its
     // queryKey matches currentKey and the effect early-returns (no loop).
-  }, [activeTab, appliedQuery, appliedFilters, currentKey, fetchNonce, lists]);
+  }, [activeTab, appliedQuery, appliedFilters, currentKey, fetchNonce, lists, locale]);
 
   /* ── URL sync (debounced with the query — skipped on mount, SSR URL
         already matches) ── */
@@ -264,6 +267,7 @@ export function MovieListProvider({
     try {
       const result = await getMovies(
         buildMovieQuery(activeTab, appliedQuery, appliedFilters, (entry.meta.page ?? 1) + 1),
+        locale,
       );
       if ("error" in result) {
         console.warn("loadMore failed:", result.error);
@@ -288,7 +292,16 @@ export function MovieListProvider({
     } finally {
       setIsLoadingMore(false);
     }
-  }, [isLoadingMore, isFetching, lists, activeTab, appliedQuery, appliedFilters, currentKey]);
+  }, [
+    isLoadingMore,
+    isFetching,
+    lists,
+    activeTab,
+    appliedQuery,
+    appliedFilters,
+    currentKey,
+    locale,
+  ]);
 
   /* ── Filter count for the panel badge ── */
   const activeFilterCount = [

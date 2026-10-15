@@ -26,6 +26,11 @@ interface ShowtimesContextType {
   isPending: boolean;
   dates: ShowtimeDateOption[];
   today: string;
+  /**
+   * True when the dates API answered (even with zero days). False means the
+   * dates fetch failed and the UI falls back to local date chips.
+   */
+  hasDateOptions: boolean;
   /** Switch the day: fetches its slot list client-side and updates the URL. */
   selectDate: (value: string) => void;
   /** Re-fetch the active day (used by the error state's try-again button). */
@@ -48,6 +53,7 @@ export function ShowtimesProvider({
   movieSlug,
   initialDate,
   dates,
+  datesAvailable,
   today,
   initialCinemas,
   initialError,
@@ -56,6 +62,7 @@ export function ShowtimesProvider({
   movieSlug: string;
   initialDate: string;
   dates: ShowtimeDateOption[];
+  datesAvailable: boolean;
   today: string;
   initialCinemas: GroupedShowtimeCinema[];
   initialError: string | null;
@@ -105,15 +112,29 @@ export function ShowtimesProvider({
     if (deepLinkCheckedRef.current) return;
     deepLinkCheckedRef.current = true;
 
+    // The dates API answered fine but lists no days — no date can have
+    // showtimes, so skip the deep-link fetch (it would only render empty).
+    if (datesAvailable && availableDates.length === 0) return;
+
     const param = new URLSearchParams(window.location.search).get("date");
     if (param && param !== initialDate && isValidDateParam(param, availableDates, today)) {
       loadDate(param);
     }
-  }, [availableDates, initialDate, loadDate, today]);
+  }, [availableDates, datesAvailable, initialDate, loadDate, today]);
 
   const value = useMemo(
-    () => ({ activeDate, cinemas, error, isPending, dates, today, selectDate: loadDate, retry }),
-    [activeDate, cinemas, error, isPending, dates, today, loadDate, retry],
+    () => ({
+      activeDate,
+      cinemas,
+      error,
+      isPending,
+      dates,
+      today,
+      hasDateOptions: datesAvailable,
+      selectDate: loadDate,
+      retry,
+    }),
+    [activeDate, cinemas, error, isPending, dates, today, datesAvailable, loadDate, retry],
   );
 
   return <ShowtimesContext.Provider value={value}>{children}</ShowtimesContext.Provider>;
