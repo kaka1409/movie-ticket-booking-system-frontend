@@ -30,6 +30,10 @@ export default function HeroSection({
     };
   }, []);
 
+  // The list can shrink under us (locale refetch) — clamp on read instead of
+  // crashing on a stale index (a sync setState effect trips the lint rule).
+  const safeIndex = Math.min(index, Math.max(movies.length - 1, 0));
+
   const goTo = useCallback(
     (nextIndex: number) => {
       if (fading) return;
@@ -43,12 +47,11 @@ export default function HeroSection({
   );
 
   const prev = useCallback(() => {
-    goTo((index - 1 + movies.length) % movies.length);
-  }, [goTo, index, movies.length]);
-
+    goTo((safeIndex - 1 + movies.length) % movies.length);
+  }, [goTo, safeIndex, movies.length]);
   const next = useCallback(() => {
-    goTo((index + 1) % movies.length);
-  }, [goTo, index, movies.length]);
+    goTo((safeIndex + 1) % movies.length);
+  }, [goTo, safeIndex, movies.length]);
 
   // Autoplay carousel every 6s unless paused
   useEffect(() => {
@@ -62,7 +65,7 @@ export default function HeroSection({
   if (error) return <SectionFallback error={error} />;
   if (movies.length === 0) return null;
 
-  const movie = movies[index];
+  const movie = movies[safeIndex];
 
   return (
     <>
@@ -72,7 +75,7 @@ export default function HeroSection({
         onMouseLeave={() => setIsPaused(false)}
         aria-label={translate("home.desktop.featured_section")}
       >
-        <div className="relative h-[480px] w-full overflow-hidden rounded-(--radius-lg) border border-(--color-border) bg-(--color-surface)">
+        <div className="relative h-[360px] w-full overflow-hidden rounded-(--radius-lg) border border-(--color-border) bg-(--color-surface) md:h-[420px] lg:h-[480px]">
           {/* Backdrop Image */}
           <div
             className={`relative h-full w-full transition-opacity duration-300 ${
@@ -84,7 +87,7 @@ export default function HeroSection({
               alt={movie.title}
               fill
               className="object-cover object-center"
-              sizes="1200px"
+              sizes="(max-width: 1024px) 100vw, 1200px"
               priority
             />
           </div>
@@ -120,7 +123,7 @@ export default function HeroSection({
           </button>
 
           {/* Movie Details Content (Always clearly visible) */}
-          <div className="absolute inset-0 z-10 flex flex-col justify-center pl-16 pr-8 max-w-[620px]">
+          <div className="absolute inset-0 z-10 flex flex-col justify-center pl-12 pr-6 md:pl-16 md:pr-8 max-w-[520px] lg:max-w-[620px]">
             <div className="mb-4 flex flex-wrap items-center gap-2.5">
               <span className="rounded-(--radius-sm) bg-(--color-gold) px-2.5 py-0.5 text-[10px] font-extrabold tracking-widest uppercase text-black">
                 {movie.label}
@@ -130,7 +133,7 @@ export default function HeroSection({
               </span>
               <span className="text-[11px] text-(--color-text-muted)">•</span>
               <span className="text-xs text-(--color-text-secondary)">
-                {Math.floor(movie.duration / 60)}h {movie.duration % 60}m
+                {movie.duration} {translate("common.min")}
               </span>
               <span className="text-[11px] text-(--color-text-muted)">•</span>
               <span className="text-xs text-(--color-text-secondary)">{movie.genre}</span>
@@ -144,7 +147,7 @@ export default function HeroSection({
               )}
             </div>
 
-            <h1 className="mb-3.5 font-black uppercase leading-[1.02] tracking-tight text-white text-4xl lg:text-5xl drop-shadow-md">
+            <h1 className="mb-3.5 font-black uppercase leading-[1.02] tracking-tight text-white text-3xl md:text-4xl lg:text-5xl drop-shadow-md line-clamp-2">
               {movie.title}
             </h1>
 
@@ -152,7 +155,7 @@ export default function HeroSection({
               {movie.description || movie.synopsis}
             </p>
 
-            <div className="flex items-center gap-3.5">
+            <div className="flex flex-wrap items-center gap-3.5">
               <Link
                 href={`/movies/${movie.slug}`}
                 className="cursor-pointer rounded-(--radius-md) bg-(--color-gold) px-7 py-3 text-[13px] font-extrabold tracking-wide text-black no-underline transition-all hover:bg-(--color-gold-light) hover:scale-102"
@@ -180,8 +183,8 @@ export default function HeroSection({
                   aria-label={`${translate("home.desktop.go_to_slide")} ${i + 1}`}
                   className="h-1.5 cursor-pointer rounded-full transition-all duration-300"
                   style={{
-                    width: i === index ? 24 : 8,
-                    background: i === index ? "var(--color-gold)" : "rgba(255,255,255,0.3)",
+                    width: i === safeIndex ? 24 : 8,
+                    background: i === safeIndex ? "var(--color-gold)" : "rgba(255,255,255,0.3)",
                   }}
                   onClick={() => goTo(i)}
                 />

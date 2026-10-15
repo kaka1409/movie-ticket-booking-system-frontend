@@ -6,6 +6,7 @@ import { Star, Sparkles } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useAuth } from "@/contexts/AuthContext";
 import type { Movie } from "@/features/movies/types";
+import { useMoviePreview } from "./MoviePreviewContext";
 
 const REASONS = [
   "Top Rated by Critics",
@@ -18,6 +19,7 @@ const REASONS = [
 export default function ForYou({ movies }: { movies: Movie[] }) {
   const { translate } = useLocale();
   const { user, isAuthenticated } = useAuth();
+  const { handleCardMouseEnter, handleCardMouseMove, handleCardMouseLeave } = useMoviePreview();
 
   if (movies.length === 0) return null;
 
@@ -51,10 +53,15 @@ export default function ForYou({ movies }: { movies: Movie[] }) {
           </p>
         </div>
 
-        <div className="grid grid-cols-5 gap-4">
+        <div className="grid grid-cols-3 gap-4 md:grid-cols-4 lg:grid-cols-5">
           {recommendedMovies.map((movie, index) => (
             <Link key={movie.id} href={`/movies/${movie.slug}`} className="group block">
-              <article className="cursor-pointer">
+              <article
+                onMouseEnter={(e) => handleCardMouseEnter(movie, e)}
+                onMouseMove={handleCardMouseMove}
+                onMouseLeave={handleCardMouseLeave}
+                className="cursor-pointer"
+              >
                 {/* Poster */}
                 <div className="relative mb-2.5 aspect-[2/3] w-full overflow-hidden rounded-(--radius-md) border border-(--color-border) bg-(--color-surface-2) transition-all duration-300 group-hover:-translate-y-1 group-hover:border-(--color-gold)/50 group-hover:shadow-lg">
                   <Image

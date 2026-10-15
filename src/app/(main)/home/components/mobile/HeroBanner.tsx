@@ -65,7 +65,10 @@ export default function HeroBanner({
 
   if (movies.length === 0) return null;
 
-  const currentMovie = movies[index];
+  // The list can shrink under us (locale refetch) — clamp on read instead of
+  // crashing on a stale index.
+  const safeIndex = Math.min(index, movies.length - 1);
+  const currentMovie = movies[safeIndex];
 
   return (
     <section
@@ -118,8 +121,9 @@ export default function HeroBanner({
               key={movieIndex}
               className="h-1.5 rounded-full transition-all duration-300"
               style={{
-                width: movieIndex === index ? 16 : 5,
-                background: movieIndex === index ? "var(--color-gold)" : "rgba(255,255,255,0.2)",
+                width: movieIndex === safeIndex ? 16 : 5,
+                background:
+                  movieIndex === safeIndex ? "var(--color-gold)" : "rgba(255,255,255,0.2)",
               }}
             />
           ))}
