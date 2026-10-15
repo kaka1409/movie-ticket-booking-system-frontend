@@ -1,7 +1,5 @@
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 import type { ApiResponse } from "@/libs/api";
-import { buildLoginUrl } from "@/libs/utils";
 
 /**
  * Full incoming `Cookie` header for server-side `apiFetch`/`apiMutation`
@@ -14,13 +12,24 @@ export async function getRequestCookie(): Promise<string | undefined> {
 }
 
 /**
+ * The UI locale for server-side catalog fetches, read from the `locale`
+ * cookie the `LanguageToggle` writes (`en|vn`, default `en`). Server
+ * components cannot read localStorage, so this cookie is the only SSR-safe
+ * locale source — every `?lang=` catalog call threads through it.
+ */
+export async function getRequestLocale(): Promise<"en" | "vn"> {
+  const cookieStore = await cookies();
+  return cookieStore.get("locale")?.value === "vn" ? "vn" : "en";
+}
+
+/**
  * Whether the incoming request carries a `refreshToken` cookie — the
  * server-side counterpart of `isAuthenticated` (server components cannot read
  * `AuthContext`). Run at the top of protected layouts/pages so unauthenticated
  * traffic never reaches a data fetch — protected data never enters the RSC
  * payload; the caller renders `LoginPrompt` instead of its children.
  * A present-but-revoked cookie still passes here; the post-fetch
- * {@link redirectIfUnauthorized} catches that case.
+ * {@link isUnauthorizedResult} check catches that case.
  */
 export async function hasSession(): Promise<boolean> {
   const cookieStore = await cookies();
@@ -28,17 +37,13 @@ export async function hasSession(): Promise<boolean> {
 }
 
 /**
- * Server-side 401 guard for user-scoped fetches. `hasSession()` only checks
+ * Whether a server-side `apiFetch` result is a 401. `hasSession()` only checks
  * that a `refreshToken` cookie exists — a revoked or stale one still passes,
- * and the backend then answers 401. Call this on the `apiFetch` result right
- * after fetching so the user is bounced to login instead of seeing the page's
- * empty/error state.
- *
- * The stale cookie cannot be cleared here (`cookies()` is read-only in server
- * components); the next successful login overwrites it.
+ * and the backend then answers 401. Callers render `<LoginPrompt />` on `true`
+ * (staying on the protected URL; the prompt's CTA carries the returnUrl) —
+ * never `redirect()`, so a dead session can neither yank the URL nor win over
+ * a parent prompt the way a child-segment `redirect()` used to.
  */
-export function redirectIfUnauthorized(result: ApiResponse<unknown>, returnUrl: string): void {
-  if ("error" in result && result.error.status === 401) {
-    redirect(buildLoginUrl(returnUrl));
-  }
+export function isUnauthorizedResult<T, M>(result: ApiResponse<T, M>): boolean {
+  return "error" in result && result.error.status === 401;
 }

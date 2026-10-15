@@ -1,7 +1,8 @@
 import { getMovieDetail } from "@/features/movies/api";
 import { getBookingById } from "@/features/booking/api";
-import { getRequestCookie, redirectIfUnauthorized } from "@/libs/session";
+import { getRequestCookie, getRequestLocale, isUnauthorizedResult } from "@/libs/session";
 import PaidBookingReset from "@/features/booking/components/PaidBookingReset";
+import LoginPrompt from "@/components/shared/LoginPrompt";
 
 // Mobile components
 import SuccessIcon from "@/components/shared/SuccessIcon";
@@ -19,20 +20,20 @@ export default async function SuccessPage({
   searchParams: Promise<{ bookingId?: string; transactionId?: string }>;
 }) {
   const [{ slug }, query] = await Promise.all([params, searchParams]);
+  const locale = await getRequestLocale();
 
   const [movieResult, bookingResult] = await Promise.all([
     // Real flow always carries `?bookingId=` (submit redirects with it) — the
     // booking payload already carries the movie, so no detail fetch there.
-    query.bookingId ? Promise.resolve(null) : getMovieDetail(slug),
+    query.bookingId ? Promise.resolve(null) : getMovieDetail(slug, locale),
     query.bookingId
       ? getBookingById(query.bookingId, await getRequestCookie())
       : Promise.resolve(null),
   ]);
 
-  if (bookingResult) redirectIfUnauthorized(bookingResult, `/booking/${slug}/status/success`);
+  if (bookingResult && isUnauthorizedResult(bookingResult)) return <LoginPrompt />;
 
-  const movie =
-    movieResult === null || "error" in movieResult ? undefined : movieResult.data;
+  const movie = movieResult === null || "error" in movieResult ? undefined : movieResult.data;
   const booking = bookingResult && !("error" in bookingResult) ? bookingResult.data : null;
   // Payment gateways may return their own reference; the fetched booking wins
   // over the raw URL param only when the param is absent.

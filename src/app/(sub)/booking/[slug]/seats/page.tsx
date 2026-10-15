@@ -2,6 +2,8 @@ import { redirect } from "next/navigation";
 import { getShowtimeById } from "@/features/showtimes/api";
 import { getSeatMap } from "@/features/booking/api";
 import { adaptSeatMap } from "@/features/booking/utils/seatMap";
+import { isUnauthorizedResult } from "@/libs/session";
+import LoginPrompt from "@/components/shared/LoginPrompt";
 
 // Shared
 import StepBar from "@/app/(sub)/booking/components/mobile/StepBar";
@@ -34,6 +36,9 @@ export default async function SelectSeatPage({
   ]);
 
   if ("error" in seatMapResult) {
+    // A dead session renders the prompt in place (same rule as every other
+    // protected fetch); anything else is a real fetch failure.
+    if (isUnauthorizedResult(seatMapResult)) return <LoginPrompt />;
     return <PageError error={seatMapResult.error} />;
   }
 

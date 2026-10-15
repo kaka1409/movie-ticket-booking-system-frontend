@@ -7,7 +7,7 @@ import type {
   Tab,
   Filters,
 } from "./types";
-import { apiFetch, type ApiResponse } from "@/libs/api";
+import { apiFetch, withLang, type ApiResponse } from "@/libs/api";
 import { formatDateOnly } from "@/libs/date";
 import { MOVIES_PAGE_SIZE } from "./constants";
 import { ALL_MOVIES } from "./mock";
@@ -77,8 +77,13 @@ export const REVALIDATE_60 = { next: { revalidate: 60 } } as const;
  */
 export const REVALIDATE_MOVIE_DETAIL = { next: { revalidate: 3600 } } as const;
 
-export async function getFeaturedMovies(): Promise<ApiResponse<FeaturedMovie[]>> {
-  const result = await apiFetch<FeaturedMovieResponse[]>("/movies?featured=true", REVALIDATE_60);
+export async function getFeaturedMovies(
+  locale: "en" | "vn" = "en",
+): Promise<ApiResponse<FeaturedMovie[]>> {
+  const result = await apiFetch<FeaturedMovieResponse[]>(
+    withLang("/movies?featured=true", locale),
+    REVALIDATE_60,
+  );
 
   if ("error" in result) {
     return { error: result.error };
@@ -121,8 +126,12 @@ export function buildMovieQuery(
  * Paginated movie list shared by home rows and the /movies grid.
  * Accepts the full query (search + filters) and maps UI labels to API params.
  */
-export async function getMovies(query: MovieQuery): Promise<ApiResponse<Movie[], MoviesMeta>> {
+export async function getMovies(
+  query: MovieQuery,
+  locale: "en" | "vn" = "en",
+): Promise<ApiResponse<Movie[], MoviesMeta>> {
   const params = new URLSearchParams();
+  params.set("lang", locale);
 
   if (query.status) params.set("status", query.status);
   if (query.search) params.set("search", query.search);
@@ -167,20 +176,30 @@ export async function getMovieBySlug(slug: string): Promise<Movie | undefined> {
 }
 
 /** LIVE — `GET /movies/:slug` returning the union (`{ data }` or `{ error }`). */
-export function getMovieDetail(slug: string): Promise<ApiResponse<Movie>> {
-  return apiFetch<Movie>(`/movies/${encodeURIComponent(slug)}`, REVALIDATE_MOVIE_DETAIL);
+export function getMovieDetail(
+  slug: string,
+  locale: "en" | "vn" = "en",
+): Promise<ApiResponse<Movie>> {
+  return apiFetch<Movie>(
+    withLang(`/movies/${encodeURIComponent(slug)}`, locale),
+    REVALIDATE_MOVIE_DETAIL,
+  );
 }
 
 /* ─── Catalog endpoints (filter options) ─────────────────── */
 
-export async function getGenres(): Promise<ApiResponse<CatalogOption[]>> {
-  return apiFetch<CatalogOption[]>("/genres", REVALIDATE_60);
+export async function getGenres(locale: "en" | "vn" = "en"): Promise<ApiResponse<CatalogOption[]>> {
+  return apiFetch<CatalogOption[]>(withLang("/genres", locale), REVALIDATE_60);
 }
 
-export async function getFormats(): Promise<ApiResponse<CatalogOption[]>> {
-  return apiFetch<CatalogOption[]>("/formats", REVALIDATE_60);
+export async function getFormats(
+  locale: "en" | "vn" = "en",
+): Promise<ApiResponse<CatalogOption[]>> {
+  return apiFetch<CatalogOption[]>(withLang("/formats", locale), REVALIDATE_60);
 }
 
-export async function getAgeRatings(): Promise<ApiResponse<CatalogOption[]>> {
-  return apiFetch<CatalogOption[]>("/age-ratings", REVALIDATE_60);
+export async function getAgeRatings(
+  locale: "en" | "vn" = "en",
+): Promise<ApiResponse<CatalogOption[]>> {
+  return apiFetch<CatalogOption[]>(withLang("/age-ratings", locale), REVALIDATE_60);
 }

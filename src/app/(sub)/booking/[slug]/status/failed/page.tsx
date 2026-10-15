@@ -1,7 +1,8 @@
 import { getMovieDetail } from "@/features/movies/api";
 import { getBookingById } from "@/features/booking/api";
-import { getRequestCookie, redirectIfUnauthorized } from "@/libs/session";
+import { getRequestCookie, getRequestLocale, isUnauthorizedResult } from "@/libs/session";
 import PaidBookingReset from "@/features/booking/components/PaidBookingReset";
+import LoginPrompt from "@/components/shared/LoginPrompt";
 import type { Movie } from "@/features/movies/types";
 import type { BookingDetail } from "@/features/booking/types";
 
@@ -21,20 +22,20 @@ export default async function FailPage({
   searchParams: Promise<{ bookingId?: string; reason?: string }>;
 }) {
   const [{ slug }, query] = await Promise.all([params, searchParams]);
+  const locale = await getRequestLocale();
 
   const [movieResult, bookingResult] = await Promise.all([
     // Real flow always carries `?bookingId=` (submit redirects with it) — the
     // booking payload already carries the movie, so no detail fetch there.
-    query.bookingId ? Promise.resolve(null) : getMovieDetail(slug),
+    query.bookingId ? Promise.resolve(null) : getMovieDetail(slug, locale),
     query.bookingId
       ? getBookingById(query.bookingId, await getRequestCookie())
       : Promise.resolve(null),
   ]);
 
-  if (bookingResult) redirectIfUnauthorized(bookingResult, `/booking/${slug}/status/failed`);
+  if (bookingResult && isUnauthorizedResult(bookingResult)) return <LoginPrompt />;
 
-  const movie =
-    movieResult === null || "error" in movieResult ? undefined : movieResult.data;
+  const movie = movieResult === null || "error" in movieResult ? undefined : movieResult.data;
   const booking = bookingResult && !("error" in bookingResult) ? bookingResult.data : null;
   // URL param first (explicit gateway failure), then the persisted payment
   // reason on the fetched booking.

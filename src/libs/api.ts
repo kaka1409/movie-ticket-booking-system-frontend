@@ -11,8 +11,10 @@ export const UNAUTHORIZED_EVENT = "primseat:unauthorized";
 /**
  * Tells the client auth layer that the current credentials were rejected.
  * `/auth/*` endpoints are skipped — a failed login/refresh 401 is an expected
- * answer, not an expired session. On the server (no `window`) callers use
- * `redirectIfUnauthorized()` from `libs/session.ts` instead.
+ * answer, not an expired session. AuthContext clears state on this event and
+ * `ProtectedRoute` renders the login prompt in place (no redirect). On the
+ * server (no `window`) callers render `<LoginPrompt />` on
+ * `isUnauthorizedResult()` from `libs/session.ts` instead.
  */
 function notifyUnauthorized(path: string): void {
   if (typeof window === "undefined") return;
@@ -24,6 +26,15 @@ export type SuccessResponse<T, M = Record<string, unknown>> = {
   data: T;
   meta?: M;
 };
+
+/**
+ * Append the backend content-locale query (`?lang=en|vn`) to a path that may
+ * already carry a query string. Only catalog endpoints read it — auth, seats,
+ * holds, bookings, tickets and user-scoped reads stay lang-less.
+ */
+export function withLang(path: string, locale: "en" | "vn"): string {
+  return `${path}${path.includes("?") ? "&" : "?"}lang=${locale}`;
+}
 
 export type ErrorResponse = {
   error: {

@@ -9,10 +9,8 @@ import {
   useMemo,
   type ReactNode,
 } from "react";
-import { useRouter } from "next/navigation";
 import { refreshAction } from "@/features/auth/action";
 import { UNAUTHORIZED_EVENT } from "@/libs/api";
-import { buildLoginUrl } from "@/libs/utils";
 import type { User } from "@/features/auth/types";
 
 interface AuthContextType {
@@ -31,7 +29,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const router = useRouter();
 
   useEffect(() => {
     refreshAction()
@@ -58,19 +55,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   // Backend answered 401 on an authenticated request — the session is gone
-  // (revoked/expired refresh, rejected access token). Reset state and bounce
-  // to login, remembering where the user was.
+  // (revoked/expired refresh, rejected access token). Just reset state:
+  // `ProtectedRoute` swaps to the login prompt in place, so the visitor stays
+  // on the protected URL instead of being yanked to /login mid-use.
   useEffect(() => {
-    const handleUnauthorized = () => {
-      const currentPath = window.location.pathname;
-      if (currentPath === "/login" || currentPath === "/register") return;
-      const returnUrl = currentPath + window.location.search;
-      clearAuth();
-      router.replace(buildLoginUrl(returnUrl));
-    };
+    const handleUnauthorized = () => clearAuth();
     window.addEventListener(UNAUTHORIZED_EVENT, handleUnauthorized);
     return () => window.removeEventListener(UNAUTHORIZED_EVENT, handleUnauthorized);
-  }, [clearAuth, router]);
+  }, [clearAuth]);
 
   const updateUser = useCallback((patch: Partial<User>) => {
     setUser((prev) => (prev ? { ...prev, ...patch } : prev));
