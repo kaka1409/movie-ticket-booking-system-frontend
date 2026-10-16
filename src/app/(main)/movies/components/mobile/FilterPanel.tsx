@@ -12,7 +12,7 @@ import {
   RATING_MAX,
   RATING_STEP,
 } from "@/features/movies/constants";
-import FilterChip from "./FilterChip";
+import Chip from "@/components/ui/Chip";
 import FilterCheckRow from "./FilterCheckRow";
 import FilterLabel from "./FilterLabel";
 import type { Filters } from "@/features/movies/types";
@@ -95,7 +95,7 @@ export default function FilterPanel() {
               <FilterLabel>{translate("movies.release_date")}</FilterLabel>
               <div className="flex flex-wrap gap-2">
                 {RELEASE_OPTIONS.map((option) => (
-                  <FilterChip
+                  <Chip
                     key={option.token}
                     label={translate(RELEASE_LABEL_KEYS[option.token])}
                     active={filters.releaseDate === option.token}
@@ -174,7 +174,7 @@ export default function FilterPanel() {
                 <FilterLabel>{translate("movies.age_rating")}</FilterLabel>
                 <div className="flex flex-wrap gap-2">
                   {filterOptions.ageRatings.map((ageRating) => (
-                    <FilterChip
+                    <Chip
                       key={ageRating.id}
                       label={ageRating.name}
                       active={filters.ageRating === ageRating.name}
@@ -190,7 +190,7 @@ export default function FilterPanel() {
               <FilterLabel>{translate("movies.format")}</FilterLabel>
               <div className="flex flex-wrap gap-2">
                 {filterOptions.formats.map((format) => (
-                  <FilterChip
+                  <Chip
                     key={format.id}
                     label={format.name}
                     active={filters.format === format.name}
