@@ -29,15 +29,13 @@ No test runner. `tests/{e2e,integration,unit}/` are empty dirs. `pnpm test` unde
   - `blank/` — `index.tsx`, `mobile/BlankLayout.tsx`, `desktop/BlankLayout.tsx`
   - `constants.ts` — LayoutType, Device types (device hook lives in `src/hooks/useDevice.ts`)
 - **Shared layout components** (`src/layouts/components/`): `Logo.tsx` (size="sm"|"lg", tagline), `LanguageToggle.tsx` (variant="flag"|"text")
-- **Shared UI components** (`src/components/ui/`): `MovieCard.tsx` (reusable movie card), `Skeleton.tsx` (Skeleton, SkeletonCard loaders), `TearLine.tsx` (ticket-style dashed separator with circular cutouts), `FormActions.tsx` (primary + cancel button pair), `Tabs.tsx` (generic tab bar), `Button.tsx` (primary/outline/loadMore variants, loading state), `FormField.tsx` (icon + input + focus/error border), `Badge.tsx` (neutral/dark/gold/success/error pills), `SectionHeader.tsx` (borderLeft/goldBar/uppercase variants), `SearchBar.tsx` (icon + input + clear button), `EmptyState.tsx` (icon + title + description + CTA), `InputField.tsx` (text input with icon), `PasswordField.tsx` (password input with Eye/EyeOff toggle), `Logo.tsx` (brand logo), `TermsCheckbox.tsx` (checkbox with terms/privacy links)
-- **Shared hooks** (`src/hooks/`): `useDevice.ts` — returns `"mobile" | "desktop"` via `matchMedia`, seeded from the server UA guess (`DeviceProvider` in `src/contexts/DeviceContext.tsx`, resolved in `src/app/layout.tsx`) so SSR/hydration paint the right variant with no flash; the `matchMedia` effect still corrects misclassified UAs (e.g. iPadOS desktop mode) and follows resizes; `useMounted.ts` — flips to `true` shortly after mount (booking status page entry animations); `useAppendReveal.ts` — paginated-list reveal (grow → scroll first new card into view + animation threshold; `swapKey` change = list replaced, no scroll); `useDebouncedValue.ts` — returns a value once it stops changing for `delayMs` (default 300 ms)
+- **Shared UI components** (`src/components/ui/`): `MovieCard.tsx` (reusable movie card), `Skeleton.tsx` (Skeleton, SkeletonCard loaders), `TearLine.tsx` (ticket-style dashed separator with circular cutouts), `FormActions.tsx` (primary + cancel button pair), `Tabs.tsx` (generic tab bar), `Button.tsx` (primary/outline/loadMore variants, loading state), `FormField.tsx` (icon + input + focus/error border), `Badge.tsx` (neutral/dark/gold/success/error pills), `SectionHeader.tsx` (borderLeft/goldBar/uppercase variants), `SearchBar.tsx` (icon + input + clear button), `EmptyState.tsx` (icon + title + description + CTA), `InputField.tsx` (text input with icon), `PasswordField.tsx` (password input with Eye/EyeOff toggle), `Logo.tsx` (brand logo), `TermsCheckbox.tsx` (checkbox with terms/privacy links), `ExpandableText.tsx` (review body with Show more/less past 160 chars)
+- **Shared hooks** (`src/hooks/`): `useDevice.ts` — returns `"mobile" | "desktop"` via `matchMedia("(min-width: 740px)")`, kept in sync with `--breakpoint-md: 740px` in `styles/global.css` (not the Tailwind default 768px) so the JS device switch and every `md:` page split change variant on the same pixel — iPad mini portrait (744px) renders desktop. Known gap: most desktop page bodies are still null stubs, so tablet-portrait visitors get desktop chrome with empty bodies until those are built (backlog); `useMounted.ts` — flips to `true` shortly after mount (booking status page entry animations); `useAppendReveal.ts` — paginated-list reveal (grow → scroll first new card into view + animation threshold; `swapKey` change = list replaced, no scroll); `useDebouncedValue.ts` — returns a value once it stops changing for `delayMs` (default 300 ms)
 - **Redux Toolkit**: store wired at `src/store/index.ts` — `reducer: {}` (unused; reserved for future global state, e.g. notifications badge).
 - **i18n**: `useLocale()` from `LocaleContext` via `useSyncExternalStore`. Returns `{ locale, setLocale, translate }`. Persists to `localStorage("locale")`. Translations at `src/locales/{en,vn}.json`. Throws if used outside `LocaleProvider`.
 - `@/` alias → `src/` in `tsconfig.json`.
 - Error pages: `src/app/error.tsx` (root, uses shared `components/shared/RouteError.tsx`), `src/app/global-error.tsx`, per-group `error.tsx` in `(main)`, `(blank)`, `(sub)`, `(auth)`; 404 at `src/app/not-found.tsx`.
 - **All API calls on server**: Every `page.tsx` is a server component that fetches data via `await` — except `tickets/[id]/cancel/page.tsx`, a client state machine by design. Client components (`"use client"`) receive data via props only — no `useEffect` + API call pattern — except request-keyed refetches (movies list, home QuickBooking dates/slots) that re-run when their key (filters/locale, movie/date) changes. Protected pages are wrapped with `<ProtectedRoute>` client component for auth gating. **Exception**: the seat-hold lifecycle (`GET`/`PUT`/`DELETE /seat-holds`) runs client-side in `features/booking/hooks/useSeatHolds.ts` — the access token lives in RAM, so the Bearer header is attached in the browser and the token never reaches the Next.js server.
-
-
 
 ## State Management
 
@@ -45,15 +43,14 @@ No test runner. `tests/{e2e,integration,unit}/` are empty dirs. `pnpm test` unde
 - **Movies page**: React Context (`src/features/movies/context.tsx`) with URL sync via `router.replace` (initial tab/query/filters seeded server-side, no `useSearchParams`). State: `activeTab`, `query`, `filtersOpen`, `filters`, `appliedFilters`, `visibleCount`. URL-synced params: `status`, `q`, `genres`, `rating`, `format`, `ageRating`. Non-URL state: `filtersOpen`, `visibleCount`, `filters.releaseDate`, `filters.length`.
 - **Tickets listing**: server-side URL pager — `(main)/tickets/page.tsx` reads `?tab=upcoming|past&page=N`, fetches only the visible tab (`getUpcomingTickets`/`getPastTickets`), renders `Tabs` + `Pager` (`components/mobile/Pager.tsx`: prev/next + 5 windowed numbers, hidden on a single page). No listing context, no client slicing; desktop `TicketsContent` is a null stub.
 - **Booking flow**: central `useReducer` draft — `BookingProvider` (`src/features/booking/context.tsx`) wraps all booking steps at `booking/[slug]/layout.tsx` and holds one `BookingState` (cinema slice incl. `cinemaQuery`, seat selection + live `seatGrid`/`maxSeats`, snack arrays, contact, `paymentMethodId` + `paymentMethod`, countdown, `holdExpiresAt`) driven by the typed `bookingReducer` in `src/features/booking/reducer.ts` (`SET_CINEMA`/`SET_CINEMA_QUERY`/`SET_CINEMA_DATE`/`CLEAR_CINEMA_SLOT`/`ADOPT_MOVIE`/`ADOPT_SEAT_GRID`/`SET_SEAT_GRID`/`SELECT_HOLD_CELLS`/`CLEAR_SEAT_SELECTION`/`TOGGLE_SEAT`/`SET_SNACKS`/`SET_CONTACT`/`SET_PAYMENT`/`SET_HOLD`/`START_COUNTDOWN`/`EXPIRE_SESSION`/`RESET`). The context setters (`setCinema`, `setCinemaQuery`, `toggleSeat`, `setSnacks`, `setCredentials`, `setPayment`, `startCountdown`, `expireSession`, …) are thin dispatch wrappers so consumers stay prop-stable. One 10-minute session starts at the first seats-step CTA (`START_COUNTDOWN` no-ops afterwards — re-presses never extend it) and persists across refreshes via `sessionStorage("booking:countdownStart")`; `EXPIRE_SESSION` (fired by `SessionExpiryWatcher`) drops the clock so a re-pick + CTA starts a new session. Derived values (`total`, `ticketCount`, `ticketPrice`, `snackTotal`, `seatType`) are computed in the value memo — never stored in state; `selectedSeats` is derived inside the reducer from `seatGrid`. `resetBooking()` (dispatch `RESET`) runs from `PaidBookingReset`.
-- **Wishlist**: React Context (`src/features/wishlist/context.tsx`) — `WishlistProvider` at root layout, `useWishlist()` hook.
+- **Wishlist**: React Context (`src/features/wishlist/context.tsx`) — `WishlistProvider` at root layout, `useWishlist()` hook. `toggleWishlist(id, feedback?)` is the single choke point for every heart: optimistic local toggle + BE sync when logged in (rollback on real failures) + toast feedback; logged-out picks mirror to `localStorage("wishlist")` and restore on mount (two-pass effect with `eslint-disable`, no hydration mismatch since storage has no server equivalent).
+- **Toast**: `ToastContext.tsx` (`ToastProvider` outermost in root layout, `useToast().notify(message, { variant, durationMs? })` — success/error/info, max 3 stacked, 3 s auto-dismiss, click to close) + `components/ui/ToastViewport.tsx` (fixed stack, `aria-live="polite"`). Use for simple notifications; keep dedicated snackbars when an action button is needed (wishlist Undo).
 - **Booking step data flow** — no step-level contexts (`src/features/booking/contexts/` was removed): server pages fetch catalogs and pass them as props, step state lives in the booking reducer, and components read `useBooking()` plus pure helpers in `features/booking/utils/`:
   - **Cinema step** — `CinemaAdopt` (effect-only component mounted once by the page) adopts the server-resolved URL selection into the draft (URL params win over the saved draft; a URL date that differs clears the stale selection) plus the slim `BookingMovie` snapshot. That snapshot is the step's only `GET /movies/:slug` fetch: credentials/payment read `movie` from `useBooking()` instead of refetching, guarded by `RequireDraft`. Handlers sit where the data is: `CinemaList` toggles slots through `resolveSlotSelection`, `DatePickerWrapper` dispatches `setCinemaDate` + `router.replace`, `SearchBar`/`BottomBar` read and write the draft directly. No mirror effect, so UI and draft cannot diverge.
   - **Seats step** — the grid lives in the reducer as `seatGrid`; `SeatMapWrapper` adopts the server map (`ADOPT_SEAT_GRID` re-marks the draft's saved seats) and renders `seatGrid ?? restoreSelectedSeats(initialRows, selectedSeats)` so first paint never flashes an empty map. `TOGGLE_SEAT` is one pure transition (sweetbox pair toggle, cap counts CHAIRS via `seatIds.length`, derives `selectedSeats`) and never starts the countdown. Sweetbox cells share one label (`I(1-2)`) for 2 chairs. `?showtimeId=` deep links sync into the draft from `SeatMapWrapper`; the hold network side lives in `hooks/useSeatHolds.ts` (restore/release/expiry only).
   - **Snack step** — the selected `combos[]`/`foods[]` arrays in the draft are the single source of truth (back-navigation restore and zeroing come for free); steppers upsert through `withItemQty()` → `setSnacks`. No qty records, no sync effects.
   - **Status pages** — no context: each `page.tsx` derives `transactionId`/`reason` server-side (URL param → fetched-booking fallback) and passes `movie`/`booking`/`reason`/`transactionId` as props; entry animations use the shared `useMounted()` hook (`src/hooks/useMounted.ts`); `PaidBookingReset` (effect-only) dispatches `resetBooking()` once the fetched booking is `paid`.
 - **Other pages**: Local `useState` or no state needed.
-
-
 
 ## Feature Scaffolding
 
@@ -62,13 +59,11 @@ No test runner. `tests/{e2e,integration,unit}/` are empty dirs. `pnpm test` unde
 - `src/features/notifications/` — `mock.tsx`, `constants.ts`, `types.ts`, `api.ts` (getNotifications).
 - `src/features/auth/` — `types.ts` (User, LoginRequest, LoginResponse, RegisterRequest, RegisterResponse, RefreshResponse), `action.ts` (server actions: loginAction, registerAction, refreshAction, logoutAction — `"use server"`), `schema.ts` (createLoginSchema, createRegisterSchema — Zod factory functions with i18n).
 - `src/features/profile/` — `types.ts` (User interface, UpdateProfileRequest), `action.ts` (updateProfile server action), `mock.ts`.
-- `src/features/reviews/` — `mock.ts` (FILTERS with FilterKey), `types.ts` (FilterKey), `api.ts` (getReviewFilters).
-- `src/features/wishlist/` — `mock.ts` (INITIAL_WISHLIST IDs), `api.ts` (re-exports INITIAL_WISHLIST), `context.tsx` (WishlistProvider, useWishlist).
+- `src/features/reviews/` — `mock.ts` (FILTERS with FilterKey), `types.ts` (FilterKey, `MovieReview` + `MyReview`/`MyReviewsResponse` for `/reviews/me`), `api.ts` (`getReviewFilters`, `getReviews`, `getMyReviews`, client-interactive `deleteMyReview`), `action.ts` (movie-detail review server actions), `useMovieReviews.ts` (detail-page review state: paging/mutations), `useReviewHighlight.ts` (shared `#review-<id>` deep-link: scroll + 4 s ring + bounded page hunt), `constants.ts` (`REVIEWS_PAGE_SIZE`, `REVIEW_MAX_LENGTH = 500`).
+- `src/features/wishlist/` — no mock (deleted): `types.ts` (`WishlistItem`, `WishlistMovie` — exact BE payload, `WishlistTab`), `api.ts` (LIVE: `getWishlist` + client-interactive `addWishlist`/`removeWishlist` with RAM Bearer, seat-holds precedent), `context.tsx` (WishlistProvider, useWishlist — `toggleWishlist(id, feedback?)` is the single choke point for every heart: optimistic local + BE sync when logged in with rollback + toast; logged-out picks mirror to `localStorage("wishlist")` with mount restore).
 - `src/features/booking/` — `types.ts` (SelectedSeat/SelectedCombo/SelectedFood/BookingMovie/BOOKING_STEP_KEYS re-export shared types + wire types: SeatMapCell/SeatMapRow/SeatMapResponse/CurrentSeatHoldResponse/SeatHoldResponse/PaymentMethodOption/BookingStatus/PaymentFailReason/BookingDetail/PayResult), `utils/` domain folder: `seat.ts` (`getSeatLabel` — the single seat-label format everywhere; grid helpers `restoreSelectedSeats`/`selectCellsByIds`/`clearGridSelection`), `cinema.ts` (`findShowtime`/`resolveSlotSelection`/`resolveCinemaAdoption` — step selection + URL adoption), `bookingCard.ts` (`bookingCardData(booking)` — BookingDetail → card props: merged sweetbox seats, snacks, payment-method label, theater/date/bookingRef), `snack.ts` (`withItemQty` stepper upsert), `seatMap.ts` (`adaptSeatMap` — wire GET /seats → SeatGrid `SeatRow[]`: kind mapping, multi-segment cell splitting, price passthrough), `api.ts` (LIVE: `getSeatMap`, `getCombos`, `getFoodItems`, `getFoodCategories`, `getPaymentMethods`, `getSeatHolds`/`putSeatHolds`/`releaseSeatHolds` (client-interactive, Bearer from RAM), `getBookingById`; MOCK out-of-scope: `getSeatRows`, `getSeatPrices`, `getCountdownSeconds` (+ `getCinemas`/`getDates` for ticket-modify only) + `TODO(api)`), `action.ts` (`"use server"`: `createBookingAction`, `payBookingAction` — see Server Actions Convention), `mock.ts` (re-exports `features/shared/mock`), `context.tsx` (BookingProvider, useBooking — thin dispatch wrappers over the reducer), `reducer.ts` (BookingState, BookingAction, bookingReducer, INITIAL_BOOKING_STATE — the seat grid and cinema-step UI state live here too), `hooks/useSeatHolds.ts` (client seat-hold lifecycle: restore/release/early-hold safety; the session end is enforced by `SessionExpiryWatcher`, not the hook), `components/` (`CinemaAdopt`, `PaidBookingReset`, `SessionExpiryWatcher`, `RequireDraft` — effect-only mount helpers/guards).
 - `src/hooks/` — `useDevice.ts` (returns `"mobile" | "desktop"` via `matchMedia`), `useMounted.ts` (post-mount flip for staged entry animations), `useAppendReveal.ts` (grow-reveal + scroll for movies/tickets/reviews lists), `useDebouncedValue.ts` (value that settles after `delayMs`)
 - `src/libs/utils.ts` has `slugify`, `formatVND`, `formatDate`, `formatRelativeTime`, `getSafeReturnUrl`, `buildLoginUrl`; `src/libs/date.ts` has `formatDateOnly` (local calendar dates); `src/libs/zod.ts` has shared Zod validators (`isValidPhone`, password regex patterns); `src/types/index.ts` has shared types (`Device`, `Movie`, `CastMember`, `FeaturedMovie`). Feature-specific types live in `features/*/types.ts`. Feature-specific Zod schemas live in `features/*/schema.ts`.
-
-
 
 ## Auth Pages (Login & Register)
 
@@ -90,32 +85,32 @@ Tab-switching auth page — both login and register in a single `AuthPage` compo
   - `POST /api/v1/auth/refresh` — forwards refreshToken cookie → new accessToken + new refreshToken cookie (rotation)
   - `POST /api/v1/auth/logout` — forwards refreshToken cookie → clears refresh token cookie + revokes token in DB
 
-
-
 ## Protected Route Guards
 
 Protection is layered (outside-in):
 
 1. **Server gate** — `hasSession(): Promise<boolean>` from `src/libs/session`, called at the top of `(sub)/layout.tsx`, `(main)/tickets/page.tsx`, `(main)/profile/page.tsx`. When the `refreshToken` cookie is absent it renders `LoginPrompt` in place of children — no redirect: the visitor stays on the protected URL and the prompt's CTA links to `/login?returnUrl={pathname}` (sanitized again by the login page).
-  - Page-level gates (`tickets`, `profile`) return before any fetch → nothing leaves the server.
-  - The layout-level gate (`(sub)/`) swaps only the DOM output: Next 16 still executes the child page segment, so its rows land in the flight `<script>` payload but are never committed to the DOM. With a live backend that cookie-less fetch answers 401 → error union → no protected data enters the payload; during the mock phase only placeholder mock data appears there.
+
+- Page-level gates (`tickets`, `profile`) return before any fetch → nothing leaves the server.
+- The layout-level gate (`(sub)/`) swaps only the DOM output: Next 16 still executes the child page segment, so its rows land in the flight `<script>` payload but are never committed to the DOM. With a live backend that cookie-less fetch answers 401 → error union → no protected data enters the payload; during the mock phase only placeholder mock data appears there.
+
 2. `src/components/shared/ProtectedRoute.tsx` — client component, UX layer (handles a cookie that exists but fails `refreshAction()`):
-  - `isLoading` → skeleton spinner
-  - `!isAuthenticated` → `LoginPrompt` (icon + "Login Required" + CTA button → `/login?returnUrl={pathname}` via `usePathname()`)
-  - `isAuthenticated` → render children
-  - Rendered at page level by `tickets/page.tsx` and `profile/page.tsx`, and at layout level by `(sub)/layout.tsx`
+
+- `isLoading` → skeleton spinner
+- `!isAuthenticated` → `LoginPrompt` (icon + "Login Required" + CTA button → `/login?returnUrl={pathname}` via `usePathname()`)
+- `isAuthenticated` → render children
+- Rendered at page level by `tickets/page.tsx` and `profile/page.tsx`, and at layout level by `(sub)/layout.tsx`
+
 3. **Backend enforcement** — server-side fetches of user-scoped data forward the incoming cookies via `getRequestCookie()` (see API Layer).
 
 - `src/components/shared/LoginPrompt.tsx` — shared prompt UI: returned directly by the server gate, and reused by `ProtectedRoute` for the client-side fallback.
 - **Component-level protection**: Movie detail `Reviews.tsx` conditionally renders `WriteReview` — shows login CTA for unauthenticated users, review list remains public
-
 
 | Route                                                                | Protected?               |
 | -------------------------------------------------------------------- | ------------------------ |
 | `/`, `/home`, `/movies`, `/movies/:slug`                             | Public                   |
 | `/tickets`, `/profile`                                               | Protected (page-level)   |
 | `/profile/*`, `/tickets/:id/*`, `/booking/:slug/*`, `/notifications` | Protected (layout-level) |
-
 
 Known gap: a present-but-revoked `refreshToken` cookie passes `hasSession()`. Handled without ever leaving the URL: client-side a backend 401 dispatches `UNAUTHORIZED_EVENT` (`libs/api.ts` `notifyUnauthorized`, `/auth/*` excluded) → `AuthContext` only clears state and `ProtectedRoute` swaps to the prompt in place; server-side callers check `isUnauthorizedResult(result)` (`libs/session.ts`) on `apiFetch` results and return `<LoginPrompt />` — wired on tickets listing/detail, booking seats/status pages (the stale cookie itself can't be cleared from a server component; the next login overwrites it). Rule: no `redirect()` to `/login` anywhere on the 401 path — a child-segment redirect used to win over the parent layout's prompt and yank the URL, which is exactly the bug this rule prevents.
 
@@ -224,10 +219,11 @@ Uses `getReviewFilters()` from `features/reviews/api.ts` and `ALL_MOVIES` mock d
 
 ## Wishlist Page
 
-`(sub)/profile/wishlist/page.tsx` — wishlist listing:
+`(sub)/profile/wishlist/page.tsx` — server component: fetches live `getWishlist(cookie, locale)` (no mock — entries carry the full movie card via `WishlistItem`; failure → local draft fallback), mounts `WishlistHydrate`, then composes:
 
-- `components/mobile/WishlistMovieList.tsx` — wishlist movie grid
-- `components/mobile/WishlistCard.tsx` — individual wishlist movie card with heart toggle
+- `components/mobile/WishlistHydrate.tsx` — effect-only mount adoption of server ids into the draft (booking `CinemaAdopt` pattern)
+- `components/mobile/WishlistMovieList.tsx` — count sentence (`count_prefix`/`count_suffix`) on top, search bar (title + genre, debounced) + All/Now Showing/Coming Soon chips (shared `ui/Chip` `variant="outline"`, reviews style) + 2-column grid; filtering is client-side; local-only ids without a BE payload never render; `isBookable` reads `movie.status`
+- `components/mobile/WishlistCard.tsx` — compact card with heart toggle (undoable removal via parent snackbar)
 - `components/mobile/EmptyState.tsx` — empty state when wishlist is empty
 - `components/desktop/WishlistContent.tsx` — stub (returns null)
 
@@ -274,8 +270,6 @@ Booking flow navigation:
 - Credentials BottomBar → `/booking/[slug]/payment`
 - Payment BottomBar → `createBookingAction` → `payBookingAction` → `/booking/[slug]/status/success?bookingId=...` or `/booking/[slug]/status/failed?bookingId=...&reason=...` (see Payment Page)
 
-
-
 ## Snack Page
 
 `(sub)/booking/[slug]/snack/page.tsx` — server component, fetches the live catalogs in parallel (`getCombos`, `getFoodItems`, `getFoodCategories` — contract §4.2–4.4), composes mobile components:
@@ -299,8 +293,6 @@ Section titles (`Quick Combos`, `Pick & Mix`) use `--color-gold-dark`. Prices us
 - `components/mobile/ContactForm.tsx` — prefill priority: saved BookingContext contact info → logged-in auth user (`fullname`/`email`) → empty
 - `components/mobile/OrderSummary.tsx` — takes no props; reads the movie snapshot (`BookingMovie` adopted at the cinema step) plus cinema, room, date/time, seats, seat type, combos, foods and total from BookingContext
 - `components/mobile/BottomBar.tsx` — sticky bottom bar, total + "Continue to Payment" CTA → `/booking/[slug]/payment`, derives `isValid` from the booking contact draft
-
-
 
 ## Payment Page
 
@@ -337,8 +329,6 @@ Both pages are plain server components with no `<Suspense>` — nothing client-s
   - `FailActions.tsx` — retry/home/help action buttons; `useMounted()`
 - `PaidBookingReset.tsx` (`features/booking/components/PaidBookingReset.tsx`) — effect-only (renders nothing), mounted by both pages: dispatches `resetBooking()` when the fetched booking status is `paid`, so a paid booking ends the flow and drops the local draft (a still-failed booking keeps its draft for the retry path).
 
-
-
 ## Shared Booking Components
 
 `booking/components/mobile/` (shared across all booking steps):
@@ -347,8 +337,6 @@ Both pages are plain server components with no `<Suspense>` — nothing client-s
 - `CountdownBanner.tsx` — session-deadline countdown (session first-CTA + 10 min wins over the hold TTL; static 10:00 pre-CTA or after a lapsed session, ticking once a session starts)
 - `DetailRow.tsx` — reusable label/value row with icon, used in ticket cards
 - `PriceBreakdown.tsx` — shared seats→snacks→payment/total block used by ticket detail, booking success/failed cards, transfer confirm and both OrderSummary panels
-
-
 
 ## Framework / Toolchain Quirks
 
@@ -371,8 +359,6 @@ Both pages are plain server components with no `<Suspense>` — nothing client-s
 - `postcss.config.mjs` only has `@tailwindcss/postcss` plugin.
 - Prettier: `.prettierrc` (`printWidth: 100`, double quotes, trailing commas) + `.prettierignore`; `pnpm format` / `pnpm format:check`. No CI/CD workflows.
 
-
-
 ## Movies Page Deep Linking
 
 URL scheme for movies page with query params:
@@ -382,7 +368,6 @@ URL scheme for movies page with query params:
 /movies?status=coming_soon&genres=Action,Drama&rating=4.5+&format=IMAX&ageRating=R
 ```
 
-
 | Param       | Values                                | Default       |
 | ----------- | ------------------------------------- | ------------- |
 | `status`    | `now_showing`, `coming_soon`          | `now_showing` |
@@ -390,7 +375,6 @@ URL scheme for movies page with query params:
 | `rating`    | `4.5+`, `4.0+`, `3.5+`                | empty         |
 | `format`    | `2D`, `IMAX`, `4DX`                   | empty         |
 | `ageRating` | `P`, `PG-13`, `R`, `NC-17`            | empty         |
-
 
 Home page "See All" / "Explore All" buttons link to movies page with appropriate `status` param.
 
@@ -408,13 +392,11 @@ URL → state is applied **once, server-side at render** (via `features/movies/u
 - Helper placement: calendar-date math → `libs/date.ts` (`formatDateOnly`); shared pure helpers → `libs/utils.ts` (`buildLoginUrl`, `formatVND`); feature helpers → `features/*/utils.ts` (or a domain-split `utils/` folder when a feature outgrows one file — booking: `getSeatLabel` in `utils/seat.ts`).
 - Mock vs live: every API function is marked at its definition (`MOCK`/`LIVE` comment or section-level `TODO(api)` marker). The booking flow itself is fully LIVE (seat map, holds, catalogs, create/pay, booking detail); remaining booking mocks (`getSeatRows`, `getSeatPrices`, `getCountdownSeconds`, plus `getCinemas`/`getDates` for ticket-modify only) — do not "just wire it live" without checking the payload.
 - Repeated markup goes to a shared component: `booking/components/mobile/PriceBreakdown.tsx` (seats/snacks/total), `(main)/tickets/components/mobile/TicketList.tsx` (upcoming/past list).
-- Filter components (FilterChip, FilterCheckRow, FilterLabel) are internal to movies page `components/mobile/`.
+- Filter components (FilterCheckRow, FilterLabel) are internal to movies page `components/mobile/`; the chip itself is shared at `components/ui/Chip.tsx` (movies filter panel + wishlist status tabs).
 - All cinema data uses **PrimeSeat** brand — Vietnamese addresses, km-based distances, 24h time format.
 - Inline `style={}` props are used for dynamic/computed values (gradients, animation delays, computed widths, aspect ratios). Static styling always uses Tailwind utility classes with CSS custom property syntax.
 - Payment method logos use `next/image` (`public/images/VNPay.png`, `public/images/momo.png`).
 - Pages using `useSearchParams()` must wrap content in `<Suspense>` to avoid 404 during SSR.
-
-
 
 ## Server Actions Convention
 
@@ -425,8 +407,6 @@ URL → state is applied **once, server-side at render** (via `features/movies/u
 - Auth actions (`features/auth/action.ts`) read/write cookies via `cookies()` from `next/headers` and `apiMutation`'s `cookie`/`raw` params.
 - Consumer components (LoginForm, RegisterForm, ProfileMenu) call server actions directly, then update auth state via `useAuth().setAuth()` or `useAuth().clearAuth()`.
 - Booking actions never throw: `createBookingAction` / `payBookingAction` catch transport failures and return the union's `{ success: false, ... }` arm.
-
-
 
 ## API Layer
 
@@ -442,8 +422,6 @@ URL → state is applied **once, server-side at render** (via `features/movies/u
 - `getRequestLocale()` — reads the `locale` cookie (`en|vn`, default `en`) for catalog fetches. Server components cannot read localStorage, so this cookie is the only SSR-safe locale source.
 - `hasSession()` — returns `true` when a `refreshToken` cookie is present (server-side counterpart of `isAuthenticated`); protected layouts/pages render `LoginPrompt` instead of children when it returns `false`.
 
-
-
 ## Catalog Localization (`?lang=`)
 
 - SSR locale resolution (no flash): the root layout resolves `initialLocale` server-side — saved `locale` cookie first, then `Accept-Language` (`vi*` → VN), EN fallback — and passes it to `LocaleProvider`. `getServerSnapshot` returns that value, so the SSR HTML already carries the visitor's language; the client snapshot reads the cookie first (the same source the server used) so hydration matches exactly. New vi-browser visitors see VN on the very first paint; returning users never see an EN→VN swap. This opts the app out of static prerendering — already the case for every catalog page — while the fetch cache keeps backend load flat.
@@ -453,8 +431,6 @@ URL → state is applied **once, server-side at render** (via `features/movies/u
 - Formatters are locale-explicit: `formatVND(amount, locale)`, `formatDate(iso, locale)`, `formatTicketDatetime(date, time, locale)` (24h clock both locales). Durations render as minutes (`{duration} {translate("common.min")}`), never `Xh Ym`. Date chips use `toShowtimeDateChips(records, locale)`; today's chip shows `translate("common.today")`, never a hardcoded `"TODAY"`.
 - Review-filter and release/length filter labels render from i18n keys by stable token (`reviews.filters.<key>`, `movies.filter_release.<token>`, `movies.filter_length.*`), never from the backend `label` payload. Payment display is `Via/Qua + brand` (branch gateway logic on the method id, never on the localized label).
 - Locale switching is two pipelines: `setLocale` (`contexts/LocaleContext.tsx`) flips static keys instantly via the `localechange` event, then calls `router.refresh()` so server segments refetch catalog data with the new cookie — client state (booking draft, countdown, scroll) is preserved, no reload. New `?lang=` URLs miss the fetch cache once, then cache per locale. Islands need no remount: movies auto-refetches (locale in queryKey), showtime chips derive from the `dates` prop + locale, review bodies are user content (never localized).
-
-
 
 ## Form Validation
 
@@ -469,14 +445,10 @@ URL → state is applied **once, server-side at render** (via `features/movies/u
 
 ---
 
-
-
 ## Production Readiness — PENDING
 
 > **Audit: 2026-10-03** — ticks reflect actual code state (21/34).
 > Tags: `[now]` = do now, low effort · `[blocked]` = waiting on backend modules · `[before deploy]` = before deploy/demo · `[prod only]` = real production only
-
-
 
 ### Level 1 — Foundation
 
@@ -488,9 +460,7 @@ URL → state is applied **once, server-side at render** (via `features/movies/u
 - [x] Environment documentation — `.env.example` added; README documents `BACKEND_URL`/`API_PREFIX` (evaluated at build time)
 - [x] README accuracy — stale `features/auth/api.ts` reference fixed; env + test sections added
 - [x] Unused dev tooling — `babel-plugin-react-compiler` removed (`reactCompiler: false` unchanged)
-- [ ] Mock data — mock files under `features/*/mock*`; live vs mock split marked at each function. Booking flow fully LIVE; home QuickBooking widgets fully LIVE (dates/slots from showtimes API, CTA by `showtimeId`); remaining mocks: tickets, notifications, wishlist, booking `getSeatRows`/`getSeatPrices`/`getCountdownSeconds` + `getCinemas`/`getDates` (ticket-modify only). File-level `TODO(api)` markers: `notifications/api.ts`, `tickets/api.ts`, `booking/api.ts` `[blocked]`
-
-
+- [ ] Mock data — mock files under `features/*/mock*`; live vs mock split marked at each function. Booking flow fully LIVE; wishlist fully LIVE (no mock file); home QuickBooking widgets fully LIVE (dates/slots from showtimes API, CTA by `showtimeId`); remaining mocks: tickets, notifications, booking `getSeatRows`/`getSeatPrices`/`getCountdownSeconds` + `getCinemas`/`getDates` (ticket-modify only). File-level `TODO(api)` markers: `notifications/api.ts`, `tickets/api.ts`, `booking/api.ts` `[blocked]`
 
 ### Level 2 — Security
 
@@ -504,8 +474,6 @@ URL → state is applied **once, server-side at render** (via `features/movies/u
 - [ ] Reviews + booking actions pass raw `accessToken` as a server-action argument — the only places the token crosses the wire; prefer cookie `[now]`
 - [ ] `allowedDevOrigins` hardcodes LAN IPs — dev-only, harmless in production `[before deploy]`
 
-
-
 ### Level 3 — Reliability
 
 - [x] 404 page (root `not-found.tsx` + in-component `MovieNotFound`)
@@ -514,8 +482,6 @@ URL → state is applied **once, server-side at render** (via `features/movies/u
 - [x] Error boundaries — root `error.tsx` (shared `components/shared/RouteError.tsx`) + per-group `error.tsx` in all 4 route groups + `global-error.tsx`
 - [x] Unhandled rejections — all 3 `.then()` chains now have `.catch()` (movies context surfaces `fetchFailure`, RecipientInput clears results, ShowtimeDataLoader shows error + retry instead of hanging skeleton)
 - [x] Silent failure — `AuthContext` session-restore failure logged via `console.warn`
-
-
 
 ### Level 4 — Operations
 
@@ -526,8 +492,6 @@ URL → state is applied **once, server-side at render** (via `features/movies/u
 - [x] SEO — root metadata (`metadataBase`, title template, OG/Twitter, `NEXT_PUBLIC_SITE_URL` in `libs/site.ts`), `generateMetadata` on `movies/[slug]` (canonical, OG), per-page titles, `robots: noindex` on all protected/auth routes, `app/robots.ts` + `app/sitemap.ts`, JSON-LD `Movie` + `AggregateRating` on the detail page. Remaining: locale-aware metadata (titles don't vary by `locale` cookie) and hreflang (not applicable — locale is cookie-based, not URL-based)
 - [x] Font loading — `next/font` Inter (self-hosted, `latin`+`latin-ext`+`vietnamese` subsets, `display: swap`) wired to `--font-inter` → `--font-sans` in `global.css`
 - [ ] Monitoring / analytics `[prod only]`
-
-
 
 ### Tests
 
