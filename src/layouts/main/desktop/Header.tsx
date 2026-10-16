@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Search, Bell } from "lucide-react";
+import { Search, Bell, LogIn } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { buildLoginUrl } from "@/libs/utils";
 import Logo from "@/layouts/components/Logo";
 import LanguageToggle from "@/layouts/components/LanguageToggle";
 
@@ -23,10 +24,10 @@ function isActiveLink(href: string, pathname: string): boolean {
 
 export default function Header() {
   const { translate } = useLocale();
-  const { user } = useAuth();
+  const { user, isAuthenticated, isLoading } = useAuth();
   const pathname = usePathname();
 
-  const displayName = user?.name ?? translate("layout.header.guest");
+  const displayName = user?.name ?? "";
   const initials =
     displayName
       .split(" ")
@@ -38,7 +39,7 @@ export default function Header() {
 
   return (
     <nav className="sticky top-0 z-50 border-b border-(--color-border) bg-black/92 backdrop-blur-md">
-      <div className="mx-auto flex h-15 max-w-7xl items-center gap-8 px-8">
+      <div className="mx-auto flex h-15 max-w-7xl items-center gap-4 px-4 lg:gap-8 lg:px-8">
         <Logo size="lg" tagline />
 
         <div className="flex items-center gap-1">
@@ -46,7 +47,7 @@ export default function Header() {
             <Link
               key={href}
               href={href}
-              className={`rounded-(--radius-sm) px-3.5 py-1.5 text-[13px] no-underline ${
+              className={`rounded-(--radius-sm) px-2 py-1.5 text-[13px] no-underline lg:px-3.5 ${
                 isActiveLink(href, pathname)
                   ? "border-b-2 border-(--color-gold) font-bold text-(--color-gold)"
                   : "border-b-2 border-transparent font-medium text-(--color-text-secondary)"
@@ -59,11 +60,11 @@ export default function Header() {
 
         <div
           className="
-          ml-auto flex max-w-[280px] h-fit flex-1 items-center gap-2 rounded-(--radius-pill) border border-(--color-border) 
-          bg-(--color-surface) px-3.5 py-2 text-[13px] text-(--color-text-muted)"
+          ml-auto flex max-w-[160px] h-fit flex-1 items-center gap-2 rounded-(--radius-pill) border border-(--color-border) 
+          bg-(--color-surface) px-3.5 py-2 text-[13px] text-(--color-text-muted) lg:max-w-[280px]"
         >
-          <Search size={16} />
-          <span>{translate("layout.header.search")}</span>
+          <Search size={16} className="shrink-0" />
+          <span className="hidden truncate lg:inline">{translate("layout.header.search")}</span>
         </div>
 
         <div className="flex items-center gap-3.5 text-(--color-text-muted)">
@@ -77,17 +78,32 @@ export default function Header() {
           </button>
         </div>
 
-        <div className="flex shrink-0 items-center gap-2 rounded-(--radius-pill) border border-(--color-border) bg-(--color-surface) pl-1.5 pr-3 py-1">
-          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-(--color-gold) to-(--color-gold-dark) text-[11px] font-extrabold text-black">
-            {initials}
+        {isLoading ? (
+          <div
+            aria-hidden
+            className="h-9 w-32 shrink-0 animate-pulse rounded-(--radius-pill) border border-(--color-border) bg-(--color-surface)"
+          />
+        ) : isAuthenticated && user ? (
+          <div className="flex shrink-0 items-center gap-2 rounded-(--radius-pill) border border-(--color-border) bg-(--color-surface) pl-1.5 pr-3 py-1">
+            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-(--color-gold) to-(--color-gold-dark) text-[11px] font-extrabold text-black">
+              {initials}
+            </div>
+            <div className="hidden leading-tight lg:block">
+              <p className="text-xs font-bold text-white">{displayName}</p>
+              <p className="text-[9px] font-semibold tracking-widest text-(--color-gold) uppercase">
+                {translate("layout.header.gold_member")}
+              </p>
+            </div>
           </div>
-          <div className="leading-tight">
-            <p className="text-xs font-bold text-white">{displayName}</p>
-            <p className="text-[9px] font-semibold tracking-widest text-(--color-gold) uppercase">
-              {translate("layout.header.gold_member")}
-            </p>
-          </div>
-        </div>
+        ) : (
+          <Link
+            href={buildLoginUrl(pathname)}
+            className="flex shrink-0 items-center gap-2 rounded-(--radius-pill) bg-(--color-gold) px-4 py-2 text-xs font-extrabold tracking-wide text-black uppercase no-underline"
+          >
+            <LogIn size={15} strokeWidth={2.2} />
+            {translate("layout.header.login")}
+          </Link>
+        )}
       </div>
     </nav>
   );
