@@ -4,6 +4,8 @@ import { Inter } from "next/font/google";
 import "@/styles/global.css";
 import { LocaleProvider, type Locale } from "@/contexts/LocaleContext";
 import { DeviceProvider } from "@/contexts/DeviceContext";
+import { ToastProvider } from "@/contexts/ToastContext";
+import ToastViewport from "@/components/ui/ToastViewport";
 import type { Device } from "@/types";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { WishlistProvider } from "@/features/wishlist/context";
@@ -92,15 +94,18 @@ async function resolveRequestLocale(): Promise<Locale> {
  * so SSR paints the right layout variant on the first byte (no mobile→desktop
  * flash, no hydration correction). Reading headers costs no extra static
  * generation: this layout already reads cookies/headers for the locale.
- * Misclassified UAs (e.g. iPadOS reporting desktop Safari) are corrected
- * client-side by the `matchMedia` effect in `useDevice`.
+ * Tablets guess desktop: at the 740px breakpoint both iPad portrait (744px)
+ * and landscape render the desktop variant. A wrong guess (e.g. an unusually
+ * narrow tablet, iPadOS reporting desktop Safari) is corrected client-side by
+ * the `matchMedia` effect in `useDevice`.
  */
 async function resolveInitialDevice(): Promise<Device> {
   const headerStore = await headers();
   const userAgent = headerStore.get("user-agent") ?? "";
-  return /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile|tablet/i.test(
-    userAgent,
-  )
+  if (/ipad|tablet/i.test(userAgent)) return "desktop";
+  // Android phones carry a "Mobile" token, Android tablets don't.
+  if (/android/i.test(userAgent)) return /mobile/i.test(userAgent) ? "mobile" : "desktop";
+  return /webos|iphone|ipod|blackberry|iemobile|opera mini|mobile/i.test(userAgent)
     ? "mobile"
     : "desktop";
 }
@@ -119,13 +124,16 @@ export default async function RootLayout({
       data-scroll-behavior="smooth"
     >
       <body className="min-h-dvh flex flex-col">
-        <DeviceProvider initialDevice={initialDevice}>
-          <LocaleProvider initialLocale={initialLocale}>
-            <AuthProvider>
-              <WishlistProvider>{children}</WishlistProvider>
-            </AuthProvider>
-          </LocaleProvider>
-        </DeviceProvider>
+        <ToastProvider>
+          <ToastViewport />
+          <DeviceProvider initialDevice={initialDevice}>
+            <LocaleProvider initialLocale={initialLocale}>
+              <AuthProvider>
+                <WishlistProvider>{children}</WishlistProvider>
+              </AuthProvider>
+            </LocaleProvider>
+          </DeviceProvider>
+        </ToastProvider>
       </body>
     </html>
   );

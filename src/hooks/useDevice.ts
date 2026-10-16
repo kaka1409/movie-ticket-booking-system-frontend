@@ -11,7 +11,10 @@ export function useDevice(): Device {
   const [device, setDevice] = useState<Device>(initialDevice);
 
   useEffect(() => {
-    const mql = window.matchMedia("(min-width: 768px)");
+    // Threshold mirrors `--breakpoint-md` in `src/styles/global.css` (740px,
+    // not the Tailwind default 768px) so the JS device switch and the `md:`
+    // page splits change variant on the same pixel.
+    const mql = window.matchMedia("(min-width: 740px)");
     const update = (event: MediaQueryListEvent | MediaQueryList) => {
       setDevice(event.matches ? "desktop" : "mobile");
     };

@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+/* Mobile→desktop breakpoint (740px, not the Tailwind default 768px) so
+   iPad mini portrait (744px) renders the desktop variant. Keep in sync
+   with the `matchMedia` threshold in `src/hooks/useDevice.ts`. */
+@theme {
+  --breakpoint-md: 740px;
+}
+
 :root {
   /* Brand colours */
   --color-gold: #ffcc4d;
