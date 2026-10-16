@@ -4,7 +4,9 @@ import { useState } from "react";
 import { Star, Pencil, Trash2, Check, X } from "lucide-react";
 import Stars from "@/components/ui/Stars";
 import Avatar from "@/components/ui/Avatar";
+import ExpandableText from "@/components/ui/ExpandableText";
 import { useLocale } from "@/contexts/LocaleContext";
+import { REVIEW_MAX_LENGTH } from "@/features/reviews/constants";
 
 export interface UiReview {
   id: string;
@@ -19,11 +21,14 @@ export interface UiReview {
 export default function ReviewCard({
   review,
   isOwner,
+  highlighted = false,
   onSave,
   onDelete,
 }: {
   review: UiReview;
   isOwner: boolean;
+  /** Deep-link target (`#review-<id>`): gold ring while the highlight is live. */
+  highlighted?: boolean;
   onSave: (rating: number, text: string) => Promise<boolean>;
   onDelete: () => Promise<boolean>;
 }) {
@@ -34,7 +39,7 @@ export default function ReviewCard({
   const { translate } = useLocale();
 
   const handleSave = async () => {
-    if (!editRating || !editText.trim()) return;
+    if (!editRating || !editText.trim() || editText.length > REVIEW_MAX_LENGTH) return;
     const isSaved = await onSave(editRating, editText.trim());
     if (isSaved) setEditing(false);
   };
@@ -80,16 +85,26 @@ export default function ReviewCard({
 
         <textarea
           value={editText}
-          onChange={(event) => setEditText(event.target.value)}
+          onChange={(event) => setEditText(event.target.value.slice(0, REVIEW_MAX_LENGTH))}
           rows={3}
+          maxLength={REVIEW_MAX_LENGTH}
           className="w-full bg-(--color-bg) border border-(--color-border) rounded-xl px-3 py-3 text-base text-(--color-text-secondary) resize-none outline-none focus:border-(--color-gold)/50 transition-colors font-[inherit]"
         />
 
-        <div className="flex gap-2 pl-11">
+        <div className="flex items-center gap-2 pl-11">
+          <span
+            className={`mr-auto text-xs tabular-nums ${
+              REVIEW_MAX_LENGTH - editText.length < 0
+                ? "text-red-400 font-bold"
+                : "text-(--color-text-muted)"
+            }`}
+          >
+            {REVIEW_MAX_LENGTH - editText.length} / {REVIEW_MAX_LENGTH}
+          </span>
           <button
             type="button"
             onClick={() => void handleSave()}
-            disabled={!editRating || !editText.trim()}
+            disabled={!editRating || !editText.trim() || editText.length > REVIEW_MAX_LENGTH}
             className="flex items-center gap-1 px-4 py-2 rounded-lg text-xs font-bold bg-(--color-gold) text-(--color-bg) hover:bg-(--color-gold-dark) disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
             <Check size={14} /> {translate("movies.detail.save")}
@@ -107,7 +122,12 @@ export default function ReviewCard({
   }
 
   return (
-    <div className="py-4 border-b border-(--color-border) last:border-0">
+    <div
+      id={`review-${review.id}`}
+      className={`py-4 border-b border-(--color-border) last:border-0 rounded-xl transition-colors ${
+        highlighted ? "bg-white/[0.04]" : ""
+      }`}
+    >
       <div className="flex items-start justify-between mb-2">
         <div className="flex items-center gap-2">
           <Avatar src={review.src} name={review.user} size="w-9 h-9" />
@@ -147,7 +167,10 @@ export default function ReviewCard({
         )}
       </div>
 
-      <p className="text-(--color-text-secondary) text-sm leading-relaxed pl-11">{review.text}</p>
+      <ExpandableText
+        text={review.text}
+        className="text-(--color-text-secondary) text-sm leading-relaxed pl-11"
+      />
     </div>
   );
 }

@@ -1,57 +1,129 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import type { Movie } from "@/features/movies/types";
+import { Trash2, ArrowUpRight } from "lucide-react";
+import type { MyReview } from "@/features/reviews/types";
 import { useLocale } from "@/contexts/LocaleContext";
 import { formatDate } from "@/libs/utils";
+import ExpandableText from "@/components/ui/ExpandableText";
 import StarRating from "./StarRating";
 
+/**
+ * Own-review card: movie poster + title link, my star rating (1–5 direct, no
+ * /2 scaling — that divisor belongs to 10-scale catalog ratings), comment and
+ * date. Delete is a two-tap inline confirm; the row only leaves the list
+ * after the BE confirms (the parent keeps it + toasts on failure).
+ */
 export default function ReviewCard({
-  movie,
-  className = "",
+  review,
+  isDeleting,
+  onDelete,
 }: {
-  movie: Movie;
-  className?: string;
+  review: MyReview;
+  isDeleting: boolean;
+  onDelete: (reviewId: string) => void;
 }) {
-  // Client-rendered so the release date follows the UI locale.
-  const { locale } = useLocale();
+  // Client-rendered so the date follows the UI locale.
+  const { locale, translate } = useLocale();
+  const [isArmed, setIsArmed] = useState(false);
+
   return (
-    <Link href={`/movies/${movie.slug}`}>
-      <article
-        data-review-card
-        className={`flex gap-3 rounded-2xl bg-(--color-surface) p-4 shadow-[--shadow-card] ${className}`}
-      >
-        {movie.src && (
-          <div className="relative h-28 w-20 flex-shrink-0 overflow-hidden rounded-xl">
-            <Image src={movie.src} alt={movie.title} fill sizes="80px" className="object-cover" />
-          </div>
-        )}
+    <article
+      data-review-card
+      className="rounded-2xl bg-(--color-surface) p-4 shadow-[--shadow-card]"
+    >
+      <div className="flex gap-3">
+        <Link
+          href={`/movies/${review.movie.slug}`}
+          className="relative h-28 w-20 flex-shrink-0 overflow-hidden rounded-xl"
+        >
+          {review.movie.src && (
+            <Image
+              src={review.movie.src}
+              alt={review.movie.title}
+              fill
+              sizes="80px"
+              className="object-cover"
+            />
+          )}
+        </Link>
 
         <div className="flex min-w-0 flex-1 flex-col gap-1">
           <div className="flex items-start justify-between gap-2">
-            <h2 className="text-lg font-semibold text-(--color-text-primary)">{movie.title}</h2>
+            <Link href={`/movies/${review.movie.slug}`}>
+              <h2 className="text-lg font-semibold text-(--color-text-primary)">
+                {review.movie.title}
+              </h2>
+            </Link>
             <span className="shrink-0 text-xs text-(--color-text-muted)">
-              {formatDate(movie.releaseDate, locale)}
+              {formatDate(review.createdAt, locale)}
             </span>
           </div>
 
           <div className="flex items-center gap-2">
-            <StarRating rating={movie.rating / 2} />
+            <StarRating rating={review.rating} />
             <span className="text-sm font-medium text-(--color-text-primary)">
-              {movie.rating.toFixed(1)}
+              {review.rating.toFixed(1)}
             </span>
           </div>
 
           <span className="inline-block w-fit text-[10px] font-bold tracking-wide uppercase text-(--color-gold) bg-(--color-gold)/10 rounded-full px-2 py-0.5">
-            {movie.genre}
+            {review.movie.genre}
           </span>
 
-          <p className="line-clamp-2 text-sm leading-snug text-(--color-text-muted)">
-            {movie.synopsis}
-          </p>
+          {review.comment && (
+            <ExpandableText
+              text={review.comment}
+              className="text-sm leading-snug text-(--color-text-muted)"
+            />
+          )}
         </div>
-      </article>
-    </Link>
+      </div>
+
+      <div className="mt-3 flex items-center justify-end gap-2 border-t border-(--color-border) pt-3">
+        {isArmed ? (
+          <>
+            <span className="mr-auto text-xs text-(--color-text-muted)">
+              {translate("profile.myreviews.delete_confirm")}
+            </span>
+            <button
+              type="button"
+              onClick={() => setIsArmed(false)}
+              className="rounded-xl border border-(--color-border) px-4 py-2 text-xs font-bold text-(--color-text-primary)"
+            >
+              {translate("profile.myreviews.cancel")}
+            </button>
+            <button
+              type="button"
+              disabled={isDeleting}
+              onClick={() => onDelete(review.id)}
+              className="rounded-xl bg-red-500 px-4 py-2 text-xs font-extrabold text-white disabled:opacity-40"
+            >
+              {translate("profile.myreviews.confirm_delete")}
+            </button>
+          </>
+        ) : (
+          <>
+            <Link
+              href={`/movies/${review.movie.slug}#review-${review.id}`}
+              className="mr-auto flex items-center gap-1.5 rounded-xl border border-(--color-border) px-4 py-2 text-xs font-bold text-(--color-gold)"
+            >
+              <ArrowUpRight size={14} />
+              {translate("profile.myreviews.view")}
+            </Link>
+            <button
+              type="button"
+              onClick={() => setIsArmed(true)}
+              className="flex items-center gap-1.5 rounded-xl border border-(--color-border) px-4 py-2 text-xs font-bold text-red-400"
+            >
+              <Trash2 size={14} />
+              {translate("profile.myreviews.delete")}
+            </button>
+          </>
+        )}
+      </div>
+    </article>
   );
 }

@@ -8,6 +8,7 @@ import Stars from "@/components/ui/Stars";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useMovieDetail } from "@/features/movies/context";
 import { useMovieReviews, formatReviewCount } from "@/features/reviews/useMovieReviews";
+import { useReviewHighlight } from "@/features/reviews/useReviewHighlight";
 import type { ReviewsResponse } from "@/features/reviews/types";
 import WriteReview from "@/components/shared/WriteReview";
 import ReviewCard from "@/components/shared/ReviewCard";
@@ -69,6 +70,14 @@ export default function Reviews({ initialData, initialError }: ReviewsProps) {
       setMaxHeight(containerRef.current.scrollHeight + "px");
     }
   }, [reviews.length, page]);
+
+  const highlightedId = useReviewHighlight({
+    reviewIds: reviews.map((review) => review.id),
+    page,
+    totalPages,
+    loadingPage,
+    goToPage,
+  });
 
   return (
     <section className="px-4 space-y-4">
@@ -159,6 +168,7 @@ export default function Reviews({ initialData, initialError }: ReviewsProps) {
               key={review.id}
               review={review}
               isOwner={currentUserId === review.userId}
+              highlighted={highlightedId === review.id}
               onSave={(rating, text) => save(review.id, rating, text)}
               onDelete={() => remove(review.id)}
             />

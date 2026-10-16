@@ -20,6 +20,27 @@ export interface MovieReview {
   };
 }
 
+/** Own review with the movie card it belongs to (`GET /reviews/me`). */
+export interface MyReview {
+  id: string;
+  rating: number;
+  comment: string;
+  createdAt: string;
+  movie: {
+    id: string;
+    slug: string;
+    title: string;
+    genre: string;
+    src?: string;
+    posterUrl?: string;
+  };
+}
+
+export interface MyReviewsResponse {
+  reviews: MyReview[];
+  total: number;
+}
+
 export interface ReviewSummary {
   average: number;
   total: number;

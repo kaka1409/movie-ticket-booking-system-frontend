@@ -9,6 +9,7 @@ import WriteReview from "./WriteReview";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useMovieDetail } from "@/features/movies/context";
 import { useMovieReviews, formatReviewCount } from "@/features/reviews/useMovieReviews";
+import { useReviewHighlight } from "@/features/reviews/useReviewHighlight";
 import type { ReviewsResponse } from "@/features/reviews/types";
 
 function RatingBar({ stars, pct }: { stars: number; pct: number }) {
@@ -72,6 +73,14 @@ export default function Reviews({
   const scrollToForm = () => {
     formRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
   };
+
+  const highlightedId = useReviewHighlight({
+    reviewIds: reviews.map((review) => review.id),
+    page,
+    totalPages,
+    loadingPage,
+    goToPage,
+  });
 
   return (
     <section>
@@ -177,6 +186,7 @@ export default function Reviews({
                 key={review.id}
                 review={review}
                 isOwner={currentUserId === review.userId}
+                highlighted={highlightedId === review.id}
                 onSave={(rating, text) => save(review.id, rating, text)}
                 onDelete={() => remove(review.id)}
               />

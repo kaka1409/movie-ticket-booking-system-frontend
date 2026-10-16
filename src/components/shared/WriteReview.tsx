@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Star } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
+import { REVIEW_MAX_LENGTH } from "@/features/reviews/constants";
 
 export default function WriteReview({
   onSubmit,
@@ -24,6 +25,8 @@ export default function WriteReview({
       setText("");
     }
   };
+
+  const remaining = REVIEW_MAX_LENGTH - text.length;
 
   return (
     <div className="rounded-2xl bg-(--color-surface) border border-(--color-border) p-4 space-y-3">
@@ -55,11 +58,22 @@ export default function WriteReview({
 
       <textarea
         value={text}
-        onChange={(event) => setText(event.target.value)}
+        onChange={(event) => setText(event.target.value.slice(0, REVIEW_MAX_LENGTH))}
         placeholder={translate("movies.detail.review_placeholder")}
         rows={3}
+        maxLength={REVIEW_MAX_LENGTH}
         className="w-full bg-(--color-bg) border border-(--color-border) rounded-xl px-3 py-3 text-base text-(--color-text-secondary) placeholder-(--color-text-muted) resize-none outline-none focus:border-(--color-gold)/50 transition-colors font-[inherit]"
       />
+
+      <div className="flex items-center justify-between">
+        <span
+          className={`text-xs tabular-nums ${
+            remaining <= 50 ? "text-red-400 font-bold" : "text-(--color-text-muted)"
+          }`}
+        >
+          {remaining} / {REVIEW_MAX_LENGTH}
+        </span>
+      </div>
 
       <button
         type="button"

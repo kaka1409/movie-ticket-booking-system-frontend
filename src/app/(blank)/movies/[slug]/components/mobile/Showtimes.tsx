@@ -101,14 +101,14 @@ export default function Showtimes() {
       {showDateStrip && (
         <div className="flex gap-2 mb-5 overflow-x-auto scrollbar-hide pb-1">
           {dateOptions.map((option) => {
-          const active = option.value === activeDate;
-          return (
-            <button
-              type="button"
-              key={option.value}
-              onClick={() => selectDate(option.value)}
-              disabled={option.disabled}
-              className={`
+            const active = option.value === activeDate;
+            return (
+              <button
+                type="button"
+                key={option.value}
+                onClick={() => selectDate(option.value)}
+                disabled={option.disabled}
+                className={`
                 shrink-0 flex flex-col items-center justify-center
                 w-14 rounded-xl py-2 border transition-all duration-150
                 ${
@@ -119,32 +119,32 @@ export default function Showtimes() {
                       : "bg-(--color-surface) border-(--color-border) hover:border-(--color-gold)/40"
                 }
               `}
-              aria-pressed={active}
-            >
-              <span
-                className={`text-[9px] font-bold tracking-widest ${
-                  active
-                    ? "text-(--color-bg)"
-                    : option.disabled
-                      ? "text-(--color-text-muted) line-through"
-                      : "text-(--color-text-muted)"
-                }`}
+                aria-pressed={active}
               >
-                {option.label}
-              </span>
-              <span
-                className={`text-xl font-extrabold leading-tight ${
-                  active
-                    ? "text-(--color-bg)"
-                    : option.disabled
-                      ? "text-(--color-text-muted)"
-                      : "text-(--color-text-primary)"
-                }`}
-              >
-                {option.day}
-              </span>
-            </button>
-          );
+                <span
+                  className={`text-[9px] font-bold tracking-widest ${
+                    active
+                      ? "text-(--color-bg)"
+                      : option.disabled
+                        ? "text-(--color-text-muted) line-through"
+                        : "text-(--color-text-muted)"
+                  }`}
+                >
+                  {option.label}
+                </span>
+                <span
+                  className={`text-xl font-extrabold leading-tight ${
+                    active
+                      ? "text-(--color-bg)"
+                      : option.disabled
+                        ? "text-(--color-text-muted)"
+                        : "text-(--color-text-primary)"
+                  }`}
+                >
+                  {option.day}
+                </span>
+              </button>
+            );
           })}
         </div>
       )}

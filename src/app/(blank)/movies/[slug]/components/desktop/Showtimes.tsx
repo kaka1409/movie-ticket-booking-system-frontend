@@ -76,48 +76,50 @@ export default function Showtimes() {
           {/* Date chips */}
           {showDateStrip && (
             <div className="flex flex-wrap gap-2">
-            {dateChips.map((chip) => {
-              const active = chip.value === activeDate;
+              {dateChips.map((chip) => {
+                const active = chip.value === activeDate;
 
-              return (
-                <button
-                  key={chip.value}
-                  type="button"
-                  onClick={() => selectDate(chip.value)}
-                  disabled={chip.disabled}
-                  aria-pressed={active}
-                  className={`flex min-w-13 cursor-pointer flex-col items-center rounded-(--radius-md) border px-3 py-2 text-center transition-all duration-150 ${
-                    active
-                      ? "border-(--color-gold) bg-(--color-gold) shadow-(--shadow-glow)"
-                      : chip.disabled
-                        ? "cursor-not-allowed border-(--color-border) bg-(--color-surface-2) opacity-40"
-                        : "border-(--color-border) bg-(--color-surface-2) hover:border-(--color-gold)/40"
-                  }`}
-                >
-                  <span
-                    className={`text-[9px] font-black tracking-widest ${
-                      active ? "text-black/70" : "text-(--color-text-muted)"
+                return (
+                  <button
+                    key={chip.value}
+                    type="button"
+                    onClick={() => selectDate(chip.value)}
+                    disabled={chip.disabled}
+                    aria-pressed={active}
+                    className={`flex min-w-13 cursor-pointer flex-col items-center rounded-(--radius-md) border px-3 py-2 text-center transition-all duration-150 ${
+                      active
+                        ? "border-(--color-gold) bg-(--color-gold) shadow-(--shadow-glow)"
+                        : chip.disabled
+                          ? "cursor-not-allowed border-(--color-border) bg-(--color-surface-2) opacity-40"
+                          : "border-(--color-border) bg-(--color-surface-2) hover:border-(--color-gold)/40"
                     }`}
                   >
-                    {chip.label}
-                  </span>
-                  <span
-                    className={`text-lg leading-tight font-extrabold ${
-                      active ? "text-(--color-bg)" : "text-(--color-text-primary)"
-                    }`}
-                  >
-                    {chip.day}
-                  </span>
-                  <span
-                    className={`text-[9px] font-semibold ${
-                      active ? "text-black/60" : "text-(--color-text-muted)"
-                    }`}
-                  >
-                    {chip.value === today ? translate("common.today").toUpperCase() : chip.weekday}
-                  </span>
-                </button>
-              );
-            })}
+                    <span
+                      className={`text-[9px] font-black tracking-widest ${
+                        active ? "text-black/70" : "text-(--color-text-muted)"
+                      }`}
+                    >
+                      {chip.label}
+                    </span>
+                    <span
+                      className={`text-lg leading-tight font-extrabold ${
+                        active ? "text-(--color-bg)" : "text-(--color-text-primary)"
+                      }`}
+                    >
+                      {chip.day}
+                    </span>
+                    <span
+                      className={`text-[9px] font-semibold ${
+                        active ? "text-black/60" : "text-(--color-text-muted)"
+                      }`}
+                    >
+                      {chip.value === today
+                        ? translate("common.today").toUpperCase()
+                        : chip.weekday}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
           )}
 

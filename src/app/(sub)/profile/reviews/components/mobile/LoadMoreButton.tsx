@@ -2,13 +2,20 @@
 
 import { useLocale } from "@/contexts/LocaleContext";
 
-export default function LoadMoreButton({ onClick }: { onClick: () => void }) {
+export default function LoadMoreButton({
+  onClick,
+  disabled = false,
+}: {
+  onClick: () => void;
+  disabled?: boolean;
+}) {
   const { translate } = useLocale();
   return (
     <div>
       <button
         type="button"
         onClick={onClick}
+        disabled={disabled}
         className="
           w-full rounded-2xl border border-(--color-border)
           bg-(--color-surface) py-3.5 text-sm font-bold uppercase
