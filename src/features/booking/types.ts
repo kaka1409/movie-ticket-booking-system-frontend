@@ -21,7 +21,10 @@ import type { Movie } from "@/types";
  * downstream OrderSummary panels need, so credentials/payment stop refetching
  * `GET /movies/:slug` on every entry (see the booking movie-adopt flow).
  */
-export type BookingMovie = Pick<Movie, "slug" | "title" | "src" | "genre" | "duration" | "ageRating">;
+export type BookingMovie = Pick<
+  Movie,
+  "slug" | "title" | "src" | "genre" | "duration" | "ageRating"
+>;
 
 /* ─── Selected Items (used across booking steps) ────────── */
 

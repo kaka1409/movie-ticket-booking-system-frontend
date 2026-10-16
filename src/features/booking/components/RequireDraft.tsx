@@ -11,13 +11,7 @@ import { useBooking } from "../context";
  * draft's movie matches the URL slug. Renders nothing while the redirect is
  * in flight (client navigation sees a live draft and paints immediately).
  */
-export default function RequireDraft({
-  slug,
-  children,
-}: {
-  slug: string;
-  children: ReactNode;
-}) {
+export default function RequireDraft({ slug, children }: { slug: string; children: ReactNode }) {
   const { movie, showtimeId } = useBooking();
   const router = useRouter();
   const isDraftReady = Boolean(movie && movie.slug === slug && showtimeId);
