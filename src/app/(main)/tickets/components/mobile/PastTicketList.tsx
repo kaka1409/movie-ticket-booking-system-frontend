@@ -11,9 +11,7 @@ export default function PastTicketList({ tickets }: { tickets: PastTicket[] }) {
   return (
     <TicketList
       tickets={tickets}
-      tab="past"
       emptyLabel={translate("tickets.no_past")}
-      loadMoreLabel={translate("tickets.load_older")}
       renderCard={(ticket) => <PastCard ticket={ticket} />}
     />
   );

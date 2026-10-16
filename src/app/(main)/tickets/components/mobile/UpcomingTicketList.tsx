@@ -11,9 +11,7 @@ export default function UpcomingTicketList({ tickets }: { tickets: UpcomingTicke
   return (
     <TicketList
       tickets={tickets}
-      tab="upcoming"
       emptyLabel={translate("tickets.no_upcoming")}
-      loadMoreLabel={translate("tickets.load_more")}
       renderCard={(ticket) => <UpcomingCard ticket={ticket} />}
     />
   );

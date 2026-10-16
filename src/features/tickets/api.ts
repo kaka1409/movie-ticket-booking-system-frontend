@@ -1,25 +1,65 @@
+import type { ApiResponse } from "@/libs/api";
+import { apiFetch } from "@/libs/api";
 import type { UpcomingTicket, PastTicket, Recipient, EligibleShowtime } from "./types";
 import { CANCELLATION_FEE } from "./constants";
 import { UPCOMING, PAST, MOCK_RECIPIENTS, MOCK_ELIGIBLE_SHOWTIMES } from "./mock";
+import type { TicketDetailWire, TicketPageMeta, TicketSummaryWire } from "./adapters";
+import { toDetailTicket, toPastTicket, toUpcomingTicket } from "./adapters";
 
-// TODO(api): replace the mock returns below with real fetches when the backend is ready.
-/* eslint-disable-next-line @typescript-eslint/no-unused-vars -- cookie is reserved for the real API call (currently mocked) */
-export async function getUpcomingTickets(cookie?: string): Promise<UpcomingTicket[]> {
-  return UPCOMING;
+/* ─── Ticket listing & detail (LIVE) ─────────────────────── */
+
+/** Upcoming tickets — paginated (`meta` drives the pager). */
+export async function getUpcomingTickets(
+  page: number,
+  cookie?: string,
+  locale: "en" | "vn" = "en",
+): Promise<ApiResponse<UpcomingTicket[], TicketPageMeta>> {
+  const result = await apiFetch<TicketSummaryWire[], TicketPageMeta>(
+    `/tickets/upcoming?page=${page}`,
+    undefined,
+    undefined,
+    cookie,
+  );
+  if ("error" in result) return result;
+  return {
+    data: result.data.map((summary) => toUpcomingTicket(summary, locale)),
+    meta: result.meta,
+  };
 }
 
-/* eslint-disable-next-line @typescript-eslint/no-unused-vars -- cookie is reserved for the real API call (currently mocked) */
-export async function getPastTickets(cookie?: string): Promise<PastTicket[]> {
-  return PAST;
+/** Past tickets — paginated (`meta` drives the pager). */
+export async function getPastTickets(
+  page: number,
+  cookie?: string,
+  locale: "en" | "vn" = "en",
+): Promise<ApiResponse<PastTicket[], TicketPageMeta>> {
+  const result = await apiFetch<TicketSummaryWire[], TicketPageMeta>(
+    `/tickets/past?page=${page}`,
+    undefined,
+    undefined,
+    cookie,
+  );
+  if ("error" in result) return result;
+  return {
+    data: result.data.map((summary) => toPastTicket(summary, locale)),
+    meta: result.meta,
+  };
 }
 
+/** Ticket detail — an absent ticket surfaces as the backend 404, not `undefined`. */
 export async function getTicketById(
   id: string,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- cookie is reserved for the real API call (currently mocked)
   cookie?: string,
-): Promise<UpcomingTicket | PastTicket | undefined> {
-  const allTickets = [...UPCOMING, ...PAST];
-  return allTickets.find((ticket) => ticket.id === id);
+  locale: "en" | "vn" = "en",
+): Promise<ApiResponse<UpcomingTicket | PastTicket>> {
+  const result = await apiFetch<TicketDetailWire>(
+    `/tickets/${encodeURIComponent(id)}`,
+    undefined,
+    undefined,
+    cookie,
+  );
+  if ("error" in result) return result;
+  return { data: toDetailTicket(result.data, locale) };
 }
 
 /* eslint-disable-next-line @typescript-eslint/no-unused-vars -- cookie is reserved for the real API call (currently mocked) */

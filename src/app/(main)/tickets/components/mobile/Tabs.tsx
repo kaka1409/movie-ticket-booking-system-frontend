@@ -1,12 +1,15 @@
 "use client";
 
 import { useLocale } from "@/contexts/LocaleContext";
-import { useTickets } from "@/features/tickets/context";
 import Tabs from "@/components/ui/Tabs";
 
-export default function TabsComponent() {
+/**
+ * Tab bar — links, not state. Switching tabs navigates (`?tab=`, page reset
+ * to 1) so the newly visible list is a fresh server fetch with its skeleton.
+ * `activeTab` comes from the page's searchParams, not client state.
+ */
+export default function TabsComponent({ activeTab }: { activeTab: "upcoming" | "past" }) {
   const { translate } = useLocale();
-  const { activeTab, setActiveTab } = useTickets();
 
   const tabs = [
     { key: "upcoming", label: translate("tickets.upcoming") },
@@ -14,10 +17,13 @@ export default function TabsComponent() {
   ];
 
   return (
-    <Tabs
-      tabs={tabs}
-      activeTab={activeTab}
-      onTabChange={(tab) => setActiveTab(tab as "upcoming" | "past")}
-    />
+    <div className="px-4">
+      <Tabs
+        tabs={tabs}
+        activeTab={activeTab}
+        onTabChange={() => {}}
+        linkFor={(key) => `/tickets?tab=${key}`}
+      />
+    </div>
   );
 }

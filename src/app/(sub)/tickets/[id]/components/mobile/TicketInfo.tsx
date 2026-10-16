@@ -142,9 +142,12 @@ export default function TicketInfo() {
             </button>
           </div>
         ) : (
-          /* QR Code */
+          /* QR Code — the signed payload when the backend issued one. */
           <div className="px-4 pb-5 pt-4 flex flex-col items-center gap-3">
-            <QRCode value={ticket.id} />
+            <QRCode
+              value={"qrCode" in ticket && ticket.qrCode ? ticket.qrCode : ticket.id}
+              ticketId={ticket.id}
+            />
             <p className="text-xs text-white/60 tracking-wide">
               {translate("tickets.detail.booking_id")}
               <span className="font-bold text-white">#{ticket.id}</span>

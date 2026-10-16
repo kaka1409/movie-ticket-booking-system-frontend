@@ -44,6 +44,8 @@ export interface UpcomingTicket {
   paymentMethod?: string;
   foodDrink?: FoodDrinkItem[];
   transfer?: TicketTransfer;
+  /** Signed scan payload (`ticketId.qrToken.signature`) — rendered as the QR. */
+  qrCode?: string;
 }
 
 export interface PastTicket {

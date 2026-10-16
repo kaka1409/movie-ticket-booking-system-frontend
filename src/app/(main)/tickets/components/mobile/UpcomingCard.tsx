@@ -31,18 +31,20 @@ export default function UpcomingCard({ ticket }: { ticket: UpcomingTicket }) {
           <span className="absolute bottom-2 left-2 text-[9px] font-black uppercase tracking-tight text-white/15">
             {ticket.movie}
           </span>
-          <span
-            className={`absolute top-2 left-2 px-2 py-0.5 rounded text-[10px] font-black ${
-              failed ? "bg-red-500 text-white" : "bg-green-500 text-white"
-            }`}
-          >
-            {failed ? translate("tickets.failed") : translate("tickets.success")}
-          </span>
         </div>
 
         {/* Info */}
         <div className="flex-1 min-w-0 pt-1">
-          <h3 className="text-white font-bold text-lg leading-tight mb-2">{ticket.movie}</h3>
+          <div className="flex items-center justify-between">
+            <h3 className="text-white font-bold text-lg leading-tight mb-2">{ticket.movie}</h3>
+            <span
+              className={`absolute top-2 left-2 px-2 py-0.5 rounded text-[10px] font-black ${
+                failed ? "bg-red-500 text-white" : "bg-green-500 text-white"
+              }`}
+            >
+              {failed ? translate("tickets.failed") : translate("tickets.success")}
+            </span>
+          </div>
 
           <div className="space-y-1.5 mb-3">
             <p className="flex items-center gap-2 text-sm ">
@@ -78,7 +80,7 @@ export default function UpcomingCard({ ticket }: { ticket: UpcomingTicket }) {
           >
             {failed ? translate("tickets.failed") : translate("tickets.booking_id")}
           </p>
-          <p className={`font-extrabold text-xl text-(--color-text-primary)`}>
+          <p className={`text-xs text-(--color-text-muted)`}>
             {failed ? ticket.totalPrice : ticket.id}
           </p>
         </div>
@@ -94,7 +96,9 @@ export default function UpcomingCard({ ticket }: { ticket: UpcomingTicket }) {
         ) : (
           <Link
             href={`/tickets/${ticket.id}`}
-            className="flex items-center justify-center px-6 py-3 rounded-xl font-bold text-sm transition-all duration-150 active:scale-[0.97] border border-(--color-gold) text-(--color-gold) bg-transparent"
+            className="
+            flex items-center justify-center px-4 py-3 rounded-xl font-bold text-sm w-full
+            transition-all duration-150 active:scale-[0.97] border border-(--color-gold) text-(--color-gold) bg-transparent"
           >
             {translate("tickets.view_details")}
           </Link>
