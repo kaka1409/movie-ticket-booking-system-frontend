@@ -1,4 +1,4 @@
-export type { CastMember, Movie, FeaturedMovie } from "@/types";
+export type { CastMember, Movie, FeaturedMovie, MovieStatus } from "@/types";
 
 export type Tab = "now_showing" | "coming_soon";
 

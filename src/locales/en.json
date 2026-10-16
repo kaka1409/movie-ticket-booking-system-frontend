@@ -10,7 +10,7 @@
       "search": "Search movies, cinemas...",
       "notifications": "Notifications",
       "gold_member": "GOLD MEMBER",
-      "guest": "Guest"
+      "login": "Login"
     },
     "nav": {
       "main": "Main navigation"
@@ -384,7 +384,34 @@
       "browse": "Browse Movies",
       "book_now": "BOOK NOW",
       "remove_wishlist": "Remove from wishlist",
-      "add_wishlist": "Add to wishlist"
+      "add_wishlist": "Add to wishlist",
+      "removed": "Removed from wishlist",
+      "undo": "Undo",
+      "toast_added": "Added to wishlist",
+      "toast_add_failed": "Couldn't save — try again",
+      "toast_remove_failed": "Couldn't remove — try again",
+      "count_prefix": "You have",
+      "count_suffix": "saved movies",
+      "search_placeholder": "Search your wishlist",
+      "filter_all": "All",
+      "filter_now_showing": "Now Showing",
+      "filter_coming_soon": "Coming Soon",
+      "empty_filtered_title": "No matches",
+      "empty_filtered_desc": "Try a different search or filter.",
+      "clear_filters": "Clear filters"
+    },
+    "myreviews": {
+      "empty_title": "No reviews yet",
+      "empty_desc": "Watch a movie and share what you thought.",
+      "browse": "Browse Movies",
+      "delete": "Delete",
+      "delete_confirm": "Delete this review?",
+      "view": "View review",
+      "cancel": "Cancel",
+      "confirm_delete": "Delete",
+      "toast_deleted": "Review deleted",
+      "toast_delete_failed": "Couldn't delete — try again",
+      "toast_load_failed": "Couldn't load reviews — try again"
     }
   },
   "booking": {
@@ -582,6 +609,8 @@
     "loading": "Loading...",
     "error": "Error",
     "try_again": "Try again",
+    "show_more": "Show more",
+    "show_less": "Show less",
     "not_found": "Not Found",
     "not_found_desc": "The page you are looking for does not exist.",
     "cinematic_excellence": "Cinematic Excellence",

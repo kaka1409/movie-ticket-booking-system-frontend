@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Heart, Play, Star, Clock } from "lucide-react";
 import { useMovieDetail } from "@/features/movies/context";
-import { useWishlist } from "@/features/wishlist/context";
+import { useWishlist, type WishlistFeedback } from "@/features/wishlist/context";
 import { useLocale } from "@/contexts/LocaleContext";
 
 export default function HeroSection() {
@@ -13,6 +13,14 @@ export default function HeroSection() {
   const { toggleWishlist, isWishlisted } = useWishlist();
   const { translate } = useLocale();
   const liked = isWishlisted(movie.id);
+
+  function buildFeedback(): WishlistFeedback {
+    return {
+      added: translate("profile.wishlist.toast_added"),
+      addFailed: translate("profile.wishlist.toast_add_failed"),
+      removeFailed: translate("profile.wishlist.toast_remove_failed"),
+    };
+  }
 
   return (
     <section className="relative w-full h-85">
@@ -50,7 +58,7 @@ export default function HeroSection() {
 
         <button
           type="button"
-          onClick={() => toggleWishlist(movie.id)}
+          onClick={() => toggleWishlist(movie.id, buildFeedback())}
           className="w-9 h-9 rounded-full bg-black/40 flex items-center justify-center"
           aria-label={
             liked

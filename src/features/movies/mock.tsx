@@ -346,4 +346,11 @@ const COMING_SOON: Movie[] = [
   },
 ];
 
-export const ALL_MOVIES: Movie[] = [...NOW_SHOWING, ...COMING_SOON];
+/**
+ * Mock catalog split with live-compatible `status` — wishlist chips filter on
+ * this until the catalog itself goes live (then the BE payload carries it).
+ */
+export const ALL_MOVIES: Movie[] = [
+  ...NOW_SHOWING.map((movie) => ({ ...movie, status: "now_showing" as const })),
+  ...COMING_SOON.map((movie) => ({ ...movie, status: "coming_soon" as const })),
+];

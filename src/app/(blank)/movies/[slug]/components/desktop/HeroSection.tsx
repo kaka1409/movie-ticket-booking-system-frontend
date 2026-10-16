@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, Clock, Heart, Play, Star, Ticket } from "lucide-react";
 import TrailerModal from "@/components/shared/TrailerModal";
 import { useMovieDetail } from "@/features/movies/context";
-import { useWishlist } from "@/features/wishlist/context";
+import { useWishlist, type WishlistFeedback } from "@/features/wishlist/context";
 import { useLocale } from "@/contexts/LocaleContext";
 
 const ICON_BUTTON_CLASS =
@@ -21,6 +21,14 @@ export default function HeroSection() {
   const [isTrailerOpen, setIsTrailerOpen] = useState(false);
 
   const liked = isWishlisted(movie.id);
+
+  function buildFeedback(): WishlistFeedback {
+    return {
+      added: translate("profile.wishlist.toast_added"),
+      addFailed: translate("profile.wishlist.toast_add_failed"),
+      removeFailed: translate("profile.wishlist.toast_remove_failed"),
+    };
+  }
   const genres = movie.genre
     ? movie.genre
         .split(",")
@@ -60,7 +68,7 @@ export default function HeroSection() {
         <div className="absolute right-5 top-5 z-20">
           <button
             type="button"
-            onClick={() => toggleWishlist(movie.id)}
+            onClick={() => toggleWishlist(movie.id, buildFeedback())}
             aria-label={
               liked
                 ? translate("movies.detail.remove_wishlist")

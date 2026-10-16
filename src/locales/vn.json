@@ -10,7 +10,7 @@
       "search": "Tìm phim, rạp chiếu...",
       "notifications": "Thông Báo",
       "gold_member": "HẠNG VÀNG",
-      "guest": "Khách"
+      "login": "Đăng nhập"
     },
     "nav": {
       "main": "Điều hướng chính"
@@ -384,7 +384,34 @@
       "browse": "Duyệt Phim",
       "book_now": "ĐẶT NGAY",
       "remove_wishlist": "Xóa khỏi danh sách yêu thích",
-      "add_wishlist": "Thêm vào danh sách yêu thích"
+      "add_wishlist": "Thêm vào danh sách yêu thích",
+      "removed": "Đã xóa khỏi danh sách",
+      "undo": "Hoàn tác",
+      "toast_added": "Đã thêm vào danh sách",
+      "toast_add_failed": "Không lưu được — thử lại",
+      "toast_remove_failed": "Không xóa được — thử lại",
+      "count_prefix": "Bạn đang có",
+      "count_suffix": "phim đã lưu",
+      "search_placeholder": "Tìm trong danh sách",
+      "filter_all": "Tất cả",
+      "filter_now_showing": "Đang chiếu",
+      "filter_coming_soon": "Sắp chiếu",
+      "empty_filtered_title": "Không tìm thấy",
+      "empty_filtered_desc": "Thử từ khóa hoặc bộ lọc khác.",
+      "clear_filters": "Xóa bộ lọc"
+    },
+    "myreviews": {
+      "empty_title": "Chưa có đánh giá nào",
+      "empty_desc": "Xem phim và chia sẻ cảm nhận của bạn.",
+      "browse": "Duyệt Phim",
+      "delete": "Xóa",
+      "delete_confirm": "Xóa đánh giá này?",
+      "view": "Xem đánh giá",
+      "cancel": "Hủy",
+      "confirm_delete": "Xóa",
+      "toast_deleted": "Đã xóa đánh giá",
+      "toast_delete_failed": "Không xóa được — thử lại",
+      "toast_load_failed": "Không tải được — thử lại"
     }
   },
   "booking": {
@@ -582,6 +609,8 @@
     "loading": "Đang tải...",
     "error": "Lỗi",
     "try_again": "Thử lại",
+    "show_more": "Xem thêm",
+    "show_less": "Thu gọn",
     "not_found": "Không Tìm Thấy",
     "not_found_desc": "Trang bạn tìm kiếm không tồn tại.",
     "cinematic_excellence": "Xuất Sắc Điện Ảnh",

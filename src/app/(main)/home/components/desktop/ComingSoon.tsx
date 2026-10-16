@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Bell, ChevronLeft, ChevronRight } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
-import { useWishlist } from "@/features/wishlist/context";
+import { useWishlist, type WishlistFeedback } from "@/features/wishlist/context";
 import { formatDate } from "@/libs/utils";
 import type { Movie } from "@/features/movies/types";
 import type { ErrorResponse } from "@/libs/api";
@@ -142,7 +142,13 @@ export default function ComingSoon({
                   {/* Wishlist / Remind Me Button */}
                   <button
                     type="button"
-                    onClick={() => toggleWishlist(movie.id)}
+                    onClick={() =>
+                      toggleWishlist(movie.id, {
+                        added: translate("profile.wishlist.toast_added"),
+                        addFailed: translate("profile.wishlist.toast_add_failed"),
+                        removeFailed: translate("profile.wishlist.toast_remove_failed"),
+                      } satisfies WishlistFeedback)
+                    }
                     className={`flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full border transition-all ${
                       wished
                         ? "border-(--color-gold) bg-(--color-gold) text-black shadow-md"

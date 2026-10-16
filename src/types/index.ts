@@ -8,6 +8,9 @@ export interface CastMember {
   src: string;
 }
 
+/** Release status — mirrors the backend `MovieStatus` enum (`now_showing` books, others link to detail only). */
+export type MovieStatus = "now_showing" | "coming_soon" | "ended";
+
 export interface Movie {
   id: string;
   title: string;
@@ -22,6 +25,8 @@ export interface Movie {
   releaseDate: string;
   ageRating: string;
   language: string;
+  /** Absent on mock-era rows; live wishlist/catalog payloads always carry it. */
+  status?: MovieStatus;
 }
 
 export interface FeaturedMovie extends Movie {
