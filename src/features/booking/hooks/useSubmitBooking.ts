@@ -6,6 +6,7 @@ import { useBooking } from "@/features/booking/context";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import { createBookingAction, payBookingAction } from "@/features/booking/action";
+import { normalizePhone } from "@/libs/zod";
 
 interface SubmitBookingResult {
   /** Whether a supported gateway is selected, so the pay CTA may be enabled. */
@@ -66,9 +67,9 @@ export function useSubmitBooking(): SubmitBookingResult {
           showtimeId,
           seatIds,
           contact: {
-            name: contactName,
-            email: contactEmail,
-            phone: `${contactCountryCode}${contactPhone}`,
+            name: contactName.trim(),
+            email: contactEmail.trim(),
+            phone: normalizePhone(contactCountryCode, contactPhone),
           },
           combos: combos.map((combo) => ({ comboId: combo.id, quantity: combo.qty })),
           foods: foods.map((food) => ({ foodItemId: food.id, quantity: food.qty })),

@@ -35,11 +35,11 @@ export default function PasswordForm() {
       setTouched(true);
       return;
     }
-    router.back();
+    router.replace("/profile");
   };
 
   const handleCancel = () => {
-    router.back();
+    router.replace("/profile");
   };
 
   return (

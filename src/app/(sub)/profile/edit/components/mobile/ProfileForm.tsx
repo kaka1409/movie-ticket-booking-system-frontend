@@ -56,7 +56,7 @@ export default function ProfileForm() {
           phone: state.data.phone,
           dob: state.data.dob,
         });
-        router.back();
+        router.replace("/profile");
       } else {
         if (state.status === 409) {
           setServerError(translate("profile.edit.error_conflict"));
@@ -68,7 +68,7 @@ export default function ProfileForm() {
   }, [hasChanges, isValid, fullName, phone, dob, token, updateUser, router, translate]);
 
   const handleCancel = () => {
-    router.back();
+    router.replace("/profile");
   };
 
   if (!user) return null;
