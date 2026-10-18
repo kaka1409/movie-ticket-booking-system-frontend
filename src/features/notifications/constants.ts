@@ -1,6 +1,16 @@
 import { Ticket, AlertCircle, Bell, Star } from "lucide-react";
 import type { NotifType } from "./types";
 
+/** Socket.IO event the backend gateway pushes on every new notification (§11). */
+export const NOTIFICATION_EVENT = "notification:new";
+
+/**
+ * Window event the notification provider fires when a push concerns a ticket —
+ * an open ticket view revalidates on it (`TICKET_UPDATED_EVENT`). `detail` is
+ * `{ ticketId? }`; a missing id means "unknown ticket, listen anyway".
+ */
+export const TICKET_UPDATED_EVENT = "primseat:ticket-updated";
+
 export const TYPE_CONFIG: Record<
   NotifType,
   {

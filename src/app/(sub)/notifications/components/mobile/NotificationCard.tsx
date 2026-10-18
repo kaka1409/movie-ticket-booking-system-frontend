@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { useLocale } from "@/contexts/LocaleContext";
+import { formatRelativeTime } from "@/libs/utils";
 import type { Notification } from "@/features/notifications/types";
 import { TYPE_CONFIG } from "@/features/notifications/constants";
 
@@ -9,10 +11,12 @@ export default function NotificationCard({
   onMarkRead,
 }: {
   notification: Notification;
-  onMarkRead: (id: number) => void;
+  onMarkRead: (id: string) => void;
 }) {
+  const { locale } = useLocale();
   const typeConfig = TYPE_CONFIG[notification.type];
   const Icon = typeConfig.Icon;
+  const time = formatRelativeTime(notification.createdAt, locale);
 
   return (
     <article
@@ -55,7 +59,7 @@ export default function NotificationCard({
 
           <div className="flex items-center gap-2">
             <span className="text-[10px] font-bold tracking-widest text-(--color-gold)">
-              {notification.time}
+              {time}
             </span>
             {notification.action && (
               <Link

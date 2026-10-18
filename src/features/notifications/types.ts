@@ -1,12 +1,38 @@
 export type NotifType = "success" | "error" | "warning" | "info";
 
+/**
+ * Exact `GET /api/v1/notifications` wire row (api-contract §10) — also the
+ * `notification:new` Socket.IO payload (api-contract §11).
+ */
+export interface NotificationDto {
+  id: string;
+  type: string;
+  title: string;
+  message: string | null;
+  href: string | null;
+  actionLabel: string | null;
+  isRead: boolean;
+  meta: unknown;
+  createdAt: string;
+}
+
+/** Inbox view model the UI consumes (adapted from {@link NotificationDto}). */
 export interface Notification {
-  id: number;
+  id: string;
   type: NotifType;
   title: string;
-  message: string | React.ReactNode;
-  time: string;
-  meta?: string;
-  action?: { label: string; href: string };
+  message: string;
+  createdAt: string;
   read: boolean;
+  action?: { label: string; href: string };
+  /** Structured payload ticket-scoped notices carry (drives live view refresh). */
+  meta?: NotificationMeta;
+}
+
+/**
+ * Narrowed form of the free-form `meta` JSON column. Today only `ticketId` is
+ * meaningful: it lets an open ticket view know the notice is about its ticket.
+ */
+export interface NotificationMeta {
+  ticketId?: string;
 }

@@ -9,6 +9,9 @@ import ToastViewport from "@/components/ui/ToastViewport";
 import type { Device } from "@/types";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { WishlistProvider } from "@/features/wishlist/context";
+import { NotificationProvider } from "@/features/notifications/context";
+import { getNotifications } from "@/features/notifications/api";
+import { getRequestCookie, hasSession } from "@/libs/session";
 import { SITE_NAME, SITE_URL, DEFAULT_DESCRIPTION, DEFAULT_OG_IMAGE } from "@/libs/site";
 
 /**
@@ -117,6 +120,12 @@ export default async function RootLayout({
 }>) {
   const initialLocale = await resolveRequestLocale();
   const initialDevice = await resolveInitialDevice();
+  // SSR inbox seed for the badge + list; empty for logged-out visitors so no
+  // cookie-less request is ever sent. The client provider keeps it live after
+  // hydration (Socket.IO pushes + REST resync).
+  const initialNotifications = (await hasSession())
+    ? (await getNotifications(await getRequestCookie())).items
+    : [];
   return (
     <html
       lang={initialLocale === "vn" ? "vi" : "en"}
@@ -129,7 +138,9 @@ export default async function RootLayout({
           <DeviceProvider initialDevice={initialDevice}>
             <LocaleProvider initialLocale={initialLocale}>
               <AuthProvider>
-                <WishlistProvider>{children}</WishlistProvider>
+                <NotificationProvider initialNotifications={initialNotifications}>
+                  <WishlistProvider>{children}</WishlistProvider>
+                </NotificationProvider>
               </AuthProvider>
             </LocaleProvider>
           </DeviceProvider>

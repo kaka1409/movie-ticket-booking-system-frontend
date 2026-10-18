@@ -1,35 +1,13 @@
 "use client";
 
-import { useState } from "react";
 import { Bell } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
-import type { Notification } from "@/features/notifications/types";
+import { useNotifications } from "@/features/notifications/context";
 import NotificationCard from "./NotificationCard";
 
-export default function NotificationList({
-  notifications: initialNotifications,
-}: {
-  notifications: Notification[];
-}) {
+export default function NotificationList() {
   const { translate } = useLocale();
-  const [notifications, setNotifications] = useState(initialNotifications);
-
-  const unreadCount = notifications.filter((notification) => !notification.read).length;
-
-  const markRead = (id: number) =>
-    setNotifications((previousNotifications) =>
-      previousNotifications.map((notification) =>
-        notification.id === id ? { ...notification, read: true } : notification,
-      ),
-    );
-
-  const markAllRead = () =>
-    setNotifications((previousNotifications) =>
-      previousNotifications.map((notification) => ({
-        ...notification,
-        read: true,
-      })),
-    );
+  const { notifications, unreadCount, markRead, markAllRead } = useNotifications();
 
   return (
     <div className="flex flex-col">
