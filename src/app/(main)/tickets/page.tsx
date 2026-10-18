@@ -22,6 +22,7 @@ import UpcomingTicketList from "@/app/(main)/tickets/components/mobile/UpcomingT
 import PastTicketList from "@/app/(main)/tickets/components/mobile/PastTicketList";
 import TicketsSkeleton from "@/app/(main)/tickets/components/mobile/TicketsSkeleton";
 import Pager from "@/app/(main)/tickets/components/mobile/Pager";
+import TicketRealtimeRefresh from "@/features/tickets/components/TicketRealtimeRefresh";
 
 // Desktop components
 import TicketsContent from "@/app/(main)/tickets/components/desktop/TicketsContent";
@@ -61,6 +62,9 @@ export default async function TicketsPage({
   const meta = (activeResult && !("error" in activeResult) && activeResult.meta) || DEFAULT_META;
   return (
     <ProtectedRoute>
+      {/* Someone else can change a ticket this user is looking at (transfer
+          accepted/declined, sender cancelled) — keep both lists live. */}
+      <TicketRealtimeRefresh />
       <Suspense fallback={<TicketsSkeleton />}>
         {/* Mobile */}
         <div className="block md:hidden">

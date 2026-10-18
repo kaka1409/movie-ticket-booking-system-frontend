@@ -1,6 +1,8 @@
 import type { TicketStatus } from "./constants";
 
 export interface SeatTicket {
+  /** Backend seat UUID — present on detail payloads, absent on list summaries. */
+  seatId?: string;
   label: string;
   type: string;
   price: number;
@@ -13,12 +15,13 @@ export interface FoodDrinkItem {
 }
 
 export interface Recipient {
+  id: string;
   name: string;
-  username: string;
   email: string;
   avatar: string;
 }
 
+/** Outgoing transfer as seen by the ticket owner. */
 export interface TicketTransfer {
   status: "pending";
   recipient: Recipient;
@@ -26,11 +29,24 @@ export interface TicketTransfer {
   transferSnacks: boolean;
 }
 
+/** Incoming offer as seen by the recipient (sender + seats, no QR credential). */
+export interface IncomingTransfer {
+  id: string;
+  sender: Recipient;
+  transferredSeats: string[];
+  transferSnacks: boolean;
+}
+
 export interface UpcomingTicket {
   id: string;
+  /** Current showtime UUID — the seats-only modification step reopens this map. */
+  showtimeId?: string;
   status: Extract<TicketStatus, "success" | "failed" | "pending" | "confirmed">;
   movie: string;
   datetime: string;
+  /** Epoch ms of the showtime start / end — same wall-clock source as `datetime`. */
+  startsAtMs: number;
+  endsAtMs: number;
   cinema: string;
   location?: string;
   format: string;
@@ -43,14 +59,28 @@ export interface UpcomingTicket {
   totalPrice?: number;
   paymentMethod?: string;
   foodDrink?: FoodDrinkItem[];
+  /** Owner view — the open transfer this owner sent to someone else. */
   transfer?: TicketTransfer;
-  /** Signed scan payload (`ticketId.qrToken.signature`) — rendered as the QR. */
+  /** Owner view — an open transfer is in flight (drives the list-card badge). */
+  isTransferring?: boolean;
+  /** Who the badge names when the transfer is open. */
+  transferRecipientName?: string;
+  /** Recipient view — the offer this viewer must accept or decline. */
+  incomingTransfer?: IncomingTransfer;
+  /** Which side of the ticket the payload was shaped for (defaults to owner). */
+  viewerRole?: "owner" | "recipient";
+  /**
+   * Signed scan payload (`ticketId.qrToken.signature`) — rendered as the QR.
+   * Absent while the viewer is a pending recipient: the ticket is not theirs yet.
+   */
   qrCode?: string;
 }
 
 export interface PastTicket {
   id: string;
-  status: Extract<TicketStatus, "used" | "expired" | "cancelled" | "refunded">;
+  /** Current showtime UUID (kept for parity with UpcomingTicket). */
+  showtimeId?: string;
+  status: Extract<TicketStatus, "used" | "expired" | "cancelled" | "refunded" | "transferred">;
   movie: string;
   format: string;
   datetime: string;
@@ -59,6 +89,12 @@ export interface PastTicket {
   cinema: string;
   location?: string;
   seatItems: SeatTicket[];
+  /**
+   * Provenance of a settled transfer the viewer is party to — `sent` for a
+   * ticket I gave away (kept in my history) or `received` for one I was given.
+   * Absent when the ticket was never transferred.
+   */
+  transfer?: { direction: "sent" | "received"; counterpartyName: string };
   room?: string;
   ageRating?: string;
   totalSeatPrice?: number;
@@ -73,6 +109,8 @@ export interface PastTicket {
 export type ModificationType = "showtime" | "seats" | "both";
 
 export interface ModificationSeat {
+  /** Backend seat UUID(s) for the modify PATCH — one per chair (sweetbox pair = 2). */
+  seatIds: string[];
   label: string;
   type: string;
   price: number;

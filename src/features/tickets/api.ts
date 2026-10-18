@@ -1,10 +1,20 @@
 import type { ApiResponse } from "@/libs/api";
 import { apiFetch } from "@/libs/api";
 import type { UpcomingTicket, PastTicket, Recipient, EligibleShowtime } from "./types";
-import { CANCELLATION_FEE } from "./constants";
-import { UPCOMING, PAST, MOCK_RECIPIENTS, MOCK_ELIGIBLE_SHOWTIMES } from "./mock";
-import type { TicketDetailWire, TicketPageMeta, TicketSummaryWire } from "./adapters";
-import { toDetailTicket, toPastTicket, toUpcomingTicket } from "./adapters";
+import type {
+  EligibleShowtimeWire,
+  SearchRecipientWire,
+  TicketDetailWire,
+  TicketPageMeta,
+  TicketSummaryWire,
+} from "./adapters";
+import {
+  toDetailTicket,
+  toEligibleShowtime,
+  toPastTicket,
+  toRecipient,
+  toUpcomingTicket,
+} from "./adapters";
 
 /* ─── Ticket listing & detail (LIVE) ─────────────────────── */
 
@@ -62,52 +72,46 @@ export async function getTicketById(
   return { data: toDetailTicket(result.data, locale) };
 }
 
-/* eslint-disable-next-line @typescript-eslint/no-unused-vars -- cookie is reserved for the real API call (currently mocked) */
-export async function findRecipient(query: string, cookie?: string): Promise<Recipient | null> {
-  const normalized = query.trim().toLowerCase().replace(/^@/, "");
-  if (!normalized) return null;
-  return (
-    MOCK_RECIPIENTS.find(
-      (recipient) =>
-        recipient.username.toLowerCase() === normalized ||
-        recipient.email.toLowerCase() === normalized,
-    ) ?? null
-  );
-}
+/* ─── Transfer recipient (LIVE) ─────────────────────────── */
 
-export async function searchRecipients(query: string): Promise<Recipient[]> {
-  const normalized = query.trim().toLowerCase().replace(/^@/, "");
-  if (!normalized) return MOCK_RECIPIENTS;
-  return MOCK_RECIPIENTS.filter(
-    (recipient) =>
-      recipient.name.toLowerCase().includes(normalized) ||
-      recipient.username.toLowerCase().includes(normalized) ||
-      recipient.email.toLowerCase().includes(normalized),
+/**
+ * Exact-email recipient lookup — `GET /user/search?email=`. Any failure
+ * (unknown email, self, network) resolves to `null`; the caller treats that as
+ * "no such recipient" rather than an error state.
+ *
+ * Client callers pass the RAM `token`; server components pass the forwarded
+ * refresh `cookie` (the route accepts Bearer OR refresh cookie).
+ */
+export async function findRecipient(
+  email: string,
+  options?: { token?: string; cookie?: string },
+): Promise<Recipient | null> {
+  const trimmed = email.trim();
+  if (!trimmed) return null;
+
+  const result = await apiFetch<SearchRecipientWire>(
+    `/user/search?email=${encodeURIComponent(trimmed)}`,
+    undefined,
+    options?.token,
+    options?.cookie,
   );
+  if ("error" in result) return null;
+  return toRecipient(result.data);
 }
 
 /* ─── Modification Queries ──────────────────────────────── */
 
-/* eslint-disable-next-line @typescript-eslint/no-unused-vars -- ticketId is reserved for the real API call (currently mocked) */
-export async function getEligibleShowtimes(ticketId?: string): Promise<EligibleShowtime[]> {
-  return MOCK_ELIGIBLE_SHOWTIMES;
-}
-
-/* ─── Cancel & Refund API ────────────────────────────────── */
-
-export async function cancelTicket(ticketId: string): Promise<{
-  success: boolean;
-  refundStatus: "processing" | "failed";
-  refundAmount: number;
-}> {
-  await new Promise((resolve) => setTimeout(resolve, 2000));
-  const ticket = [...UPCOMING, ...PAST].find((entry) => entry.id === ticketId);
-  const ticketTotal = ticket?.seatItems.reduce((sum, seat) => sum + seat.price, 0) ?? 0;
-  const snackTotal = ticket?.foodDrink?.reduce((sum, f) => sum + f.price * f.qty, 0) ?? 0;
-  const isFailed = Math.random() < 0.3;
-  return {
-    success: true,
-    refundStatus: isFailed ? "failed" : "processing",
-    refundAmount: ticketTotal + snackTotal - CANCELLATION_FEE,
-  };
+/** Showtimes this ticket may move to (same movie, >1h out) — `GET /tickets/:id/modify/eligible-showtimes`. */
+export async function getEligibleShowtimes(
+  ticketId: string,
+  cookie?: string,
+): Promise<ApiResponse<EligibleShowtime[]>> {
+  const result = await apiFetch<EligibleShowtimeWire[]>(
+    `/tickets/${encodeURIComponent(ticketId)}/modify/eligible-showtimes`,
+    undefined,
+    undefined,
+    cookie,
+  );
+  if ("error" in result) return result;
+  return { data: result.data.map(toEligibleShowtime) };
 }

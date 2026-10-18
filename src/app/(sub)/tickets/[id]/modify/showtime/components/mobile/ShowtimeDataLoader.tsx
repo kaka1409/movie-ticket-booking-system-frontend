@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useModification } from "@/features/tickets/contexts/ModificationContext";
 import { getEligibleShowtimes } from "@/features/tickets/api";
-import { getDates } from "@/features/booking/api";
+import { toEligibleDateOptions } from "@/features/tickets/adapters";
 import { Skeleton } from "@/components/ui/Skeleton";
 import Button from "@/components/ui/Button";
 import { useLocale } from "@/contexts/LocaleContext";
@@ -16,40 +16,37 @@ export default function ShowtimeDataLoader({
   children: React.ReactNode;
 }) {
   const { showtimes, setShowtimes, dates, setDates, setSelectedDate } = useModification();
-  const { translate } = useLocale();
+  const { translate, locale } = useLocale();
   const [loadError, setLoadError] = useState(false);
   const [retryNonce, setRetryNonce] = useState(0);
 
   useEffect(() => {
-    if (showtimes.length > 0 && dates.length > 0) return;
+    if (showtimes.length > 0) return;
 
-    Promise.all([
-      showtimes.length > 0 ? showtimes : getEligibleShowtimes(ticketId),
-      dates.length > 0 ? dates : getDates(),
-    ])
-      .then(([showtimesData, datesData]) => {
-        if (showtimes.length === 0) setShowtimes(showtimesData);
-        if (dates.length === 0) {
-          setDates(datesData);
-          setSelectedDate(datesData[0]?.value ?? "");
+    let cancelled = false;
+    getEligibleShowtimes(ticketId)
+      .then((result) => {
+        if (cancelled) return;
+        if ("error" in result) {
+          setLoadError(true);
+          return;
         }
+        setShowtimes(result.data);
+        // The date strip is derived from the eligible list — one fetch, no second API.
+        const dateOptions = toEligibleDateOptions(result.data, locale);
+        setDates(dateOptions);
+        setSelectedDate(dateOptions[0]?.value ?? "");
       })
       .catch((error: unknown) => {
         // Without this, a rejected promise leaves the skeleton up forever.
         console.warn("Loading eligible showtimes failed:", error);
-        setLoadError(true);
+        if (!cancelled) setLoadError(true);
       });
-  }, [
-    ticketId,
-    showtimes.length,
-    dates.length,
-    setShowtimes,
-    setDates,
-    setSelectedDate,
-    showtimes,
-    dates,
-    retryNonce,
-  ]);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [ticketId, showtimes.length, setShowtimes, setDates, setSelectedDate, locale, retryNonce]);
 
   const handleRetry = () => {
     setLoadError(false);

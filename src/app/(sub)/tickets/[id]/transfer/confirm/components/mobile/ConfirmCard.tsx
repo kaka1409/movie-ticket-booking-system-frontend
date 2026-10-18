@@ -114,7 +114,7 @@ export default function ConfirmCard({
               <span className="font-bold text-sm text-(--color-text-primary)">
                 {recipient.name}
               </span>
-              <span className="text-xs text-(--color-text-muted)">@{recipient.username}</span>
+              <span className="text-xs text-(--color-text-muted)">{recipient.email}</span>
             </span>
           </div>
         </div>

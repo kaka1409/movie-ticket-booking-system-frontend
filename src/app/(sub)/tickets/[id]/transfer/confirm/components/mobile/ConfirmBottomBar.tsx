@@ -1,9 +1,8 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale } from "@/contexts/LocaleContext";
-import { useAuth } from "@/contexts/AuthContext";
 import type { Recipient } from "@/features/tickets/types";
 import { createTransfer } from "@/features/tickets/action";
 import type { TransferActionResult } from "@/features/tickets/action";
@@ -26,28 +25,24 @@ export default function ConfirmBottomBar({
   const router = useRouter();
   const { ticket } = useTicketDetail();
   const { translate } = useLocale();
-  const { token } = useAuth();
 
   const [state, formAction, isPending] = useActionState(createTransfer, initialState);
 
-  const handleConfirm = () => {
-    if (isPending) return;
-    formAction({
-      ticketId: ticket.id,
-      recipient,
-      seats: seatLabels,
-      transferSnacks,
-      token: token ?? "",
-    });
-  };
+  // Selected labels → backend seat UUIDs; drives both the hidden inputs and the
+  // CTA's disabled state (nothing to transfer → nothing to submit).
+  const seatIds = ticket.seatItems
+    .filter((seat) => seatLabels.includes(seat.label) && seat.seatId)
+    .map((seat) => seat.seatId as string);
+
+  useEffect(() => {
+    if (state.success) {
+      router.push(`/tickets/${ticket.id}`);
+    }
+  }, [state, router, ticket.id]);
 
   const handleCancel = () => {
     router.back();
   };
-
-  if (state.success) {
-    router.push(`/tickets/${ticket.id}`);
-  }
 
   return (
     <div className="sticky bottom-0 z-50 bg-(--color-bg) border-t border-(--color-border) px-4 pb-6 pt-3">
@@ -60,9 +55,17 @@ export default function ConfirmBottomBar({
         >
           {translate("tickets.transfer.cancel")}
         </button>
-        <Button fullWidth={false} className="flex-1" loading={isPending} onClick={handleConfirm}>
-          {translate("tickets.transfer.confirm_cta")}
-        </Button>
+        <form action={formAction} className="flex-1">
+          <input type="hidden" name="ticketId" value={ticket.id} />
+          <input type="hidden" name="recipientEmail" value={recipient.email} />
+          <input type="hidden" name="transferSnacks" value={String(transferSnacks)} />
+          {seatIds.map((seatId) => (
+            <input key={seatId} type="hidden" name="seatId" value={seatId} />
+          ))}
+          <Button type="submit" loading={isPending} disabled={seatIds.length === 0}>
+            {translate("tickets.transfer.confirm_cta")}
+          </Button>
+        </form>
       </div>
     </div>
   );

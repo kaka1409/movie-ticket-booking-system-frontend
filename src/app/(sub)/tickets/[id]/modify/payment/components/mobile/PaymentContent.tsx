@@ -7,12 +7,17 @@ import { useLocale } from "@/contexts/LocaleContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext";
 import { useModification } from "@/features/tickets/contexts/ModificationContext";
-import { PAYMENT_METHODS } from "@/features/booking/mock";
 import { formatVND } from "@/libs/utils";
 import { modifyTicket } from "@/features/tickets/action";
 import BookingBottomBar from "@/components/shared/BookingBottomBar";
 import MicroLabel from "@/components/ui/MicroLabel";
 import Image from "next/image";
+
+/** Local gateway cards — the backend charges the difference on the original method. */
+const PAYMENT_METHODS: { id: string; name: string; description: string; imageSrc: string }[] = [
+  { id: "vnpay", name: "VNPAY", description: "Bank Transfer", imageSrc: "/images/VNPay.png" },
+  { id: "momo", name: "MoMo E-Wallet", description: "Fast & Secure", imageSrc: "/images/momo.png" },
+];
 
 export default function PaymentContent() {
   const params = useParams();
@@ -23,6 +28,7 @@ export default function PaymentContent() {
   const { token } = useAuth();
   const { modificationType, selectedShowtime, selectedSeats } = useModification();
   const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
   const showtimeFee = 15000;
@@ -44,22 +50,16 @@ export default function PaymentContent() {
 
   const handleConfirm = () => {
     if (!canPay) return;
+    setErrorMessage(null);
 
     startTransition(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      const newShowtime = selectedShowtime
-        ? {
-            date: selectedShowtime.date,
-            time: selectedShowtime.time,
-            cinema: selectedShowtime.cinemaName,
-            room: selectedShowtime.room,
-          }
+      const newShowtime = selectedShowtime?.showtimeId
+        ? { showtimeId: selectedShowtime.showtimeId }
         : undefined;
+      const seatIds = selectedSeats.flatMap((seat) => seat.seatIds);
+      const newSeats = seatIds.length > 0 ? { seatIds } : undefined;
 
-      const newSeats = selectedSeats.length > 0 ? selectedSeats : undefined;
-
-      await modifyTicket(
+      const result = await modifyTicket(
         { success: false, error: "" },
         {
           ticketId: id,
@@ -69,6 +69,11 @@ export default function PaymentContent() {
           token: token ?? "",
         },
       );
+
+      if (!result.success) {
+        setErrorMessage(result.error);
+        return;
+      }
 
       const txnId = `TXN${Date.now()}`;
       router.push(`/tickets/${id}/modify/success?transactionId=${txnId}`);
@@ -162,6 +167,7 @@ export default function PaymentContent() {
                 : translate("tickets.modify.payment.confirm_cta")
             }
             isLoading={isPending}
+            errorText={errorMessage ?? undefined}
             onCtaClick={handleConfirm}
           />
         </div>

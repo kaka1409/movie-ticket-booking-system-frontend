@@ -2,58 +2,53 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { searchRecipients } from "@/features/tickets/api";
-import type { Recipient } from "@/features/tickets/types";
+import { findRecipient } from "@/features/tickets/api";
 import { useTransfer } from "@/features/tickets/contexts/TransferContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
+import { isValidEmail } from "@/libs/zod";
 import SearchBar from "@/components/ui/SearchBar";
 
+/**
+ * Exact-email recipient lookup: a valid address triggers `GET /user/search`,
+ * which returns a single user (or none). The recipient is adopted into the
+ * transfer context only when found, so the CTA stays disabled otherwise.
+ */
 export default function RecipientInput() {
   const { recipient, setRecipient } = useTransfer();
+  const { token } = useAuth();
   const { translate } = useLocale();
   const [query, setQuery] = useState("");
-  const [isOpen, setIsOpen] = useState(false);
-  const [results, setResults] = useState<Recipient[]>([]);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [notFound, setNotFound] = useState(false);
   const debouncedQuery = useDebouncedValue(query);
   const requestSequenceRef = useRef(0);
 
   useEffect(() => {
+    const email = debouncedQuery.trim();
+    const canSearch = isValidEmail(email);
     const requestSequence = ++requestSequenceRef.current;
-    searchRecipients(debouncedQuery)
+
+    // All state transitions land in the promise callback (never synchronously
+    // in the effect body), so a stale keystroke can't flash a stale result.
+    // The RAM Bearer token authenticates the client call (route also accepts
+    // the refresh cookie for server-side callers).
+    const lookup = canSearch
+      ? findRecipient(email, { token: token ?? undefined })
+      : Promise.resolve(null);
+
+    lookup
       .then((found) => {
-        if (requestSequence === requestSequenceRef.current) setResults(found);
+        if (requestSequence !== requestSequenceRef.current) return;
+        setRecipient(found);
+        setNotFound(canSearch && !found);
       })
       .catch(() => {
-        if (requestSequence === requestSequenceRef.current) setResults([]);
+        if (requestSequence !== requestSequenceRef.current) return;
+        setRecipient(null);
+        setNotFound(canSearch);
       });
-  }, [debouncedQuery]);
-
-  // Close dropdown on click outside
-  useEffect(() => {
-    const handleMouseDown = (event: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleMouseDown);
-    return () => document.removeEventListener("mousedown", handleMouseDown);
-  }, []);
-
-  const handleChange = (value: string) => {
-    setQuery(value);
-    setIsOpen(true);
-    if (recipient) {
-      setRecipient(null);
-    }
-  };
-
-  const handleSelect = (selected: Recipient) => {
-    setRecipient(selected);
-    setQuery(selected.name);
-    setIsOpen(false);
-  };
+  }, [debouncedQuery, setRecipient, token]);
 
   return (
     <section className="px-4 space-y-3">
@@ -61,50 +56,17 @@ export default function RecipientInput() {
         {translate("tickets.transfer.transfer_to")}
       </h2>
 
-      <div ref={containerRef} className="relative">
-        <SearchBar
-          value={query}
-          onChange={handleChange}
-          onFocus={() => setIsOpen(true)}
-          placeholder={translate("tickets.transfer.email_placeholder")}
-        />
+      <SearchBar
+        value={query}
+        onChange={setQuery}
+        placeholder={translate("tickets.transfer.email_placeholder")}
+      />
 
-        {/* Autocomplete dropdown */}
-        {isOpen && !recipient && (
-          <div className="absolute inset-x-0 top-full z-50 mt-1 rounded-2xl bg-(--color-surface) border border-(--color-border) shadow-[--shadow-card] overflow-hidden max-h-60 overflow-y-auto">
-            {results.length > 0 ? (
-              results.map((item, index) => (
-                <button
-                  key={item.username}
-                  type="button"
-                  onClick={() => handleSelect(item)}
-                  className={`flex items-center gap-3.5 w-full px-4 py-3 text-left transition-colors hover:bg-(--color-surface-2) active:scale-[0.98] ${
-                    index < results.length - 1 ? "border-b border-(--color-border)" : ""
-                  }`}
-                >
-                  <Image
-                    src={item.avatar}
-                    alt={item.name}
-                    width={40}
-                    height={40}
-                    className="shrink-0 w-10 h-10 rounded-full object-cover bg-(--color-surface-2)"
-                  />
-                  <span className="flex flex-col gap-0.5 min-w-0">
-                    <span className="text-sm font-bold text-(--color-text-primary)">
-                      {item.name}
-                    </span>
-                    <span className="text-xs text-(--color-text-muted)">@{item.username}</span>
-                  </span>
-                </button>
-              ))
-            ) : (
-              <p className="px-4 py-3 text-sm text-red-400">
-                {translate("tickets.transfer.recipient_not_found").replace("{query}", query.trim())}
-              </p>
-            )}
-          </div>
-        )}
-      </div>
+      {notFound && (
+        <p className="text-sm text-red-400">
+          {translate("tickets.transfer.recipient_not_found").replace("{query}", query.trim())}
+        </p>
+      )}
 
       {/* Selected recipient preview */}
       {recipient && (
@@ -118,7 +80,7 @@ export default function RecipientInput() {
           />
           <span className="flex flex-col gap-0.5 min-w-0">
             <span className="font-bold text-sm text-(--color-text-primary)">{recipient.name}</span>
-            <span className="text-xs text-(--color-text-muted)">@{recipient.username}</span>
+            <span className="text-xs text-(--color-text-muted)">{recipient.email}</span>
           </span>
         </div>
       )}

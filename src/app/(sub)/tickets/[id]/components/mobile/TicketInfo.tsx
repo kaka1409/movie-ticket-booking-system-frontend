@@ -3,24 +3,23 @@
 import Image from "next/image";
 import { useActionState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { MonitorPlay, CalendarDays, Clock, Loader2 } from "lucide-react";
+import { MonitorPlay, CalendarDays, Clock, Loader2, XCircle } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
-import { useAuth } from "@/contexts/AuthContext";
 import DetailRow from "@/app/(sub)/booking/components/mobile/DetailRow";
 import PriceBreakdown from "@/app/(sub)/booking/components/mobile/PriceBreakdown";
 import QRCode from "./QRCode";
 import TearLine from "@/components/ui/TearLine";
 import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext";
+import { isPastStatus, PAST_STATUS_META } from "@/features/tickets/status";
 import { cancelTransfer } from "@/features/tickets/action";
-import type { TransferActionResult } from "@/features/tickets/action";
+import type { CancelTransferActionResult } from "@/features/tickets/action";
 
-const initialTransferState: TransferActionResult = { success: false, error: "" };
+const initialTransferState: CancelTransferActionResult = { success: false, error: "" };
 
 export default function TicketInfo() {
-  const { ticket, transfer } = useTicketDetail();
+  const { ticket, transfer, incomingTransfer } = useTicketDetail();
   const { translate } = useLocale();
   const router = useRouter();
-  const { token } = useAuth();
 
   const [cancelState, cancelFormAction, isCancelPending] = useActionState(
     cancelTransfer,
@@ -29,11 +28,6 @@ export default function TicketInfo() {
 
   const seatItems = ticket?.seatItems ?? [];
   const isTransferPending = transfer?.status === "pending";
-
-  const handleCancelTransfer = () => {
-    if (isCancelPending) return;
-    cancelFormAction({ ticketId: ticket.id, token: token ?? "" });
-  };
 
   useEffect(() => {
     if (cancelState.success) {
@@ -109,7 +103,7 @@ export default function TicketInfo() {
         <TearLine className="px-0 my-0" lineClassName="mx-3" />
 
         {isTransferPending && transfer ? (
-          /* Transfer pending panel — replaces QR while waiting */
+          /* Owner: transfer pending panel — replaces QR while waiting */
           <div className="px-4 pb-5 pt-4 flex flex-col items-center gap-3 text-center">
             <span className="px-3 py-1.5 rounded-full inline-flex items-center gap-1.5 bg-(--color-gold)/10 border border-(--color-gold)/40">
               <Clock size={13} className="text-(--color-gold)" />
@@ -128,26 +122,64 @@ export default function TicketInfo() {
                 transfer.recipient.name,
               )}
             </p>
-            <button
-              type="button"
-              onClick={handleCancelTransfer}
-              disabled={isCancelPending}
-              className="mt-1 px-5 py-2.5 rounded-xl font-extrabold text-xs tracking-widest uppercase transition-all duration-150 active:scale-[0.98] border border-red-500/60 text-red-400 bg-transparent disabled:opacity-40"
-            >
-              {isCancelPending ? (
-                <Loader2 size={14} className="animate-spin" />
-              ) : (
-                translate("tickets.transfer.cancel_transfer")
+            <form action={cancelFormAction} className="mt-1">
+              <input type="hidden" name="ticketId" value={ticket.id} />
+              <button
+                type="submit"
+                disabled={isCancelPending}
+                className="px-5 py-2.5 rounded-xl font-extrabold text-xs tracking-widest uppercase transition-all duration-150 active:scale-[0.98] border border-red-500/60 text-red-400 bg-transparent disabled:opacity-40"
+              >
+                {isCancelPending ? (
+                  <Loader2 size={14} className="animate-spin" />
+                ) : (
+                  translate("tickets.transfer.cancel_transfer")
+                )}
+              </button>
+            </form>
+          </div>
+        ) : incomingTransfer ? (
+          /* Recipient: offer panel — no QR until the transfer is accepted. */
+          <div className="px-4 pb-5 pt-4 flex flex-col items-center gap-3 text-center">
+            <span className="px-3 py-1.5 rounded-full inline-flex items-center gap-1.5 bg-(--color-gold)/10 border border-(--color-gold)/40">
+              <Clock size={13} className="text-(--color-gold)" />
+              <span className="text-[11px] font-bold uppercase tracking-wide text-(--color-gold)">
+                {translate("tickets.transfer.incoming_badge")}
+              </span>
+            </span>
+            {incomingTransfer.transferredSeats.length > 0 && (
+              <p className="font-extrabold text-lg text-(--color-text-primary)">
+                {incomingTransfer.transferredSeats.join(" · ")}
+              </p>
+            )}
+            <p className="text-sm text-(--color-text-muted)">
+              {translate("tickets.transfer.incoming_from").replace(
+                "{name}",
+                incomingTransfer.sender.name,
               )}
-            </button>
+            </p>
+            <p className="text-xs text-(--color-text-muted)">
+              {translate("tickets.transfer.incoming_hint")}
+            </p>
           </div>
         ) : (
-          /* QR Code — the signed payload when the backend issued one. */
+          /* QR Code — only when the backend issued a payload (usable, owner
+             view). A dead entitlement must not render a scannable-looking QR. */
           <div className="px-4 pb-5 pt-4 flex flex-col items-center gap-3">
-            <QRCode
-              value={"qrCode" in ticket && ticket.qrCode ? ticket.qrCode : ticket.id}
-              ticketId={ticket.id}
-            />
+            {"qrCode" in ticket && ticket.qrCode ? (
+              <QRCode value={ticket.qrCode} ticketId={ticket.id} />
+            ) : (
+              <div className="w-full flex flex-col items-center gap-2 px-4 py-6 rounded-2xl border border-(--color-border) bg-(--color-surface-2)">
+                <XCircle size={26} className="text-(--color-text-muted)" />
+                <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-(--color-text-muted)">
+                  {isPastStatus(ticket.status)
+                    ? translate(PAST_STATUS_META[ticket.status].labelKey)
+                    : translate("tickets.detail.qr_invalid")}
+                </span>
+                <p className="text-xs text-center text-(--color-text-muted)">
+                  {translate("tickets.detail.qr_invalid_hint")}
+                </p>
+              </div>
+            )}
             <p className="text-xs text-white/60 tracking-wide">
               {translate("tickets.detail.booking_id")}
               <span className="font-bold text-white">#{ticket.id}</span>

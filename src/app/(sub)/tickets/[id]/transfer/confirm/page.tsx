@@ -20,14 +20,16 @@ interface ConfirmPageProps {
 
 export default async function ConfirmPage({ params, searchParams }: ConfirmPageProps) {
   const { id } = await params;
-  const { seats, recipient: recipientUsername, transferSnacks } = await searchParams;
+  const { seats, recipient: recipientEmail, transferSnacks } = await searchParams;
 
   // Validate required searchParams
-  if (!seats || !recipientUsername) {
+  if (!seats || !recipientEmail) {
     redirect(`/tickets/${id}/transfer`);
   }
 
-  const recipient = await findRecipient(recipientUsername, await getRequestCookie());
+  const recipient = await findRecipient(recipientEmail, {
+    cookie: await getRequestCookie(),
+  });
   if (!recipient) {
     redirect(`/tickets/${id}/transfer`);
   }

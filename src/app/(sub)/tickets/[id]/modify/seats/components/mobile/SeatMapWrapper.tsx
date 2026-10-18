@@ -4,31 +4,41 @@ import { useEffect, useCallback } from "react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useModification } from "@/features/tickets/contexts/ModificationContext";
 import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext";
-import { getSeatRows, getSeatPrices } from "@/features/booking/api";
-import type { Seat, SeatPrice } from "@/features/booking/types";
+import { getSeatMap } from "@/features/booking/api";
+import { adaptSeatMap } from "@/features/booking/utils/seatMap";
+import type { Seat } from "@/features/booking/types";
 import { getSeatLabel } from "@/features/booking/utils/seat";
 import SeatGrid from "@/components/ui/SeatGrid";
 
 export default function SeatMapWrapper() {
   const { translate } = useLocale();
-  const { toggleSeat, selectedSeats, seatRows, setSeatRows, seatPrices, setSeatPrices } =
+  const { toggleSeat, selectedSeats, seatRows, setSeatRows, seatPrices, setSeatPrices, selectedShowtime } =
     useModification();
   const { ticket } = useTicketDetail();
 
+  // "Both"/"showtime" picked a target showtime; a seats-only change reopens the
+  // ticket's current showtime map.
+  const showtimeId = selectedShowtime?.showtimeId ?? ticket.showtimeId ?? "";
+
   useEffect(() => {
     if (seatRows.length > 0 && seatPrices) return;
+    if (!showtimeId) return;
 
-    async function load() {
-      const [r, p] = await Promise.all([getSeatRows(), getSeatPrices()]);
-      setSeatRows(r);
-      setSeatPrices(p);
-    }
-    load();
-  }, [seatRows.length, seatPrices, setSeatRows, setSeatPrices]);
+    let cancelled = false;
+    getSeatMap(showtimeId).then((result) => {
+      if (cancelled || "error" in result) return;
+      const adapted = adaptSeatMap(result.data);
+      setSeatRows(adapted.rows);
+      setSeatPrices(adapted.seatPrices);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [showtimeId, seatRows.length, seatPrices, setSeatRows, setSeatPrices]);
 
   const handleToggle = useCallback(
     (rowLabel: string, seat: Seat) => {
-      if (!seatPrices) return;
       if (seat.status === "occupied") return;
 
       const label = getSeatLabel(rowLabel, seat);
@@ -38,11 +48,10 @@ export default function SeatMapWrapper() {
           : seat.kind === "vip"
             ? "VIP"
             : "SweetBox";
-      const price = seatPrices[seat.kind as keyof SeatPrice];
 
-      toggleSeat({ label, type, price });
+      toggleSeat({ seatIds: seat.seatIds, label, type, price: seat.price });
     },
-    [seatPrices, toggleSeat, translate],
+    [toggleSeat, translate],
   );
 
   if (!seatPrices || seatRows.length === 0) {

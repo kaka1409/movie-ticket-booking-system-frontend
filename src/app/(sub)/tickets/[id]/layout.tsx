@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getTicketById } from "@/features/tickets/api";
 import { TicketDetailProvider } from "@/features/tickets/contexts/TicketDetailContext";
+import TicketRealtimeRefresh from "@/features/tickets/components/TicketRealtimeRefresh";
 import LoginPrompt from "@/components/shared/LoginPrompt";
 import { getRequestCookie, getRequestLocale, isUnauthorizedResult } from "@/libs/session";
 
@@ -25,5 +26,12 @@ export default async function TicketDetailLayout({
     notFound();
   }
 
-  return <TicketDetailProvider ticket={result.data}>{children}</TicketDetailProvider>;
+  return (
+    <TicketDetailProvider ticket={result.data}>
+      {/* Live view: re-reads this ticket when someone else changes it, and
+          navigates to /tickets if ownership moved away (avoids a 404 page). */}
+      <TicketRealtimeRefresh ticketId={result.data.id} />
+      {children}
+    </TicketDetailProvider>
+  );
 }
