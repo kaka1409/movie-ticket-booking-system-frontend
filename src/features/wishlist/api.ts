@@ -27,14 +27,15 @@ function toErrorUnion(error: unknown): ErrorResponse {
    They never reject — failures come back as the `{ error }` union arm and
    the context rolls the optimistic update back. */
 
-/** LIVE - `POST /wishlist/:movieId` (contract §5) — a 409 only races a double-tap, so callers treat it as already-liked. */
+/** LIVE - `POST /wishlist/:movieId?lang=` (contract §5) — a 409 only races a double-tap, so callers treat it as already-liked. */
 export async function addWishlist(
   movieId: string,
   token: string,
+  locale: "en" | "vn" = "en",
 ): Promise<ApiResponse<WishlistItem>> {
   try {
     return await apiMutation<ApiResponse<WishlistItem>>(
-      `/wishlist/${encodeURIComponent(movieId)}`,
+      withLang(`/wishlist/${encodeURIComponent(movieId)}`, locale),
       { method: "POST" },
       token,
     );

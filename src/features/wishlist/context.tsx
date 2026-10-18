@@ -3,13 +3,16 @@
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/contexts/ToastContext";
+import { useLocale } from "@/contexts/LocaleContext";
 import { addWishlist, removeWishlist } from "@/features/wishlist/api";
 
-/** Pre-translated toast messages for a toggle — built by the caller (context has no locale). */
+/** Pre-translated toast messages for a toggle — built by the caller so each call site picks the messages it needs. */
 export interface WishlistFeedback {
   added: string;
   addFailed: string;
   removeFailed: string;
+  /** Success message for a removal — only pass where there is no Undo snackbar. */
+  removed?: string;
 }
 
 interface WishlistContextType {
@@ -43,6 +46,7 @@ function readStoredWishlist(): string[] {
 export function WishlistProvider({ children }: { children: ReactNode }) {
   const { token } = useAuth();
   const { notify } = useToast();
+  const { locale } = useLocale();
   const [wishlist, setWishlist] = useState<string[]>([]);
 
   // Mount-only restore of logged-out picks. Intentionally two-pass: first paint
@@ -73,7 +77,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
       if (!token) return;
 
       if (!wasLiked) {
-        void addWishlist(id, token).then((result) => {
+        void addWishlist(id, token, locale).then((result) => {
           if ("error" in result && result.error.code !== "ALREADY_WISHLISTED") {
             setWishlist((prev) => prev.filter((entry) => entry !== id));
             if (feedback) notify(feedback.addFailed, { variant: "error" });
@@ -86,11 +90,13 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
           if ("error" in result && result.error.code !== "NOT_FOUND") {
             setWishlist((prev) => (prev.includes(id) ? prev : [...prev, id]));
             if (feedback) notify(feedback.removeFailed, { variant: "error" });
+          } else if (feedback?.removed) {
+            notify(feedback.removed);
           }
         });
       }
     },
-    [wishlist, token, notify],
+    [wishlist, token, notify, locale],
   );
 
   const isWishlisted = useCallback((id: string) => wishlist.includes(id), [wishlist]);

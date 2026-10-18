@@ -17,7 +17,7 @@ const UNDO_WINDOW_MS = 4000;
 const TABS: WishlistTab[] = ["all", "now_showing", "coming_soon"];
 
 /**
- * 2-column wishlist grid. The grid renders only synced BE items (local-only
+ * Single-column wishlist list. The list renders only synced BE items (local-only
  * ids have no card payload and stay hidden); a title/genre search bar and
  * All / Now Showing / Coming Soon chips filter client-side — the list is
  * personal and small, so no round-trip per keystroke. Removing a title shows
@@ -106,7 +106,7 @@ export default function WishlistMovieList({ initialItems }: { initialItems: Wish
 
   return (
     <main className="flex-1 overflow-y-auto px-4 pb-24 pt-4">
-      <div className="mb-3 flex items-center justify-between">
+      <div className="mb-4 flex items-center justify-between">
         <p className="text-sm text-(--color-text-muted)">
           {translate("profile.wishlist.count_prefix")}{" "}
           <span className="font-bold text-(--color-text-primary)">{visibleMovies.length}</span>{" "}
@@ -129,7 +129,7 @@ export default function WishlistMovieList({ initialItems }: { initialItems: Wish
         placeholder={translate("profile.wishlist.search_placeholder")}
       />
 
-      <div className="mt-1 flex items-center gap-3 overflow-x-auto py-2">
+      <div className="my-3 flex items-center gap-3 overflow-x-auto py-2">
         {TABS.map((tab) => (
           <Chip
             key={tab}
@@ -156,7 +156,7 @@ export default function WishlistMovieList({ initialItems }: { initialItems: Wish
           </button>
         </EmptyState>
       ) : (
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3">
           {visibleMovies.map((movie) => (
             <WishlistCard
               key={movie.id}
