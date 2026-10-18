@@ -1,9 +1,30 @@
 /**
- * Back-button target for the sub layout: nested detail/confirm/review routes
- * walk one level up, plain ticket detail goes to the list, and `null` means
- * "use `router.back()`" (no known parent inside the app).
+ * Back-button target for the sub layout. Every route maps to a deterministic
+ * in-app parent so the back button always works, even on a first entry with no
+ * browser history (deep link / new tab). The only exception is the terminal
+ * booking status pages, which return `null` — the mobile header hides its back
+ * button there (both have a "Back to Home" CTA). Unrecognised routes fall back
+ * to the home page.
  */
 export function getBackHref(pathname: string): string | null {
+  if (pathname.includes("/status/success") || pathname.includes("/status/failed")) {
+    return null;
+  }
+  if (pathname.startsWith("/booking/")) {
+    const slug = pathname.split("/")[2] ?? "";
+    if (pathname.endsWith("/cinema")) return `/movies/${slug}`;
+    if (pathname.endsWith("/seats")) return `/booking/${slug}/cinema`;
+    if (pathname.endsWith("/snack")) return `/booking/${slug}/seats`;
+    if (pathname.endsWith("/credentials")) return `/booking/${slug}/snack`;
+    if (pathname.endsWith("/payment")) return `/booking/${slug}/credentials`;
+    return `/movies/${slug}`;
+  }
+  if (pathname.startsWith("/notifications")) {
+    return "/";
+  }
+  if (pathname.startsWith("/profile/")) {
+    return "/profile";
+  }
   if (pathname.endsWith("/transfer/confirm")) {
     return pathname.slice(0, -"/confirm".length);
   }
@@ -34,7 +55,7 @@ export function getBackHref(pathname: string): string | null {
   if (/^\/tickets\/[^/]+$/.test(pathname)) {
     return "/tickets";
   }
-  return null;
+  return "/";
 }
 
 /**

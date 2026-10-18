@@ -3,22 +3,22 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { ArrowLeft, Clock, Heart, Play, Star, Ticket } from "lucide-react";
 import TrailerModal from "@/components/shared/TrailerModal";
 import { useMovieDetail } from "@/features/movies/context";
 import { useWishlist, type WishlistFeedback } from "@/features/wishlist/context";
+import { useSmartBack } from "@/hooks/useSmartBack";
 import { useLocale } from "@/contexts/LocaleContext";
 
 const ICON_BUTTON_CLASS =
   "flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-white/15 bg-black/50 backdrop-blur-sm transition-all duration-300 hover:bg-black/75";
 
 export default function HeroSection() {
-  const router = useRouter();
   const movie = useMovieDetail();
   const { toggleWishlist, isWishlisted } = useWishlist();
   const { translate } = useLocale();
   const [isTrailerOpen, setIsTrailerOpen] = useState(false);
+  const handleBack = useSmartBack("/movies");
 
   const liked = isWishlisted(movie.id);
 
@@ -27,6 +27,7 @@ export default function HeroSection() {
       added: translate("profile.wishlist.toast_added"),
       addFailed: translate("profile.wishlist.toast_add_failed"),
       removeFailed: translate("profile.wishlist.toast_remove_failed"),
+      removed: translate("profile.wishlist.removed"),
     };
   }
   const genres = movie.genre
@@ -57,7 +58,7 @@ export default function HeroSection() {
         <div className="absolute left-5 top-5 z-20">
           <button
             type="button"
-            onClick={() => router.back()}
+            onClick={handleBack}
             aria-label={translate("movies.detail.back")}
             className={ICON_BUTTON_CLASS}
           >

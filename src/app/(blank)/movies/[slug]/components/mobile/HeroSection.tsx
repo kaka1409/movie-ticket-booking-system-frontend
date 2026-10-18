@@ -1,17 +1,17 @@
 "use client";
 
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { ArrowLeft, Heart, Play, Star, Clock } from "lucide-react";
 import { useMovieDetail } from "@/features/movies/context";
 import { useWishlist, type WishlistFeedback } from "@/features/wishlist/context";
+import { useSmartBack } from "@/hooks/useSmartBack";
 import { useLocale } from "@/contexts/LocaleContext";
 
 export default function HeroSection() {
-  const router = useRouter();
   const movie = useMovieDetail();
   const { toggleWishlist, isWishlisted } = useWishlist();
   const { translate } = useLocale();
+  const handleBack = useSmartBack("/movies");
   const liked = isWishlisted(movie.id);
 
   function buildFeedback(): WishlistFeedback {
@@ -19,6 +19,7 @@ export default function HeroSection() {
       added: translate("profile.wishlist.toast_added"),
       addFailed: translate("profile.wishlist.toast_add_failed"),
       removeFailed: translate("profile.wishlist.toast_remove_failed"),
+      removed: translate("profile.wishlist.removed"),
     };
   }
 
@@ -49,7 +50,7 @@ export default function HeroSection() {
       <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-4 pt-5">
         <button
           type="button"
-          onClick={() => router.back()}
+          onClick={handleBack}
           className="w-9 h-9 rounded-full bg-black/40 flex items-center justify-center"
           aria-label={translate("movies.detail.back")}
         >

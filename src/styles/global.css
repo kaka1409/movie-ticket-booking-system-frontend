@@ -24,6 +24,14 @@
   --color-text-secondary: #ffe4af;
   --color-text-muted: #606060;
 
+  /* Toast — success/info share the green family, error the red one */
+  --color-info-bg: #e8f5e9;
+  --color-info: #2e7d32;
+  --color-info-text: #1b3a1f;
+  --color-error-bg: #fdecec;
+  --color-error: #d32f2f;
+  --color-error-text: #5f1a1a;
+
   /* Typography — `--font-inter` comes from `next/font` (Inter, self-hosted);
      the generic stack keeps a sane fallback if the variable is missing. */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;

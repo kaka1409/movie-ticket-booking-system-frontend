@@ -15,24 +15,20 @@ export default function Header() {
   const backClassName =
     "w-9 h-9 flex items-center justify-center rounded-full hover:bg-(--color-surface) transition-colors";
 
-  const handleBack = () => {
-    if (backHref) {
-      router.replace(backHref);
-    } else {
-      router.back();
-    }
-  };
-
   return (
     <header className="flex items-center justify-between px-4 py-2 border-b border-(--color-border)">
-      <button
-        type="button"
-        onClick={handleBack}
-        className={backClassName}
-        aria-label={translate("layout.sub.back")}
-      >
-        <ArrowLeft size={22} className="text-(--color-gold-light)" />
-      </button>
+      {backHref ? (
+        <button
+          type="button"
+          onClick={() => router.replace(backHref)}
+          className={backClassName}
+          aria-label={translate("layout.sub.back")}
+        >
+          <ArrowLeft size={22} className="text-(--color-gold-light)" />
+        </button>
+      ) : (
+        <div className="w-9 h-9" />
+      )}
 
       <div className="flex items-center gap-2">
         <h1 className="text-xl font-bold text-(--color-gold-light)">{title}</h1>
