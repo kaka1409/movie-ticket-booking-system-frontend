@@ -1,9 +1,5 @@
 import { apiFetch, apiMutation, withLang, type ApiResponse, type ErrorResponse } from "@/libs/api";
 import type {
-  Cinema,
-  DateOption,
-  SeatRow,
-  SeatPrice,
   ComboItem,
   FoodItem,
   FoodCategory,
@@ -14,7 +10,6 @@ import type {
   SeatHoldResponse,
   BookingDetail,
 } from "./types";
-import { CINEMAS, DATES, SEAT_ROWS, SEAT_PRICES, COUNTDOWN_SECONDS } from "./mock";
 
 /* ─── Booking catalogs (LIVE) ──────────────────────────────── */
 
@@ -182,32 +177,4 @@ export async function releaseSeatHolds(
   } catch (error) {
     return toErrorUnion(error);
   }
-}
-
-/* ─── Out-of-scope mocks (still used outside the booking flow) ─ */
-
-// MOCK - ticket-modify screens only (home went live); the booking flow itself
-// no longer reads these. TODO(api): switch the ticket-modify screens to live
-// seat maps when that batch starts.
-
-export async function getCinemas(): Promise<Cinema[]> {
-  return CINEMAS;
-}
-
-export async function getDates(): Promise<DateOption[]> {
-  return DATES;
-}
-
-export async function getSeatRows(): Promise<SeatRow[]> {
-  return SEAT_ROWS;
-}
-
-export async function getSeatPrices(): Promise<SeatPrice> {
-  return SEAT_PRICES;
-}
-
-// MOCK - the booking countdown seeds at this value (static 10:00 before the hold exists)
-// and then follows the live `PUT /seat-holds` `expiresAt` (600s = contract `holdTtlSeconds`).
-export async function getCountdownSeconds(): Promise<number> {
-  return COUNTDOWN_SECONDS;
 }
