@@ -55,13 +55,13 @@ No test runner. `tests/{e2e,integration,unit}/` are empty dirs. `pnpm test` unde
 ## Feature Scaffolding
 
 - `src/features/movies/` — `mock.tsx` (NOW_SHOWING, COMING_SOON, ALL_MOVIES — module-internal), `constants.ts` (GENRES, AGE_RATINGS, RELEASE_OPTIONS, RATING_OPTIONS, LENGTH_OPTIONS, FORMAT_OPTIONS), `types.ts` (Movie, CastMember, FeaturedMovie), `api.ts` (LIVE: `buildMovieQuery`, `getMovies`, `getFeaturedMovies`, `getGenres`/`getFormats`/`getAgeRatings`; MOCK: `getAllMovies`, `getMovieBySlug` — marked with `MOCK` comments, TODO(api) to switch callers to `getMovieDetail`). No hooks — `page.tsx` calls API directly via `await`.
-- `src/features/tickets/` — `constants.ts` (TICKET_STATUS, CANCELLATION_FEE), `mock.ts` (MOCK_RECIPIENTS, MOCK_ELIGIBLE_SHOWTIMES + legacy UPCOMING/PAST detail fixtures), `types.ts` (FoodDrinkItem, UpcomingTicket, PastTicket, Recipient, TicketTransfer, SeatTicket, ModificationType, ModificationSeat, EligibleShowtime), `api.ts` (LIVE queries: getUpcomingTickets, getPastTickets, getTicketById; MOCK: findRecipient, searchRecipients, getEligibleShowtimes, cancelTicket — `TODO(api)`), `action.ts` (server actions: createTransfer, cancelTransfer, modifyTicket, cancelTicket — `"use server"`), `adapters.ts` (wire → UI mapping + `TicketPageMeta`), `contexts/` (TransferContext, TicketDetailContext, ModificationContext — no listing context).
-- `src/features/notifications/` — `mock.tsx`, `constants.ts`, `types.ts`, `api.ts` (getNotifications).
+- `src/features/tickets/` — `constants.ts` (TICKET_STATUS, CANCELLATION_FEE), `types.ts` (FoodDrinkItem, UpcomingTicket, PastTicket, Recipient, TicketTransfer, SeatTicket, ModificationType, ModificationSeat, EligibleShowtime), `status.ts` (`PAST_STATUS_META` — past-ticket `status` → `{ labelKey }`, the single source for the listing badge + `isPastStatus()` narrowing guard; the FE-only `transferred` status covers a ticket given away), `api.ts` (LIVE: getUpcomingTickets, getPastTickets, getTicketById, getEligibleShowtimes, findRecipient — exact-email recipient lookup via `GET /user/search`), `action.ts` (server actions: `createTransfer`/`cancelTransfer`/`acceptTransfer`/`declineTransfer` take `(prevState, formData: FormData)` and forward the refresh cookie; `modifyTicket`/`cancelTicket` take `(prevState, { …, token })` — `"use server"`), `adapters.ts` (wire → UI mapping + `TicketPageMeta` + recipient/eligible-showtime adapters), `contexts/` (TransferContext, TicketDetailContext, ModificationContext — no listing context). No mock file.
+- `src/features/notifications/` — `mock.tsx`, `constants.ts` (`NOTIFICATION_EVENT` + `TICKET_UPDATED_EVENT` window event), `types.ts` (`Notification` + `NotificationMeta`), `api.ts` (getNotifications), `adapters.ts` (`toNotification` narrows the free-form `meta` JSON to `{ ticketId? }`).
 - `src/features/auth/` — `types.ts` (User, LoginRequest, LoginResponse, RegisterRequest, RegisterResponse, RefreshResponse), `action.ts` (server actions: loginAction, registerAction, refreshAction, logoutAction — `"use server"`), `schema.ts` (createLoginSchema, createRegisterSchema — Zod factory functions with i18n).
-- `src/features/profile/` — `types.ts` (User interface, UpdateProfileRequest), `action.ts` (updateProfile server action), `mock.ts`.
+- `src/features/profile/` — `types.ts` (User interface, UpdateProfileRequest), `action.ts` (updateProfile server action).
 - `src/features/reviews/` — `mock.ts` (FILTERS with FilterKey), `types.ts` (FilterKey, `MovieReview` + `MyReview`/`MyReviewsResponse` for `/reviews/me`), `api.ts` (`getReviewFilters`, `getReviews`, `getMyReviews`, client-interactive `deleteMyReview`), `action.ts` (movie-detail review server actions), `useMovieReviews.ts` (detail-page review state: paging/mutations), `useReviewHighlight.ts` (shared `#review-<id>` deep-link: scroll + 4 s ring + bounded page hunt), `constants.ts` (`REVIEWS_PAGE_SIZE`, `REVIEW_MAX_LENGTH = 500`).
 - `src/features/wishlist/` — no mock (deleted): `types.ts` (`WishlistItem`, `WishlistMovie` — exact BE payload, `WishlistTab`), `api.ts` (LIVE: `getWishlist` + client-interactive `addWishlist`/`removeWishlist` with RAM Bearer, seat-holds precedent), `context.tsx` (WishlistProvider, useWishlist — `toggleWishlist(id, feedback?)` is the single choke point for every heart: optimistic local + BE sync when logged in with rollback + toast; logged-out picks mirror to `localStorage("wishlist")` with mount restore).
-- `src/features/booking/` — `types.ts` (SelectedSeat/SelectedCombo/SelectedFood/BookingMovie/BOOKING_STEP_KEYS re-export shared types + wire types: SeatMapCell/SeatMapRow/SeatMapResponse/CurrentSeatHoldResponse/SeatHoldResponse/PaymentMethodOption/BookingStatus/PaymentFailReason/BookingDetail/PayResult), `utils/` domain folder: `seat.ts` (`getSeatLabel` — the single seat-label format everywhere; grid helpers `restoreSelectedSeats`/`selectCellsByIds`/`clearGridSelection`), `cinema.ts` (`findShowtime`/`resolveSlotSelection`/`resolveCinemaAdoption` — step selection + URL adoption), `bookingCard.ts` (`bookingCardData(booking)` — BookingDetail → card props: merged sweetbox seats, snacks, payment-method label, theater/date/bookingRef), `snack.ts` (`withItemQty` stepper upsert), `seatMap.ts` (`adaptSeatMap` — wire GET /seats → SeatGrid `SeatRow[]`: kind mapping, multi-segment cell splitting, price passthrough), `api.ts` (LIVE: `getSeatMap`, `getCombos`, `getFoodItems`, `getFoodCategories`, `getPaymentMethods`, `getSeatHolds`/`putSeatHolds`/`releaseSeatHolds` (client-interactive, Bearer from RAM), `getBookingById`; MOCK out-of-scope: `getSeatRows`, `getSeatPrices`, `getCountdownSeconds` (+ `getCinemas`/`getDates` for ticket-modify only) + `TODO(api)`), `action.ts` (`"use server"`: `createBookingAction`, `payBookingAction` — see Server Actions Convention), `mock.ts` (re-exports `features/shared/mock`), `context.tsx` (BookingProvider, useBooking — thin dispatch wrappers over the reducer), `reducer.ts` (BookingState, BookingAction, bookingReducer, INITIAL_BOOKING_STATE — the seat grid and cinema-step UI state live here too), `hooks/useSeatHolds.ts` (client seat-hold lifecycle: restore/release/early-hold safety; the session end is enforced by `SessionExpiryWatcher`, not the hook), `components/` (`CinemaAdopt`, `PaidBookingReset`, `SessionExpiryWatcher`, `RequireDraft` — effect-only mount helpers/guards).
+- `src/features/booking/` — `types.ts` (SelectedSeat/SelectedCombo/SelectedFood/BookingMovie/BOOKING_STEP_KEYS re-export shared types + wire types: SeatMapCell/SeatMapRow/SeatMapResponse/CurrentSeatHoldResponse/SeatHoldResponse/PaymentMethodOption/BookingStatus/PaymentFailReason/BookingDetail/PayResult), `utils/` domain folder: `seat.ts` (`getSeatLabel` — the single seat-label format everywhere; grid helpers `restoreSelectedSeats`/`selectCellsByIds`/`clearGridSelection`), `cinema.ts` (`findShowtime`/`resolveSlotSelection`/`resolveCinemaAdoption` — step selection + URL adoption), `bookingCard.ts` (`bookingCardData(booking)` — BookingDetail → card props: merged sweetbox seats, snacks, payment-method label, theater/date/bookingRef), `snack.ts` (`withItemQty` stepper upsert), `seatMap.ts` (`adaptSeatMap` — wire GET /seats → SeatGrid `SeatRow[]`: kind mapping, multi-segment cell splitting, price passthrough), `api.ts` (LIVE: `getSeatMap`, `getCombos`, `getFoodItems`, `getFoodCategories`, `getPaymentMethods`, `getSeatHolds`/`putSeatHolds`/`releaseSeatHolds` (client-interactive, Bearer from RAM), `getBookingById`), `action.ts` (`"use server"`: `createBookingAction`, `payBookingAction` — see Server Actions Convention), `constants.ts` (`BOOKING_SESSION_SECONDS` = 600 — session clock seed), `context.tsx` (BookingProvider, useBooking — thin dispatch wrappers over the reducer), `reducer.ts` (BookingState, BookingAction, bookingReducer, INITIAL_BOOKING_STATE — the seat grid and cinema-step UI state live here too), `hooks/useSeatHolds.ts` (client seat-hold lifecycle: restore/release/early-hold safety; the session end is enforced by `SessionExpiryWatcher`, not the hook), `components/` (`CinemaAdopt`, `PaidBookingReset`, `SessionExpiryWatcher`, `RequireDraft` — effect-only mount helpers/guards). No mock file.
 - `src/hooks/` — `useDevice.ts` (returns `"mobile" | "desktop"` via `matchMedia`), `useMounted.ts` (post-mount flip for staged entry animations), `useAppendReveal.ts` (grow-reveal + scroll for movies/tickets/reviews lists), `useDebouncedValue.ts` (value that settles after `delayMs`)
 - `src/libs/utils.ts` has `slugify`, `formatVND`, `formatDate`, `formatRelativeTime`, `getSafeReturnUrl`, `buildLoginUrl`; `src/libs/date.ts` has `formatDateOnly` (local calendar dates); `src/libs/zod.ts` has shared Zod validators (`isValidPhone`, password regex patterns); `src/types/index.ts` has shared types (`Device`, `Movie`, `CastMember`, `FeaturedMovie`). Feature-specific types live in `features/*/types.ts`. Feature-specific Zod schemas live in `features/*/schema.ts`.
 
@@ -118,41 +118,61 @@ Known gap: a present-but-revoked `refreshToken` cookie passes `hasSession()`. Ha
 
 Two-level routing:
 
-- **Listing**: `(main)/tickets/page.tsx` — server URL pager (`?tab=&page=`, one tab fetched per render) inside main layout with BottomNav. Server gate (`hasSession()` → `LoginPrompt`) + `<ProtectedRoute>` client fallback. Mobile renders `Tabs` + `UpcomingTicketList`/`PastTicketList` + `Pager`; desktop `TicketsContent` is a null stub.
+- **Listing**: `(main)/tickets/page.tsx` — server URL pager (`?tab=&page=`, one tab fetched per render) inside main layout with BottomNav. Server gate (`hasSession()` → `LoginPrompt`) + `<ProtectedRoute>` client fallback. Mobile renders `Tabs` + `UpcomingTicketList`/`PastTicketList` + `Pager`; desktop `TicketsContent` is a null stub. Each upcoming card wears its status on the **poster**: a full-width `TicketCountdown` ribbon (client-only, ticks against the absolute showtime deadline, compact units — the poster is ~96 px wide) for a usable ticket, or the gold `tickets.transfer.pending_badge` ribbon while a transfer is in flight (a countdown would be misleading). The tag row keeps a gold pill carrying the one thing the ribbon cannot fit — the recipient name (`features/tickets/adapters.ts` → `isTransferring`/`transferRecipientName`).
 - **Detail**: `(sub)/tickets/[id]/page.tsx` — renders components directly (no props). **Layout** (`layout.tsx`) is the server component that calls `getTicketById(id, await getRequestCookie())`, wraps children in `<TicketDetailProvider>`. Components read ticket from `useTicketDetail()` context.
 
 Detail page components under `(sub)/tickets/[id]/components/`:
 
 - `mobile/TicketInfo.tsx` — hero poster, theater/location, seat, food & drink, QR code, payment summary
-- `mobile/TicketActions.tsx` — Download Ticket (always) + Cancel & Refund (only for success/confirmed/pending) + Transfer Ticket (upcoming only)
-- `mobile/QRCode.tsx` — `qrcode.react` with full URL encoding (`https://primseat.com/tickets/{id}`), error correction level H
+- `mobile/TicketActions.tsx` — owner: Download Ticket (only while a scan payload exists) + Cancel & Refund (only for success/confirmed/pending) + Transfer Ticket (upcoming only). Recipient (`viewerRole === "recipient"`): Accept Transfer + Decline only.
+- `mobile/QRCode.tsx` — `qrcode.react` rendering the backend's signed scan payload (`ticketId.qrToken.signature`) as-is; the URL form (`https://primseat.com/tickets/{id}`) is only a fallback for values without a payload (never called with a bare id from the detail page)
 - `desktop/TicketDetail.tsx` — stub (returns null)
 
 Past tickets show the same detail layout but without action buttons.
+
+**QR gating**: the backend issues `qrCode`/`qrToken` **only** for a usable ticket (owner + `active` + not revoked) — a used/expired/refunded/cancelled ticket and a pending recipient get neither. The FE never fabricates a QR: `TicketInfo` renders `<QRCode value={ticket.qrCode}/>` only when the payload exists (no `ticket.id` fallback) and otherwise shows a neutral panel labelled with `PAST_STATUS_META` (`tickets.detail.qr_invalid_hint` when the status is not a past one), and `TicketActions` hides **Download Ticket** whenever `ticket.qrCode` is absent. Rationale: a dead QR is misleading — the gate (`POST /tickets/check-in`) rejects it with `TICKET_NOT_ACTIVE` / `TICKET_EXPIRED`.
+
+**Past-status badges**: the backend persists the terminal status (`used` | `expired` | `cancelled` | `refunded`) — `mapPastStatus` (adapters) passes it straight through and `PastCard` reads `PAST_STATUS_META[status]` (`features/tickets/status.ts`) for the badge label (`translate(meta.labelKey)` → `tickets.used`/`tickets.expired`/`tickets.refunded`/`tickets.cancelled`). Use the `isPastStatus()` guard before indexing the map (the detail status union also carries upcoming values). Never derive "expired" from the showtime client-side: the backend expiry sweep (minute cron) is the authority, and a ticket that was checked in, refunded or cancelled must keep showing *that* status. **No muted styling** — every past card renders at full opacity.
+
+**Transfer provenance**: `GET /tickets/past` also returns the tickets the viewer transferred away, so `toPastTicket` maps the summary's settled-transfer field to `PastTicket.transfer` and `mapPastStatus` returns the viewer-derived `"transferred"` status (a `TicketStatus` member that exists only on the FE) for `direction: "sent"`. `PastCard` shows the provenance badge (`tickets.transfer.sent_badge` / `received_badge`) **instead of** the terminal badge whenever `transfer` is present, and for a sent ticket it names the recipient where the "View Details" link would be — ownership moved on accept, so the detail endpoint answers 404 for the sender and the link must not be rendered.
+
+**Live refresh** (`features/tickets/components/TicketRealtimeRefresh.tsx`): the ticket *writer* is often not the viewer, so both the listing (`<TicketRealtimeRefresh />`, no id) and the detail layout (`<TicketRealtimeRefresh ticketId={...} />`) stay honest about a transfer the other side accepted/declined/cancelled. Triggers: the notification push (`notification:new` → provider dispatches `TICKET_UPDATED_EVENT` with `{ ticketId }`) and returning to a hidden tab; a 15 s throttle coalesces them. A listener reacts unless the event names a *different* ticket. On the detail page the ticket is re-read **before** refreshing — `getTicketById` answering 404 means ownership moved away, so the visitor is sent to `/tickets` (`router.replace`) instead of rendering the layout's `notFound()`; otherwise `router.refresh()`.
 
 ## Ticket Transfer
 
 Two sub-routes under `(sub)/tickets/[id]/transfer/`:
 
 - `transfer/page.tsx` — wraps with `TransferProvider`, renders `SeatSelector`, `RecipientInput`, `TransferBottomBar`. Mobile/desktop split via `block md:hidden`.
-- `transfer/confirm/page.tsx` — **server component** that reads `searchParams` (`seats`, `recipient`, `transferSnacks`), calls `findRecipient()`, redirects to transfer page if invalid. Renders `ConfirmCard`, `ConfirmBottomBar`.
+- `transfer/confirm/page.tsx` — **server component** that reads `searchParams` (`seats`, `recipient` = email, `transferSnacks`), calls `findRecipient()` (exact email), redirects to transfer page if invalid. Renders `ConfirmCard`, `ConfirmBottomBar`.
 
 Both have `loading.tsx`. Desktop stubs return null.
 
 Components under `transfer/components/`:
 
 - `mobile/SeatSelector.tsx` — seat toggle for transferable seats
-- `mobile/RecipientInput.tsx` — recipient search (uses `searchRecipients()` API)
-- `mobile/TransferBottomBar.tsx` — sticky bottom bar with transfer CTA → links to confirm page
+- `mobile/RecipientInput.tsx` — exact-email recipient lookup (valid email → `findRecipient()` → `GET /user/search`; adopts the single match into the transfer context, shows "not found" otherwise)
+- `mobile/TransferBottomBar.tsx` — sticky bottom bar with transfer CTA → links to confirm page (passes the recipient email)
 - `desktop/TransferContent.tsx` — stub
 
 Components under `transfer/confirm/components/`:
 
 - `mobile/ConfirmCard.tsx` — transfer summary (seats, recipient, snacks toggle)
-- `mobile/ConfirmBottomBar.tsx` — calls `createTransfer()` API, redirects to ticket detail on success
+- `mobile/ConfirmBottomBar.tsx` — resolves the selected seat labels to backend seat UUIDs at render, renders them as repeated hidden `seatId` inputs inside a `<form action={createTransfer}>` (plus hidden `ticketId`/`recipientEmail`/`transferSnacks`), and redirects to the ticket detail from a `useEffect` on success (never during render). The CTA is `type="submit"` and disabled when no transferable seat resolves.
 - `desktop/ConfirmContent.tsx` — stub
 
-`TransferContext.tsx` (`features/tickets/contexts/`) manages `selectedSeats`, `recipient`, `transferSnacks` state. `TicketDetailContext.tsx` provides `{ ticket, transfer }` from layout.
+`TransferContext.tsx` (`features/tickets/contexts/`) manages `selectedSeats`, `recipient`, `transferSnacks` state. `TicketDetailContext.tsx` provides `{ ticket, viewerRole, transfer, incomingTransfer }` from layout.
+
+### Incoming transfers (recipient side)
+
+`GET /tickets/:id` also answers for the recipient of the ticket's open transfer, so the `transfer received` notification (which already links to `/tickets/{ticketId}`) opens a real page. The payload is view-shaped by the backend:
+
+- `viewerRole: "owner" | "recipient"` — `TicketDetailContext` exposes the resolved value (defaults to `owner` for list-derived data).
+- Owner: `transfer` (who it is going to) + the QR.
+- Recipient: `incomingTransfer` (`{ id, sender, transferredSeats, transferSnacks }`) and **no QR** (`qrToken`/`qrCode` are null/absent until they accept).
+- `TicketInfo` renders the offer panel instead of the QR; `TicketActions` renders Accept/Decline instead of Download/More actions.
+- Accept → `acceptTransfer` (`POST /tickets/transfers/:id/accept`) then `router.refresh()` — the same URL re-renders as the owner view with the QR. Decline → `declineTransfer` then `router.replace("/tickets")`. Both are real `<form action={formAction}>` submits (hidden `transferId`), and `isAccepting || isDeclining` disables **both** buttons while a decision is in flight.
+- The owner's Cancel Transfer button (`TicketInfo` pending-transfer panel) is likewise a `<form action={formAction}>` with a hidden `ticketId`, refreshing on success.
+- `409 TRANSFER_NOT_PENDING` is treated as "already handled" (the actions carry `status`/`code` through the union), not as an error.
 
 ## Ticket Cancel & Refund
 
@@ -168,7 +188,7 @@ Single route under `(sub)/tickets/[id]/cancel/` — no separate routes for succe
 
 Entry point: `TicketActions.tsx` Cancel & Refund row → `router.push(/tickets/${id}/cancel)`. Currently shown only when `canCancel` is true (status success/confirmed/pending) and no pending transfer.
 
-Cancellation fee is fixed ₫20,000 (policy time from backend in future). `cancelTicket()` API simulates 2s delay with 70% success / 30% refund-failure. After success, "View Ticket" calls `router.replace()` + `router.refresh()` to re-fetch server-side ticket data.
+Cancellation fee is fixed ₫20,000 (policy time from backend in future). `cancelTicket` is the live server action (`POST /tickets/:id/cancel`) — the backend decides the refund outcome. After success, "View Ticket" calls `router.replace()` + `router.refresh()` to re-fetch server-side ticket data.
 
 ## Profile Page
 
@@ -222,8 +242,8 @@ Uses `getReviewFilters()` from `features/reviews/api.ts` and `ALL_MOVIES` mock d
 `(sub)/profile/wishlist/page.tsx` — server component: fetches live `getWishlist(cookie, locale)` (no mock — entries carry the full movie card via `WishlistItem`; failure → local draft fallback), mounts `WishlistHydrate`, then composes:
 
 - `components/mobile/WishlistHydrate.tsx` — effect-only mount adoption of server ids into the draft (booking `CinemaAdopt` pattern)
-- `components/mobile/WishlistMovieList.tsx` — count sentence (`count_prefix`/`count_suffix`) on top, search bar (title + genre, debounced) + All/Now Showing/Coming Soon chips (shared `ui/Chip` `variant="outline"`, reviews style) + 2-column grid; filtering is client-side; local-only ids without a BE payload never render; `isBookable` reads `movie.status`
-- `components/mobile/WishlistCard.tsx` — compact card with heart toggle (undoable removal via parent snackbar)
+- `components/mobile/WishlistMovieList.tsx` — count sentence (`count_prefix`/`count_suffix`) on top, search bar (title + genre, debounced) + All/Now Showing/Coming Soon chips (shared `ui/Chip` `variant="outline"`, reviews style) + single-column list; filtering is client-side; local-only ids without a BE payload never render; `isBookable` reads `movie.status`
+- `components/mobile/WishlistCard.tsx` — vertical card (16:9 poster banner on top + title/meta row), Book CTA for now-showing or a muted "Coming Soon" label otherwise, heart toggle (undoable removal via parent snackbar)
 - `components/mobile/EmptyState.tsx` — empty state when wishlist is empty
 - `components/desktop/WishlistContent.tsx` — stub (returns null)
 
@@ -248,7 +268,7 @@ Sub layout provides back button (→ movie detail) + "Cinema & Showtime" title. 
 
 - `components/mobile/StepBar.tsx` — step=2
 - `components/mobile/CountdownBanner.tsx` — session-deadline countdown: shows `countdownStartTime + countdownSeconds` once the session started (hold re-presses never move it), `holdExpiresAt` is only a fallback for a session the tab forgot, static `countdownSeconds` (10:00) pre-CTA. The value derives from the absolute deadline (no setState-in-effect).
-- Seat map rendered inline in page (fixed layout, no zoom/pan — `SeatGrid` fits the viewport width). Screen rendered as curved SVG arc. Max seats = `MAX_SEATS_PER_BOOKING` (8), counted in CHAIRS (`seatIds.length`, so a sweetbox pair counts 2).
+- Seat map rendered inline in page (fixed layout, no zoom/pan — `SeatGrid` fits the viewport width). Screen rendered as curved SVG arc. Max seats comes from the seat-map wire (`maxSeats`, currently 8), counted in CHAIRS (`seatIds.length`, so a sweetbox pair counts 2).
 - `components/mobile/BottomBar.tsx` — sticky bottom bar, selected seats + total (per-cell `price` from the wire — sweetbox cell price is the price of both chairs), "Continue to Snacks" CTA. The CTA is a handler, not a link: it is where the seat hold is finally created (`PUT /seat-holds`), then `setHoldExpiresAt` + `startCountdown` + `router.push('/snack')` on success; `409` → `recoverSeatMap` + inline `booking.seats.hold_taken`; any other failure → inline `booking.seats.hold_failed`. Picking seats writes nothing to the server.
 - `components/desktop/SeatContent.tsx` — stub (returns null)
 
@@ -355,7 +375,8 @@ Both pages are plain server components with no `<Suspense>` — nothing client-s
 - **Movies page** (`(main)/movies/page.tsx`) — **server component**: reads the `searchParams` prop server-side, derives `initialTab`/`initialFilters` with the helpers in `features/movies/url.ts` (`readTabFromParams`, `readFiltersFromParams`, `writeParamsFromState`), fetches `getMovies()` for both tabs, and passes everything as props into `<MovieListProvider>`. The provider no longer calls `useSearchParams()` — no `<Suspense>` boundary needed and the URL state is fully server-rendered. Components: Tabs, SearchBar, FilterPanel, MovieGrid. Desktop stub in `components/desktop/MovieGrid` (returns null).
 - **Component split pattern**: Pages that render both mobile & desktop content in the same file use `block md:hidden` / `hidden md:block` (e.g. home, movies). Layout-level switching is handled by `LayoutProvider` via `matchMedia`. Each page has `components/{mobile,desktop}/` dirs. Shared components go in `components/shared/`. See `(main)/home/` as canonical example.
 - **Sub layout** `getSubTitle()`: Uses i18n keys via `translate()` — `t("notif.title")`, `t("tickets.detail_title")`, `t("tickets.transfer.title")`, `t("tickets.transfer.confirm_title")`, `t("tickets.cancel.title")`, `t("booking.cinema.title")`, `t("booking.seats.title")`, `t("booking.snack.title")`, `t("booking.credentials.title")`, `t("booking.payment.title")`, `t("booking.status.success.title")`, `t("booking.status.failed.title")`, `t("profile.edit_profile")`, `t("profile.change_password")`, `t("profile.review_rating")`, `t("profile.wishlist_label")`. Routing prefix `/profile` → back to `/profile`. Extracted to `src/layouts/sub/utils.ts`.
-- **Sub layout** `getBackHref()`: Determines back-button target — `transfer/confirm` → `transfer`, `transfer` → ticket detail, `/tickets/[id]/cancel` → `/tickets/[id]`, `/tickets/[id]` → `/tickets`, otherwise `null` (uses `router.back()`). Also in `src/layouts/sub/utils.ts`.
+- **Sub layout** `getBackHref()`: Exhaustive deterministic back-button target so it works even on a first entry with no browser history — profile sub-pages → `/profile`, `/notifications` → `/`, `/booking/[slug]/cinema` → `/movies/[slug]` (then seats → cinema, snack → seats, credentials → snack, payment → credentials), ticket routes walk one level up (`/tickets/[id]` → `/tickets`), unrecognised → `/`. The terminal booking status pages (`/status/success|failed`) return `null` → the mobile header hides its back button (both pages have a "Back to Home" CTA). Also in `src/layouts/sub/utils.ts`.
+- `useSmartBack(fallbackHref)` (`src/hooks/`) — back handler that keeps real browser history when present (`window.history.length > 1`) and otherwise replaces to `fallbackHref`; used by the public movie-detail hero (`/movies` fallback) where the true origin is worth preserving.
 - `postcss.config.mjs` only has `@tailwindcss/postcss` plugin.
 - Prettier: `.prettierrc` (`printWidth: 100`, double quotes, trailing commas) + `.prettierignore`; `pnpm format` / `pnpm format:check`. No CI/CD workflows.
 
@@ -390,7 +411,7 @@ URL → state is applied **once, server-side at render** (via `features/movies/u
 - Exported functions, components and types get English `/** JSDoc */`; non-obvious logic gets a short WHY comment. Never leave commented-out dead code in files.
 - State flags are `is*`/`setIs*` (`isLoading`, `isAuthenticated`); simple adjective flags for local display state are acceptable (`mounted`, `expired`).
 - Helper placement: calendar-date math → `libs/date.ts` (`formatDateOnly`); shared pure helpers → `libs/utils.ts` (`buildLoginUrl`, `formatVND`); feature helpers → `features/*/utils.ts` (or a domain-split `utils/` folder when a feature outgrows one file — booking: `getSeatLabel` in `utils/seat.ts`).
-- Mock vs live: every API function is marked at its definition (`MOCK`/`LIVE` comment or section-level `TODO(api)` marker). The booking flow itself is fully LIVE (seat map, holds, catalogs, create/pay, booking detail); remaining booking mocks (`getSeatRows`, `getSeatPrices`, `getCountdownSeconds`, plus `getCinemas`/`getDates` for ticket-modify only) — do not "just wire it live" without checking the payload.
+- Mock vs live: every API function is marked at its definition (`MOCK`/`LIVE` comment or section-level `TODO(api)` marker). The booking flow, tickets, wishlist and notifications are fully LIVE; the only remaining mocks are `movies` (`ALL_MOVIES` + `getAllMovies`/`getMovieBySlug`) and `reviews` filters — do not "just wire it live" without checking the payload.
 - Repeated markup goes to a shared component: `booking/components/mobile/PriceBreakdown.tsx` (seats/snacks/total), `(main)/tickets/components/mobile/TicketList.tsx` (upcoming/past list).
 - Filter components (FilterCheckRow, FilterLabel) are internal to movies page `components/mobile/`; the chip itself is shared at `components/ui/Chip.tsx` (movies filter panel + wishlist status tabs).
 - All cinema data uses **PrimeSeat** brand — Vietnamese addresses, km-based distances, 24h time format.
@@ -403,7 +424,9 @@ URL → state is applied **once, server-side at render** (via `features/movies/u
 - `api.ts` = queries only (GET requests via `apiFetch`). No `"use server"` directive.
 - `action.ts` = mutations (POST/PATCH/PUT/DELETE via `apiMutation`) as `"use server"` server actions.
 - Actions return discriminated unions: `{ success: true, data } | { success: false, error, status? }` — plus the booking-specific `BookingActionResult` with server-normalized error arms.
-- Two param shapes: `useActionState` style `(prevState, data)` (auth, profile) and explicit `(input, token)` (reviews, booking `action.ts`) — the RAM access token is passed as a server-action argument because server actions cannot read React state.
+- Three param shapes: `useActionState` style `(prevState, data)` (auth, profile), `useActionState` **form** style `(prevState, formData: FormData)` (tickets transfer), and explicit `(input, token)` (reviews, booking `action.ts`, ticket modify/cancel) — where the RAM access token must cross the wire it is passed as a server-action argument because server actions cannot read React state.
+- **Never call a `useActionState` dispatcher from an `onClick`.** React 19 requires a transition; outside one the dispatcher never flips `isPending` and dev logs *"An async function with useActionState was called outside of a transition"* — so `disabled={isPending}` guards silently fail (real double-submit risk). Put the dispatcher on a real `<form action={formAction}>`: React wraps it in a transition, `isPending` drives the spinner/`disabled`, and Enter submits. Extra fields travel as hidden inputs; a list travels as repeated names read with `formData.getAll()`.
+- Ticket **transfer** actions (`createTransfer`/`cancelTransfer`/`acceptTransfer`/`declineTransfer`) forward the incoming **refresh cookie** via `getRequestCookie()` instead of a RAM token — `ReadAuthGuard` accepts Bearer **or** the refresh cookie, so this matches the ticket read path and keeps the token out of the DOM. `modifyTicket`/`cancelTicket` still take `(prevState, { …, token })`.
 - Auth actions (`features/auth/action.ts`) read/write cookies via `cookies()` from `next/headers` and `apiMutation`'s `cookie`/`raw` params.
 - Consumer components (LoginForm, RegisterForm, ProfileMenu) call server actions directly, then update auth state via `useAuth().setAuth()` or `useAuth().clearAuth()`.
 - Booking actions never throw: `createBookingAction` / `payBookingAction` catch transport failures and return the union's `{ success: false, ... }` arm.
@@ -460,7 +483,7 @@ URL → state is applied **once, server-side at render** (via `features/movies/u
 - [x] Environment documentation — `.env.example` added; README documents `BACKEND_URL`/`API_PREFIX` (evaluated at build time)
 - [x] README accuracy — stale `features/auth/api.ts` reference fixed; env + test sections added
 - [x] Unused dev tooling — `babel-plugin-react-compiler` removed (`reactCompiler: false` unchanged)
-- [ ] Mock data — mock files under `features/*/mock*`; live vs mock split marked at each function. Booking flow fully LIVE; wishlist fully LIVE (no mock file); home QuickBooking widgets fully LIVE (dates/slots from showtimes API, CTA by `showtimeId`); remaining mocks: tickets, notifications, booking `getSeatRows`/`getSeatPrices`/`getCountdownSeconds` + `getCinemas`/`getDates` (ticket-modify only). File-level `TODO(api)` markers: `notifications/api.ts`, `tickets/api.ts`, `booking/api.ts` `[blocked]`
+- [ ] Mock data — live vs mock split marked at each function. Booking flow, tickets (listing/detail/transfer/modify/cancel), wishlist, notifications and home QuickBooking are fully LIVE (no mock file). Remaining mocks: `movies/mock.tsx` (`ALL_MOVIES`/`NOW_SHOWING`/`COMING_SOON` — desktop preview popover) + `movies/api.ts` (`getAllMovies`/`getMovieBySlug`, `TODO(api)`), and `reviews/mock.ts` (`FILTERS`/`FilterKey`; `getReviewFilters` carries a `TODO(api)`) `[blocked]`
 
 ### Level 2 — Security
 
@@ -471,7 +494,7 @@ URL → state is applied **once, server-side at render** (via `features/movies/u
 - [x] `next/image` host allowlist (11 explicit hosts, no wildcards)
 - [x] Session/401 handling — client: `UNAUTHORIZED_EVENT` in `libs/api.ts` → `AuthContext` clears state only, `ProtectedRoute` renders the prompt in place (excludes `/auth/*`, no redirect); server: `isUnauthorizedResult()` in `libs/session.ts` → `<LoginPrompt />` in place — wired on tickets listing/detail and booking seats/status pages
 - [ ] Security headers — no CSP/HSTS/X-Frame-Options/Referrer-Policy `[before deploy]`
-- [ ] Reviews + booking actions pass raw `accessToken` as a server-action argument — the only places the token crosses the wire; prefer cookie `[now]`
+- [ ] Reviews, booking and ticket modify/cancel actions pass raw `accessToken` as a server-action argument — the remaining places the token crosses the wire; prefer cookie `[now]` (ticket **transfer** actions already forward the refresh cookie)
 - [ ] `allowedDevOrigins` hardcodes LAN IPs — dev-only, harmless in production `[before deploy]`
 
 ### Level 3 — Reliability
