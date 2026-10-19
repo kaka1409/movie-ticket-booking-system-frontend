@@ -13,6 +13,7 @@ interface InputProps {
   error?: string;
   autoComplete?: string;
   inputMode?: React.HTMLAttributes<HTMLInputElement>["inputMode"];
+  maxLength?: number;
 }
 
 export default function TextInput({
@@ -25,6 +26,7 @@ export default function TextInput({
   error,
   autoComplete,
   inputMode,
+  maxLength,
 }: InputProps) {
   const [focused, setFocused] = useState(false);
 
@@ -49,6 +51,7 @@ export default function TextInput({
           value={value}
           inputMode={inputMode}
           autoComplete={autoComplete}
+          maxLength={maxLength}
           placeholder={placeholder}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}

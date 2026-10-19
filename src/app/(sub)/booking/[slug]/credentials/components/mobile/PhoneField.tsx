@@ -15,12 +15,14 @@ const COUNTRY_CODES = [
 ];
 
 export default function PhoneField({
+  id = "phone",
   countryCode,
   onCountryChange,
   phone,
   onPhoneChange,
   error,
 }: {
+  id?: string;
   countryCode: string;
   onCountryChange: (v: string) => void;
   phone: string;
@@ -80,9 +82,12 @@ export default function PhoneField({
             }`}
           />
           <input
+            id={id}
             type="tel"
             inputMode="tel"
             autoComplete="tel"
+            maxLength={20}
+            aria-invalid={error ? true : undefined}
             placeholder={translate("booking.credentials.phone_placeholder")}
             value={phone}
             onFocus={() => setFocused(true)}

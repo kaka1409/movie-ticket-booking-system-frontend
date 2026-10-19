@@ -17,7 +17,7 @@ export default function OrderSummary() {
     <div className="mx-4 rounded-2xl bg-(--color-surface) border border-(--color-border) overflow-visible">
       <div className="px-4 pt-3 pb-2">
         <p className="text-[9px] font-black tracking-[0.18em] uppercase text-(--color-text-muted)">
-          {translate("booking.common.order_summary")}
+          {translate("booking.common.ticket_details")}
         </p>
       </div>
 

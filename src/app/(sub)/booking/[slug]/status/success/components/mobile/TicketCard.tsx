@@ -4,7 +4,7 @@ import Image from "next/image";
 import { QRCodeSVG } from "qrcode.react";
 import { useBooking } from "@/features/booking/context";
 import { useMounted } from "@/hooks/useMounted";
-import { bookingCardData } from "@/features/booking/utils/bookingCard";
+import { bookingCardData, resolveTicketIdentity } from "@/features/booking/utils/bookingCard";
 import { useLocale } from "@/contexts/LocaleContext";
 import DetailRow from "@/app/(sub)/booking/components/mobile/DetailRow";
 import PriceBreakdown from "@/app/(sub)/booking/components/mobile/PriceBreakdown";
@@ -41,9 +41,7 @@ export default function TicketCard({
   // `?bookingId=` payload is authoritative; the BookingContext draft covers
   // direct links / mock-era URLs without one.
   const cardData = booking ? bookingCardData(booking) : null;
-  const posterSrc = movie?.src ?? booking?.showtime.movie.posterUrl ?? null;
-  const title = movie?.title ?? booking?.showtime.movie.title ?? "N/A";
-  const ageRating = movie?.ageRating ?? booking?.showtime.movie.ageRating;
+  const { posterSrc, title, ageRating } = resolveTicketIdentity(movie, booking);
   const bookingRef = cardData?.bookingRef ?? transactionId;
   const qrValue = booking
     ? `https://primseat.com/tickets/${booking.id}`

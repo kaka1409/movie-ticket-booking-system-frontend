@@ -8,7 +8,14 @@ import { useLocale } from "@/contexts/LocaleContext";
 import { withItemQty } from "@/features/booking/utils/snack";
 import { formatVND } from "@/libs/utils";
 
-export default function ComboCard({ item }: { item: ComboItem }) {
+export default function ComboCard({
+  item,
+  className = "mx-4",
+}: {
+  item: ComboItem;
+  /** Container classes — the desktop grid drops the mobile side margin. */
+  className?: string;
+}) {
   const { locale } = useLocale();
   const { combos, foods, setSnacks } = useBooking();
   const qty = combos.find((entry) => entry.id === item.id)?.qty ?? 0;
@@ -16,7 +23,7 @@ export default function ComboCard({ item }: { item: ComboItem }) {
 
   return (
     <article
-      className={`mx-4 rounded-2xl overflow-hidden transition-all duration-200 bg-(--color-surface) border ${
+      className={`${className} rounded-2xl overflow-hidden transition-all duration-200 bg-(--color-surface) border ${
         isSelected
           ? "border-(--color-gold) shadow-[0_0_0_1px_rgba(255,204,77,0.12)]"
           : "border-(--color-border)"

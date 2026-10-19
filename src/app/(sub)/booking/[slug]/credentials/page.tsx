@@ -30,7 +30,7 @@ export default async function CredentialsPage({ params }: { params: Promise<{ sl
 
       {/* Desktop */}
       <div className="hidden md:block">
-        <DesktopCredentialsContent />
+        <DesktopCredentialsContent slug={slug} />
       </div>
     </RequireDraft>
   );

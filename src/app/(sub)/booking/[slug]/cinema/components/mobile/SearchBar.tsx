@@ -4,7 +4,7 @@ import { useBooking } from "@/features/booking/context";
 import { useLocale } from "@/contexts/LocaleContext";
 import SearchBar from "@/components/ui/SearchBar";
 
-export default function SearchBarWrapper() {
+export default function SearchBarWrapper({ className = "px-4" }: { className?: string }) {
   const { cinemaQuery, setCinemaQuery } = useBooking();
   const { translate } = useLocale();
 
@@ -13,7 +13,7 @@ export default function SearchBarWrapper() {
       value={cinemaQuery}
       onChange={setCinemaQuery}
       placeholder={translate("booking.cinema.search")}
-      className="px-4"
+      className={className}
     />
   );
 }

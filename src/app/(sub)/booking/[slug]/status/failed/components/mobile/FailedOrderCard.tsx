@@ -8,17 +8,11 @@ import DetailRow from "@/app/(sub)/booking/components/mobile/DetailRow";
 import PriceBreakdown from "@/app/(sub)/booking/components/mobile/PriceBreakdown";
 import TearLine from "@/components/ui/TearLine";
 import Badge from "@/components/ui/Badge";
-import { bookingCardData } from "@/features/booking/utils/bookingCard";
+import { bookingCardData, resolveTicketIdentity } from "@/features/booking/utils/bookingCard";
+import { paymentErrorCode } from "@/features/booking/utils/paymentFailure";
 import { MonitorPlay, CalendarDays } from "lucide-react";
 import type { Movie } from "@/features/movies/types";
 import type { BookingDetail } from "@/features/booking/types";
-
-const ERROR_CODES: Record<string, string> = {
-  payment_declined: "ERR_PAYMENT_DECLINED",
-  insufficient_funds: "ERR_INSUFFICIENT_FUNDS",
-  network_error: "ERR_NETWORK",
-  expired_card: "ERR_CARD_EXPIRED",
-};
 
 export default function FailedOrderCard({
   movie,
@@ -48,11 +42,9 @@ export default function FailedOrderCard({
   // `?bookingId=` payload is authoritative; the BookingContext draft covers
   // direct links / mock-era URLs without one.
   const cardData = booking ? bookingCardData(booking) : null;
-  const posterSrc = movie?.src ?? booking?.showtime.movie.posterUrl ?? null;
-  const title = movie?.title ?? booking?.showtime.movie.title ?? "N/A";
-  const ageRating = movie?.ageRating ?? booking?.showtime.movie.ageRating;
+  const { posterSrc, title, ageRating } = resolveTicketIdentity(movie, booking);
 
-  const errorCode = ERROR_CODES[reason ?? ""] ?? "ERR_UNKNOWN";
+  const errorCode = paymentErrorCode(reason);
 
   return (
     <div

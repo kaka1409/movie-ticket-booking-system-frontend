@@ -127,7 +127,7 @@ export default async function CinemaShowtimePage({
 
       {/* Desktop */}
       <div className="hidden md:block">
-        <DesktopCinemaContent />
+        <DesktopCinemaContent movieSlug={slug} cinemas={cinemas} dates={dates} />
       </div>
     </>
   );

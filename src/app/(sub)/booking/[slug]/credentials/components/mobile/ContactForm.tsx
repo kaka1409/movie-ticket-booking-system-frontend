@@ -1,89 +1,84 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
 import { User, Mail } from "lucide-react";
-import { useBooking } from "@/features/booking/context";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/contexts/LocaleContext";
-import { createContactSchema } from "@/features/booking/schema";
+import { useContactDraft } from "@/features/booking/hooks/useContactDraft";
+import { Skeleton } from "@/components/ui/Skeleton";
 import FieldLabel from "./FieldLabel";
 import TextInput from "./TextInput";
 import PhoneField from "./PhoneField";
 
-export default function ContactForm() {
+/**
+ * Gates the form on the session-restore call so the account prefill runs with a
+ * resolved `user` — initializing the fields inline used to leave them empty on a
+ * hard refresh, because AuthContext resolves asynchronously.
+ */
+export default function ContactForm({ className = "px-4 space-y-4" }: { className?: string }) {
+  const { isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <section className={`${className}`} aria-busy="true">
+        <Skeleton className="h-7 w-40 rounded-md" />
+        <Skeleton className="h-13 w-full rounded-2xl" />
+        <Skeleton className="h-13 w-full rounded-2xl" />
+        <Skeleton className="h-13 w-full rounded-2xl" />
+      </section>
+    );
+  }
+
+  return <ContactFields className={className} />;
+}
+
+function ContactFields({ className }: { className: string }) {
   const { translate } = useLocale();
-  const { user } = useAuth();
-  const { contactName, contactEmail, contactPhone, contactCountryCode, setCredentials } =
-    useBooking();
-
-  // Prefill order: saved booking state (back-nav) > auth profile > empty.
-  const [name, setName] = useState(contactName || user?.name || "");
-  const [email, setEmail] = useState(contactEmail || user?.email || "");
-  const [phone, setPhone] = useState(contactPhone || user?.phone || "");
-  const [countryCode, setCountryCode] = useState(contactCountryCode || "+84");
-  const [touched, setTouched] = useState(false);
-
-  const schema = useMemo(() => createContactSchema(translate), [translate]);
-  const result = schema.safeParse({ name, email, phone });
-  const errors = result.success ? {} : result.error.flatten().fieldErrors;
-  const isValid = result.success;
-  const showErrors = touched && !isValid;
-
-  useEffect(() => {
-    setCredentials(name, email, phone, countryCode);
-  }, [name, email, phone, countryCode, setCredentials]);
+  const { name, email, phone, countryCode, errors, setField, setCountryCode } = useContactDraft();
 
   return (
-    <section className="px-4 space-y-4">
+    <section className={className}>
       <h2 className="font-bold text-xl text-(--color-text-primary)">
         {translate("booking.credentials.your_details")}
       </h2>
 
       <div>
-        <FieldLabel>{translate("booking.credentials.full_name")}</FieldLabel>
+        <FieldLabel htmlFor="full-name">{translate("booking.credentials.full_name")}</FieldLabel>
         <TextInput
           id="full-name"
           value={name}
-          onChange={(v) => {
-            setName(v);
-            setTouched(true);
-          }}
+          maxLength={100}
+          onChange={(value) => setField("name", value)}
           placeholder={translate("booking.credentials.name_placeholder")}
           icon={User}
           autoComplete="name"
-          error={showErrors ? errors.name?.[0] : undefined}
+          error={errors.name}
         />
       </div>
 
       <div>
-        <FieldLabel>{translate("booking.credentials.email")}</FieldLabel>
+        <FieldLabel htmlFor="email">{translate("booking.credentials.email")}</FieldLabel>
         <TextInput
           id="email"
           type="email"
           value={email}
-          onChange={(v) => {
-            setEmail(v);
-            setTouched(true);
-          }}
+          maxLength={254}
+          onChange={(value) => setField("email", value)}
           placeholder={translate("booking.credentials.email_placeholder")}
           icon={Mail}
           autoComplete="email"
           inputMode="email"
-          error={showErrors ? errors.email?.[0] : undefined}
+          error={errors.email}
         />
       </div>
 
       <div>
-        <FieldLabel>{translate("booking.credentials.phone")}</FieldLabel>
+        <FieldLabel htmlFor="phone">{translate("booking.credentials.phone")}</FieldLabel>
         <PhoneField
           countryCode={countryCode}
           onCountryChange={setCountryCode}
           phone={phone}
-          onPhoneChange={(v) => {
-            setPhone(v);
-            setTouched(true);
-          }}
-          error={showErrors ? errors.phone?.[0] : undefined}
+          onPhoneChange={(value) => setField("phone", value)}
+          error={errors.phone}
         />
       </div>
 

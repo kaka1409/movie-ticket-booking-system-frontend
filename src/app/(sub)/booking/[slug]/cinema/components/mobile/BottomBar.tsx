@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { useBooking } from "@/features/booking/context";
 import { useLocale } from "@/contexts/LocaleContext";
 import BookingBottomBar from "@/components/shared/BookingBottomBar";
+import { buildSeatsHref } from "@/features/booking/utils/cinema";
 import type { Cinema } from "@/features/booking/types";
 
 export default function BottomBar({
@@ -22,14 +23,7 @@ export default function BottomBar({
   );
   const hasSelection = Boolean(selectedCinema && time);
 
-  const seatsQuery = new URLSearchParams();
-  if (showtimeId) seatsQuery.set("showtimeId", showtimeId);
-  if (selectedCinema) seatsQuery.set("cinema", selectedCinema.id);
-  if (time) seatsQuery.set("time", time);
-  if (date) seatsQuery.set("date", date);
-
-  const query = seatsQuery.toString();
-  const seatsHref = `/booking/${movieSlug}/seats${query ? `?${query}` : ""}`;
+  const seatsHref = buildSeatsHref(movieSlug, { showtimeId, cinemaId, time, date });
 
   return (
     <BookingBottomBar

@@ -52,7 +52,7 @@ export default async function PaymentPage({ params }: { params: Promise<{ slug: 
 
       {/* Desktop */}
       <div className="hidden md:block">
-        <DesktopPaymentContent />
+        <DesktopPaymentContent paymentMethods={paymentMethods} />
       </div>
     </RequireDraft>
   );

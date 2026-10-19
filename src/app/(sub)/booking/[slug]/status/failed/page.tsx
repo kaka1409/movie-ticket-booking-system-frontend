@@ -52,7 +52,7 @@ export default async function FailPage({
 
       {/* Desktop */}
       <div className="hidden md:block">
-        <DesktopFailContent />
+        <DesktopFailContent movie={movie} booking={booking} reason={reason} />
       </div>
     </>
   );

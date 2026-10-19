@@ -14,6 +14,9 @@ import PageError from "@/app/(sub)/booking/components/mobile/PageError";
 import SeatMapWrapper from "./components/mobile/SeatMapWrapper";
 import BottomBar from "./components/mobile/BottomBar";
 
+// Shared (effect-only mount helper — see SeatMapAdopter)
+import SeatMapAdopter from "@/features/booking/components/SeatMapAdopter";
+
 // Desktop
 import DesktopSeatContent from "./components/desktop/SeatContent";
 
@@ -47,19 +50,23 @@ export default async function SelectSeatPage({
 
   return (
     <>
+      {/* Effect-only: exactly one seat-map adoption + hold subscription for both
+          the mobile and the desktop tree. */}
+      <SeatMapAdopter initialRows={rows} maxSeats={maxSeats} initialShowtime={showtime} />
+
       {/* Mobile */}
       <div className="block md:hidden">
         <StepBar current={2} />
         <main className="space-y-5 pt-1 pb-10">
           <CountdownBanner />
-          <SeatMapWrapper initialRows={rows} maxSeats={maxSeats} initialShowtime={showtime} />
+          <SeatMapWrapper initialRows={rows} />
         </main>
         <BottomBar />
       </div>
 
       {/* Desktop */}
       <div className="hidden md:block">
-        <DesktopSeatContent />
+        <DesktopSeatContent initialRows={rows} />
       </div>
     </>
   );

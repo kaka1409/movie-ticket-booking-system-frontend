@@ -3,6 +3,7 @@
 import { AlertCircle } from "lucide-react";
 import { useMounted } from "@/hooks/useMounted";
 import { useLocale } from "@/contexts/LocaleContext";
+import { failReasonMessageKey } from "@/features/booking/utils/paymentFailure";
 
 export default function FailedIcon({ reason }: { reason: string | null }) {
   const mounted = useMounted();
@@ -45,14 +46,9 @@ export default function FailedIcon({ reason }: { reason: string | null }) {
 function FailReason({ reason }: { reason: string | null }) {
   const { translate } = useLocale();
 
-  const REASONS: Record<string, string> = {
-    payment_declined: translate("booking.status.failed.reason_payment_declined"),
-    insufficient_funds: translate("booking.status.failed.reason_insufficient_funds"),
-    network_error: translate("booking.status.failed.reason_network_error"),
-    expired_card: translate("booking.status.failed.reason_expired_card"),
-  };
-
-  const message = REASONS[reason ?? ""] ?? translate("booking.status.failed.reason_unknown");
-
-  return <p className="text-sm text-white/60 leading-relaxed max-w-xs mx-auto">{message}</p>;
+  return (
+    <p className="text-sm text-white/60 leading-relaxed max-w-xs mx-auto">
+      {translate(failReasonMessageKey(reason))}
+    </p>
+  );
 }

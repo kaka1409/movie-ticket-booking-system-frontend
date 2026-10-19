@@ -81,3 +81,23 @@ export function resolveCinemaAdoption(input: {
 
   return resolveSlotSelection(cinema, time, date, showtimeId);
 }
+
+/**
+ * The seats-step URL for a resolved cinema slice. Every booked slot travels in
+ * the query so a cold entry (refresh, shared link, or a back/forward jump from
+ * step 5) rebuilds the map and its showtime context without the draft.
+ * Single source for both the mobile bottom bar and the desktop rail CTA.
+ */
+export function buildSeatsHref(
+  movieSlug: string,
+  selection: Pick<CinemaDraft, "showtimeId" | "cinemaId" | "time" | "date">,
+): string {
+  const query = new URLSearchParams();
+  if (selection.showtimeId) query.set("showtimeId", selection.showtimeId);
+  if (selection.cinemaId) query.set("cinema", selection.cinemaId);
+  if (selection.time) query.set("time", selection.time);
+  if (selection.date) query.set("date", selection.date);
+
+  const search = query.toString();
+  return `/booking/${movieSlug}/seats${search ? `?${search}` : ""}`;
+}

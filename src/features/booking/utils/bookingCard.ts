@@ -1,3 +1,4 @@
+import type { Movie } from "@/types";
 import type { BookingDetail, SelectedCombo, SelectedSeat } from "../types";
 
 const PAYMENT_METHOD_LABELS: Record<"vnpay" | "momo", string> = {
@@ -69,5 +70,28 @@ export function bookingCardData(booking: BookingDetail): BookingCardData {
       .join(", "),
     dateTime: `${booking.showtime.date}  ${booking.showtime.startTime}`,
     bookingRef: booking.transactionRef ?? booking.id,
+  };
+}
+
+/** Movie identity printed on a ticket/receipt header. */
+export interface TicketIdentity {
+  posterSrc: string | null;
+  title: string;
+  ageRating?: string;
+}
+
+/**
+ * Resolve the poster/title/age-rating a ticket or receipt card shows: the
+ * movie-detail payload (mock-era / direct-link entry) wins, the authoritative
+ * `GET /bookings/:id` payload is the fallback.
+ */
+export function resolveTicketIdentity(
+  movie: Movie | undefined,
+  booking: BookingDetail | null,
+): TicketIdentity {
+  return {
+    posterSrc: movie?.src ?? booking?.showtime.movie.posterUrl ?? null,
+    title: movie?.title ?? booking?.showtime.movie.title ?? "N/A",
+    ageRating: movie?.ageRating ?? booking?.showtime.movie.ageRating ?? undefined,
   };
 }

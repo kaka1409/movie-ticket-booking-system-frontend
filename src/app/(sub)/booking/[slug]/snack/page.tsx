@@ -68,7 +68,11 @@ export default async function CombosPage() {
 
       {/* Desktop */}
       <div className="hidden md:block">
-        <DesktopSnackContent />
+        <DesktopSnackContent
+          combos={combos}
+          foodItems={foodItems}
+          foodCategories={foodCategories}
+        />
       </div>
     </>
   );

@@ -15,7 +15,7 @@ export default function OrderSummary() {
 
   return (
     <div className="px-4 space-y-3">
-      <h2 className="font-bold text-lg text-white">{translate("booking.common.order_summary")}</h2>
+      <h2 className="font-bold text-lg text-white">{translate("booking.common.ticket_details")}</h2>
 
       <div className="rounded-2xl bg-(--color-surface) border border-(--color-border) overflow-visible">
         {/* Movie info */}

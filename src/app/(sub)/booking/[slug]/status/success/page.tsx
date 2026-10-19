@@ -60,7 +60,7 @@ export default async function SuccessPage({
 
       {/* Desktop */}
       <div className="hidden md:block">
-        <DesktopSuccessContent />
+        <DesktopSuccessContent movie={movie} booking={booking} transactionId={transactionId} />
       </div>
     </>
   );
