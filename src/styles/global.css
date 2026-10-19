@@ -78,11 +78,64 @@ body {
   );
 }
 
+/* Desktop raised surface — the booking step panel (`BookingStepLayout`) and the
+   movies panel (`(main)/movies/page.tsx`): the panel itself paints
+   `--color-surface`, so every card nested inside it steps up one level to
+   `--color-surface-2`. Those cards are all shared with the mobile skin — which
+   still renders on the darker `--color-bg`, where `--color-surface` is the
+   right lift — so the shift is scoped here instead of inside the components. */
+.surface-raised {
+  --color-surface: var(--color-surface-2);
+}
+
 @utility scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
   &::-webkit-scrollbar {
     display: none;
+  }
+}
+
+/* ─── Double-thumb range slider ──────────────────────────────────
+   Backs `components/ui/RangeSlider.tsx`. Two native range inputs share one
+   track; the inputs are `pointer-events-none` so only the visible knobs stay
+   draggable (a knob can never steal the other's hit area). */
+.range-slider-thumb {
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    pointer-events: auto;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--color-bg);
+    border-radius: var(--radius-pill);
+    background: var(--color-gold);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+  }
+
+  &::-moz-range-thumb {
+    pointer-events: auto;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--color-bg);
+    border-radius: var(--radius-pill);
+    background: var(--color-gold);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+  }
+
+  /* keyboard affordance — the native outline is removed with `appearance` */
+  &:focus-visible {
+    &::-webkit-slider-thumb {
+      outline: 2px solid var(--color-gold-light);
+      outline-offset: 2px;
+    }
+
+    &::-moz-range-thumb {
+      outline: 2px solid var(--color-gold-light);
+      outline-offset: 2px;
+    }
   }
 }
 

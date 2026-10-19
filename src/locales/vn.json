@@ -9,7 +9,7 @@
     "header": {
       "search": "Tìm phim, rạp chiếu...",
       "notifications": "Thông Báo",
-      "gold_member": "HẠNG VÀNG",
+      "account": "Menu tài khoản",
       "login": "Đăng nhập"
     },
     "nav": {
@@ -111,9 +111,12 @@
     "no_results_hint": "Thử thay đổi tìm kiếm hoặc bộ lọc.",
     "clear_filters": "Xóa tất cả bộ lọc",
     "coming": "Sắp chiếu",
+    "book_now": "Đặt Vé",
     "release_date": "Ngày Phát Hành",
     "genre": "Thể Loại",
     "rating": "Đánh Giá",
+    "rating_min": "Đánh giá tối thiểu",
+    "rating_max": "Đánh giá tối đa",
     "length": "Thời Lượng",
     "format": "Định Dạng",
     "age_rating": "Phân Loại Tuổi",
@@ -245,8 +248,8 @@
       "cancel": "Hủy",
       "confirm_cta": "Xác nhận chuyển",
       "pending_badge": "Đang Chờ Nhận Vé",
-    "sent_badge": "Đã Chuyển Nhượng",
-    "received_badge": "Nhận Chuyển Nhượng",
+      "sent_badge": "Đã Chuyển Nhượng",
+      "received_badge": "Nhận Chuyển Nhượng",
       "pending_waiting": "Đang chờ {name} chấp nhận vé này.",
       "cancel_transfer": "Hủy Chuyển Vé",
       "incoming_badge": "Lời Mời Nhận Vé",
@@ -382,10 +385,6 @@
       "update": "CẬP NHẬT MẬT KHẨU",
       "cancel": "HỦY",
       "requirements": "Yêu Cầu Mật Khẩu",
-      "req_length": "Ít nhất 8 ký tự",
-      "req_uppercase": "Chứa ít nhất một chữ hoa",
-      "req_number": "Chứa ít nhất một chữ số",
-      "req_special": "Chứa ký tự đặc biệt (!@#$%^&*)",
       "error_current_required": "Mật khẩu hiện tại là bắt buộc.",
       "error_new_required": "Mật khẩu mới là bắt buộc.",
       "error_new_requirements": "Mật khẩu mới không đáp ứng tất cả yêu cầu.",
@@ -434,7 +433,7 @@
     "step": "BƯỚC {current} / {total}",
     "min": "phút",
     "common": {
-      "order_summary": "Tóm Tắt Đơn Hàng",
+      "ticket_details": "Thông Tin Vé",
       "total": "Tổng Cộng",
       "total_price": "Tổng Tiền",
       "seats": "Ghế",
@@ -593,6 +592,21 @@
       "privacy_policy": "Chính Sách Bảo Mật",
       "terms_suffix": "."
     },
+    "promo": {
+      "title": "Mỗi hàng ghế, mỗi câu chuyện — đặt trong vài giây.",
+      "subtitle": "Rạp chiếu cao cấp Việt Nam, chỉ cách một cú chạm.",
+      "bullet_ticket": "Vé QR tức thì",
+      "bullet_refund": "Hoàn tiền trong vài phút",
+      "bullet_rewards": "Ưu đãi riêng cho thành viên"
+    },
+    "forgot": {
+      "title": "Quên Mật Khẩu",
+      "subtitle": "Nhập email của bạn, chúng tôi sẽ gửi liên kết đặt lại mật khẩu.",
+      "email": "Địa Chỉ Email",
+      "submit": "Gửi Liên Kết",
+      "coming_soon": "Tính năng đặt lại mật khẩu đang được hoàn thiện. Trang này đã sẵn sàng — trong lúc chờ, bạn có thể đăng nhập hoặc tạo tài khoản mới.",
+      "back_to_login": "Quay Lại Đăng Nhập"
+    },
     "protected": {
       "title": "Yêu Cầu Đăng Nhập",
       "description": "Vui lòng đăng nhập để truy cập trang này",
@@ -636,6 +650,12 @@
     "clear_selection": "Xóa lựa chọn",
     "clear_search": "Xóa tìm kiếm",
     "show_password": "Hiện mật khẩu",
-    "hide_password": "Ẩn mật khẩu"
+    "hide_password": "Ẩn mật khẩu",
+    "password": {
+      "req_length": "Ít nhất 8 ký tự",
+      "req_uppercase": "Chứa ít nhất một chữ hoa",
+      "req_number": "Chứa ít nhất một chữ số",
+      "req_special": "Chứa ký tự đặc biệt (!@#$%^&*)"
+    }
   }
 }
