@@ -2,12 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Search, Bell, LogIn } from "lucide-react";
+import { Search, LogIn } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { buildLoginUrl } from "@/libs/utils";
 import Logo from "@/layouts/components/Logo";
 import LanguageToggle from "@/layouts/components/LanguageToggle";
+import NotificationBell from "./NotificationBell";
+import AccountMenu from "./AccountMenu";
 
 const NAV_LINKS = [
   { labelKey: "nav.home", href: "/" },
@@ -22,20 +24,18 @@ function isActiveLink(href: string, pathname: string): boolean {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
+/* Auth screens bring their own card and CTA; a header "Login" button on top of
+   them is noise. The profile chip still wins when a session exists. */
+const AUTH_ROUTES = ["/login", "/register", "/forgot-password"] as const;
+
+function isAuthRoute(pathname: string): boolean {
+  return AUTH_ROUTES.some((route) => pathname === route || pathname.startsWith(`${route}/`));
+}
+
 export default function Header() {
   const { translate } = useLocale();
   const { user, isAuthenticated, isLoading } = useAuth();
   const pathname = usePathname();
-
-  const displayName = user?.name ?? "";
-  const initials =
-    displayName
-      .split(" ")
-      .filter(Boolean)
-      .map((word) => word[0])
-      .slice(-2)
-      .join("")
-      .toUpperCase() || "?";
 
   return (
     <nav className="sticky top-0 z-50 border-b border-(--color-border) bg-black/92 backdrop-blur-md">
@@ -58,24 +58,27 @@ export default function Header() {
           ))}
         </div>
 
-        <div
+        {/* Native GET form — the same contract as the mobile home search bar. */}
+        <form
+          action="/movies"
+          method="get"
           className="
-          ml-auto flex max-w-[160px] h-fit flex-1 items-center gap-2 rounded-(--radius-pill) border border-(--color-border) 
-          bg-(--color-surface) px-3.5 py-2 text-[13px] text-(--color-text-muted) lg:max-w-[280px]"
+          ml-auto flex h-fit max-w-[160px] flex-1 items-center gap-2 rounded-(--radius-pill) border border-(--color-border) 
+          bg-(--color-surface) px-3.5 py-2 lg:max-w-[280px]"
         >
-          <Search size={16} className="shrink-0" />
-          <span className="hidden truncate lg:inline">{translate("layout.header.search")}</span>
-        </div>
+          <Search size={16} className="shrink-0 text-(--color-text-muted)" />
+          <input
+            type="search"
+            name="q"
+            placeholder={translate("layout.header.search")}
+            aria-label={translate("layout.header.search")}
+            className="min-w-0 flex-1 border-none bg-transparent text-[13px] text-(--color-text-primary) outline-none placeholder:text-(--color-text-muted)"
+          />
+        </form>
 
-        <div className="flex items-center gap-3.5 text-(--color-text-muted)">
-          <LanguageToggle variant="text" />
-          <button
-            type="button"
-            className="relative cursor-pointer border-none bg-transparent p-1 text-inherit"
-          >
-            <Bell size={18} />
-            <span className="absolute right-1 top-1 h-1.5 w-1.5 rounded-full bg-(--color-gold)" />
-          </button>
+        <div className="flex items-center gap-2 text-(--color-text-muted)">
+          <LanguageToggle variant="flag" />
+          <NotificationBell />
         </div>
 
         {isLoading ? (
@@ -84,18 +87,8 @@ export default function Header() {
             className="h-9 w-32 shrink-0 animate-pulse rounded-(--radius-pill) border border-(--color-border) bg-(--color-surface)"
           />
         ) : isAuthenticated && user ? (
-          <div className="flex shrink-0 items-center gap-2 rounded-(--radius-pill) border border-(--color-border) bg-(--color-surface) pl-1.5 pr-3 py-1">
-            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-(--color-gold) to-(--color-gold-dark) text-[11px] font-extrabold text-black">
-              {initials}
-            </div>
-            <div className="hidden leading-tight lg:block">
-              <p className="text-xs font-bold text-white">{displayName}</p>
-              <p className="text-[9px] font-semibold tracking-widest text-(--color-gold) uppercase">
-                {translate("layout.header.gold_member")}
-              </p>
-            </div>
-          </div>
-        ) : (
+          <AccountMenu />
+        ) : isAuthRoute(pathname) ? null : (
           <Link
             href={buildLoginUrl(pathname)}
             className="flex shrink-0 items-center gap-2 rounded-(--radius-pill) bg-(--color-gold) px-4 py-2 text-xs font-extrabold tracking-wide text-black uppercase no-underline"

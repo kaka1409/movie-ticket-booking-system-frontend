@@ -1,23 +1,14 @@
 "use client";
 
 import { LogOut, Star, Heart, UserCog, LockKeyhole } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useLocale } from "@/contexts/LocaleContext";
-import { useAuth } from "@/contexts/AuthContext";
-import { logoutAction } from "@/features/auth/action";
+import { useLogout } from "@/features/auth/hooks/useLogout";
 import MenuSection from "./MenuSection";
 import Button from "@/components/ui/Button";
 
 export default function ProfileMenu() {
   const { translate } = useLocale();
-  const { clearAuth } = useAuth();
-  const router = useRouter();
-
-  const handleLogout = async () => {
-    clearAuth();
-    await logoutAction();
-    router.push("/");
-  };
+  const { logout, isLoggingOut } = useLogout();
 
   return (
     <div className="mt-8 w-full space-y-6">
@@ -37,7 +28,7 @@ export default function ProfileMenu() {
       />
 
       <div className="px-4">
-        <Button icon={LogOut} onClick={handleLogout}>
+        <Button icon={LogOut} onClick={logout} loading={isLoggingOut}>
           {translate("profile.logout")}
         </Button>
       </div>
