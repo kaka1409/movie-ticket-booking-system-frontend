@@ -31,7 +31,10 @@ export function useAppendReveal<T extends HTMLElement>({
 
     if (grew && !swapChanged) {
       const container = containerRef.current;
-      if (container) {
+      // Both device trees render their own list, so two containers can be
+      // attached to this hook at once — only the visible one (the one with
+      // layout boxes) may scroll the page.
+      if (container && container.getClientRects().length > 0) {
         const cards = container.querySelectorAll<HTMLElement>(cardSelector);
         const firstNew = cards[prevCountRef.current];
         if (firstNew) {

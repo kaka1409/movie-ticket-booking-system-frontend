@@ -68,7 +68,8 @@ function keyOf(query: string, filters: Filters, locale: "en" | "vn"): string {
     locale,
     query,
     filters.genres,
-    filters.rating,
+    filters.ratingMin,
+    filters.ratingMax,
     filters.length,
     filters.format,
     filters.ageRating,
@@ -306,7 +307,8 @@ export function MovieListProvider({
   /* ── Filter count for the panel badge ── */
   const activeFilterCount = [
     appliedFilters.genres.length > 0,
-    !!appliedFilters.rating,
+    /* the rating pair counts as one flag */
+    !!(appliedFilters.ratingMin || appliedFilters.ratingMax),
     !!appliedFilters.length,
     !!appliedFilters.format,
     !!appliedFilters.ageRating,

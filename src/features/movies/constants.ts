@@ -41,7 +41,7 @@ export const LENGTH_LABEL_KEYS: Record<(typeof LENGTH_OPTIONS)[number], string> 
   "> 120 min": "movies.filter_length.long",
 };
 
-/** Rating slider bounds (backend rating scale is 0–10). */
+/** Rating range bounds (backend rating scale is 0–10). */
 export const RATING_MIN = 0;
 export const RATING_MAX = 10;
 export const RATING_STEP = 0.5;
@@ -51,7 +51,8 @@ export const MOVIES_PAGE_SIZE = 8;
 export const DEFAULT_FILTERS: Filters = {
   releaseDate: "",
   genres: [],
-  rating: "",
+  ratingMin: "",
+  ratingMax: "",
   length: "",
   format: "",
   ageRating: "",

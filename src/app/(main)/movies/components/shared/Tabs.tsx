@@ -4,7 +4,19 @@ import { useLocale } from "@/contexts/LocaleContext";
 import { useMovieList } from "@/features/movies/context";
 import Tabs from "@/components/ui/Tabs";
 
-export default function TabsComponent() {
+/**
+ * Now Showing / Coming Soon switch, shared by both device trees — the tab state
+ * lives in the movies context, so the desktop toolbar and the mobile header
+ * drive the same list.
+ */
+export default function MovieTabs({
+  /** Spread the tabs across the row (mobile) instead of sizing them to their label (desktop). */
+  stretch = true,
+  className = "",
+}: {
+  stretch?: boolean;
+  className?: string;
+}) {
   const { translate } = useLocale();
   const { activeTab, setActiveTab } = useMovieList();
 
@@ -18,6 +30,8 @@ export default function TabsComponent() {
       tabs={tabs}
       activeTab={activeTab}
       onTabChange={(tab) => setActiveTab(tab as "now_showing" | "coming_soon")}
+      stretch={stretch}
+      className={className}
     />
   );
 }

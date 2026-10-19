@@ -13,7 +13,10 @@ export interface MoviesMeta {
 export interface Filters {
   releaseDate: string;
   genres: string[];
-  rating: string;
+  /** Lower rating bound as a string ("" = unbounded). */
+  ratingMin: string;
+  /** Upper rating bound as a string ("" = unbounded). */
+  ratingMax: string;
   length: string;
   format: string;
   ageRating: string;
@@ -24,7 +27,8 @@ export interface MovieQuery {
   status?: Tab;
   search?: string;
   genres?: string[];
-  rating?: string;
+  ratingMin?: number;
+  ratingMax?: number;
   ageRating?: string;
   length?: string;
   format?: string;

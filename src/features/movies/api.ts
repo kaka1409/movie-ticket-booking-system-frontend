@@ -112,7 +112,8 @@ export function buildMovieQuery(
     status,
     search: search || undefined,
     genres: filters.genres.length > 0 ? filters.genres : undefined,
-    rating: filters.rating || undefined,
+    ratingMin: filters.ratingMin ? Number(filters.ratingMin) : undefined,
+    ratingMax: filters.ratingMax ? Number(filters.ratingMax) : undefined,
     ageRating: filters.ageRating || undefined,
     length: filters.length || undefined,
     format: filters.format || undefined,
@@ -136,7 +137,8 @@ export async function getMovies(
   if (query.status) params.set("status", query.status);
   if (query.search) params.set("search", query.search);
   if (query.genres?.length) params.set("genres", query.genres.join(","));
-  if (query.rating) params.set("rating", query.rating);
+  if (query.ratingMin !== undefined) params.set("ratingMin", String(query.ratingMin));
+  if (query.ratingMax !== undefined) params.set("ratingMax", String(query.ratingMax));
   if (query.ageRating) params.set("ageRating", query.ageRating);
 
   const range = toDurationRange(query.length);

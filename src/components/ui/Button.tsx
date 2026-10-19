@@ -1,6 +1,7 @@
 "use client";
 
 import { Loader2 } from "lucide-react";
+import Link from "next/link";
 import type { ReactNode } from "react";
 
 type ButtonVariant = "primary" | "outline" | "loadMore";
@@ -30,6 +31,7 @@ export default function Button({
   iconPosition = "right",
   children,
   onClick,
+  href,
   type = "button",
   className = "",
 }: {
@@ -43,17 +45,14 @@ export default function Button({
   iconPosition?: "left" | "right";
   children: ReactNode;
   onClick?: () => void;
+  /** Navigation target — renders a `<Link>` (a disabled/loading button wins over it). */
+  href?: string;
   type?: "button" | "submit" | "reset";
   className?: string;
 }) {
   const iconSize = size === "sm" ? 14 : 17;
 
-  return (
-    <button
-      type={type}
-      onClick={onClick}
-      disabled={disabled || loading}
-      className={`
+  const classes = `
         flex items-center justify-center gap-2.5 font-extrabold
         transition-all duration-150 active:scale-[0.98]
         disabled:opacity-40 disabled:pointer-events-none
@@ -63,20 +62,32 @@ export default function Button({
         ${sizeClasses[size]}
         ${variant === "primary" ? "hover:opacity-90" : ""}
         ${className}
-      `}
-    >
-      {loading ? (
-        <>
-          <Loader2 size={iconSize} className="animate-spin" />
-          {children}
-        </>
-      ) : (
-        <>
-          {Icon && iconPosition === "left" && <Icon size={iconSize} />}
-          {children}
-          {Icon && iconPosition === "right" && <Icon size={iconSize} />}
-        </>
-      )}
+      `;
+
+  const content = loading ? (
+    <>
+      <Loader2 size={iconSize} className="animate-spin" />
+      {children}
+    </>
+  ) : (
+    <>
+      {Icon && iconPosition === "left" && <Icon size={iconSize} />}
+      {children}
+      {Icon && iconPosition === "right" && <Icon size={iconSize} />}
+    </>
+  );
+
+  if (href !== undefined && !disabled && !loading) {
+    return (
+      <Link href={href} className={classes}>
+        {content}
+      </Link>
+    );
+  }
+
+  return (
+    <button type={type} onClick={onClick} disabled={disabled || loading} className={classes}>
+      {content}
     </button>
   );
 }

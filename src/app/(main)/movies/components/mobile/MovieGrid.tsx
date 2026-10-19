@@ -6,6 +6,7 @@ import { useMovieList } from "@/features/movies/context";
 import { useAppendReveal } from "@/hooks/useAppendReveal";
 import MovieCard from "@/components/ui/MovieCard";
 import SectionFallback from "@/components/ui/SectionFallback";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 export default function MovieGrid() {
   const { translate } = useLocale();
@@ -82,6 +83,18 @@ export default function MovieGrid() {
                 minLabel={translate("common.min")}
                 sizes="(max-width: 767px) calc(50vw - 22px), 130px"
               />
+            </div>
+          ))}
+        </div>
+      ) : isFetching ? (
+        /* First load of a tab / new query: skeletons, never the "no results"
+           panel (the list is briefly empty before the page-1 fetch lands). */
+        <div className="grid grid-cols-2 gap-x-3 gap-y-6 px-(--space-md)">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <div key={index}>
+              <Skeleton className="w-full rounded-(--radius-lg)" style={{ aspectRatio: "2/3" }} />
+              <Skeleton className="mt-2 h-3.5 w-3/4 rounded-full" />
+              <Skeleton className="mt-1 h-2.5 w-1/2 rounded-full" />
             </div>
           ))}
         </div>

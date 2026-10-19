@@ -32,12 +32,15 @@ export const metadata: Metadata = {
 };
 
 // Mobile
-import Tabs from "./components/mobile/Tabs";
-import SearchBar from "./components/mobile/SearchBar";
+import Tabs from "./components/shared/Tabs";
+import SearchBar from "./components/shared/SearchBar";
 import FilterPanel from "./components/mobile/FilterPanel";
-import MovieGrid from "./components/mobile/MovieGrid";
+import MobileMovieGrid from "./components/mobile/MovieGrid";
 
 // Desktop
+import MoviesHeader from "./components/desktop/MoviesHeader";
+import FilterSidebar from "./components/desktop/FilterSidebar";
+import MovieToolbar from "./components/desktop/MovieToolbar";
 import DesktopMovieGrid from "./components/desktop/MovieGrid";
 
 function toCatalog(
@@ -129,15 +132,38 @@ export default async function MoviesPage({
         <div className="block md:hidden">
           <div className="space-y-4 py-(--space-md)">
             <Tabs />
-            <SearchBar />
+            <div className="px-(--space-md)">
+              <SearchBar />
+            </div>
             <FilterPanel />
-            <MovieGrid />
+            <MobileMovieGrid />
           </div>
         </div>
 
         {/* Desktop */}
         <div className="hidden md:block">
-          <DesktopMovieGrid />
+          <div className="mx-auto w-full max-w-7xl px-6 py-8 lg:px-8">
+            <MoviesHeader />
+
+            {/* One column at 740–1023px (the filter card stacks above the grid);
+                sidebar + content from `lg:`. */}
+            <div className="mt-8 grid items-start gap-8 lg:grid-cols-[300px_minmax(0,1fr)]">
+              <FilterSidebar />
+
+              {/* The movie container: toolbar (tabs + search) over the grid, in
+                  one panel so the controls sit with the list they act on.
+                  `surface-raised` lifts the nested cards — and the search field —
+                  to `--color-surface-2` so they read on the panel. */}
+              <div className="min-w-0 rounded-2xl border border-(--color-border) bg-(--color-surface) p-5 lg:p-6">
+                <div className="surface-raised">
+                  <MovieToolbar />
+                  <div className="mt-6">
+                    <DesktopMovieGrid />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </MovieListProvider>
     </>

@@ -13,8 +13,9 @@ import {
   RATING_STEP,
 } from "@/features/movies/constants";
 import Chip from "@/components/ui/Chip";
-import FilterCheckRow from "./FilterCheckRow";
-import FilterLabel from "./FilterLabel";
+import RangeSlider from "@/components/ui/RangeSlider";
+import FilterCheckRow from "../shared/FilterCheckRow";
+import FilterLabel from "../shared/FilterLabel";
 import type { Filters } from "@/features/movies/types";
 
 export default function FilterPanel() {
@@ -125,32 +126,44 @@ export default function FilterPanel() {
               </div>
             </div>
 
-            {/* Rating slider (backend scale 0–10) */}
+            {/* Rating range slider (backend scale 0–10) — the two edges mean "unbounded" */}
             <div>
               <FilterLabel>{translate("movies.rating")}</FilterLabel>
-              <div className="flex items-center gap-4">
-                <input
-                  type="range"
-                  min={RATING_MIN}
-                  max={RATING_MAX}
-                  step={RATING_STEP}
-                  value={filters.rating ? Number(filters.rating) : RATING_MIN}
-                  onChange={(event) => {
-                    const value = Number(event.target.value);
-                    setFilters({
-                      ...filters,
-                      rating: value > RATING_MIN ? String(value) : "",
-                    });
-                  }}
-                  aria-label={translate("movies.rating")}
-                  className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-(--color-border) accent-(--color-gold)"
-                />
+              <RangeSlider
+                min={RATING_MIN}
+                max={RATING_MAX}
+                step={RATING_STEP}
+                valueMin={filters.ratingMin ? Number(filters.ratingMin) : RATING_MIN}
+                valueMax={filters.ratingMax !== "" ? Number(filters.ratingMax) : RATING_MAX}
+                labelMin={translate("movies.rating_min")}
+                labelMax={translate("movies.rating_max")}
+                onValueMinChange={(value) =>
+                  setFilters({
+                    ...filters,
+                    ratingMin: value > RATING_MIN ? String(value) : "",
+                  })
+                }
+                onValueMaxChange={(value) =>
+                  setFilters({
+                    ...filters,
+                    ratingMax: value < RATING_MAX ? String(value) : "",
+                  })
+                }
+              />
+              <div className="mt-1 flex items-center justify-between text-sm font-bold tabular-nums">
                 <span
-                  className={`min-w-14 text-right text-sm font-bold tabular-nums ${
-                    filters.rating ? "text-(--color-gold)" : "text-(--color-text-muted)"
-                  }`}
+                  className={
+                    filters.ratingMin ? "text-(--color-gold)" : "text-(--color-text-muted)"
+                  }
                 >
-                  {filters.rating ? `≥ ${filters.rating}` : "—"}
+                  {filters.ratingMin ? `≥ ${filters.ratingMin}` : "—"}
+                </span>
+                <span
+                  className={
+                    filters.ratingMax ? "text-(--color-gold)" : "text-(--color-text-muted)"
+                  }
+                >
+                  {filters.ratingMax ? `≤ ${filters.ratingMax}` : "—"}
                 </span>
               </div>
             </div>
