@@ -10,6 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLocale } from "@/contexts/LocaleContext";
 import { useToast } from "@/contexts/ToastContext";
 import { getNotifications, markAllNotificationsRead, markNotificationRead } from "./api";
 import { toNotification } from "./adapters";
@@ -29,9 +30,14 @@ const NotificationContext = createContext<NotificationContextValue | null>(null)
 /**
  * Single client-side source of truth for the inbox. The SSR seed comes from the
  * root layout (cookie fetch); after hydration the provider keeps the list live:
- * `notification:new` pushes from the Socket.IO gateway prepend rows, and a
+ * `notification:new` pushes from the Socket.IO gateway add rows, and a
  * reconnect re-fetches `/notifications` to resync anything missed offline
  * (REST stays authoritative — api-contract §11).
+ *
+ * The list is language-sensitive: the backend renders each notice from a code +
+ * params, so it is fetched with the current locale and re-read whenever that
+ * locale changes (`router.refresh()` cannot reseed this provider — its state is
+ * seeded once).
  */
 export function NotificationProvider({
   initialNotifications,
@@ -41,6 +47,7 @@ export function NotificationProvider({
   children: ReactNode;
 }) {
   const { token, isAuthenticated } = useAuth();
+  const { locale } = useLocale();
   const { notify } = useToast();
   const [notifications, setNotifications] = useState(initialNotifications);
 
@@ -56,30 +63,40 @@ export function NotificationProvider({
      * revalidate. No `ticketId` = scope unknown, listeners decide for themselves.
      */
     const broadcastTicketUpdate = (meta?: NotificationMeta) => {
-      window.dispatchEvent(
-        new CustomEvent(TICKET_UPDATED_EVENT, { detail: meta ?? {} }),
-      );
+      window.dispatchEvent(new CustomEvent(TICKET_UPDATED_EVENT, { detail: meta ?? {} }));
     };
 
     const handleNew = (dto: NotificationDto) => {
-      const notification = toNotification(dto);
+      const pushed = toNotification(dto);
+
+      // Show it at once, so a slow refetch never hides a new notice...
       setNotifications((previous) =>
-        previous.some((item) => item.id === notification.id)
-          ? previous
-          : [notification, ...previous],
+        previous.some((item) => item.id === pushed.id) ? previous : [pushed, ...previous],
       );
-      notify(notification.title, {
-        variant: notification.type === "warning" ? "info" : notification.type,
-      });
-      if (notification.meta?.ticketId) {
-        broadcastTicketUpdate(notification.meta);
+      if (pushed.meta?.ticketId) {
+        broadcastTicketUpdate(pushed.meta);
       }
+
+      // ...then re-read the inbox: the push payload is rendered in the canonical
+      // locale (the server has no locale for a socket), and REST is the source
+      // of truth, so the refetch both localizes the row and picks up anything
+      // the socket missed. The toast is announced once, in the visitor's language.
+      void getNotifications(undefined, locale).then((result) => {
+        if (cancelled) return;
+        const notification = result.items.find((item) => item.id === pushed.id) ?? pushed;
+        if (result.items.length > 0) setNotifications(result.items);
+        notify(notification.title, {
+          variant: notification.type === "warning" ? "info" : notification.type,
+        });
+      });
     };
 
-    // REST resync — runs once on mount (covers login without a reload) and on
-    // every reconnect (covers notifications missed while the socket was down).
+    // REST resync — runs once on mount (covers login without a reload), on
+    // every reconnect (covers notifications missed while the socket was down)
+    // and on a locale change (the effect re-runs, so the inbox re-reads in the
+    // new language).
     const resync = () => {
-      void getNotifications().then((result) => {
+      void getNotifications(undefined, locale).then((result) => {
         if (!cancelled) setNotifications(result.items);
       });
     };
@@ -101,7 +118,7 @@ export function NotificationProvider({
       socket.io.off("reconnect", handleReconnect);
       socket.disconnect();
     };
-  }, [isAuthenticated, token, notify]);
+  }, [isAuthenticated, token, locale, notify]);
 
   const markRead = useCallback(
     (id: string) => {

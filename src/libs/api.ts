@@ -29,8 +29,9 @@ export type SuccessResponse<T, M = Record<string, unknown>> = {
 
 /**
  * Append the backend content-locale query (`?lang=en|vn`) to a path that may
- * already carry a query string. Only catalog endpoints read it — auth, seats,
- * holds, bookings, tickets and user-scoped reads stay lang-less.
+ * already carry a query string. Catalog endpoints read it, and so do the
+ * notification reads — a notice's text is stored as a code + params and rendered
+ * per locale. Auth, seats, holds, bookings and tickets stay lang-less.
  */
 export function withLang(path: string, locale: "en" | "vn"): string {
   return `${path}${path.includes("?") ? "&" : "?"}lang=${locale}`;

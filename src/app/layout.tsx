@@ -124,7 +124,7 @@ export default async function RootLayout({
   // cookie-less request is ever sent. The client provider keeps it live after
   // hydration (Socket.IO pushes + REST resync).
   const initialNotifications = (await hasSession())
-    ? (await getNotifications(await getRequestCookie())).items
+    ? (await getNotifications(await getRequestCookie(), initialLocale)).items
     : [];
   return (
     <html

@@ -1,9 +1,4 @@
-import type {
-  Notification,
-  NotificationDto,
-  NotificationMeta,
-  NotifType,
-} from "./types";
+import type { Notification, NotificationDto, NotificationMeta, NotifType } from "./types";
 
 const NOTIFICATION_TYPES: readonly NotifType[] = ["success", "error", "warning", "info"];
 
@@ -34,8 +29,7 @@ export function toNotification(dto: NotificationDto): Notification {
     message: dto.message ?? "",
     createdAt: dto.createdAt,
     read: dto.isRead,
-    action:
-      dto.href && dto.actionLabel ? { label: dto.actionLabel, href: dto.href } : undefined,
+    action: dto.href && dto.actionLabel ? { label: dto.actionLabel, href: dto.href } : undefined,
     meta: toNotificationMeta(dto.meta),
   };
 }

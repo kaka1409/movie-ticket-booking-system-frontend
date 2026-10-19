@@ -1,5 +1,6 @@
-import { apiFetch, apiMutation } from "@/libs/api";
+import { apiFetch, apiMutation, withLang } from "@/libs/api";
 import { toNotification } from "./adapters";
+import type { Locale } from "@/contexts/LocaleContext";
 import type { Notification, NotificationDto } from "./types";
 
 interface NotificationsMeta {
@@ -19,10 +20,17 @@ export interface NotificationsResult {
  * GET /notifications — the inbox is the REST source of truth (the socket only
  * pushes *new* rows). `cookie` is required on the server; the browser reaches
  * it same-origin through the Next rewrite.
+ *
+ * The rows are rendered by the backend in `locale` (the notice text is stored as
+ * a code + params, not as pre-baked copy), so switching language re-reads the
+ * same inbox in the new language.
  */
-export async function getNotifications(cookie?: string): Promise<NotificationsResult> {
+export async function getNotifications(
+  cookie?: string,
+  locale: Locale = "en",
+): Promise<NotificationsResult> {
   const result = await apiFetch<NotificationDto[], NotificationsMeta>(
-    "/notifications?limit=50",
+    withLang("/notifications?limit=50", locale),
     undefined,
     undefined,
     cookie,
