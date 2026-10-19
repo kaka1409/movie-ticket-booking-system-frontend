@@ -1,75 +1,39 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { Mail, AlertCircle } from "lucide-react";
+import { Mail } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
-import { useAuth } from "@/contexts/AuthContext";
-import { loginAction } from "@/features/auth/action";
-import { createLoginSchema } from "@/features/auth/schema";
+import { useLoginForm } from "@/features/auth/hooks/useLoginForm";
+import { buildLoginUrl, buildRegisterUrl } from "@/libs/utils";
 
 import Logo from "@/components/ui/Logo";
 import InputField from "@/components/ui/InputField";
 import PasswordField from "@/components/ui/PasswordField";
 import Button from "@/components/ui/Button";
+import ErrorAlert from "@/components/ui/ErrorAlert";
 import Tabs from "@/components/ui/Tabs";
 
+/**
+ * Mobile login form: state and submit live in `useLoginForm` (shared with the
+ * desktop skin), this file is the phone presentation — centred logo, heading,
+ * stacked fields.
+ *
+ * The tab switch and the register link are real `<Link>`s carrying `returnUrl`,
+ * so the post-login target survives a detour through the register page.
+ */
 export default function LoginForm({ returnUrl }: { returnUrl?: string }) {
   const { translate } = useLocale();
-  const { setAuth } = useAuth();
-  const router = useRouter();
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [touched, setTouched] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [serverError, setServerError] = useState("");
-
-  const schema = useMemo(() => createLoginSchema(translate), [translate]);
-  const result = schema.safeParse({ email, password });
-  const isValid = result.success;
-
-  const emailError = touched
-    ? result.success
-      ? undefined
-      : result.error.flatten().fieldErrors.email?.[0]
-    : undefined;
-
-  const passwordError = touched
-    ? result.success
-      ? undefined
-      : result.error.flatten().fieldErrors.password?.[0]
-    : undefined;
-
-  const handleSubmit = useCallback(
-    async (event: React.FormEvent) => {
-      event.preventDefault();
-      setTouched(true);
-      setServerError("");
-      if (!isValid) return;
-
-      setIsSubmitting(true);
-      try {
-        const result = await loginAction({ success: false, error: "" }, { email, password });
-        if (result.success) {
-          setAuth(result.data.user, result.data.accessToken);
-          router.push(returnUrl ?? "/");
-        } else {
-          if (result.status === 401) {
-            setServerError(translate("auth.login.error_invalid_credentials"));
-          } else {
-            setServerError(translate("auth.login.error_server"));
-          }
-        }
-      } catch {
-        setServerError(translate("auth.login.error_server"));
-      } finally {
-        setIsSubmitting(false);
-      }
-    },
-    [isValid, setAuth, email, password, router, translate, returnUrl],
-  );
+  const {
+    email,
+    setEmail,
+    password,
+    setPassword,
+    emailError,
+    passwordError,
+    serverError,
+    isSubmitting,
+    handleSubmit,
+  } = useLoginForm({ returnUrl });
 
   return (
     <div className="w-full max-w-md mx-auto animate-fade-in">
@@ -90,7 +54,9 @@ export default function LoginForm({ returnUrl }: { returnUrl?: string }) {
           { key: "register", label: translate("auth.register.register_btn") },
         ]}
         activeTab="login"
-        onTabChange={(tab) => router.push(`/${tab}`)}
+        linkFor={(key) =>
+          key === "login" ? buildLoginUrl(returnUrl) : buildRegisterUrl(returnUrl)
+        }
       />
 
       <form onSubmit={handleSubmit} className="mt-6 space-y-4">
@@ -123,12 +89,7 @@ export default function LoginForm({ returnUrl }: { returnUrl?: string }) {
           </div>
         </div>
 
-        {serverError && (
-          <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20">
-            <AlertCircle size={15} className="text-red-400 shrink-0" />
-            <p className="text-xs text-red-400 font-semibold">{serverError}</p>
-          </div>
-        )}
+        {serverError && <ErrorAlert message={serverError} />}
 
         <Button type="submit" variant="primary" size="lg" loading={isSubmitting}>
           {translate("auth.login.login_btn")}
@@ -137,13 +98,12 @@ export default function LoginForm({ returnUrl }: { returnUrl?: string }) {
 
       <p className="text-center text-xs text-(--color-text-muted) mt-6">
         {translate("auth.login.no_account")}{" "}
-        <button
-          type="button"
-          onClick={() => router.push("/register")}
+        <Link
+          href={buildRegisterUrl(returnUrl)}
           className="text-(--color-gold) font-semibold underline underline-offset-2 hover:text-(--color-gold-light) transition-colors"
         >
           {translate("auth.login.register_link")}
-        </button>
+        </Link>
       </p>
     </div>
   );

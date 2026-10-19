@@ -1,37 +1,108 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
-import Logo from "@/layouts/components/Logo";
-import LanguageToggle from "@/layouts/components/LanguageToggle";
+import Image from "next/image";
 import { useLocale } from "@/contexts/LocaleContext";
+import DesktopShell from "@/layouts/components/DesktopShell";
+import Logo from "@/layouts/components/Logo";
+import { AUTH_PROMO_BULLETS, AUTH_PROMO_IMAGE, AUTH_PROMO_IMAGE_SIZES } from "../constants";
 
-export default function AuthLayout({ children }: { children: React.ReactNode }) {
-  const router = useRouter();
+/**
+ * Brand cue printed over the artwork — logo plus strapline. Shared by the
+ * tablet banner and the `lg:` artwork tile, which is why it is not duplicated.
+ */
+function PromoBrand() {
   const { translate } = useLocale();
 
   return (
-    <div className="flex min-h-screen flex-col bg-(--color-bg)">
-      <nav className="sticky top-0 z-50 border-b border-(--color-border) bg-black/92 backdrop-blur-md">
-        <div className="mx-auto flex h-15 max-w-7xl items-center gap-8 px-8">
-          <button
-            type="button"
-            onClick={() => router.push("/")}
-            className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-(--color-surface) transition-colors"
-            aria-label={translate("layout.sub.back")}
-          >
-            <ArrowLeft size={22} className="text-(--color-gold-light)" />
-          </button>
+    <div className="flex items-center gap-2">
+      <Logo size="sm" />
+      <span className="text-[9px] font-semibold tracking-widest text-(--color-text-muted) uppercase">
+        {translate("common.cinematic_excellence")}
+      </span>
+    </div>
+  );
+}
 
-          <Logo size="lg" tagline />
+/**
+ * Desktop auth chrome: the shared site shell (header + footer) around a card
+ * that holds **two tiles** — the artwork, which owns the majority of the width
+ * (`3fr : 2fr`), and the form. Both sit inside the card, which is what the
+ * card's own padding is for; the artwork is a real rounded tile, so nothing
+ * bleeds underneath the form.
+ *
+ * From `lg:` the card is one row (artwork | form) with a `620px` floor, so the
+ * form never has to fight the artwork for height; below `lg:` — the 740–1023px
+ * band — the artwork becomes an in-flow `h-52` banner above the form in a
+ * single column (its copy carries over, the bullets stay `lg:`-only).
+ *
+ * The form column carries `.surface-raised` so the shared input wells, which
+ * paint `--color-surface`, step up to `--color-surface-2` and stay visible on
+ * the flat card.
+ *
+ * Mobile keeps its own AuthLayout, untouched.
+ */
+export default function AuthLayout({ children }: { children: React.ReactNode }) {
+  const { translate } = useLocale();
 
-          <div className="ml-auto">
-            <LanguageToggle />
+  return (
+    <DesktopShell>
+      <div className="mx-auto w-full max-w-7xl px-6 py-10 lg:px-8 lg:py-12">
+        <div className="rounded-2xl border border-(--color-border) bg-(--color-surface) p-2 lg:p-3">
+          <div className="lg:grid lg:min-h-[620px] lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:gap-3">
+            {/* Artwork tile: a banner below `lg:`, the left column from `lg:`.
+                `lg:h-auto` matters: without it the fixed `h-52` would win over
+                the grid row height and the tile would only cover a top strip. */}
+            <div className="relative h-52 w-full overflow-hidden rounded-xl lg:h-auto lg:min-h-[620px]">
+              <Image
+                src={AUTH_PROMO_IMAGE}
+                alt=""
+                fill
+                priority
+                quality={90}
+                sizes={AUTH_PROMO_IMAGE_SIZES}
+                className="object-cover"
+              />
+
+              {/* Keeps the copy readable whatever the artwork underneath does;
+                  darkest towards the bottom-left, where the copy sits. */}
+              <div
+                aria-hidden
+                className="absolute inset-0 bg-gradient-to-tr from-black/95 via-black/55 to-black/10"
+              />
+
+              <div className="absolute inset-0 flex flex-col justify-between gap-3 p-6 lg:p-8">
+                <PromoBrand />
+
+                <div className="flex flex-col gap-2.5">
+                  <p className="text-xl font-black text-white lg:text-[26px] xl:text-[30px] xl:leading-[1.15]">
+                    {translate("auth.promo.title")}
+                  </p>
+                  <p className="text-sm text-white/70 lg:text-base">
+                    {translate("auth.promo.subtitle")}
+                  </p>
+
+                  {/* The banner (740–1023px) is only 208px tall — the bullets
+                      need the `lg:` tile where there is room for them. */}
+                  <ul className="hidden flex-col gap-2.5 lg:flex">
+                    {AUTH_PROMO_BULLETS.map(({ labelKey, icon: Icon }) => (
+                      <li key={labelKey} className="flex items-center gap-2">
+                        <Icon size={15} className="shrink-0 text-(--color-gold)" aria-hidden />
+                        <span className="text-xs font-semibold text-(--color-gold-light)">
+                          {translate(labelKey)}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div className="surface-raised flex items-center justify-center p-6 lg:p-8">
+              <div className="w-full">{children}</div>
+            </div>
           </div>
         </div>
-      </nav>
-
-      <main className="flex-1 flex items-center justify-center px-8">{children}</main>
-    </div>
+      </div>
+    </DesktopShell>
   );
 }

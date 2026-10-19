@@ -1,4 +1,6 @@
-import RegisterForm from "./components/mobile/RegisterForm";
+import MobileRegisterForm from "./components/mobile/RegisterForm";
+import DesktopRegisterForm from "./components/desktop/RegisterForm";
+import { authReturnTarget } from "@/libs/utils";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -6,14 +8,23 @@ export const metadata: Metadata = {
   robots: { index: false },
 };
 
-export default function RegisterPage() {
+export default async function RegisterPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ returnUrl?: string }>;
+}) {
+  const { returnUrl } = await searchParams;
+  /* Carried through from the login page (which links here with it) so a visitor
+     who signs up instead of signing in still lands on the original target. */
+  const target = authReturnTarget(returnUrl);
+
   return (
     <>
       <div className="block md:hidden">
-        <RegisterForm />
+        <MobileRegisterForm returnUrl={target} />
       </div>
       <div className="hidden md:block">
-        <RegisterForm />
+        <DesktopRegisterForm returnUrl={target} />
       </div>
     </>
   );

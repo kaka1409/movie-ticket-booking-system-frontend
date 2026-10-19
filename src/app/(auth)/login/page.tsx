@@ -1,5 +1,6 @@
-import LoginForm from "./components/mobile/LoginForm";
-import { getSafeReturnUrl } from "@/libs/utils";
+import MobileLoginForm from "./components/mobile/LoginForm";
+import DesktopLoginForm from "./components/desktop/LoginForm";
+import { authReturnTarget } from "@/libs/utils";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -13,15 +14,17 @@ export default async function LoginPage({
   searchParams: Promise<{ returnUrl?: string }>;
 }) {
   const { returnUrl } = await searchParams;
-  const safeReturnUrl = getSafeReturnUrl(returnUrl);
+  /* Sanitized here, once: the form only ever receives a same-origin target (or
+     `undefined` for home, which keeps the tab links plain). */
+  const target = authReturnTarget(returnUrl);
 
   return (
     <>
       <div className="block md:hidden">
-        <LoginForm returnUrl={safeReturnUrl} />
+        <MobileLoginForm returnUrl={target} />
       </div>
       <div className="hidden md:block">
-        <LoginForm returnUrl={safeReturnUrl} />
+        <DesktopLoginForm returnUrl={target} />
       </div>
     </>
   );

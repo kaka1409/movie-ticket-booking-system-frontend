@@ -26,6 +26,27 @@ export const PASSWORD_UPPERCASE = /[A-Z]/;
 export const PASSWORD_NUMBER = /[0-9]/;
 export const PASSWORD_SPECIAL = /[!@#$%^&*]/;
 
+/**
+ * Password rules in display order — one source for every "your password needs…"
+ * checklist (register form, change-password page). The tests are the same
+ * predicates the Zod schemas validate with (`createRegisterSchema` uses the
+ * regexes above), so a checklist can never disagree with the validator.
+ *
+ * `labelKey` resolves under `common.password.*`.
+ */
+export const PASSWORD_RULES = [
+  { labelKey: "common.password.req_length", test: (value: string) => value.length >= 8 },
+  {
+    labelKey: "common.password.req_uppercase",
+    test: (value: string) => PASSWORD_UPPERCASE.test(value),
+  },
+  { labelKey: "common.password.req_number", test: (value: string) => PASSWORD_NUMBER.test(value) },
+  {
+    labelKey: "common.password.req_special",
+    test: (value: string) => PASSWORD_SPECIAL.test(value),
+  },
+] as const;
+
 /** Pragmatic email shape check (not RFC-complete) — gates the live recipient lookup. */
 export function isValidEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
