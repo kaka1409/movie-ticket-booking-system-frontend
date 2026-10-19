@@ -9,15 +9,15 @@ import Badge from "@/components/ui/Badge";
 
 export default function PastCard({ ticket }: { ticket: PastTicket }) {
   const { translate } = useLocale();
-  const { transfer } = ticket;
+  const { transferProvenance } = ticket;
   // Provenance replaces the terminal status: for a ticket I gave away the
   // entitlement status belongs to whoever holds it now, not to me.
-  const badgeKey = transfer
-    ? transfer.direction === "sent"
+  const badgeKey = transferProvenance
+    ? transferProvenance.direction === "sent"
       ? "tickets.transfer.sent_badge"
       : "tickets.transfer.received_badge"
     : PAST_STATUS_META[ticket.status].labelKey;
-  const isSent = transfer?.direction === "sent";
+  const isSent = transferProvenance?.direction === "sent";
 
   return (
     <article className="flex gap-3 p-4 rounded-2xl bg-(--color-surface) border border-(--color-border) shadow-(--shadow-card)">
@@ -58,7 +58,8 @@ export default function PastCard({ ticket }: { ticket: PastTicket }) {
             // Ownership moved on accept, so GET /tickets/:id answers 404 for the
             // sender — name the recipient instead of rendering a dead link.
             <span className="text-sm font-light text-(--color-text-secondary)">
-              {translate("tickets.transfer.recipient_label")}: {transfer?.counterpartyName}
+              {translate("tickets.transfer.recipient_label")}:{" "}
+              {transferProvenance?.counterpartyName}
             </span>
           ) : (
             <Link

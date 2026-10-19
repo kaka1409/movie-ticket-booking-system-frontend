@@ -205,10 +205,10 @@ export function toUpcomingTicket(summary: TicketSummaryWire, locale: "en" | "vn"
 }
 
 export function toPastTicket(summary: TicketSummaryWire, locale: "en" | "vn"): PastTicket {
-  const transfer = summary.transfer ?? undefined;
+  const transferProvenance = summary.transfer ?? undefined;
   return {
     id: summary.ticketId,
-    status: mapPastStatus(summary.ticketStatus, transfer?.direction === "sent"),
+    status: mapPastStatus(summary.ticketStatus, transferProvenance?.direction === "sent"),
     movie: summary.movieTitle,
     format: summary.format,
     datetime: formatTicketDatetime(summary.showtimeDate, summary.showtimeStart, locale),
@@ -216,7 +216,7 @@ export function toPastTicket(summary: TicketSummaryWire, locale: "en" | "vn"): P
     poster: summary.posterUrl ?? POSTER_FALLBACK,
     cinema: summary.cinemaName,
     seatItems: summary.seatLabels.map((label): SeatTicket => ({ label, type: "", price: 0 })),
-    transfer,
+    transferProvenance,
     room: summary.roomName,
     totalPrice: summary.totalPrice,
   };
@@ -254,10 +254,7 @@ export function toDetailTicket(
   }));
   const seatTotal = seatItems.reduce((sum, seat) => sum + seat.price, 0);
   const snackTotal = foodDrink.reduce((sum, item) => sum + item.price * item.qty, 0);
-  const startsAtMs = buildShowtimeStart(
-    detail.showtime.date,
-    detail.showtime.startTime,
-  ).getTime();
+  const startsAtMs = buildShowtimeStart(detail.showtime.date, detail.showtime.startTime).getTime();
   const base = {
     id: detail.ticketId,
     showtimeId: detail.showtime.id,
@@ -419,4 +416,3 @@ export function toEligibleDateOptions(
 
   return options.sort((first, second) => first.value.localeCompare(second.value));
 }
-

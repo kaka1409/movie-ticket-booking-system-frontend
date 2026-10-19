@@ -1,8 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { useActionState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { MonitorPlay, CalendarDays, Clock, Loader2, XCircle } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import DetailRow from "@/app/(sub)/booking/components/mobile/DetailRow";
@@ -11,29 +9,15 @@ import QRCode from "./QRCode";
 import TearLine from "@/components/ui/TearLine";
 import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext";
 import { isPastStatus, PAST_STATUS_META } from "@/features/tickets/status";
-import { cancelTransfer } from "@/features/tickets/action";
-import type { CancelTransferActionResult } from "@/features/tickets/action";
-
-const initialTransferState: CancelTransferActionResult = { success: false, error: "" };
+import { useCancelTransfer } from "@/features/tickets/hooks/useCancelTransfer";
 
 export default function TicketInfo() {
   const { ticket, transfer, incomingTransfer } = useTicketDetail();
   const { translate } = useLocale();
-  const router = useRouter();
-
-  const [cancelState, cancelFormAction, isCancelPending] = useActionState(
-    cancelTransfer,
-    initialTransferState,
-  );
+  const { cancelFormAction, isCancelPending } = useCancelTransfer();
 
   const seatItems = ticket?.seatItems ?? [];
   const isTransferPending = transfer?.status === "pending";
-
-  useEffect(() => {
-    if (cancelState.success) {
-      router.refresh();
-    }
-  }, [cancelState, router]);
 
   return (
     <main className="flex-1 overflow-y-auto pb-8 p-4">

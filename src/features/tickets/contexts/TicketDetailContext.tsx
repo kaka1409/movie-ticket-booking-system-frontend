@@ -1,12 +1,7 @@
 "use client";
 
 import { createContext, useContext, type ReactNode } from "react";
-import type {
-  IncomingTransfer,
-  PastTicket,
-  TicketTransfer,
-  UpcomingTicket,
-} from "../types";
+import type { IncomingTransfer, PastTicket, TicketTransfer, UpcomingTicket } from "../types";
 
 interface TicketDetailContextType {
   ticket: UpcomingTicket | PastTicket;
@@ -28,8 +23,7 @@ export function TicketDetailProvider({
   children: ReactNode;
 }) {
   const transfer = "transfer" in ticket ? ticket.transfer : undefined;
-  const incomingTransfer =
-    "incomingTransfer" in ticket ? ticket.incomingTransfer : undefined;
+  const incomingTransfer = "incomingTransfer" in ticket ? ticket.incomingTransfer : undefined;
   const viewerRole = ("viewerRole" in ticket ? ticket.viewerRole : undefined) ?? "owner";
 
   return (

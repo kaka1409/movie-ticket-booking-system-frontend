@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import {
   ArrowUpRight,
@@ -15,15 +15,7 @@ import {
 import { useLocale } from "@/contexts/LocaleContext";
 import ActionSheet, { ActionRow } from "@/components/ui/ActionSheet";
 import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext";
-import { acceptTransfer, declineTransfer } from "@/features/tickets/action";
-import type { TransferDecisionActionResult } from "@/features/tickets/action";
-
-const initialDecisionState: TransferDecisionActionResult = { success: false, error: "" };
-
-/** A decided transfer (accepted elsewhere/expired) is not an error — it is done. */
-function isSettled(state: TransferDecisionActionResult): boolean {
-  return state.success || state.code === "TRANSFER_NOT_PENDING";
-}
+import { useTransferDecisions } from "@/features/tickets/hooks/useTransferDecisions";
 
 export default function TicketActions() {
   const { ticket, viewerRole, transfer, incomingTransfer } = useTicketDetail();
@@ -33,35 +25,10 @@ export default function TicketActions() {
   const id = params.id as string;
   const [actionsOpen, setActionsOpen] = useState(false);
 
-  const [acceptState, acceptFormAction, isAccepting] = useActionState(
-    acceptTransfer,
-    initialDecisionState,
-  );
-  const [declineState, declineFormAction, isDeclining] = useActionState(
-    declineTransfer,
-    initialDecisionState,
-  );
-
-  // Accepted: the same URL now renders the owner view (QR included).
-  useEffect(() => {
-    if (!isSettled(acceptState)) return;
-    router.refresh();
-  }, [acceptState, router]);
-
-  // Declined (or already settled): the ticket is no longer readable here.
-  useEffect(() => {
-    if (!isSettled(declineState)) return;
-    router.replace("/tickets");
-    router.refresh();
-  }, [declineState, router]);
+  const { acceptFormAction, declineFormAction, isAccepting, isDeclining, isBusy, error } =
+    useTransferDecisions();
 
   if (viewerRole === "recipient" && incomingTransfer) {
-    const error =
-      !acceptState.success && !declineState.success
-        ? acceptState.error || declineState.error
-        : "";
-    const isBusy = isAccepting || isDeclining;
-
     return (
       <div className="px-4 pb-8 space-y-3">
         <form action={acceptFormAction}>
@@ -88,9 +55,7 @@ export default function TicketActions() {
           </button>
         </form>
 
-        {error && !isSettled(acceptState) && !isSettled(declineState) && (
-          <p className="text-center text-xs text-red-400">{error}</p>
-        )}
+        {error && <p className="text-center text-xs text-red-400">{error}</p>}
       </div>
     );
   }

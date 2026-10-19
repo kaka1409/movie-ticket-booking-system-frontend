@@ -92,9 +92,10 @@ export interface PastTicket {
   /**
    * Provenance of a settled transfer the viewer is party to — `sent` for a
    * ticket I gave away (kept in my history) or `received` for one I was given.
-   * Absent when the ticket was never transferred.
+   * Absent when the ticket was never transferred. Named apart from
+   * `UpcomingTicket.transfer` (the *open* transfer detail) on purpose.
    */
-  transfer?: { direction: "sent" | "received"; counterpartyName: string };
+  transferProvenance?: { direction: "sent" | "received"; counterpartyName: string };
   room?: string;
   ageRating?: string;
   totalSeatPrice?: number;

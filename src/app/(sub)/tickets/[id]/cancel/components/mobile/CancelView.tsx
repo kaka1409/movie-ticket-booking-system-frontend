@@ -1,12 +1,10 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
-import { useAuth } from "@/contexts/AuthContext";
 import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext";
-import { cancelTicket } from "@/features/tickets/action";
-import { CANCELLATION_FEE } from "@/features/tickets/constants";
+import { useCancelFlow } from "@/features/tickets/hooks/useCancelFlow";
 import type { UpcomingTicket } from "@/features/tickets/types";
 
 // Components
@@ -15,19 +13,13 @@ import CancellationPolicySheet from "./CancellationPolicySheet";
 import ConfirmationSheet from "./ConfirmationSheet";
 import CancelResult from "./CancelResult";
 
-type CancelView = "idle" | "processing" | "success" | "failed";
-
 export default function CancelView() {
   const { translate } = useLocale();
   const { ticket } = useTicketDetail();
-  const { token } = useAuth();
-  const [view, setView] = useState<CancelView>("idle");
-  const [refundAmount, setRefundAmount] = useState(0);
+  const { view, isPending, refundAmount, computedRefund, paymentMethod, confirm, retry } =
+    useCancelFlow();
   const [policyOpen, setPolicyOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [isPending, startTransition] = useTransition();
-
-  const computedRefund = Number(ticket.totalPrice) - CANCELLATION_FEE;
 
   const handleContinue = () => {
     setConfirmOpen(true);
@@ -35,28 +27,8 @@ export default function CancelView() {
 
   const handleConfirm = () => {
     setConfirmOpen(false);
-    setView("processing");
-    startTransition(async () => {
-      const state = await cancelTicket(
-        { success: false, error: "" },
-        { ticketId: ticket.id, token: token ?? "" },
-      );
-      if (state.success) {
-        setRefundAmount(state.data.refundAmount);
-        setView(state.data.success ? "success" : "failed");
-      } else {
-        setRefundAmount(computedRefund);
-        setView("failed");
-      }
-    });
+    confirm();
   };
-
-  const handleRetry = () => {
-    setView("idle");
-    setRefundAmount(0);
-  };
-
-  const paymentMethod = ticket.paymentMethod ?? "";
 
   return (
     <div>
@@ -91,7 +63,7 @@ export default function CancelView() {
           status={view}
           refundAmount={refundAmount}
           paymentMethod={paymentMethod}
-          onRetry={handleRetry}
+          onRetry={retry}
         />
       )}
     </div>

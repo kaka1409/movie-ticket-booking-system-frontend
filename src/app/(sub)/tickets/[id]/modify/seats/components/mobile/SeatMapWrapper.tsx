@@ -12,8 +12,15 @@ import SeatGrid from "@/components/ui/SeatGrid";
 
 export default function SeatMapWrapper() {
   const { translate } = useLocale();
-  const { toggleSeat, selectedSeats, seatRows, setSeatRows, seatPrices, setSeatPrices, selectedShowtime } =
-    useModification();
+  const {
+    toggleSeat,
+    selectedSeats,
+    seatRows,
+    setSeatRows,
+    seatPrices,
+    setSeatPrices,
+    selectedShowtime,
+  } = useModification();
   const { ticket } = useTicketDetail();
 
   // "Both"/"showtime" picked a target showtime; a seats-only change reopens the

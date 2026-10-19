@@ -62,8 +62,7 @@ export async function createTransfer(
 }
 
 export type CancelTransferActionResult =
-  | { success: true; data: { id: string; status: string } }
-  | { success: false; error: string };
+  { success: true; data: { id: string; status: string } } | { success: false; error: string };
 
 export async function cancelTransfer(
   prevState: CancelTransferActionResult,
