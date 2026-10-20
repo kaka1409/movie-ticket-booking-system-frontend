@@ -26,7 +26,13 @@ export default async function ReviewPage() {
         <ReviewList initialReviews={initial.reviews} total={initial.total} filters={filters} />
       </div>
       <div className="hidden md:block">
-        <DesktopReviewContent />
+        <div className="mx-auto w-full max-w-7xl px-6 py-8 lg:px-8">
+          <DesktopReviewContent
+            initialReviews={initial.reviews}
+            total={initial.total}
+            filters={filters}
+          />
+        </div>
       </div>
     </>
   );
