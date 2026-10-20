@@ -1,4 +1,5 @@
 import { Skeleton, SkeletonCard } from "@/components/ui/Skeleton";
+import AccountSkeleton from "@/features/profile/components/desktop/AccountSkeleton";
 
 function WishlistCardSkeleton() {
   return (
@@ -18,12 +19,19 @@ function WishlistCardSkeleton() {
 
 export default function WishlistLoading() {
   return (
-    <div className="min-h-dvh max-w-md mx-auto bg-(--color-bg) block md:hidden">
-      <main className="px-(--space-md) pb-10 pt-4 space-y-4">
-        {Array.from({ length: 3 }).map((_, index) => (
-          <WishlistCardSkeleton key={index} />
-        ))}
-      </main>
-    </div>
+    <>
+      <div className="min-h-dvh max-w-md mx-auto bg-(--color-bg) block md:hidden">
+        <main className="px-(--space-md) pb-10 pt-4 space-y-4">
+          {Array.from({ length: 3 }).map((_, index) => (
+            <WishlistCardSkeleton key={index} />
+          ))}
+        </main>
+      </div>
+      <div className="hidden md:block">
+        <div className="mx-auto w-full max-w-7xl px-6 py-8 lg:px-8">
+          <AccountSkeleton />
+        </div>
+      </div>
+    </>
   );
 }

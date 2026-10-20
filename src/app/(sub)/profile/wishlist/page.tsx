@@ -18,7 +18,9 @@ export default async function WishlistPage() {
         <WishlistMovieList initialItems={initialItems} />
       </div>
       <div className="hidden md:block">
-        <DesktopWishlistContent />
+        <div className="mx-auto w-full max-w-7xl px-6 py-8 lg:px-8">
+          <DesktopWishlistContent initialItems={initialItems} />
+        </div>
       </div>
     </>
   );
