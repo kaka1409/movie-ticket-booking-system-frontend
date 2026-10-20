@@ -46,7 +46,7 @@ export function NotificationProvider({
   initialNotifications: Notification[];
   children: ReactNode;
 }) {
-  const { token, isAuthenticated } = useAuth();
+  const { token, isAuthenticated, isLoading } = useAuth();
   const { locale } = useLocale();
   const { notify } = useToast();
   const [notifications, setNotifications] = useState(initialNotifications);
@@ -138,9 +138,16 @@ export function NotificationProvider({
   // Logout is a derived gate, not a mutation: a logged-out visitor sees an
   // empty inbox immediately without a state-clearing effect (the next login
   // resyncs the list through the socket effect).
+  //
+  // `isLoading` keeps the gate open while the session is still being restored,
+  // which is exactly the state the server renders in (`AuthContext` has no
+  // server session, so `isAuthenticated` is false there). Without it the SSR
+  // seed would be thrown away on the server and every inbox — the bell, the
+  // mobile list, the desktop page — would paint "No notifications yet" and only
+  // fill in after hydration. A logged-out visitor seeds `[]` anyway.
   const visibleNotifications = useMemo(
-    () => (isAuthenticated ? notifications : []),
-    [isAuthenticated, notifications],
+    () => (isAuthenticated || isLoading ? notifications : []),
+    [isAuthenticated, isLoading, notifications],
   );
 
   const unreadCount = useMemo(
