@@ -1,81 +1,36 @@
 "use client";
 
-import { useState, useMemo, useCallback, useTransition } from "react";
-import { useRouter } from "next/navigation";
 import { User, Mail, Lock, Smartphone, Calendar, AlertCircle } from "lucide-react";
 import AvatarEditor from "./AvatarEditor";
 import FormField from "@/components/ui/FormField";
 import FormActions from "@/components/ui/FormActions";
 import { useLocale } from "@/contexts/LocaleContext";
-import { useAuth } from "@/contexts/AuthContext";
-import { createProfileSchema } from "@/features/profile/schema";
-import { updateProfile } from "@/features/profile/action";
+import { useProfileForm } from "@/features/profile/hooks/useProfileForm";
 
 export default function ProfileForm() {
-  const router = useRouter();
   const { translate } = useLocale();
-  const { user, token, updateUser } = useAuth();
-  const [isPending, startTransition] = useTransition();
-
-  const [fullName, setFullName] = useState(user?.name ?? "");
-  const [phone, setPhone] = useState(user?.phone ?? "");
-  const [dob, setDob] = useState(user?.dob ?? "");
-  const [touched, setTouched] = useState(false);
-  const [avatarChanged, setAvatarChanged] = useState(false);
-  const [serverError, setServerError] = useState("");
-
-  const hasChanges =
-    fullName !== (user?.name ?? "") ||
-    phone !== (user?.phone ?? "") ||
-    dob !== (user?.dob ?? "") ||
-    avatarChanged;
-
-  const schema = useMemo(() => createProfileSchema(translate), [translate]);
-  const result = schema.safeParse({ name: fullName, phone, dob });
-  const errors = result.success ? {} : result.error.flatten().fieldErrors;
-  const isValid = result.success;
-  const showErrors = touched && !isValid;
-
-  const handleSave = useCallback(() => {
-    if (!hasChanges) return;
-    if (!isValid) {
-      setTouched(true);
-      return;
-    }
-
-    setServerError("");
-    startTransition(async () => {
-      const state = await updateProfile(
-        { success: false, error: "" },
-        { fullname: fullName, phone, dob, token: token ?? "" },
-      );
-
-      if (state.success) {
-        updateUser({
-          name: state.data.name,
-          phone: state.data.phone,
-          dob: state.data.dob,
-        });
-        router.replace("/profile");
-      } else {
-        if (state.status === 409) {
-          setServerError(translate("profile.edit.error_conflict"));
-        } else {
-          setServerError(translate("profile.edit.error_server"));
-        }
-      }
-    });
-  }, [hasChanges, isValid, fullName, phone, dob, token, updateUser, router, translate]);
-
-  const handleCancel = () => {
-    router.replace("/profile");
-  };
+  const {
+    user,
+    fullName,
+    phone,
+    dob,
+    setFullName,
+    setPhone,
+    setDob,
+    showErrors,
+    errors,
+    hasChanges,
+    isPending,
+    serverError,
+    submit,
+    cancel,
+  } = useProfileForm();
 
   if (!user) return null;
 
   return (
     <main className="flex-1 overflow-y-auto px-4 pb-24">
-      <AvatarEditor onAvatarChange={setAvatarChanged} />
+      <AvatarEditor />
 
       <div className="flex flex-col gap-5">
         <FormField
@@ -143,8 +98,8 @@ export default function ProfileForm() {
       <FormActions
         primaryLabel={translate("profile.edit.save")}
         cancelLabel={translate("profile.edit.cancel")}
-        onPrimary={handleSave}
-        onCancel={handleCancel}
+        onPrimary={submit}
+        onCancel={cancel}
         disabled={!hasChanges || isPending}
         loading={isPending}
       />

@@ -1,35 +1,27 @@
 "use client";
 
-import { useRef, useState } from "react";
 import Image from "next/image";
 import { Camera } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { DEFAULT_AVATAR_SRC } from "@/components/ui/Avatar";
 
-export default function AvatarEditor({
-  onAvatarChange,
-}: {
-  onAvatarChange?: (changed: boolean) => void;
-}) {
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [preview, setPreview] = useState<string | null>(null);
+/**
+ * Avatar editor. Photo upload is not wired to a backend yet, so the control is
+ * honestly disabled instead of previewing a file that would be silently dropped
+ * on save.
+ */
+export default function AvatarEditor() {
   const { translate } = useLocale();
   const { user } = useAuth();
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setPreview(URL.createObjectURL(file));
-      onAvatarChange?.(true);
-    }
-  };
-
   if (!user) return null;
+
+  const src = user.avatarUrl || DEFAULT_AVATAR_SRC;
 
   return (
     <div className="flex flex-col items-center py-8">
       <div className="relative h-36 w-36">
-        {/* Gradient ring */}
         <div
           className="absolute inset-0 rounded-full p-[4px]"
           style={{
@@ -40,10 +32,9 @@ export default function AvatarEditor({
           <div className="h-full w-full rounded-full bg-(--color-bg)" />
         </div>
 
-        {/* Avatar image */}
         <div className="absolute inset-[4px] rounded-full overflow-hidden bg-(--color-surface-2)">
           <Image
-            src={preview || user.avatarUrl || "/images/default-avatar.jpg"}
+            src={src}
             alt={user.name || ""}
             fill
             sizes="128px"
@@ -53,25 +44,19 @@ export default function AvatarEditor({
         </div>
       </div>
 
-      {/* Camera button */}
       <button
         type="button"
+        disabled
         aria-label={translate("profile.edit.change_photo")}
-        onClick={() => fileInputRef.current?.click()}
-        className="relative -mt-5 ml-20 flex h-10 w-10 items-center justify-center rounded-full bg-(--color-gold) shadow-[--shadow-card] z-10"
+        className="relative -mt-5 ml-20 flex h-10 w-10 items-center justify-center rounded-full bg-(--color-gold) shadow-[--shadow-card] z-10 opacity-40 cursor-not-allowed"
       >
         <Camera className="h-5 w-5 text-black" strokeWidth={2.2} />
       </button>
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/*"
-        className="hidden"
-        onChange={handleFileChange}
-      />
 
       <p className="mt-4 text-xl font-bold text-(--color-text-primary)">{user.name}</p>
-      <p className="text-sm text-(--color-text-secondary)">Member</p>
+      <p className="mt-1 text-sm text-(--color-text-secondary)">
+        {translate("profile.edit.photo_unavailable")}
+      </p>
     </div>
   );
 }

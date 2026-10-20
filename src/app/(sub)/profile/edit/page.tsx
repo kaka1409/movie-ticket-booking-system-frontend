@@ -8,7 +8,9 @@ export default function EditProfilePage() {
         <ProfileForm />
       </div>
       <div className="hidden md:block">
-        <DesktopEditProfileContent />
+        <div className="mx-auto w-full max-w-7xl px-6 py-8 lg:px-8">
+          <DesktopEditProfileContent />
+        </div>
       </div>
     </>
   );

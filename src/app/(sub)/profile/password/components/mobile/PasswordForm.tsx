@@ -1,46 +1,34 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { useRouter } from "next/navigation";
 import { Lock, KeyRound, LockKeyhole } from "lucide-react";
 import PasswordField from "./PasswordField";
 import PasswordRequirements from "./PasswordRequirements";
 import FormActions from "@/components/ui/FormActions";
 import { useLocale } from "@/contexts/LocaleContext";
-import { createPasswordSchema } from "@/features/profile/schema";
+import { usePasswordForm } from "@/features/profile/hooks/usePasswordForm";
 
 export default function PasswordForm() {
-  const router = useRouter();
   const { translate } = useLocale();
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [showCurrent, setShowCurrent] = useState(false);
-  const [showNew, setShowNew] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
-  const [touched, setTouched] = useState(false);
-
-  const schema = useMemo(() => createPasswordSchema(translate), [translate]);
-  const result = schema.safeParse({
-    current: currentPassword,
-    newPass: newPassword,
-    confirm: confirmPassword,
-  });
-  const errors = result.success ? {} : result.error.flatten().fieldErrors;
-  const isValid = result.success;
-  const showErrors = touched && !isValid;
-
-  const handleSubmit = () => {
-    if (!isValid) {
-      setTouched(true);
-      return;
-    }
-    router.replace("/profile");
-  };
-
-  const handleCancel = () => {
-    router.replace("/profile");
-  };
+  const {
+    currentPassword,
+    newPassword,
+    confirmPassword,
+    showCurrent,
+    showNew,
+    showConfirm,
+    setCurrentPassword,
+    setNewPassword,
+    setConfirmPassword,
+    setShowCurrent,
+    setShowNew,
+    setShowConfirm,
+    showErrors,
+    errors,
+    canSubmit,
+    submit,
+    cancel,
+    touch,
+  } = usePasswordForm();
 
   return (
     <main className="flex-1 overflow-y-auto px-4 pb-24 pt-4">
@@ -81,11 +69,19 @@ export default function PasswordForm() {
 
       <PasswordRequirements password={newPassword} />
 
+      <div className="mt-6 rounded-xl border border-(--color-gold)/25 bg-(--color-gold)/8 p-3 text-xs text-(--color-gold-light)">
+        {translate("profile.password.unavailable")}
+      </div>
+
       <FormActions
         primaryLabel={translate("profile.password.update")}
         cancelLabel={translate("profile.password.cancel")}
-        onPrimary={handleSubmit}
-        onCancel={handleCancel}
+        onPrimary={() => {
+          touch();
+          submit();
+        }}
+        onCancel={cancel}
+        disabled={!canSubmit}
       />
     </main>
   );
