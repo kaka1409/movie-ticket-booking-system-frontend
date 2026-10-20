@@ -348,8 +348,19 @@
   },
   "notif": {
     "title": "Notifications",
+    "subtitle": "Updates about your bookings and account.",
     "mark_all_read": "Mark all as read",
-    "no_notifications": "No notifications yet"
+    "no_notifications": "No notifications yet",
+    "tab_all": "All",
+    "tab_unread": "Unread",
+    "empty_unread_title": "You're all caught up",
+    "empty_unread_desc": "New notifications will show up here.",
+    "view_all": "View all notifications"
+  },
+  "aria": {
+    "auth_tabs": "Sign in or register",
+    "tickets_tabs": "Ticket lists",
+    "movies_tabs": "Movie catalogue"
   },
   "profile": {
     "activity": "Activity",
@@ -373,7 +384,9 @@
       "error_dob_required": "Date of birth is required.",
       "error_server": "Something went wrong. Please try again.",
       "error_conflict": "This information is already in use.",
-      "change_photo": "Change photo"
+      "change_photo": "Change photo",
+      "photo_unavailable": "Photo upload isn't available yet.",
+      "unsaved": "You have unsaved changes."
     },
     "password": {
       "current": "Current Password",
@@ -390,6 +403,7 @@
       "error_new_requirements": "New password does not meet all requirements.",
       "error_confirm_required": "Please confirm your new password.",
       "error_confirm_match": "Passwords do not match.",
+      "unavailable": "Changing your password isn't available yet — keep signing in with your current password.",
       "show_password": "Show password",
       "hide_password": "Hide password"
     },
@@ -418,6 +432,8 @@
     "myreviews": {
       "empty_title": "No reviews yet",
       "empty_desc": "Watch a movie and share what you thought.",
+      "count_prefix": "You have",
+      "count_suffix": "reviews",
       "browse": "Browse Movies",
       "delete": "Delete",
       "delete_confirm": "Delete this review?",
@@ -427,6 +443,23 @@
       "toast_deleted": "Review deleted",
       "toast_delete_failed": "Couldn't delete — try again",
       "toast_load_failed": "Couldn't load reviews — try again"
+    },
+    "area_label": "Account",
+    "overview": "Overview",
+    "member": "Member",
+    "account_details": "Account details",
+    "not_set": "Not set",
+    "stats": {
+      "tickets": "Upcoming tickets",
+      "reviews": "Reviews",
+      "wishlist": "Wishlist"
+    },
+    "pages": {
+      "overview_desc": "Your member details and activity at a glance.",
+      "edit_desc": "Keep your contact details up to date.",
+      "password_desc": "Choose a strong password you don't use elsewhere.",
+      "reviews_desc": "Everything you've rated, newest first.",
+      "wishlist_desc": "Movies you saved for later."
     }
   },
   "booking": {

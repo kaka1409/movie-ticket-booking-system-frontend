@@ -348,8 +348,19 @@
   },
   "notif": {
     "title": "Thông Báo",
+    "subtitle": "Cập nhật về đơn đặt vé và tài khoản của bạn.",
     "mark_all_read": "Đánh dấu đã đọc tất cả",
-    "no_notifications": "Chưa có thông báo nào"
+    "no_notifications": "Chưa có thông báo nào",
+    "tab_all": "Tất cả",
+    "tab_unread": "Chưa đọc",
+    "empty_unread_title": "Bạn đã đọc hết",
+    "empty_unread_desc": "Thông báo mới sẽ xuất hiện ở đây.",
+    "view_all": "Xem tất cả thông báo"
+  },
+  "aria": {
+    "auth_tabs": "Đăng nhập hoặc đăng ký",
+    "tickets_tabs": "Danh sách vé",
+    "movies_tabs": "Danh mục phim"
   },
   "profile": {
     "activity": "Hoạt Động",
@@ -373,7 +384,9 @@
       "error_dob_required": "Ngày sinh là bắt buộc.",
       "error_server": "Đã có lỗi xảy ra. Vui lòng thử lại.",
       "error_conflict": "Thông tin này đã được sử dụng.",
-      "change_photo": "Thay đổi ảnh"
+      "change_photo": "Thay đổi ảnh",
+      "photo_unavailable": "Tính năng đổi ảnh chưa khả dụng.",
+      "unsaved": "Bạn có thay đổi chưa lưu."
     },
     "password": {
       "current": "Mật Khẩu Hiện Tại",
@@ -390,6 +403,7 @@
       "error_new_requirements": "Mật khẩu mới không đáp ứng tất cả yêu cầu.",
       "error_confirm_required": "Vui lòng xác nhận mật khẩu mới.",
       "error_confirm_match": "Mật khẩu không khớp.",
+      "unavailable": "Tính năng đổi mật khẩu chưa khả dụng — bạn vẫn đăng nhập bằng mật khẩu hiện tại.",
       "show_password": "Hiện mật khẩu",
       "hide_password": "Ẩn mật khẩu"
     },
@@ -418,6 +432,8 @@
     "myreviews": {
       "empty_title": "Chưa có đánh giá nào",
       "empty_desc": "Xem phim và chia sẻ cảm nhận của bạn.",
+      "count_prefix": "Bạn có",
+      "count_suffix": "đánh giá",
       "browse": "Duyệt Phim",
       "delete": "Xóa",
       "delete_confirm": "Xóa đánh giá này?",
@@ -427,6 +443,23 @@
       "toast_deleted": "Đã xóa đánh giá",
       "toast_delete_failed": "Không xóa được — thử lại",
       "toast_load_failed": "Không tải được — thử lại"
+    },
+    "area_label": "Tài khoản",
+    "overview": "Tổng quan",
+    "member": "Thành viên",
+    "account_details": "Thông tin tài khoản",
+    "not_set": "Chưa cập nhật",
+    "stats": {
+      "tickets": "Vé sắp tới",
+      "reviews": "Đánh giá",
+      "wishlist": "Phim đã lưu"
+    },
+    "pages": {
+      "overview_desc": "Thông tin thành viên và hoạt động của bạn trong một cái nhìn.",
+      "edit_desc": "Cập nhật thông tin liên hệ của bạn.",
+      "password_desc": "Chọn mật khẩu mạnh mà bạn không dùng ở nơi khác.",
+      "reviews_desc": "Mọi phim bạn đã đánh giá, mới nhất trước.",
+      "wishlist_desc": "Những phim bạn đã lưu để xem sau."
     }
   },
   "booking": {

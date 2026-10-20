@@ -21,7 +21,7 @@ export default function TabsComponent({ activeTab }: { activeTab: "upcoming" | "
       <Tabs
         tabs={tabs}
         activeTab={activeTab}
-        onTabChange={() => {}}
+        ariaLabel={translate("aria.tickets_tabs")}
         linkFor={(key) => `/tickets?tab=${key}`}
       />
     </div>
