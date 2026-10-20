@@ -62,6 +62,7 @@ export default function RegisterForm({ returnUrl }: { returnUrl?: string }) {
           { key: "register", label: translate("auth.register.register_btn") },
         ]}
         activeTab="register"
+        ariaLabel={translate("aria.auth_tabs")}
         linkFor={(key) =>
           key === "login" ? buildLoginUrl(returnUrl) : buildRegisterUrl(returnUrl)
         }

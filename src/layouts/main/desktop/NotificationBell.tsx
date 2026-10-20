@@ -1,12 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { Bell, X } from "lucide-react";
+import { Bell, ChevronRight, X } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useNotifications } from "@/features/notifications/context";
-import { TYPE_CONFIG } from "@/features/notifications/constants";
-import { formatRelativeTime } from "@/libs/utils";
-import type { Notification } from "@/features/notifications/types";
+import NotificationRow from "@/features/notifications/components/NotificationRow";
 import Dropdown from "@/components/ui/Dropdown";
 
 /** Unread pill — widened past a single digit so two digits still fit. */
@@ -19,89 +17,14 @@ function UnreadBadge({ count }: { count: number }) {
 }
 
 /**
- * One row of the inbox popup.
- *
- * The whole row is the target: it marks the notice read and, when the notice
- * carries an action, navigates. No nested link — inside a clickable row the
- * action label is a cue, not a second control.
- */
-function NotificationRow({
-  notification,
-  onSelect,
-}: {
-  notification: Notification;
-  onSelect: () => void;
-}) {
-  const { locale } = useLocale();
-  const { iconBg, iconColor, dot, Icon } = TYPE_CONFIG[notification.type];
-
-  const body = (
-    <>
-      <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${iconBg}`}>
-        <Icon size={16} className={iconColor} aria-hidden />
-      </span>
-
-      <span className="min-w-0 flex-1">
-        <span className="flex items-center gap-2">
-          <span
-            className={`truncate text-[13px] font-bold ${
-              notification.type === "error" ? "text-red-400" : "text-(--color-text-primary)"
-            }`}
-          >
-            {notification.title}
-          </span>
-          {!notification.read && dot && (
-            <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${dot}`} aria-hidden />
-          )}
-        </span>
-
-        {notification.message && (
-          <span className="mt-0.5 line-clamp-2 block text-xs leading-relaxed text-(--color-text-muted)">
-            {notification.message}
-          </span>
-        )}
-
-        <span className="mt-1.5 flex items-center gap-2">
-          <span className="text-[10px] font-bold tracking-widest text-(--color-gold) uppercase">
-            {formatRelativeTime(notification.createdAt, locale)}
-          </span>
-          {notification.action && (
-            <span className="ml-auto text-[10px] font-bold tracking-wide text-(--color-text-secondary)">
-              {notification.action.label}
-            </span>
-          )}
-        </span>
-      </span>
-    </>
-  );
-
-  const rowClassName = `flex w-full cursor-pointer items-start gap-3 rounded-xl px-3 py-2.5 text-left transition-colors duration-150 hover:bg-(--color-surface-2) ${
-    notification.read ? "opacity-55" : ""
-  }`;
-
-  if (notification.action) {
-    return (
-      <Link href={notification.action.href} onClick={onSelect} className={rowClassName}>
-        {body}
-      </Link>
-    );
-  }
-
-  return (
-    <button type="button" onClick={onSelect} className={rowClassName}>
-      {body}
-    </button>
-  );
-}
-
-/**
  * Desktop header inbox.
  *
- * The popup **is** the inbox on desktop — there is no `/notifications` screen
- * for this skin — so it renders the whole list in a capped, scrollable panel
- * rather than a "latest 5 + View all" teaser. Data needs no fetch of its own:
- * `NotificationProvider` (root layout, SSR-seeded) already pushes new notices
- * in over the socket and keeps the unread count. The header carries
+ * The popup is the **quick** view: it renders the whole list in a capped,
+ * scrollable panel (a "latest 5" teaser would hide notices behind an extra
+ * click) and its footer hands off to `/notifications` — the page that carries
+ * the All/Unread switch and the room to read a long notice. Data needs no fetch
+ * of its own: `NotificationProvider` (root layout, SSR-seeded) already pushes
+ * new notices in over the socket and keeps the unread count. The header carries
  * mark-all-read plus an explicit close button — the panel is tall enough that
  * clicking outside should not be the only way out.
  */
@@ -180,6 +103,17 @@ export default function NotificationBell() {
               </div>
             </div>
           )}
+
+          {/* The popup is a quick view, the page is the inbox: without this the
+              new screen would be reachable only by typing the URL. */}
+          <Link
+            href="/notifications"
+            onClick={close}
+            className="flex items-center justify-center gap-1.5 border-t border-(--color-border) py-2.5 text-[10px] font-bold tracking-widest text-(--color-text-secondary) uppercase transition-colors hover:text-(--color-gold)"
+          >
+            {translate("notif.view_all")}
+            <ChevronRight size={12} aria-hidden />
+          </Link>
         </>
       )}
     </Dropdown>

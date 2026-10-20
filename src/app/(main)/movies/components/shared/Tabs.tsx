@@ -29,6 +29,7 @@ export default function MovieTabs({
     <Tabs
       tabs={tabs}
       activeTab={activeTab}
+      ariaLabel={translate("aria.movies_tabs")}
       onTabChange={(tab) => setActiveTab(tab as "now_showing" | "coming_soon")}
       stretch={stretch}
       className={className}

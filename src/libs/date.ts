@@ -20,3 +20,33 @@ export function formatDateOnly(date: Date): string {
 export function formatDayOfMonth(day: number | string): string {
   return String(day).padStart(2, "0");
 }
+
+/**
+ * Value for `<input type="date">`. The backend serialises `dob` as an ISO
+ * timestamp (e.g. `1999-05-12T00:00:00.000Z`), which a date input rejects —
+ * it needs the calendar-day portion only. Returns `""` for null/unparseable
+ * input so a missing value never renders a malformed field.
+ */
+export function toDateInputValue(value: string | null | undefined): string {
+  if (!value) return "";
+  const match = /^(\d{4}-\d{2}-\d{2})/.exec(value);
+  return match ? match[1] : "";
+}
+
+/**
+ * Render a calendar day (`YYYY-MM-DD`, typically from `toDateInputValue`) in the
+ * UI locale without the timezone drift `formatDate` would introduce by parsing
+ * the string as a UTC instant.
+ */
+export function formatCalendarDate(value: string | null | undefined, locale: "en" | "vn"): string {
+  if (!value) return "";
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  if (!match) return "";
+  const [, year, month, day] = match;
+  const date = new Date(Number(year), Number(month) - 1, Number(day));
+  return date.toLocaleDateString(locale === "vn" ? "vi-VN" : "en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
