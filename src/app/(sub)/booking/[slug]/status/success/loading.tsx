@@ -7,14 +7,12 @@ export default function SuccessLoading() {
         <Skeleton className="w-9 h-9 rounded-full" />
       </div>
       <main className="flex-1 overflow-y-auto pb-8 pt-4 space-y-6">
-        {/* Success icon */}
         <div className="flex flex-col items-center gap-4 pt-8">
           <Skeleton className="w-20 h-20 rounded-full" />
           <Skeleton className="h-5 w-48 rounded-full" />
           <Skeleton className="h-3 w-64 rounded-full" />
         </div>
 
-        {/* Ticket card */}
         <SkeletonCard className="mx-4 overflow-hidden p-0">
           <Skeleton className="h-40 w-full" />
           <div className="p-4 space-y-3">
@@ -34,7 +32,6 @@ export default function SuccessLoading() {
           </div>
         </SkeletonCard>
 
-        {/* Action buttons */}
         <div className="px-4 flex gap-3">
           <Skeleton className="h-12 flex-1 rounded-2xl" />
           <Skeleton className="h-12 flex-1 rounded-2xl" />

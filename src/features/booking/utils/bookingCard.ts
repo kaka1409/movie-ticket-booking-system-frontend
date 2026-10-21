@@ -6,7 +6,7 @@ const PAYMENT_METHOD_LABELS: Record<"vnpay" | "momo", string> = {
   momo: "MoMo",
 };
 
-export interface BookingCardData {
+interface BookingCardData {
   /** Seats merged per label — both sweetbox chairs collapse back into one pair line. */
   seats: SelectedSeat[];
   snacks: SelectedCombo[];
@@ -74,7 +74,7 @@ export function bookingCardData(booking: BookingDetail): BookingCardData {
 }
 
 /** Movie identity printed on a ticket/receipt header. */
-export interface TicketIdentity {
+interface TicketIdentity {
   posterSrc: string | null;
   title: string;
   ageRating?: string;
@@ -82,8 +82,8 @@ export interface TicketIdentity {
 
 /**
  * Resolve the poster/title/age-rating a ticket or receipt card shows: the
- * movie-detail payload (mock-era / direct-link entry) wins, the authoritative
- * `GET /bookings/:id` payload is the fallback.
+ * movie-detail payload (direct-link entry, no `?bookingId=`) wins, the
+ * authoritative `GET /bookings/:id` payload is the fallback.
  */
 export function resolveTicketIdentity(
   movie: Movie | undefined,

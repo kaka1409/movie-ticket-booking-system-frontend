@@ -17,7 +17,6 @@ export default function FailContent({
   reason,
 }: {
   movie: Movie | undefined;
-  /** Authoritative booking payload when the page was reached with `?bookingId=`. */
   booking: BookingDetail | null;
   reason: string | null;
 }) {

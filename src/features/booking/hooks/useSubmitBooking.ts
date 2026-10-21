@@ -17,15 +17,9 @@ interface SubmitBookingResult {
 }
 
 /**
- * Payment-step flow controller: creates the booking from the draft, pays it,
- * and routes to the status pages. Extracted from the step's BottomBar so the
- * component stays presentational.
- *
- * Error branches (kept from the original flow):
- * - create `409 SEAT_TAKEN` → back to the seat map (survivors re-hold)
- * - create `409 INVALID_STATE` → back to cinema (showtime unusable)
- * - pay failure → status/failed with the booking id (booking still exists)
- * - transport failure → inline error, no navigation
+ * Payment-step controller: create → pay → route to the status page. A pay
+ * failure still routes (the booking exists); only a transport failure stays
+ * inline. Create `409 SEAT_TAKEN` → seats, `409 INVALID_STATE` → cinema.
  */
 export function useSubmitBooking(): SubmitBookingResult {
   const params = useParams();

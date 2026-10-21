@@ -46,7 +46,6 @@ export default async function SuccessPage({
       {/* Mobile */}
       <div className="block md:hidden">
         <div className="min-h-dvh max-w-md mx-auto flex flex-col bg-(--color-bg)">
-          {/* Scrollable body */}
           <main className="flex-1 overflow-y-auto pb-8 pt-4 space-y-6">
             <SuccessIcon
               titleKey="booking.status.success.title"

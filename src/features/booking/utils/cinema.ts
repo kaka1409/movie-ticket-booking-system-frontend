@@ -1,7 +1,7 @@
 import type { Cinema, CinemaDraft, DateOption } from "../types";
 
 /** Locate a showtime (and its cinema) coming from a movie-detail deep link. */
-export function findShowtime(cinemas: Cinema[], showtimeId?: string | null) {
+function findShowtime(cinemas: Cinema[], showtimeId?: string | null) {
   if (!showtimeId) return null;
 
   for (const cinema of cinemas) {

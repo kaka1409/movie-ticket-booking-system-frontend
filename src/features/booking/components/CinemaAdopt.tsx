@@ -7,12 +7,10 @@ import type { Cinema, DateOption } from "../types";
 import type { Movie } from "@/types";
 
 /**
- * Effect-only (renders nothing): adopts the server-resolved URL selection
- * into the booking draft once per page mount — URL params win over the saved
- * draft, and a URL date that differs clears the stale selection. The movie
- * snapshot rides along so downstream steps read it from the draft instead of
- * refetching `GET /movies/:slug`. Event handlers take over from there (no
- * mirror effect, so UI and draft cannot diverge).
+ * Effect-only (renders nothing): adopts the server-resolved URL selection into
+ * the draft once per mount (URL wins over the saved draft; a different date
+ * clears the slot) plus the movie snapshot later steps read instead of
+ * refetching.
  */
 export default function CinemaAdopt({
   movie,

@@ -33,7 +33,7 @@ function union<T>(result: ApiResponse<T>): BookingActionResult<T> {
   return { success: true, data: result.data };
 }
 
-export interface CreateBookingInput {
+export interface CreateBookingRequest {
   showtimeId: string;
   seatIds: string[];
   contact: { name: string; email: string; phone: string };
@@ -44,7 +44,7 @@ export interface CreateBookingInput {
 
 /** `POST /bookings` (contract §4.9) — server prices everything, returns the detail. */
 export async function createBookingAction(
-  input: CreateBookingInput,
+  input: CreateBookingRequest,
   token: string,
 ): Promise<BookingActionResult<BookingDetail>> {
   try {

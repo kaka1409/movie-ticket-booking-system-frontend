@@ -2,7 +2,7 @@ import type { SeatMapCell, SeatMapResponse, SeatMapRow, Seat, SeatRow, SeatPrice
 import { getSeatMap } from "../api";
 import { selectCellsByIds } from "./seat";
 
-export interface AdaptedSeatMap {
+interface AdaptedSeatMap {
   rows: SeatRow[];
   /** `{ available, vip, sweetbox }` — the FE vocabulary (`available` = BE `standard`). */
   seatPrices: SeatPrice;

@@ -6,8 +6,8 @@ import { useBooking } from "@/features/booking/context";
 import { useMounted } from "@/hooks/useMounted";
 import { bookingCardData, resolveTicketIdentity } from "@/features/booking/utils/bookingCard";
 import { useLocale } from "@/contexts/LocaleContext";
-import DetailRow from "@/app/(sub)/booking/components/mobile/DetailRow";
-import PriceBreakdown from "@/app/(sub)/booking/components/mobile/PriceBreakdown";
+import DetailRow from "@/components/shared/DetailRow";
+import PriceBreakdown from "@/components/shared/PriceBreakdown";
 import TearLine from "@/components/ui/TearLine";
 import { MonitorPlay, CalendarDays } from "lucide-react";
 import type { Movie } from "@/features/movies/types";
@@ -19,7 +19,6 @@ export default function TicketCard({
   transactionId,
 }: {
   movie: Movie | undefined;
-  /** Authoritative booking payload when the page was reached with `?bookingId=`. */
   booking: BookingDetail | null;
   transactionId: string;
 }) {
@@ -38,8 +37,6 @@ export default function TicketCard({
   const mounted = useMounted();
   const { translate } = useLocale();
 
-  // `?bookingId=` payload is authoritative; the BookingContext draft covers
-  // direct links / mock-era URLs without one.
   const cardData = booking ? bookingCardData(booking) : null;
   const { posterSrc, title, ageRating } = resolveTicketIdentity(movie, booking);
   const bookingRef = cardData?.bookingRef ?? transactionId;
@@ -53,7 +50,6 @@ export default function TicketCard({
         mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
       }`}
     >
-      {/* Top: movie info */}
       <div className="flex gap-3 p-4">
         {posterSrc && (
           <div className="w-20 h-30 flex-shrink-0 rounded-sm overflow-hidden relative">
@@ -72,10 +68,8 @@ export default function TicketCard({
         </div>
       </div>
 
-      {/* Tear line */}
       <TearLine className="px-0 my-0" lineClassName="mx-3" />
 
-      {/* Booking details */}
       <div className="px-4 py-4 space-y-4">
         <div className="flex justify-between gap-4">
           <DetailRow
@@ -110,10 +104,8 @@ export default function TicketCard({
         />
       </div>
 
-      {/* Tear line */}
       <TearLine className="px-0 my-0" lineClassName="mx-3" />
 
-      {/* QR code */}
       <div className="px-4 pb-5 pt-4 flex flex-col items-center gap-3">
         <div className="flex flex-col items-center gap-4 px-6 py-6 rounded-2xl bg-white">
           <QRCodeSVG value={qrValue} size={250} level="H" />

@@ -4,10 +4,15 @@ import Image from "next/image";
 import { MonitorPlay, CalendarDays } from "lucide-react";
 import { useBooking } from "@/features/booking/context";
 import { useLocale } from "@/contexts/LocaleContext";
-import DetailRow from "@/app/(sub)/booking/components/mobile/DetailRow";
-import PriceBreakdown from "@/app/(sub)/booking/components/mobile/PriceBreakdown";
+import DetailRow from "@/components/shared/DetailRow";
+import PriceBreakdown from "@/components/shared/PriceBreakdown";
 import TearLine from "@/components/ui/TearLine";
 
+/**
+ * The order recap on the credentials and payment steps. Both steps read the
+ * same booking draft, so they share one card — a reader who walks forward must
+ * not see the summary change shape between two adjacent steps.
+ */
 export default function OrderSummary() {
   const { translate } = useLocale();
   const { movie, cinemaName, room, location, date, time, selectedSeats, combos, foods, total } =
@@ -21,7 +26,6 @@ export default function OrderSummary() {
         </p>
       </div>
 
-      {/* Movie info */}
       <div className="flex items-start justify-between gap-3 px-4 pb-4">
         <div className="flex gap-3">
           {movie?.src && (
@@ -35,7 +39,7 @@ export default function OrderSummary() {
             </h3>
             {movie && (
               <p className="text-xs text-(--color-text-muted)">
-                {movie.genre} • {movie.duration} min
+                {movie.genre} • {movie.duration} {translate("booking.min")}
               </p>
             )}
           </div>
@@ -47,10 +51,8 @@ export default function OrderSummary() {
         )}
       </div>
 
-      {/* Tear line */}
       <TearLine className="px-0 my-0" lineClassName="mx-3" />
 
-      {/* Booking details */}
       <div className="px-4 py-4 space-y-4">
         <div className="flex justify-between gap-4">
           <DetailRow
@@ -73,7 +75,6 @@ export default function OrderSummary() {
           />
         </div>
 
-        {/* Seats → snacks → total */}
         <PriceBreakdown seats={selectedSeats} snacks={[...combos, ...foods]} total={total} />
       </div>
     </div>

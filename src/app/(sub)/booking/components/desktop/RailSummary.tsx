@@ -3,7 +3,7 @@
 import { useBooking } from "@/features/booking/context";
 import { useLocale } from "@/contexts/LocaleContext";
 import MicroLabel from "@/components/ui/MicroLabel";
-import PriceBreakdown from "@/app/(sub)/booking/components/mobile/PriceBreakdown";
+import PriceBreakdown from "@/components/shared/PriceBreakdown";
 
 /**
  * The tail of the desktop rail on the last steps: which theater/day the seats

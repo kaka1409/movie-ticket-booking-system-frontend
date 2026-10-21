@@ -1,5 +1,3 @@
-"use client";
-
 import type { ReactNode } from "react";
 import BookingRail from "./BookingRail";
 import StepRail from "./StepRail";

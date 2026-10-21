@@ -26,11 +26,12 @@ export default function PhoneField({
   countryCode: string;
   onCountryChange: (v: string) => void;
   phone: string;
-  onPhoneChange: (v: string) => void;
+  onPhoneChange: (value: string) => void;
   error?: string;
 }) {
   const [focused, setFocused] = useState(false);
-  const selected = COUNTRY_CODES.find((c) => c.code === countryCode) ?? COUNTRY_CODES[0];
+  const selected =
+    COUNTRY_CODES.find((country) => country.code === countryCode) ?? COUNTRY_CODES[0];
   const { translate } = useLocale();
 
   return (
@@ -47,9 +48,9 @@ export default function PhoneField({
             aria-label={translate("booking.credentials.country_code")}
             className="absolute inset-0 opacity-0 w-full text-black text-center cursor-pointer"
           >
-            {COUNTRY_CODES.map((c) => (
-              <option key={c.code} value={c.code}>
-                {c.code} {c.label}
+            {COUNTRY_CODES.map((country) => (
+              <option key={country.code} value={country.code}>
+                {country.code} {country.label}
               </option>
             ))}
           </select>

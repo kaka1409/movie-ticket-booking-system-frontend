@@ -3,7 +3,7 @@
 import { MapPin } from "lucide-react";
 import { useCinemaSelection } from "@/features/booking/hooks/useCinemaSelection";
 import { useLocale } from "@/contexts/LocaleContext";
-import CinemaCard from "@/components/ui/CinemaCard";
+import CinemaCard from "@/features/showtimes/components/CinemaCard";
 import type { Cinema } from "@/features/booking/types";
 
 export default function CinemaList({ cinemas }: { cinemas: Cinema[] }) {

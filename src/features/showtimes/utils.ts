@@ -1,5 +1,6 @@
 import type { ShowtimeDateOption } from "./types";
 import { formatDateOnly, formatDayOfMonth } from "@/libs/date";
+import { toLocaleTag } from "@/libs/utils";
 import { DATE_STRIP_DAYS } from "./constants";
 
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
@@ -28,10 +29,6 @@ export interface ShowtimeDateChip {
   weekday?: string;
   value: string;
   disabled?: boolean;
-}
-
-function toLocaleTag(locale: "en" | "vn"): string {
-  return locale === "vn" ? "vi-VN" : "en-US";
 }
 
 function toMonthLabel(date: Date, locale: "en" | "vn"): string {

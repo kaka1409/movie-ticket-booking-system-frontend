@@ -4,6 +4,7 @@ import { getShowtimeDates, getShowtimes } from "@/features/showtimes/api";
 import { toShowtimeDateChips } from "@/features/showtimes/utils";
 import type { ShowtimeDateOption, ShowtimesResponse } from "@/features/showtimes/types";
 import { getRequestLocale } from "@/libs/session";
+import { todayInCinemaZone } from "@/libs/date";
 import enMessages from "@/locales/en.json";
 import vnMessages from "@/locales/vn.json";
 import CinemaAdopt from "@/features/booking/components/CinemaAdopt";
@@ -24,12 +25,6 @@ import BottomBar from "./components/mobile/BottomBar";
 import DesktopCinemaContent from "./components/desktop/CinemaContent";
 
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
-
-function todayISO(): string {
-  return new Date().toLocaleDateString("sv-SE", {
-    timeZone: "Asia/Ho_Chi_Minh",
-  });
-}
 
 /* Backend returns one record per date that has showtimes. Chips render the
    localized weekday (`dayOfWeek` already arrives in the request locale);
@@ -91,7 +86,7 @@ export default async function CinemaShowtimePage({
   }
 
   const movie = movieResult.data;
-  const today = todayISO();
+  const today = todayInCinemaZone();
 
   const datesResult = await getShowtimeDates(slug, locale);
   const dates = "error" in datesResult ? [] : toDateOptions(datesResult.data, today, locale);

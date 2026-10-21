@@ -147,7 +147,7 @@ function toErrorUnion(error: unknown): ErrorResponse {
 }
 
 /** LIVE - `PUT /seat-holds` (contract §4.6) — set-replacement created at the seats-step CTA, TTL 600s. */
-export async function putSeatHolds(
+export async function saveSeatHolds(
   showtimeId: string,
   seatIds: string[],
   token: string,

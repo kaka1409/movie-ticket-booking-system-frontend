@@ -73,7 +73,6 @@ export default function PriceBreakdown({
 
   return (
     <>
-      {/* Seats grouped by type */}
       <div className="space-y-3">
         <MicroLabel className="flex items-center gap-1.5 text-white/60">
           <Armchair size={10} />
@@ -100,7 +99,6 @@ export default function PriceBreakdown({
         ))}
       </div>
 
-      {/* Snacks */}
       {snacks.length > 0 && (
         <div className="space-y-2">
           <MicroLabel className="flex items-center gap-1.5 text-white/60">

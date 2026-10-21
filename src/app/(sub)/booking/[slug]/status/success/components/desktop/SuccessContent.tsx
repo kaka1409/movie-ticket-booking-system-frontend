@@ -18,7 +18,6 @@ export default function SuccessContent({
   transactionId,
 }: {
   movie: Movie | undefined;
-  /** Authoritative booking payload when the page was reached with `?bookingId=`. */
   booking: BookingDetail | null;
   transactionId: string;
 }) {

@@ -6,7 +6,7 @@ import { getRequestLocale } from "@/libs/session";
 import StepBar from "@/app/(sub)/booking/components/mobile/StepBar";
 import CountdownBanner from "@/app/(sub)/booking/components/mobile/CountdownBanner";
 import PageError from "@/app/(sub)/booking/components/mobile/PageError";
-import OrderSummary from "./components/mobile/OrderSummary";
+import OrderSummary from "@/features/booking/components/OrderSummary";
 import PaymentOption from "./components/mobile/PaymentOption";
 import SecureBadge from "./components/mobile/SecureBadge";
 import TermsNote from "./components/mobile/TermsNote";
@@ -38,8 +38,8 @@ export default async function PaymentPage({ params }: { params: Promise<{ slug: 
             <section className="px-4 space-y-3">
               <PaymentHeader />
               <div className="space-y-2.5">
-                {paymentMethods.map((m) => (
-                  <PaymentOption key={m.id} method={m} />
+                {paymentMethods.map((method) => (
+                  <PaymentOption key={method.id} method={method} />
                 ))}
               </div>
             </section>

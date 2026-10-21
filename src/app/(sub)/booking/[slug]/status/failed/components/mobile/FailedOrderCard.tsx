@@ -4,8 +4,8 @@ import Image from "next/image";
 import { useBooking } from "@/features/booking/context";
 import { useMounted } from "@/hooks/useMounted";
 import { useLocale } from "@/contexts/LocaleContext";
-import DetailRow from "@/app/(sub)/booking/components/mobile/DetailRow";
-import PriceBreakdown from "@/app/(sub)/booking/components/mobile/PriceBreakdown";
+import DetailRow from "@/components/shared/DetailRow";
+import PriceBreakdown from "@/components/shared/PriceBreakdown";
 import TearLine from "@/components/ui/TearLine";
 import Badge from "@/components/ui/Badge";
 import { bookingCardData, resolveTicketIdentity } from "@/features/booking/utils/bookingCard";
@@ -20,7 +20,6 @@ export default function FailedOrderCard({
   reason,
 }: {
   movie: Movie | undefined;
-  /** Authoritative booking payload when the page was reached with `?bookingId=`. */
   booking: BookingDetail | null;
   reason: string | null;
 }) {
@@ -39,8 +38,6 @@ export default function FailedOrderCard({
   const mounted = useMounted();
   const { translate } = useLocale();
 
-  // `?bookingId=` payload is authoritative; the BookingContext draft covers
-  // direct links / mock-era URLs without one.
   const cardData = booking ? bookingCardData(booking) : null;
   const { posterSrc, title, ageRating } = resolveTicketIdentity(movie, booking);
 
@@ -52,7 +49,6 @@ export default function FailedOrderCard({
         mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
       }`}
     >
-      {/* Top: movie info */}
       <div className="flex gap-3 p-4">
         {posterSrc && (
           <div className="w-20 h-30 flex-shrink-0 rounded-sm overflow-hidden relative opacity-70">
@@ -71,10 +67,8 @@ export default function FailedOrderCard({
         </div>
       </div>
 
-      {/* Tear line */}
       <TearLine lineClassName="mx-3" />
 
-      {/* Booking details */}
       <div className="px-4 py-4 space-y-4">
         <div className="flex justify-between gap-4">
           <DetailRow
@@ -109,7 +103,6 @@ export default function FailedOrderCard({
           totalClassName="text-white"
         />
 
-        {/* Error code pill */}
         <div className="flex items-center gap-2 pt-1">
           <Badge
             variant="error"
@@ -124,7 +117,6 @@ export default function FailedOrderCard({
         </div>
       </div>
 
-      {/* Tear line */}
       <TearLine lineClassName="mx-3" />
     </div>
   );

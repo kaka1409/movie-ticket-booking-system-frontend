@@ -9,7 +9,6 @@ export default function MovieSummary({ movie }: { movie: Movie }) {
   const { translate } = useLocale();
   return (
     <div className="flex items-center gap-3 p-3 rounded-2xl bg-(--color-surface) border border-(--color-border)">
-      {/* Mini poster */}
       <div
         className="w-16 relative overflow-hidden rounded-sm flex-shrink-0 flex items-end bg-(--color-surface-2)"
         style={{ aspectRatio: "2/3" }}
@@ -23,7 +22,6 @@ export default function MovieSummary({ movie }: { movie: Movie }) {
         )}
       </div>
 
-      {/* Info */}
       <div className="flex-1 min-w-0">
         <h2 className="font-bold text-base mb-1 text-(--color-text-primary)">{movie.title}</h2>
         <p className="flex items-center gap-1.5 text-xs mb-2 text-(--color-text-muted)">

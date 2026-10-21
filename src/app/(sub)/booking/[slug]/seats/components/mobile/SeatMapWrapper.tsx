@@ -3,15 +3,14 @@
 import { useMemo } from "react";
 import { useBooking } from "@/features/booking/context";
 import { restoreSelectedSeats } from "@/features/booking/utils/seat";
-import SeatGrid from "@/components/ui/SeatGrid";
+import SeatGrid from "@/features/booking/components/seats/SeatGrid";
 import type { SeatRow } from "@/features/booking/types";
 
 /**
- * Mobile seat-map surface. The adoption/hold side effects live in
- * `SeatMapAdopter` (mounted once at page level); this component only paints the
- * draft grid. First paint happens before the adoption effect runs, so it falls
- * back to the server rows with the draft's seats re-marked — the map never
- * flashes empty.
+ * Seat-map surface for both skins (the caller caps its width). Lifecycle lives
+ * in `SeatMapAdopter` (mounted once at page level); this only paints the draft
+ * grid, falling back to the server rows with the draft's seats re-marked so the
+ * first paint (before adoption) never flashes empty.
  */
 export default function SeatMapWrapper({ initialRows }: { initialRows: SeatRow[] }) {
   const { seatGrid, selectedSeats, toggleSeat } = useBooking();

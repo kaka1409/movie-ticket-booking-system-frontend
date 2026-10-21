@@ -35,6 +35,13 @@ interface BookingBottomBarProps {
   errorText?: string | null;
 }
 
+/**
+ * Sticky CTA bar shared by the booking, transfer and modify steps.
+ * `onCtaClick` wins over `ctaHref` (a hold or a submit cannot be a link); a
+ * "disabled" link keeps `href="#"` and cancels the click, so it stays focusable
+ * and announced as unavailable. `selectionInfo.onClear` only renders when
+ * `showClearButton` is set — the bar never owns the selection itself.
+ */
 export default function BookingBottomBar({
   hintText,
   selectionInfo,
@@ -107,7 +114,6 @@ export default function BookingBottomBar({
         <p className="mb-3 px-1 text-xs font-medium text-red-400 leading-relaxed">{errorText}</p>
       )}
 
-      {/* Hint (micro-label above the CTA) */}
       {hintText && (
         <div className="flex items-end justify-between mb-3 min-h-[40px]">
           <p className="text-[9px] font-bold tracking-widest uppercase text-(--color-text-muted) mb-0.5">
@@ -116,7 +122,6 @@ export default function BookingBottomBar({
         </div>
       )}
 
-      {/* Selection Info */}
       {selectionInfo && (
         <div className="flex items-center justify-between mb-3 px-1">
           {hasSelection ? (
@@ -162,7 +167,6 @@ export default function BookingBottomBar({
         </div>
       )}
 
-      {/* Total Info */}
       {totalInfo && (
         <div className="flex items-end justify-between mb-3 min-h-[40px]">
           {totalInfo.label && (
@@ -180,7 +184,6 @@ export default function BookingBottomBar({
         </div>
       )}
 
-      {/* CTA Button */}
       {renderButton()}
     </div>
   );

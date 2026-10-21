@@ -6,8 +6,8 @@ import { useBooking } from "@/features/booking/context";
 import { useMounted } from "@/hooks/useMounted";
 import { useLocale } from "@/contexts/LocaleContext";
 import { bookingCardData, resolveTicketIdentity } from "@/features/booking/utils/bookingCard";
-import DetailRow from "@/app/(sub)/booking/components/mobile/DetailRow";
-import PriceBreakdown from "@/app/(sub)/booking/components/mobile/PriceBreakdown";
+import DetailRow from "@/components/shared/DetailRow";
+import PriceBreakdown from "@/components/shared/PriceBreakdown";
 import TearLine from "@/components/ui/TearLine";
 import type { Movie } from "@/features/movies/types";
 import type { BookingDetail } from "@/features/booking/types";
@@ -22,7 +22,6 @@ export default function ReceiptCard({
   booking,
 }: {
   movie: Movie | undefined;
-  /** Authoritative booking payload when the page was reached with `?bookingId=`. */
   booking: BookingDetail | null;
 }) {
   const {
@@ -40,8 +39,6 @@ export default function ReceiptCard({
   const mounted = useMounted();
   const { translate } = useLocale();
 
-  // `?bookingId=` payload is authoritative; the BookingContext draft covers
-  // direct links / mock-era URLs without one.
   const cardData = booking ? bookingCardData(booking) : null;
   const { posterSrc, title, ageRating } = resolveTicketIdentity(movie, booking);
 
@@ -51,7 +48,6 @@ export default function ReceiptCard({
         mounted ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
       }`}
     >
-      {/* Movie identity */}
       <div className="flex gap-5 p-6">
         {posterSrc && (
           <div className="relative h-36 w-24 shrink-0 overflow-hidden rounded-md bg-(--color-surface-2)">

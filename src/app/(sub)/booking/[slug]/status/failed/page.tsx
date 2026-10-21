@@ -70,15 +70,11 @@ function FailPageMobile({
   return (
     <>
       <div className="min-h-dvh max-w-md mx-auto flex flex-col bg-(--color-bg)">
-        {/* Scrollable body */}
         <main className="flex-1 overflow-y-auto pb-8 pt-10 space-y-6">
-          {/* Error hero */}
           <FailedIcon reason={reason} />
 
-          {/* Failed order card */}
           <FailedOrderCard movie={movie} booking={booking} reason={reason} />
 
-          {/* Action buttons */}
           <FailActions />
         </main>
       </div>

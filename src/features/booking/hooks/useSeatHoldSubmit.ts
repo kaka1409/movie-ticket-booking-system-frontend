@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useBooking } from "@/features/booking/context";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/contexts/LocaleContext";
-import { putSeatHolds } from "@/features/booking/api";
+import { saveSeatHolds } from "@/features/booking/api";
 import { recoverSeatMap } from "@/features/booking/utils/seatMap";
 
 interface SeatHoldSubmitResult {
@@ -48,7 +48,7 @@ export function useSeatHoldSubmit(): SeatHoldSubmitResult {
     setIsReserving(true);
     setErrorText(null);
 
-    const result = await putSeatHolds(showtimeId, seatIds, token);
+    const result = await saveSeatHolds(showtimeId, seatIds, token);
     if ("error" in result) {
       if (result.error.status === 409 || result.error.code === "SEAT_TAKEN") {
         await recoverSeatMap(showtimeId, seatIds, setSeatGrid);

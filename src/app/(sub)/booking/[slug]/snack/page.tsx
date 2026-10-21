@@ -42,7 +42,6 @@ export default async function CombosPage() {
 
           <SnackHeader />
 
-          {/* Quick Combos */}
           <div className="space-y-3">
             <SnackSectionHeading sectionKey="booking.snack.quick_combos" />
             <div className="space-y-3">
@@ -52,7 +51,6 @@ export default async function CombosPage() {
             </div>
           </div>
 
-          {/* Pick & Mix */}
           <div className="space-y-4">
             {foodCategories.map((category) => (
               <CategorySection

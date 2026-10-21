@@ -30,7 +30,6 @@ export default function FailActions() {
         </Button>
       </div>
 
-      {/* Help link */}
       <div
         className={`px-4 pb-4 transition-all duration-700 delay-[600ms] ${
           mounted ? "opacity-100" : "opacity-0"
