@@ -6,8 +6,8 @@ import { Star, Clock, Loader2 } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useMounted } from "@/hooks/useMounted";
 import { formatDate } from "@/libs/utils";
-import { ALL_MOVIES } from "@/features/movies/mock";
-import type { Movie } from "@/features/movies/types";
+import { ALL_MOVIES } from "../mock";
+import type { Movie } from "../types";
 
 interface MoviePreviewPopoverProps {
   movie: Movie;
@@ -45,13 +45,14 @@ export default function MoviePreviewPopover({
 
   if (!mounted || !isOpen) return null;
 
-  // Fallback lookup from full catalog if field is missing from shallow API response
-  const fallback = ALL_MOVIES.find((m) => m.slug === movie.slug || m.id === movie.id);
+  // List rows are shallow — the local catalog only fills the fields the API never sends.
+  const fallback = ALL_MOVIES.find(
+    (candidate) => candidate.slug === movie.slug || candidate.id === movie.id,
+  );
   const effectiveSynopsis = movie.synopsis || fallback?.synopsis || "";
   const effectiveCast = movie.cast && movie.cast.length > 0 ? movie.cast : (fallback?.cast ?? []);
   const effectiveDirector = movie.director || fallback?.director || "";
 
-  // Calculate position following the cursor
   let left = cursorPos.x + CURSOR_OFFSET_X;
   if (left + POPOVER_WIDTH > window.innerWidth - VIEWPORT_PADDING) {
     // Flip to the left of the cursor if overflowing right edge
@@ -81,7 +82,6 @@ export default function MoviePreviewPopover({
       className="pointer-events-none z-[9999] select-none animate-in fade-in zoom-in-95 duration-150 transition-[top,left] ease-out"
     >
       <div className="overflow-hidden rounded-(--radius-lg) border border-(--color-gold)/40 bg-(--color-surface) shadow-[0_25px_60px_rgba(0,0,0,0.95)] backdrop-blur-md max-h-[calc(100vh-32px)] overflow-y-auto">
-        {/* Media Banner */}
         <div className="relative aspect-video w-full overflow-hidden bg-(--color-surface-2)">
           <Image
             src={movie.src || "/images/movie-poster-placeholder.jpg"}
@@ -91,10 +91,8 @@ export default function MoviePreviewPopover({
             className="object-cover"
           />
 
-          {/* Dark Gradients */}
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-black/20" />
 
-          {/* Top-left Badges */}
           <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5">
             {movie.rating > 0 && (
               <span className="flex items-center gap-1 rounded-(--radius-sm) bg-(--color-gold) px-2 py-0.5 text-[11px] font-black text-black shadow">
@@ -108,15 +106,13 @@ export default function MoviePreviewPopover({
             )}
           </div>
 
-          {/* Loading indicator if detail is fetching */}
           {isLoading && (
             <div className="absolute top-2.5 right-2.5 flex items-center gap-1 rounded-full bg-black/60 px-2 py-0.5 text-[10px] font-medium text-(--color-gold) backdrop-blur-xs">
               <Loader2 size={11} className="animate-spin" />
-              <span>Loading...</span>
+              <span>{translate("common.loading")}</span>
             </div>
           )}
 
-          {/* Bottom Banner Info */}
           <div className="absolute bottom-2.5 left-3 right-3 flex items-center justify-between gap-2 text-xs">
             <span className="font-extrabold uppercase tracking-wide text-(--color-gold) truncate min-w-0">
               {movie.genre}
@@ -132,16 +128,13 @@ export default function MoviePreviewPopover({
           </div>
         </div>
 
-        {/* Content Body (Informative only, no CTAs) */}
         <div className="p-3.5 space-y-3">
-          {/* Title */}
           <div>
             <h3 className="line-clamp-1 text-base font-black tracking-tight text-white">
               {movie.title}
             </h3>
           </div>
 
-          {/* Synopsis Section */}
           {effectiveSynopsis && (
             <div className="space-y-1">
               <h4 className="text-[10px] font-bold uppercase tracking-wider text-(--color-gold)">
@@ -153,7 +146,6 @@ export default function MoviePreviewPopover({
             </div>
           )}
 
-          {/* Cast Section */}
           {effectiveCast.length > 0 && (
             <div className="space-y-1.5 border-t border-(--color-border) pt-2">
               <div className="flex items-center justify-between gap-2">
@@ -203,7 +195,6 @@ export default function MoviePreviewPopover({
             </div>
           )}
 
-          {/* Footer Metadata */}
           <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 border-t border-(--color-border) pt-2 text-[10px] text-(--color-text-muted)">
             {movie.releaseDate && (
               <span>

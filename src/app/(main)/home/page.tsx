@@ -5,7 +5,7 @@ import { getRequestLocale } from "@/libs/session";
 import { SITE_NAME } from "@/libs/site";
 import type { Metadata } from "next";
 
-/** Static shell rebuilt every 60s so catalog edits show up without a redeploy. */
+/** 60s fetch cache for the catalog calls (keyed per `?lang=`); the route renders per request. */
 export const revalidate = 60;
 
 export const metadata: Metadata = {
@@ -21,7 +21,7 @@ import NowShowing from "@/app/(main)/home/components/desktop/NowShowing";
 import ComingSoon from "@/app/(main)/home/components/desktop/ComingSoon";
 import QuickBookingBar from "@/app/(main)/home/components/desktop/QuickBookingBar";
 import ForYou from "@/app/(main)/home/components/desktop/ForYou";
-import { MoviePreviewProvider } from "@/app/(main)/home/components/desktop/MoviePreviewContext";
+import { MoviePreviewProvider } from "@/features/movies/moviePreviewContext";
 
 // Mobile
 import HeroBanner from "@/app/(main)/home/components/mobile/HeroBanner";
@@ -29,13 +29,16 @@ import QuickBooking from "@/app/(main)/home/components/mobile/QuickBooking";
 import SearchBar from "@/app/(main)/home/components/mobile/SearchBar";
 import MovieRow from "@/app/(main)/home/components/mobile/MovieRow";
 
+// Shared: one quick-booking controller for both device trees
+import { QuickBookingProvider } from "@/app/(main)/home/components/QuickBookingProvider";
+
 export default async function HomePage() {
   // Cookie read makes this route dynamic per request (ISR HTML would serve
   // one locale to everyone); the 60s fetch cache below still shields the
   // backend, keyed per ?lang= URL.
   const locale = await getRequestLocale();
-  // QuickBooking widgets fetch their own dates/slots client-side (they depend
-  // on the picked movie), so the page only serves movies + featured here.
+  // QuickBooking's dates/slots are request-keyed client-side (they depend on the
+  // picked movie), so the page itself only serves movies + featured.
   const [nowShowingSettled, comingSoonSettled, featuredSettled] = await Promise.allSettled([
     getMovies({ status: "now_showing", page: 1, limit: MOVIES_PAGE_SIZE }, locale),
     getMovies({ status: "coming_soon", page: 1, limit: MOVIES_PAGE_SIZE }, locale),
@@ -54,7 +57,7 @@ export default async function HomePage() {
   const comingSoonList = "error" in comingSoon ? [] : comingSoon.data;
 
   return (
-    <>
+    <QuickBookingProvider movies={nowShowingList}>
       {/* Mobile */}
       <div className="block md:hidden">
         <div className="flex flex-col gap-(--space-lg)">
@@ -62,7 +65,6 @@ export default async function HomePage() {
           <QuickBooking movies={nowShowingList} error={nowShowingError} />
           <SearchBar />
 
-          {/* Now Showing */}
           <MovieRow
             titleKey="home.movie_row.now_showing"
             movies={nowShowingList}
@@ -70,7 +72,6 @@ export default async function HomePage() {
             status="now_showing"
           />
 
-          {/* Coming Soon */}
           <MovieRow
             titleKey="home.movie_row.coming_soon"
             movies={comingSoonList}
@@ -90,6 +91,6 @@ export default async function HomePage() {
           <ForYou movies={nowShowingList} />
         </MoviePreviewProvider>
       </div>
-    </>
+    </QuickBookingProvider>
   );
 }

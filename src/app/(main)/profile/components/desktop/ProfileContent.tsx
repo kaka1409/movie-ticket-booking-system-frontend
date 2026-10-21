@@ -44,7 +44,6 @@ export default function ProfileContent({
         </Button>
       }
     >
-      {/* Identity hero */}
       <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
         <AvatarRing src={user.avatarUrl} name={user.name} size="h-24 w-24" />
         <div className="min-w-0 flex-1">
@@ -60,7 +59,6 @@ export default function ProfileContent({
 
       <AccountStats stats={stats} />
 
-      {/* Account details */}
       <div className="mt-6 rounded-xl border border-(--color-border) bg-(--color-surface) p-5">
         <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.18em] text-(--color-text-muted)">
           {translate("profile.account_details")}

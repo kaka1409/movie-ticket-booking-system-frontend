@@ -62,7 +62,6 @@ export default function MovieGrid() {
         </div>
       )}
 
-      {/* Grid */}
       {movies.length > 0 ? (
         <div
           ref={gridRef}

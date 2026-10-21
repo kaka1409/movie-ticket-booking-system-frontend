@@ -7,7 +7,7 @@ import { useLocale } from "@/contexts/LocaleContext";
 import type { Movie } from "@/features/movies/types";
 import type { ErrorResponse } from "@/libs/api";
 import SectionFallback from "@/components/ui/SectionFallback";
-import { useMoviePreview } from "./MoviePreviewContext";
+import { useMoviePreview } from "@/features/movies/moviePreviewContext";
 
 export default function NowShowing({
   movies,
@@ -27,7 +27,6 @@ export default function NowShowing({
       className="mx-auto max-w-7xl px-8 pt-12 pb-4"
       aria-label={translate("home.desktop.now_showing_section")}
     >
-      {/* Header */}
       <div className="mb-7 flex items-end justify-between">
         <div>
           <h2 className="flex items-center gap-2.5 text-[26px] font-black tracking-tight text-white">
@@ -47,17 +46,15 @@ export default function NowShowing({
         </Link>
       </div>
 
-      {/* Grid */}
       <div className="grid grid-cols-2 gap-6 md:grid-cols-3 xl:grid-cols-4">
         {movies.map((movie) => (
           <article
             key={movie.id}
-            onMouseEnter={(e) => handleCardMouseEnter(movie, e)}
+            onMouseEnter={(event) => handleCardMouseEnter(movie, event)}
             onMouseMove={handleCardMouseMove}
             onMouseLeave={handleCardMouseLeave}
             className="group relative flex flex-col overflow-hidden rounded-(--radius-lg) border border-(--color-border) bg-(--color-surface) transition-all duration-300 hover:-translate-y-1.5 hover:border-(--color-gold)/50 hover:shadow-xl"
           >
-            {/* Poster Thumbnail */}
             <Link
               href={`/movies/${movie.slug}`}
               className="relative block aspect-[2/3] w-full overflow-hidden bg-(--color-surface-2)"
@@ -70,10 +67,8 @@ export default function NowShowing({
                 className="object-cover transition-transform duration-500 group-hover:scale-105"
               />
 
-              {/* Gradient Overlay on Hover */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 opacity-60 transition-opacity group-hover:opacity-80" />
 
-              {/* Badges on Poster */}
               <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between">
                 {movie.rating > 0 ? (
                   <span className="flex items-center gap-1 rounded-(--radius-sm) bg-(--color-gold) px-2 py-0.5 text-xs font-black text-black">
@@ -99,7 +94,6 @@ export default function NowShowing({
               )}
             </Link>
 
-            {/* Info & Action */}
             <div className="flex flex-1 flex-col justify-between p-4">
               <div>
                 <Link href={`/movies/${movie.slug}`}>

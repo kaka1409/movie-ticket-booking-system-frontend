@@ -40,13 +40,11 @@ export default function TicketsSkeleton() {
   return (
     <div className="min-h-dvh bg-(--color-bg) px-(--space-md)">
       <div className="space-y-4 pt-2 pb-10">
-        {/* Tabs */}
         <div className="flex gap-3">
           <Skeleton className="h-9 w-32 rounded-xl" />
           <Skeleton className="h-9 w-28 rounded-xl" />
         </div>
 
-        {/* Ticket cards */}
         {Array.from({ length: 3 }).map((_, index) => (
           <UpcomingCardSkeleton key={index} />
         ))}

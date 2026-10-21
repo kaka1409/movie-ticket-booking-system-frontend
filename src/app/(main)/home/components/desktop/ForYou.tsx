@@ -6,7 +6,7 @@ import { Star, Sparkles } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useAuth } from "@/contexts/AuthContext";
 import type { Movie } from "@/features/movies/types";
-import { useMoviePreview } from "./MoviePreviewContext";
+import { useMoviePreview } from "@/features/movies/moviePreviewContext";
 
 const REASONS = [
   "Top Rated by Critics",
@@ -57,12 +57,11 @@ export default function ForYou({ movies }: { movies: Movie[] }) {
           {recommendedMovies.map((movie, index) => (
             <Link key={movie.id} href={`/movies/${movie.slug}`} className="group block">
               <article
-                onMouseEnter={(e) => handleCardMouseEnter(movie, e)}
+                onMouseEnter={(event) => handleCardMouseEnter(movie, event)}
                 onMouseMove={handleCardMouseMove}
                 onMouseLeave={handleCardMouseLeave}
                 className="cursor-pointer"
               >
-                {/* Poster */}
                 <div className="relative mb-2.5 aspect-[2/3] w-full overflow-hidden rounded-(--radius-md) border border-(--color-border) bg-(--color-surface-2) transition-all duration-300 group-hover:-translate-y-1 group-hover:border-(--color-gold)/50 group-hover:shadow-lg">
                   <Image
                     src={movie.src || "/images/movie-poster-placeholder.jpg"}
@@ -80,7 +79,6 @@ export default function ForYou({ movies }: { movies: Movie[] }) {
                   )}
                 </div>
 
-                {/* Details */}
                 <h3 className="truncate text-xs font-bold text-white transition-colors group-hover:text-(--color-gold)">
                   {movie.title}
                 </h3>

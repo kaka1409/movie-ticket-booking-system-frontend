@@ -97,7 +97,6 @@ export default function HeroBanner({
         </div>
         <div aria-hidden className="absolute inset-0 bg-hero-gradient" />
 
-        {/* Movie info */}
         <div className="absolute bottom-10 left-(--space-md) right-(--space-md) z-20">
           <div className="mb-1 flex items-center gap-1.5">
             <span className="rounded-(--radius-sm) bg-(--color-gold) px-1.5 py-0.5 text-[7px] font-bold tracking-widest text-black">
@@ -113,7 +112,6 @@ export default function HeroBanner({
         </div>
       </Link>
 
-      {/* Dot indicators */}
       <div className="absolute bottom-2 left-0 right-0 z-20 flex items-center justify-center">
         <div className="flex gap-1.5">
           {movies.map((_, movieIndex) => (

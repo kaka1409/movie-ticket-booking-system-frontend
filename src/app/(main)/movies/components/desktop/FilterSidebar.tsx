@@ -35,26 +35,10 @@ function SectionBadge({ count }: { count: number }) {
 }
 
 /**
- * Desktop filter panel — the mobile accordion with its drawer removed: the same
- * draft/apply model (`filters` edits the draft, Apply commits it) and the same
- * sections, but sticky beside the grid and foldable one by one (`FilterSection`).
- *
- * Between 740px and 1023px the sidebar stacks above the grid at full width, so
- * the sections lay out two-up there (`items-start`, so folding one does not
- * stretch its neighbour) and collapse back to a single column from `lg:`, where
- * the sidebar is 300px wide.
- *
- * From `lg:` it is sticky and shows **every** section at once — no viewport cap
- * and no scroll region of its own, so the panel never hides a filter behind an
- * (invisible) inner scrollbar. The cost is that on a short viewport the bottom
- * row (Apply) can sit below the fold; sticky releases at the end of the grid,
- * so the page scroll still reaches it. The Genre section lays out two-up (the
- * other sections are short enough to stay single-column at 300px).
- *
- * Every indicator in here — the section badges and the header count that gates
- * Clear All — is derived from the **draft**, because that is what the controls on
- * screen show. `activeFilterCount` from the context counts the *committed*
- * filters and drives the mobile panel's badge instead.
+ * Desktop filter panel: the mobile draft/apply model minus the drawer, sticky
+ * beside the grid, sections foldable one at a time. Badges count the **draft**;
+ * `activeFilterCount` is the committed count the mobile panel shows. The layout
+ * tradeoffs (no viewport cap, two-up in the tablet band) live in AGENTS.md.
  */
 export default function FilterSidebar() {
   const { translate } = useLocale();
@@ -103,7 +87,6 @@ export default function FilterSidebar() {
             )}
           </div>
 
-          {/* Clears the draft *and* the committed filters, plus the search box. */}
           {draftFilterCount > 0 && (
             <button
               type="button"
@@ -117,7 +100,6 @@ export default function FilterSidebar() {
         </div>
 
         <div className="mt-4 grid grid-cols-2 items-start gap-x-6 gap-y-4 border-t border-(--color-border) pt-4 lg:grid-cols-1">
-          {/* Release Date */}
           <FilterSection
             title={translate("movies.release_date")}
             badge={<SectionBadge count={sectionActive.releaseDate} />}
@@ -197,7 +179,6 @@ export default function FilterSidebar() {
             </div>
           </FilterSection>
 
-          {/* Length */}
           <FilterSection
             title={translate("movies.length")}
             badge={<SectionBadge count={sectionActive.length} />}
@@ -214,7 +195,6 @@ export default function FilterSidebar() {
             </div>
           </FilterSection>
 
-          {/* Age Rating */}
           <FilterSection
             title={translate("movies.age_rating")}
             badge={<SectionBadge count={sectionActive.ageRating} />}
@@ -231,7 +211,6 @@ export default function FilterSidebar() {
             </div>
           </FilterSection>
 
-          {/* Format */}
           <FilterSection
             title={translate("movies.format")}
             badge={<SectionBadge count={sectionActive.format} />}

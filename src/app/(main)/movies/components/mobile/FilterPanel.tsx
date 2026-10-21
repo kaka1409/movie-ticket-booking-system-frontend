@@ -48,7 +48,6 @@ export default function FilterPanel() {
 
   return (
     <section className="mx-(--space-md) rounded-(--radius-lg) border border-(--color-border) bg-(--color-surface)">
-      {/* ── Header (toggle) ── */}
       <button
         type="button"
         onClick={toggleFiltersOpen}
@@ -85,13 +84,11 @@ export default function FilterPanel() {
         </div>
       </button>
 
-      {/* ── Content (animated) ── */}
       <div
         className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${filtersOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
       >
         <div className="overflow-hidden min-h-0">
           <div className="space-y-5 border-t border-(--color-border) p-(--space-md)">
-            {/* Release Date */}
             <div>
               <FilterLabel>{translate("movies.release_date")}</FilterLabel>
               <div className="flex flex-wrap gap-2">
@@ -111,7 +108,6 @@ export default function FilterPanel() {
               </div>
             </div>
 
-            {/* Genre */}
             <div>
               <FilterLabel>{translate("movies.genre")}</FilterLabel>
               <div className="grid grid-cols-2 gap-x-4 gap-y-2">
@@ -168,7 +164,6 @@ export default function FilterPanel() {
               </div>
             </div>
 
-            {/* Length + Age Rating */}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <FilterLabel>{translate("movies.length")}</FilterLabel>
@@ -198,7 +193,6 @@ export default function FilterPanel() {
               </div>
             </div>
 
-            {/* Format */}
             <div>
               <FilterLabel>{translate("movies.format")}</FilterLabel>
               <div className="flex flex-wrap gap-2">
@@ -213,7 +207,6 @@ export default function FilterPanel() {
               </div>
             </div>
 
-            {/* Apply */}
             <button
               type="button"
               onClick={applyFilters}

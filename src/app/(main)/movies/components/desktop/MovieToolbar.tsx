@@ -4,16 +4,9 @@ import MovieTabs from "../shared/Tabs";
 import MovieSearchBar from "../shared/SearchBar";
 
 /**
- * Toolbar at the top of the desktop movie panel: the Now Showing / Coming Soon
- * switch on the left, the search field on the right.
- *
- * The search sits with the list it filters (the page header above is only the
- * title band). Clear All is not here either — the filter sidebar owns it, next
- * to the filters it resets: at `lg:` the panel is ~600px wide and tabs + search
- * + a third control would not fit on one row.
- *
- * `items-end` keeps the tab row's underline on the same line as the bottom edge
- * of the search field, so the two read as one toolbar band.
+ * Desktop toolbar: tab switch left, search right (`items-end` aligns the tab
+ * underline with the search field's bottom edge). Clear All lives in the filter
+ * sidebar, with the filters it resets — three controls do not fit at `lg:`.
  */
 export default function MovieToolbar() {
   return (

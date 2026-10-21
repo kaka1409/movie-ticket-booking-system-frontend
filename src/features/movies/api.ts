@@ -10,7 +10,6 @@ import type {
 import { apiFetch, withLang, type ApiResponse } from "@/libs/api";
 import { formatDateOnly } from "@/libs/date";
 import { MOVIES_PAGE_SIZE } from "./constants";
-import { ALL_MOVIES } from "./mock";
 
 type FeaturedMovieResponse = Movie & {
   featuredLabel?: string;
@@ -161,22 +160,6 @@ export async function getMovies(
   });
 }
 
-/**
- * MOCK — reads the local catalog, no backend call. Used by the booking flow
- * (credentials/payment/status pages) and wishlist/reviews lists, which need
- * full movie payloads the `/movies` list endpoint does not return.
- * TODO(api): switch those callers to `getMovieDetail()` once the backend
- * serves complete movie objects for every route.
- */
-export async function getAllMovies(): Promise<Movie[]> {
-  return ALL_MOVIES;
-}
-
-/** MOCK counterpart of {@link getMovieDetail} — local lookup, undefined when the slug is unknown. */
-export async function getMovieBySlug(slug: string): Promise<Movie | undefined> {
-  return ALL_MOVIES.find((movie) => movie.slug === slug);
-}
-
 /** LIVE — `GET /movies/:slug` returning the union (`{ data }` or `{ error }`). */
 export function getMovieDetail(
   slug: string,
@@ -190,16 +173,19 @@ export function getMovieDetail(
 
 /* ─── Catalog endpoints (filter options) ─────────────────── */
 
+/** Genre catalog; callers fall back to `FALLBACK_GENRES` on an error union. */
 export async function getGenres(locale: "en" | "vn" = "en"): Promise<ApiResponse<CatalogOption[]>> {
   return apiFetch<CatalogOption[]>(withLang("/genres", locale), REVALIDATE_60);
 }
 
+/** Format catalog; callers fall back to `FALLBACK_FORMATS` on an error union. */
 export async function getFormats(
   locale: "en" | "vn" = "en",
 ): Promise<ApiResponse<CatalogOption[]>> {
   return apiFetch<CatalogOption[]>(withLang("/formats", locale), REVALIDATE_60);
 }
 
+/** Age-rating catalog; callers fall back to `FALLBACK_AGE_RATINGS` on an error union. */
 export async function getAgeRatings(
   locale: "en" | "vn" = "en",
 ): Promise<ApiResponse<CatalogOption[]>> {

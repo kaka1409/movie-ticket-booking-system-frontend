@@ -17,7 +17,7 @@ import { writeParamsFromState } from "./url";
 import type { Tab, Filters, Movie, MoviesMeta, FilterOptions } from "./types";
 import type { ErrorResponse } from "@/libs/api";
 
-/* ─── Movie list — trang /movies ────────────────────────────── */
+/* ─── Movie list — /movies ─────────────────────────────────── */
 
 interface MovieListContextType {
   activeTab: Tab;
@@ -158,15 +158,15 @@ export function MovieListProvider({
           // Mark the key as attempted (stops the refetch loop) and surface
           // the error; retryFetch clears both and re-runs this effect.
           setFetchFailure({ key: currentKey, error: result.error });
-          setLists((prev) => ({
-            ...prev,
-            [activeTab]: { ...prev[activeTab], queryKey: currentKey },
+          setLists((previous) => ({
+            ...previous,
+            [activeTab]: { ...previous[activeTab], queryKey: currentKey },
           }));
           return;
         }
         setFetchFailure(null);
-        setLists((prev) => ({
-          ...prev,
+        setLists((previous) => ({
+          ...previous,
           [activeTab]: {
             movies: result.data,
             meta: result.meta,
@@ -182,9 +182,9 @@ export function MovieListProvider({
           key: currentKey,
           error: { status: 0, code: "NETWORK_ERROR", message: "Network error" },
         });
-        setLists((prev) => ({
-          ...prev,
-          [activeTab]: { ...prev[activeTab], queryKey: currentKey },
+        setLists((previous) => ({
+          ...previous,
+          [activeTab]: { ...previous[activeTab], queryKey: currentKey },
         }));
       });
 
@@ -234,7 +234,7 @@ export function MovieListProvider({
     debounceRef.current = setTimeout(() => setAppliedQuery(q), SEARCH_DEBOUNCE_MS);
   }, []);
 
-  const toggleFiltersOpen = useCallback(() => setFiltersOpen((v) => !v), []);
+  const toggleFiltersOpen = useCallback(() => setFiltersOpen((previous) => !previous), []);
 
   const setFilters = useCallback((f: Filters) => setFiltersState(f), []);
 
@@ -254,8 +254,11 @@ export function MovieListProvider({
   const retryFetch = useCallback(() => {
     setFetchFailure(null);
     // Invalidate the current key so the fetch effect runs again.
-    setLists((prev) => ({ ...prev, [activeTab]: { ...prev[activeTab], queryKey: null } }));
-    setFetchNonce((n) => n + 1);
+    setLists((previous) => ({
+      ...previous,
+      [activeTab]: { ...previous[activeTab], queryKey: null },
+    }));
+    setFetchNonce((previousNonce) => previousNonce + 1);
   }, [activeTab]);
 
   const loadMore = useCallback(async () => {
@@ -276,13 +279,13 @@ export function MovieListProvider({
       }
 
       const fetched = result.data;
-      setLists((prev) => {
-        const current = prev[activeTab];
+      setLists((previous) => {
+        const current = previous[activeTab];
         // Query changed while paging → the page-1 effect owns the list now.
-        if (current.queryKey !== queryKeyAtCall) return prev;
+        if (current.queryKey !== queryKeyAtCall) return previous;
         const existingIds = new Set(current.movies.map((movie) => movie.id));
         return {
-          ...prev,
+          ...previous,
           [activeTab]: {
             movies: [...current.movies, ...fetched.filter((movie) => !existingIds.has(movie.id))],
             meta: result.meta ?? current.meta,
@@ -349,20 +352,23 @@ export function MovieListProvider({
 
 /* ─── Hook ──────────────────────────────────────────────────── */
 
+/** Catalog state for the movies page: tab, search, draft/applied filters, URL sync. */
 export function useMovieList(): MovieListContextType {
   const ctx = useContext(MovieListContext);
   if (!ctx) throw new Error("useMovieList must be used within MovieListProvider");
   return ctx;
 }
 
-/* ─── Movie detail — trang /movies/[slug] ───────────────────── */
+/* ─── Movie detail — /movies/[slug] ────────────────────────── */
 
 const MovieDetailContext = createContext<Movie | null>(null);
 
+/** Hands the server-fetched movie to the detail page's client islands. */
 export function MovieDetailProvider({ movie, children }: { movie: Movie; children: ReactNode }) {
   return <MovieDetailContext.Provider value={movie}>{children}</MovieDetailContext.Provider>;
 }
 
+/** The movie rendered by the detail page; throws outside its provider. */
 export function useMovieDetail(): Movie {
   const ctx = useContext(MovieDetailContext);
   if (!ctx) throw new Error("useMovieDetail must be used within MovieDetailProvider");
@@ -385,6 +391,10 @@ interface MovieSelectionContextType {
 
 const MovieSelectionContext = createContext<MovieSelectionContextType | null>(null);
 
+/**
+ * Pre-selection bridge for the detail page's slot chips — **not** the booking
+ * draft: the chosen showtime only seeds the Book CTA's `?showtimeId=`.
+ */
 export function MovieSelectionProvider({ children }: { children: ReactNode }) {
   const [selectedShowtime, setSelectedShowtime] = useState<ShowtimeSelection | null>(null);
 
@@ -395,6 +405,7 @@ export function MovieSelectionProvider({ children }: { children: ReactNode }) {
   );
 }
 
+/** Showtime pre-selected on the detail page, read by the Book CTA. */
 export function useMovieSelection(): MovieSelectionContextType {
   const ctx = useContext(MovieSelectionContext);
   if (!ctx) throw new Error("useMovieSelection must be used within MovieSelectionProvider");

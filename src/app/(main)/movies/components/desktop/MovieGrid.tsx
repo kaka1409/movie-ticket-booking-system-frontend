@@ -25,15 +25,9 @@ function SkeletonBar({
 }
 
 /**
- * Desktop movies grid: three columns from the tablet band up, four once the
- * 280px filter column leaves the content enough room (`xl:`).
- *
- * "Bookable" is the active tab, not `movie.status`: the tab IS the status query
- * the server answered with, so a Coming Soon row can never offer a booking CTA
- * even if a payload came back without the optional `status` field.
- *
- * The append-reveal is the same hook the mobile grid uses — both trees run it,
- * the hidden one is a no-op (see the hook).
+ * Desktop movies grid: 3 columns, 4 from `xl:`. "Bookable" is the ACTIVE TAB,
+ * not `movie.status` — a Coming Soon row can never offer a CTA whatever the
+ * payload says. Both trees run `useAppendReveal`; the hidden one is a no-op.
  */
 export default function MovieGrid() {
   const { translate } = useLocale();
@@ -58,7 +52,6 @@ export default function MovieGrid() {
 
   const isBookable = activeTab === "now_showing";
 
-  /* Fetch failed and there is nothing to show */
   if (fetchError && movies.length === 0) {
     return (
       <>
@@ -137,7 +130,7 @@ export default function MovieGrid() {
         ))}
       </div>
 
-      {/* Load More — appends the next server page of the SAME query */}
+      {/* Next server page of the same query */}
       {hasMore && (
         <div className="mt-10 flex justify-center">
           <Button

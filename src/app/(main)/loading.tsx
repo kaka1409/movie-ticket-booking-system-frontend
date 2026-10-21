@@ -30,10 +30,8 @@ export default function HomeLoading() {
   return (
     <div className="min-h-dvh bg-(--color-bg) block md:hidden">
       <main className="pb-10 pt-2 space-y-8">
-        {/* HeroBanner */}
         <Skeleton className="h-55 w-full" />
 
-        {/* QuickBooking */}
         <div className="px-(--space-md)">
           <SkeletonCard>
             <div className="space-y-3">
@@ -54,15 +52,12 @@ export default function HomeLoading() {
           </SkeletonCard>
         </div>
 
-        {/* SearchBar */}
         <div className="px-(--space-md)">
           <Skeleton className="h-11 w-full rounded-md" />
         </div>
 
-        {/* MovieRow 1 */}
         <MovieRowSkeleton />
 
-        {/* MovieRow 2 */}
         <MovieRowSkeleton />
       </main>
     </div>

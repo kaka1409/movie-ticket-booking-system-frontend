@@ -13,7 +13,6 @@ export default function UpcomingCard({ ticket }: { ticket: UpcomingTicket }) {
 
   return (
     <article className="rounded-2xl overflow-hidden bg-(--color-surface) shadow-(--shadow-card) border border-(--color-gold)/25">
-      {/* Top section: poster + info */}
       <div className="flex gap-3 p-4">
         {/* Poster — the status chip is the remaining time, or the transfer state
             while the ticket is in flight (a countdown would be misleading). */}
@@ -37,7 +36,6 @@ export default function UpcomingCard({ ticket }: { ticket: UpcomingTicket }) {
           </span>
         </div>
 
-        {/* Info */}
         <div className="flex-1 min-w-0 pt-1">
           <h3 className="text-white font-bold text-lg leading-tight mb-2">{ticket.movie}</h3>
 
@@ -73,10 +71,8 @@ export default function UpcomingCard({ ticket }: { ticket: UpcomingTicket }) {
         </div>
       </div>
 
-      {/* Tear line */}
       <TearLine className="px-4 my-0" />
 
-      {/* Bottom section: amount + CTA */}
       <div className="flex items-center justify-between px-4 py-4">
         <div>
           <p className="text-xs font-bold tracking-widest uppercase mb-0.5 text-(--color-gold-light)/70">

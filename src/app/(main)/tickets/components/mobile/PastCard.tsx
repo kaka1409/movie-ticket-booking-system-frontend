@@ -21,7 +21,6 @@ export default function PastCard({ ticket }: { ticket: PastTicket }) {
 
   return (
     <article className="flex gap-3 p-4 rounded-2xl bg-(--color-surface) border border-(--color-border) shadow-(--shadow-card)">
-      {/* Poster */}
       <div className="shrink-0 w-20 rounded-xl overflow-hidden aspect-2/3 relative">
         <Image src={ticket.poster} alt={ticket.movie} fill sizes="80px" className="object-cover" />
         <span className="absolute bottom-0 left-0 right-0 flex h-full items-end p-2 text-[8px] font-black uppercase tracking-tight text-white/15">
@@ -29,7 +28,6 @@ export default function PastCard({ ticket }: { ticket: PastTicket }) {
         </span>
       </div>
 
-      {/* Info */}
       <div className="flex-1 flex flex-col justify-between min-w-0">
         <div className="flex items-start justify-between">
           <h3 className="font-bold text-base leading-tight text-(--color-text-primary)">

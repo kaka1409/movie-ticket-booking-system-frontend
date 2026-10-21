@@ -46,10 +46,10 @@ export default function HeroSection({
     [fading],
   );
 
-  const prev = useCallback(() => {
+  const goToPrevious = useCallback(() => {
     goTo((safeIndex - 1 + movies.length) % movies.length);
   }, [goTo, safeIndex, movies.length]);
-  const next = useCallback(() => {
+  const goToNext = useCallback(() => {
     goTo((safeIndex + 1) % movies.length);
   }, [goTo, safeIndex, movies.length]);
 
@@ -57,10 +57,10 @@ export default function HeroSection({
   useEffect(() => {
     if (movies.length <= 1 || isPaused || isTrailerOpen) return;
     const interval = setInterval(() => {
-      next();
+      goToNext();
     }, 6000);
     return () => clearInterval(interval);
-  }, [movies.length, isPaused, isTrailerOpen, next]);
+  }, [movies.length, isPaused, isTrailerOpen, goToNext]);
 
   if (error) return <SectionFallback error={error} />;
   if (movies.length === 0) return null;
@@ -76,7 +76,6 @@ export default function HeroSection({
         aria-label={translate("home.desktop.featured_section")}
       >
         <div className="relative h-[360px] w-full overflow-hidden rounded-(--radius-lg) border border-(--color-border) bg-(--color-surface) md:h-[420px] lg:h-[480px]">
-          {/* Backdrop Image */}
           <div
             className={`relative h-full w-full transition-opacity duration-300 ${
               fading ? "opacity-30" : "opacity-100"
@@ -96,10 +95,9 @@ export default function HeroSection({
           <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/55 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
 
-          {/* Navigation Arrows */}
           <button
             type="button"
-            onClick={prev}
+            onClick={goToPrevious}
             className="
               absolute left-4 top-1/2 z-20 -translate-y-1/2 cursor-pointer rounded-full border border-white/15 
               bg-black/50 p-2.5 text-white backdrop-blur-sm transition-all duration-300
@@ -111,7 +109,7 @@ export default function HeroSection({
           </button>
           <button
             type="button"
-            onClick={next}
+            onClick={goToNext}
             className="
               absolute right-4 top-1/2 z-20 -translate-y-1/2 cursor-pointer rounded-full border border-white/15 
               bg-black/50 p-2.5 text-white backdrop-blur-sm transition-all duration-300
@@ -122,7 +120,6 @@ export default function HeroSection({
             <ChevronRight size={22} />
           </button>
 
-          {/* Movie Details Content (Always clearly visible) */}
           <div className="absolute inset-0 z-10 flex flex-col justify-center pl-12 pr-6 md:pl-16 md:pr-8 max-w-[520px] lg:max-w-[620px]">
             <div className="mb-4 flex flex-wrap items-center gap-2.5">
               <span className="rounded-(--radius-sm) bg-(--color-gold) px-2.5 py-0.5 text-[10px] font-extrabold tracking-widest uppercase text-black">
@@ -173,7 +170,6 @@ export default function HeroSection({
             </div>
           </div>
 
-          {/* Dots Indicator */}
           <div className="absolute bottom-4 left-0 right-0 z-20 flex items-center justify-center">
             <div className="flex items-center gap-2 rounded-full bg-black/40 px-3 py-1.5 backdrop-blur-xs">
               {movies.map((_, i) => (
@@ -194,7 +190,6 @@ export default function HeroSection({
         </div>
       </section>
 
-      {/* Trailer Modal */}
       <TrailerModal
         isOpen={isTrailerOpen}
         onClose={() => setIsTrailerOpen(false)}
