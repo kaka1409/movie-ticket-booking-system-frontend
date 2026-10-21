@@ -25,7 +25,7 @@ export interface Movie {
   releaseDate: string;
   ageRating: string;
   language: string;
-  /** Absent on mock-era rows; live wishlist/catalog payloads always carry it. */
+  /** Optional in the movie list payload; wishlist rows always carry it. */
   status?: MovieStatus;
 }
 

@@ -31,8 +31,8 @@ function useGlitchDecode(target: string, duration = 2000) {
         count++;
         if (count >= maxCycles) {
           clearInterval(interval);
-          setChars((prev) => {
-            const next = [...prev];
+          setChars((previous) => {
+            const next = [...previous];
             next[i] = char;
             return next;
           });
@@ -41,8 +41,8 @@ function useGlitchDecode(target: string, duration = 2000) {
           }
           return;
         }
-        setChars((prev) => {
-          const next = [...prev];
+        setChars((previous) => {
+          const next = [...previous];
           next[i] = GLITCH_CHARS[Math.floor(Math.random() * GLITCH_CHARS.length)];
           return next;
         });
@@ -105,12 +105,10 @@ export default function RouteError({ reset }: { error: Error; reset: () => void 
 
   return (
     <div className="min-h-dvh flex flex-col items-center justify-center px-6 bg-(--color-bg)">
-      {/* Error icon */}
       <div className="mt-14 flex h-20 w-20 items-center justify-center rounded-full bg-red-500/10">
         <AlertTriangle size={36} className="text-red-600" />
       </div>
 
-      {/* Glitch decode title */}
       <div className="mt-6 text-5xl font-black tracking-widest">
         <GlitchText text={translate("error.title")} onDone={() => setGlitchDone(true)} />
       </div>

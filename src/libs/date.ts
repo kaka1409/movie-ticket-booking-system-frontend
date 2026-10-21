@@ -5,11 +5,24 @@
  * with no timezone conversion.
  */
 
+import { toLocaleTag } from "./utils";
+
+/** Showtime calendars are Vietnamese walls — the backend keys them on this zone. */
+const CINEMA_TIMEZONE = "Asia/Ho_Chi_Minh";
+
 /** Format a `Date` as `YYYY-MM-DD` from its local parts. */
 export function formatDateOnly(date: Date): string {
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
   return `${date.getFullYear()}-${month}-${day}`;
+}
+
+/**
+ * Today as `YYYY-MM-DD` in the cinema's timezone — showtime dates are keyed on
+ * that calendar day, so the server's own timezone must not decide it.
+ */
+export function todayInCinemaZone(): string {
+  return new Date().toLocaleDateString("sv-SE", { timeZone: CINEMA_TIMEZONE });
 }
 
 /**
@@ -44,7 +57,7 @@ export function formatCalendarDate(value: string | null | undefined, locale: "en
   if (!match) return "";
   const [, year, month, day] = match;
   const date = new Date(Number(year), Number(month) - 1, Number(day));
-  return date.toLocaleDateString(locale === "vn" ? "vi-VN" : "en-US", {
+  return date.toLocaleDateString(toLocaleTag(locale), {
     month: "short",
     day: "numeric",
     year: "numeric",

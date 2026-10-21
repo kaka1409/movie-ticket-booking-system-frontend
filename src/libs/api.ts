@@ -22,7 +22,7 @@ function notifyUnauthorized(path: string): void {
   window.dispatchEvent(new Event(UNAUTHORIZED_EVENT));
 }
 
-export type SuccessResponse<T, M = Record<string, unknown>> = {
+type SuccessResponse<T, M = Record<string, unknown>> = {
   data: T;
   meta?: M;
 };
@@ -100,8 +100,9 @@ export function toApiResponse<T, M = Record<string, unknown>>(
  * empty bodies all come back as `{ error }`, so server components can render
  * an error state instead of crashing the RSC tree.
  *
- * - A 401 (except on `/auth/*`) additionally dispatches `UNAUTHORIZED_EVENT`
- *   so the client clears the session and redirects to login.
+ * - A 401 (except on `/auth/*`) additionally dispatches `UNAUTHORIZED_EVENT`:
+ *   `AuthContext` clears the session and `ProtectedRoute` renders the prompt in
+ *   place — never a redirect.
  * - On the server pass the incoming cookies via the `cookie` arg —
  *   `credentials: "include"` only forwards cookies in the browser.
  */

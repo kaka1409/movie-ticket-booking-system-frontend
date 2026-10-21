@@ -15,7 +15,6 @@ export default function NotFound() {
     <div className="min-h-dvh flex flex-col items-center justify-center px-6 bg-(--color-bg)">
       <Logo size="lg" />
 
-      {/* 404 Film Strip Scroll */}
       <div className="mt-14 flex items-baseline gap-1">
         {DIGITS.map((digit, index) => (
           <span
@@ -39,7 +38,6 @@ export default function NotFound() {
         {translate("common.not_found")}
       </h1>
 
-      {/* Description */}
       <p
         className="mt-2 text-sm text-center text-(--color-text-muted) max-w-xs opacity-0 animate-fade-in"
         style={{ animationDelay: "700ms" }}
@@ -47,7 +45,6 @@ export default function NotFound() {
         {translate("common.not_found_desc")}
       </p>
 
-      {/* CTAs */}
       <div
         className="flex flex-col gap-2 mt-8 w-full max-w-xs space-y-3 opacity-0 animate-fade-in"
         style={{ animationDelay: "850ms" }}

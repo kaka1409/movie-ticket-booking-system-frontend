@@ -10,20 +10,24 @@ export function slugify(text: string): string {
     .replace(/^-|-$/g, "");
 }
 
+/** BCP-47 tag for `Intl`/`toLocale*` calls — the UI locale is `en` | `vn`. */
+export function toLocaleTag(locale: "en" | "vn"): string {
+  return locale === "vn" ? "vi-VN" : "en-US";
+}
+
 /**
  * Locale-formatted amount with the ₫ suffix (`120,000₫` in EN, `120.000₫`
  * in VN). The suffix stays ₫ in both locales — the amount is always VND.
  */
 export function formatVND(amount: number, locale: "en" | "vn"): string {
-  return `${amount.toLocaleString(locale === "vn" ? "vi-VN" : "en-US")}₫`;
+  return `${amount.toLocaleString(toLocaleTag(locale))}₫`;
 }
 
 /**
  * Canonical login redirect URL: `/login?returnUrl=<encoded>` when a target is
- * known, plain `/login` otherwise. All four redirect sites (proxy, session,
- * AuthContext 401 handler, ProtectedRoute) build their URL through here so the
- * query shape stays consistent — callers sanitize `returnUrl` with
- * {@link getSafeReturnUrl} first when the value comes from outside the app.
+ * known, plain `/login` otherwise. The prompt, the auth forms and the header CTA
+ * all build their link here so the query shape stays consistent — a value from
+ * outside the app is sanitized with {@link getSafeReturnUrl} first.
  */
 export function buildLoginUrl(returnUrl?: string | null): string {
   return returnUrl ? `/login?returnUrl=${encodeURIComponent(returnUrl)}` : "/login";
@@ -51,7 +55,7 @@ const AUTH_ENTRY_PATHS = ["/login", "/register", "/forgot-password"] as const;
  * browser) and auth entry points are rejected (see above). Everything else
  * falls back to `/`.
  */
-export function getSafeReturnUrl(rawReturnUrl: string | null | undefined): string {
+function getSafeReturnUrl(rawReturnUrl: string | null | undefined): string {
   if (!rawReturnUrl) return "/";
   if (!rawReturnUrl.startsWith("/")) return "/";
   if (rawReturnUrl.startsWith("//") || rawReturnUrl.startsWith("/\\")) return "/";
@@ -74,8 +78,8 @@ export function authReturnTarget(rawReturnUrl: string | null | undefined): strin
 
 /** Short absolute date (`Oct 4, 2026` in EN, `4 thg 10, 2026` in VN). */
 export function formatDate(dateStr: string, locale: "en" | "vn"): string {
-  const d = new Date(dateStr);
-  return d.toLocaleDateString(locale === "vn" ? "vi-VN" : "en-US", {
+  const parsedDate = new Date(dateStr);
+  return parsedDate.toLocaleDateString(toLocaleTag(locale), {
     month: "short",
     day: "numeric",
     year: "numeric",

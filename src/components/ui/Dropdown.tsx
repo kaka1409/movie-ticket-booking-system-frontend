@@ -21,19 +21,11 @@ interface DropdownProps {
 }
 
 /**
- * Header popover primitive: a trigger button plus a panel anchored under it.
- *
- * Owns the behaviour every popover in the header needs — click toggles, a
- * `pointerdown` outside closes (so the trigger's own click never races the
- * close), `Escape` closes and hands focus back to the trigger, closing from
- * inside the panel also hands focus back (so a keyboard user is never dropped on
- * `<body>`), and a route change closes it (`DropdownBody` is keyed on the
- * pathname, so navigating from a link inside the panel remounts it shut instead
- * of leaving it open behind the new page).
- *
- * The panel is `absolute right-0` under the trigger and portaled nowhere: the
- * header is `sticky` with `z-50`, so a `z-50` panel inside it paints above the
- * page without escaping its stacking context.
+ * Header popover: trigger + `absolute right-0` panel. Closes on a second click,
+ * an outside `pointerdown` (so the trigger's click never races the close),
+ * `Escape` or an inner `close()` — both restore focus to the trigger — and on a
+ * route change (`DropdownBody` is keyed on the pathname). `z-50` inside the
+ * sticky header paints over the page without leaving its stacking context.
  */
 export default function Dropdown(props: DropdownProps) {
   const pathname = usePathname();

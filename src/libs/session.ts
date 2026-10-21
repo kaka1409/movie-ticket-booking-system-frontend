@@ -41,8 +41,8 @@ export async function hasSession(): Promise<boolean> {
  * that a `refreshToken` cookie exists — a revoked or stale one still passes,
  * and the backend then answers 401. Callers render `<LoginPrompt />` on `true`
  * (staying on the protected URL; the prompt's CTA carries the returnUrl) —
- * never `redirect()`, so a dead session can neither yank the URL nor win over
- * a parent prompt the way a child-segment `redirect()` used to.
+ * never `redirect()`: a child-segment redirect would win over the parent
+ * layout's prompt and yank the URL.
  */
 export function isUnauthorizedResult<T, M>(result: ApiResponse<T, M>): boolean {
   return "error" in result && result.error.status === 401;

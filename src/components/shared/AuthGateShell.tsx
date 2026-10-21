@@ -1,18 +1,8 @@
 /**
- * Chrome shared by the two auth-gate fallbacks — the `LoginPrompt` and the
- * session-restore skeleton in `ProtectedRoute` — so the visitor sees the same
- * geometry before and after the restore settles.
- *
- * Below `md:` it is the plain mobile stack the prompt has always used; from
- * `md:` up the same content sits in one centred card. `md:` is the device
- * split here rather than a desktop enhancement: the device layout renders
- * this, so exactly one instance exists per request (see AGENTS "Desktop
- * variants"). `max-w-md` is a no-op on mobile — both mobile layouts are
- * already capped at 28rem.
- *
- * The card paints `--color-surface` while the inner wrapper carries
- * `.surface-raised`, so the prompt's own `bg-(--color-surface)` icon tile
- * steps up to `--color-surface-2` instead of vanishing into the card.
+ * Chrome shared by `LoginPrompt` and `ProtectedRoute`'s restore skeleton, so
+ * nothing shifts when the restore settles. `md:` is the split (not `lg:`) — the
+ * device layout renders exactly one instance per request. `.surface-raised`
+ * keeps the prompt's `--color-surface` icon tile visible on the card.
  */
 export default function AuthGateShell({ children }: { children: React.ReactNode }) {
   return (

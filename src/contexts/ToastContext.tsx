@@ -37,7 +37,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       clearTimeout(timer);
       timers.current.delete(id);
     }
-    setToasts((prev) => prev.filter((toast) => toast.id !== id));
+    setToasts((previous) => previous.filter((toast) => toast.id !== id));
   }, []);
 
   const notify = useCallback(
@@ -45,7 +45,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       const id = nextId.current++;
       const toast: ToastItem = { id, message, variant: options?.variant ?? "success" };
       // Cap the stack so a burst of actions never covers the screen.
-      setToasts((prev) => [...prev.slice(-(MAX_TOASTS - 1)), toast]);
+      setToasts((previous) => [...previous.slice(-(MAX_TOASTS - 1)), toast]);
       timers.current.set(
         id,
         setTimeout(() => dismiss(id), options?.durationMs ?? DEFAULT_DURATION_MS),

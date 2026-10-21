@@ -22,10 +22,9 @@ const VARIANT_CONTAINER_CLASS: Record<ToastVariant, string> = {
 };
 
 /**
- * Fixed toast stack shared by every action notification (wishlist saves,
- * future booking/ticket notices). Mounted once in the root layout; actions
- * fire through `useToast().notify`. For notifications with action buttons
- * (e.g. wishlist Undo) keep the dedicated snackbar instead.
+ * Fixed toast stack; mounted once in the root layout and fired through
+ * `useToast().notify`. Notifications with an action button (wishlist Undo) use
+ * the dedicated snackbar instead.
  */
 export default function ToastViewport() {
   const { toasts, dismiss } = useToast();

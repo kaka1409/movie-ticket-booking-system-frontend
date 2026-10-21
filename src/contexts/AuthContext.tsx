@@ -65,7 +65,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [clearAuth]);
 
   const updateUser = useCallback((patch: Partial<User>) => {
-    setUser((prev) => (prev ? { ...prev, ...patch } : prev));
+    setUser((previous) => (previous ? { ...previous, ...patch } : previous));
   }, []);
 
   const isAuthenticated = Boolean(token && user);

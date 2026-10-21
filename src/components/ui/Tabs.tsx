@@ -10,26 +10,11 @@ export const tabId = (idBase: string, key: string) => `${idBase}-tab-${key}`;
 export const tabPanelId = (idBase: string, key: string) => `${idBase}-panel-${key}`;
 
 /**
- * Tab bar with two deliberately different semantics:
- *
- * - `linkFor` — the "tabs" are real links to another URL (auth login/register,
- *   the tickets pager), so they render inside a `<nav>` and mark the current
- *   one with `aria-current="page"`. They are **not** `role="tab"`: a link that
- *   navigates must keep link behaviour, or a screen-reader user is promised a
- *   panel that never appears.
- * - no `linkFor` — a state switch (`role="tablist"` + `role="tab"` +
- *   `aria-selected`). ArrowLeft/ArrowRight/Home/End move focus between tabs;
- *   Enter/Space activates (native button), i.e. **manual activation**, so
- *   arrowing across a tab that fetches (the movies catalogue) never fires a
- *   request per keypress. Only the active tab is in the Tab order (roving
- *   tabindex); when `activeTab` matches no tab the first one stays focusable so
- *   the list can never become keyboard-unreachable.
- *
- * Pass `idBase` when the consumer renders the controlled region as
- * `role="tabpanel"` — then tabs get `aria-controls` and stable ids built with
- * {@link tabId} / {@link tabPanelId}. Without it, tabs carry ids but no
- * `aria-controls`, which keeps filter-only bars (review sorting) valid without a
- * dangling reference.
+ * Two deliberately different semantics: with `linkFor` these are real links in
+ * a `<nav>` + `aria-current="page"` — never `role="tab"`, since a navigating
+ * link promises no panel. Without it: a real tablist with roving tabindex and
+ * MANUAL activation (arrowing across the fetching movies tabs fires no request).
+ * `idBase` wires `aria-controls` through {@link tabId}/{@link tabPanelId}.
  */
 export default function Tabs({
   tabs,

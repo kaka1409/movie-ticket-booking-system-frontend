@@ -33,7 +33,7 @@ function readCookieLocale(): Locale | null {
   return isLocale(saved) ? saved : null;
 }
 
-/** localStorage first (written by `setLocale`), cookie as the cross-tab fallback. */
+/** Cookie first (the value the server rendered with), `localStorage` as the fallback. */
 function readSavedLocale(): Locale | null {
   const fromCookie = readCookieLocale();
   if (fromCookie) return fromCookie;

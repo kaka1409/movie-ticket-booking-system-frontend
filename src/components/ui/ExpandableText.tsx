@@ -29,7 +29,7 @@ export default function ExpandableText({
       <p className={`${className} ${isExpanded ? "" : "line-clamp-3"}`}>{text}</p>
       <button
         type="button"
-        onClick={() => setIsExpanded((prev) => !prev)}
+        onClick={() => setIsExpanded((previous) => !previous)}
         className="mt-1 text-xs font-bold text-(--color-gold)"
       >
         {isExpanded ? translate("common.show_less") : translate("common.show_more")}
