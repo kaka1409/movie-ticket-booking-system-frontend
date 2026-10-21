@@ -16,7 +16,7 @@ import { getNotifications, markAllNotificationsRead, markNotificationRead } from
 import { toNotification } from "./adapters";
 import { NOTIFICATION_EVENT, TICKET_UPDATED_EVENT } from "./constants";
 import { createNotificationSocket } from "./socket";
-import type { Notification, NotificationDto, NotificationMeta } from "./types";
+import type { Notification, NotificationWire, NotificationMeta } from "./types";
 
 interface NotificationContextValue {
   notifications: Notification[];
@@ -66,7 +66,7 @@ export function NotificationProvider({
       window.dispatchEvent(new CustomEvent(TICKET_UPDATED_EVENT, { detail: meta ?? {} }));
     };
 
-    const handleNew = (dto: NotificationDto) => {
+    const handleNew = (dto: NotificationWire) => {
       const pushed = toNotification(dto);
 
       // Show it at once, so a slow refetch never hides a new notice...
@@ -83,8 +83,15 @@ export function NotificationProvider({
       // the socket missed. The toast is announced once, in the visitor's language.
       void getNotifications(undefined, locale).then((result) => {
         if (cancelled) return;
-        const notification = result.items.find((item) => item.id === pushed.id) ?? pushed;
-        if (result.items.length > 0) setNotifications(result.items);
+        // A failed re-read still has the pushed row to announce.
+        if ("error" in result) {
+          notify(pushed.title, {
+            variant: pushed.type === "warning" ? "info" : pushed.type,
+          });
+          return;
+        }
+        const notification = result.data.items.find((item) => item.id === pushed.id) ?? pushed;
+        if (result.data.items.length > 0) setNotifications(result.data.items);
         notify(notification.title, {
           variant: notification.type === "warning" ? "info" : notification.type,
         });
@@ -97,7 +104,8 @@ export function NotificationProvider({
     // new language).
     const resync = () => {
       void getNotifications(undefined, locale).then((result) => {
-        if (!cancelled) setNotifications(result.items);
+        // Keep whatever is on screen: a failed resync must not empty the inbox.
+        if (!cancelled && "data" in result) setNotifications(result.data.items);
       });
     };
 
@@ -135,16 +143,10 @@ export function NotificationProvider({
     if (token) void markAllNotificationsRead(token).catch(() => undefined);
   }, [token]);
 
-  // Logout is a derived gate, not a mutation: a logged-out visitor sees an
-  // empty inbox immediately without a state-clearing effect (the next login
-  // resyncs the list through the socket effect).
-  //
-  // `isLoading` keeps the gate open while the session is still being restored,
-  // which is exactly the state the server renders in (`AuthContext` has no
-  // server session, so `isAuthenticated` is false there). Without it the SSR
-  // seed would be thrown away on the server and every inbox — the bell, the
-  // mobile list, the desktop page — would paint "No notifications yet" and only
-  // fill in after hydration. A logged-out visitor seeds `[]` anyway.
+  // Derived gate, not a state mutation: a logout empties the inbox with no
+  // clearing effect. `isLoading` keeps it open while the session restores — the
+  // server has no session, so `isAuthenticated` is false during SSR and a plain
+  // check would discard the seeded list and paint "No notifications yet".
   const visibleNotifications = useMemo(
     () => (isAuthenticated || isLoading ? notifications : []),
     [isAuthenticated, isLoading, notifications],

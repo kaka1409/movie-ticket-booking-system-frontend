@@ -1,6 +1,6 @@
-import type { Notification, NotificationDto, NotificationMeta, NotifType } from "./types";
+import type { Notification, NotificationWire, NotificationMeta, NotificationType } from "./types";
 
-const NOTIFICATION_TYPES: readonly NotifType[] = ["success", "error", "warning", "info"];
+const NOTIFICATION_TYPES: readonly NotificationType[] = ["success", "error", "warning", "info"];
 
 /**
  * `meta` is free-form JSON in the DB, so narrow it at the boundary — a notice
@@ -17,9 +17,9 @@ function toNotificationMeta(meta: unknown): NotificationMeta | undefined {
  * Wire row → inbox view model. Unknown server categories degrade to `info`
  * (the DB column is a free-form string, so the FE must stay tolerant).
  */
-export function toNotification(dto: NotificationDto): Notification {
-  const type = NOTIFICATION_TYPES.includes(dto.type as NotifType)
-    ? (dto.type as NotifType)
+export function toNotification(dto: NotificationWire): Notification {
+  const type = NOTIFICATION_TYPES.includes(dto.type as NotificationType)
+    ? (dto.type as NotificationType)
     : "info";
 
   return {

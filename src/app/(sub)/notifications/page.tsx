@@ -1,5 +1,3 @@
-"use client";
-
 import MobileNotificationList from "./components/mobile/NotificationList";
 import DesktopNotificationList from "./components/desktop/NotificationList";
 

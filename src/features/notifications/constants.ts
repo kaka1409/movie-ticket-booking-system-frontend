@@ -1,5 +1,5 @@
 import { Ticket, AlertCircle, Bell, Star } from "lucide-react";
-import type { NotifType } from "./types";
+import type { NotificationType } from "./types";
 
 /** Socket.IO event the backend gateway pushes on every new notification (§11). */
 export const NOTIFICATION_EVENT = "notification:new";
@@ -12,7 +12,7 @@ export const NOTIFICATION_EVENT = "notification:new";
 export const TICKET_UPDATED_EVENT = "primseat:ticket-updated";
 
 export const TYPE_CONFIG: Record<
-  NotifType,
+  NotificationType,
   {
     iconBg: string;
     iconColor: string;

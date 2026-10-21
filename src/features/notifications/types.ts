@@ -1,10 +1,10 @@
-export type NotifType = "success" | "error" | "warning" | "info";
+export type NotificationType = "success" | "error" | "warning" | "info";
 
 /**
  * Exact `GET /api/v1/notifications` wire row (api-contract §10) — also the
  * `notification:new` Socket.IO payload (api-contract §11).
  */
-export interface NotificationDto {
+export interface NotificationWire {
   id: string;
   type: string;
   title: string;
@@ -16,10 +16,10 @@ export interface NotificationDto {
   createdAt: string;
 }
 
-/** Inbox view model the UI consumes (adapted from {@link NotificationDto}). */
+/** Inbox view model the UI consumes (adapted from {@link NotificationWire}). */
 export interface Notification {
   id: string;
-  type: NotifType;
+  type: NotificationType;
   title: string;
   message: string;
   createdAt: string;

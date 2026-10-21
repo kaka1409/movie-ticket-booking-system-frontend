@@ -1,7 +1,7 @@
-import { apiFetch, apiMutation, withLang } from "@/libs/api";
+import { apiFetch, apiMutation, withLang, type ApiResponse } from "@/libs/api";
 import { toNotification } from "./adapters";
 import type { Locale } from "@/contexts/LocaleContext";
-import type { Notification, NotificationDto } from "./types";
+import type { Notification, NotificationWire } from "./types";
 
 interface NotificationsMeta {
   unreadCount: number;
@@ -18,29 +18,33 @@ export interface NotificationsResult {
 
 /**
  * GET /notifications — the inbox is the REST source of truth (the socket only
- * pushes *new* rows). `cookie` is required on the server; the browser reaches
- * it same-origin through the Next rewrite.
+ * pushes *new* rows). `cookie` is required on the server; the browser reaches it
+ * same-origin through the Next rewrite.
  *
- * The rows are rendered by the backend in `locale` (the notice text is stored as
- * a code + params, not as pre-baked copy), so switching language re-reads the
- * same inbox in the new language.
+ * The rows are rendered by the backend in `locale` (a notice is stored as a code
+ * + params, not as pre-baked copy), so switching language re-reads the same inbox
+ * in the new language. The union is preserved: "no notices" and "fetch failed"
+ * must stay distinguishable at both call sites.
  */
 export async function getNotifications(
   cookie?: string,
   locale: Locale = "en",
-): Promise<NotificationsResult> {
-  const result = await apiFetch<NotificationDto[], NotificationsMeta>(
+): Promise<ApiResponse<NotificationsResult, NotificationsMeta>> {
+  const result = await apiFetch<NotificationWire[], NotificationsMeta>(
     withLang("/notifications?limit=50", locale),
     undefined,
     undefined,
     cookie,
   );
 
-  if ("error" in result) return { items: [], unreadCount: 0 };
+  if ("error" in result) return result;
 
   return {
-    items: result.data.map(toNotification),
-    unreadCount: result.meta?.unreadCount ?? result.data.filter((dto) => !dto.isRead).length,
+    data: {
+      items: result.data.map(toNotification),
+      unreadCount: result.meta?.unreadCount ?? result.data.filter((dto) => !dto.isRead).length,
+    },
+    ...(result.meta ? { meta: result.meta } : {}),
   };
 }
 
