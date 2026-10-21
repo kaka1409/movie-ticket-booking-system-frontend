@@ -2,7 +2,7 @@ import type { MovieStatus } from "@/types";
 
 /**
  * Movie card payload from `GET /wishlist` — the exact BE shape (`status` is
- * always present, unlike the optional one on the mock-era `Movie`).
+ * always present, unlike the optional one on the shared `Movie`).
  */
 export interface WishlistMovie {
   id: string;

@@ -57,7 +57,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
     const stored = readStoredWishlist();
     if (stored.length > 0) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setWishlist((prev) => [...prev, ...stored.filter((id) => !prev.includes(id))]);
+      setWishlist((previous) => [...previous, ...stored.filter((id) => !previous.includes(id))]);
     }
   }, []);
 
@@ -73,13 +73,15 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
   const toggleWishlist = useCallback(
     (id: string, feedback?: WishlistFeedback) => {
       const wasLiked = wishlist.includes(id);
-      setWishlist((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+      setWishlist((previous) =>
+        previous.includes(id) ? previous.filter((movieId) => movieId !== id) : [...previous, id],
+      );
       if (!token) return;
 
       if (!wasLiked) {
         void addWishlist(id, token, locale).then((result) => {
           if ("error" in result && result.error.code !== "ALREADY_WISHLISTED") {
-            setWishlist((prev) => prev.filter((entry) => entry !== id));
+            setWishlist((previous) => previous.filter((entry) => entry !== id));
             if (feedback) notify(feedback.addFailed, { variant: "error" });
           } else if (feedback) {
             notify(feedback.added);
@@ -88,7 +90,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
       } else {
         void removeWishlist(id, token).then((result) => {
           if ("error" in result && result.error.code !== "NOT_FOUND") {
-            setWishlist((prev) => (prev.includes(id) ? prev : [...prev, id]));
+            setWishlist((previous) => (previous.includes(id) ? previous : [...previous, id]));
             if (feedback) notify(feedback.removeFailed, { variant: "error" });
           } else if (feedback?.removed) {
             notify(feedback.removed);
@@ -102,7 +104,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
   const isWishlisted = useCallback((id: string) => wishlist.includes(id), [wishlist]);
 
   const hydrateWishlist = useCallback((ids: string[]) => {
-    setWishlist((prev) => [...ids, ...prev.filter((id) => !ids.includes(id))]);
+    setWishlist((previous) => [...ids, ...previous.filter((id) => !ids.includes(id))]);
   }, []);
 
   return (

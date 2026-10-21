@@ -8,7 +8,7 @@ import SearchBar from "@/components/ui/SearchBar";
 import Chip from "@/components/ui/Chip";
 import EmptyState from "@/components/ui/EmptyState";
 import WishlistCard from "./WishlistCard";
-import EmptyWishlistState from "./EmptyState";
+import EmptyWishlistState from "@/features/wishlist/components/WishlistEmptyState";
 import UndoSnackbar from "@/components/ui/UndoSnackbar";
 import { useWishlistBrowser } from "@/features/wishlist/hooks/useWishlistBrowser";
 
