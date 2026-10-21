@@ -5,9 +5,12 @@ import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext";
 import { useModification } from "@/features/tickets/contexts/ModificationContext";
-import { modifyTicket } from "@/features/tickets/action";
+import { modifyTicketAction } from "@/features/tickets/action";
 
-/** Fixed fees the backend adds on top of the seat price delta. */
+/**
+ * Change fees mirrored by hand from the backend's fee schedule — the server is
+ * the authority on the final charge, so these must move with it.
+ */
 const SHOWTIME_CHANGE_FEE = 15_000;
 const SEAT_CHANGE_FEE = 10_000;
 
@@ -24,7 +27,7 @@ interface ModifyPayment {
 }
 
 /**
- * Modify-payment controller — fee math plus the `modifyTicket` submit, shared by
+ * Modify-payment controller — fee math plus the `modifyTicketAction` submit, shared by
  * the mobile payment step and the desktop payment rail. The refund/charge lands
  * on the original payment method server-side; the local gateway cards only pick
  * which method the difference is charged to.
@@ -67,7 +70,7 @@ export function useModifyPayment(): ModifyPayment {
       const seatIds = selectedSeats.flatMap((seat) => seat.seatIds);
       const newSeats = seatIds.length > 0 ? { seatIds } : undefined;
 
-      const result = await modifyTicket(
+      const result = await modifyTicketAction(
         { success: false, error: "" },
         {
           ticketId: id,

@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { createTransfer } from "@/features/tickets/action";
+import { createTransferAction } from "@/features/tickets/action";
 import type { TransferActionResult } from "@/features/tickets/action";
 import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext";
 
@@ -19,7 +19,7 @@ interface TransferSubmit {
 
 /**
  * Transfer-confirm submit controller: resolves the picked seat labels to backend
- * seat UUIDs and binds `createTransfer` as a real form action (hidden `seatId`
+ * seat UUIDs and binds `createTransferAction` as a real form action (hidden `seatId`
  * list plus `ticketId`/`recipientEmail`/`transferSnacks`, read server-side with
  * `formData.getAll()`), so React 19 wraps the submit in a transition and the RAM
  * access token never enters the DOM. Redirects to the ticket detail from an
@@ -33,7 +33,7 @@ export function useTransferSubmit(seatLabels: string[]): TransferSubmit {
   const router = useRouter();
   const { ticket } = useTicketDetail();
 
-  const [state, formAction, isPending] = useActionState(createTransfer, initialState);
+  const [state, formAction, isPending] = useActionState(createTransferAction, initialState);
 
   const seatIds = ticket.seatItems
     .filter((seat) => seatLabels.includes(seat.label) && seat.seatId)

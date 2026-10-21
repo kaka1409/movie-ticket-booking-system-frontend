@@ -23,7 +23,7 @@ export default function TicketActions() {
   const params = useParams();
   const router = useRouter();
   const id = params.id as string;
-  const [actionsOpen, setActionsOpen] = useState(false);
+  const [isActionsOpen, setIsActionsOpen] = useState(false);
 
   const { acceptFormAction, declineFormAction, isAccepting, isDeclining, isBusy, error } =
     useTransferDecisions();
@@ -82,20 +82,20 @@ export default function TicketActions() {
         <>
           <button
             type="button"
-            onClick={() => setActionsOpen(true)}
+            onClick={() => setIsActionsOpen(true)}
             className="w-full flex items-center justify-center gap-2.5 py-4 rounded-xl font-extrabold text-sm tracking-wide transition-all duration-150 active:scale-[0.98] border border-(--color-border) text-(--color-text-secondary) bg-transparent"
           >
             <MoreHorizontal size={18} />
             {translate("tickets.detail.more_actions")}
           </button>
 
-          <ActionSheet open={actionsOpen} onClose={() => setActionsOpen(false)}>
+          <ActionSheet isOpen={isActionsOpen} onClose={() => setIsActionsOpen(false)}>
             <ActionRow
               icon={Pencil}
               label={translate("tickets.detail.edit_ticket")}
               description={translate("tickets.detail.edit_ticket_desc")}
               onClick={() => {
-                setActionsOpen(false);
+                setIsActionsOpen(false);
                 router.push(`/tickets/${id}/modify`);
               }}
             />
@@ -104,7 +104,7 @@ export default function TicketActions() {
               label={translate("tickets.detail.transfer_ticket")}
               description={translate("tickets.detail.transfer_ticket_desc")}
               onClick={() => {
-                setActionsOpen(false);
+                setIsActionsOpen(false);
                 router.push(`/tickets/${id}/transfer`);
               }}
             />
@@ -114,7 +114,7 @@ export default function TicketActions() {
               description={translate("tickets.detail.cancel_refund_desc")}
               danger
               onClick={() => {
-                setActionsOpen(false);
+                setIsActionsOpen(false);
                 router.push(`/tickets/${id}/cancel`);
               }}
             />

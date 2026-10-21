@@ -29,7 +29,6 @@ export default function PaymentContent() {
   return (
     <div className="flex flex-col min-h-dvh">
       <main className="flex-1 overflow-y-auto pb-5 pt-4 space-y-5">
-        {/* Amount to pay */}
         <section className="px-4">
           <div className="p-5 rounded-2xl bg-(--color-surface) border border-(--color-border) text-center">
             <MicroLabel className="text-(--color-text-muted) mb-2">
@@ -41,7 +40,6 @@ export default function PaymentContent() {
           </div>
         </section>
 
-        {/* Payment methods */}
         <section className="px-4 space-y-3">
           <MicroLabel className="text-(--color-text-muted)">
             {translate("booking.payment.select_method")}
@@ -88,7 +86,6 @@ export default function PaymentContent() {
           })}
         </section>
 
-        {/* Refund notice */}
         {difference < 0 && (
           <section className="px-4">
             <div className="flex items-center gap-2 p-3 rounded-xl bg-emerald-500/10 text-emerald-400 text-xs">
@@ -99,7 +96,6 @@ export default function PaymentContent() {
         )}
       </main>
 
-      {/* Bottom bar */}
       <BookingBottomBar
         canProceed={canPay}
         ctaText={

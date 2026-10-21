@@ -33,7 +33,7 @@ export interface TransferDetail {
 export type TransferActionResult =
   { success: true; data: TransferDetail } | { success: false; error: string };
 
-export async function createTransfer(
+export async function createTransferAction(
   prevState: TransferActionResult,
   formData: FormData,
 ): Promise<TransferActionResult> {
@@ -64,7 +64,7 @@ export async function createTransfer(
 export type CancelTransferActionResult =
   { success: true; data: { id: string; status: string } } | { success: false; error: string };
 
-export async function cancelTransfer(
+export async function cancelTransferAction(
   prevState: CancelTransferActionResult,
   formData: FormData,
 ): Promise<CancelTransferActionResult> {
@@ -122,7 +122,7 @@ async function submitTransferDecision(
 }
 
 /** Recipient accepts — ownership (and the QR) moves to them. */
-export async function acceptTransfer(
+export async function acceptTransferAction(
   prevState: TransferDecisionActionResult,
   formData: FormData,
 ): Promise<TransferDecisionActionResult> {
@@ -134,7 +134,7 @@ export async function acceptTransfer(
 }
 
 /** Recipient declines — the ticket stays with the sender. */
-export async function declineTransfer(
+export async function declineTransferAction(
   prevState: TransferDecisionActionResult,
   formData: FormData,
 ): Promise<TransferDecisionActionResult> {
@@ -161,7 +161,7 @@ export interface ModifyResult {
 export type ModifyActionResult =
   { success: true; data: ModifyResult } | { success: false; error: string };
 
-export async function modifyTicket(
+export async function modifyTicketAction(
   prevState: ModifyActionResult,
   data: {
     ticketId: string;
@@ -197,7 +197,7 @@ export type CancelActionResult =
     }
   | { success: false; error: string };
 
-export async function cancelTicket(
+export async function cancelTicketAction(
   prevState: CancelActionResult,
   data: { ticketId: string; token: string },
 ): Promise<CancelActionResult> {

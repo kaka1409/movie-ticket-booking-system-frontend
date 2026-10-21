@@ -28,7 +28,6 @@ export default function CancelResult({
   if (status === "success") {
     return (
       <main className="flex-1 overflow-y-auto pb-8 pt-4 px-4 space-y-6">
-        {/* Success icon */}
         <section className="flex flex-col items-center text-center gap-4">
           <div
             className={`flex items-center justify-center transition-all duration-700 ${
@@ -65,7 +64,6 @@ export default function CancelResult({
           </div>
         </section>
 
-        {/* Refund info card */}
         <div
           className={`rounded-2xl bg-(--color-surface) border border-(--color-border) p-5 space-y-4 transition-all duration-700 delay-300 ${
             mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
@@ -111,7 +109,6 @@ export default function CancelResult({
           </div>
         </div>
 
-        {/* Actions */}
         <div
           className={`space-y-3 transition-all duration-700 delay-500 ${
             mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
@@ -141,7 +138,6 @@ export default function CancelResult({
 
   return (
     <main className="flex-1 overflow-y-auto pb-8 pt-4 px-4 space-y-6">
-      {/* Failed icon */}
       <section className="flex flex-col items-center text-center gap-4">
         <div
           className={`flex items-center justify-center transition-all duration-500 ${
@@ -175,7 +171,6 @@ export default function CancelResult({
         </div>
       </section>
 
-      {/* Failed info card */}
       <div
         className={`rounded-2xl bg-(--color-surface) border border-red-500/20 p-5 space-y-4 transition-all duration-700 delay-300 ${
           mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
@@ -205,7 +200,6 @@ export default function CancelResult({
         </p>
       </div>
 
-      {/* Actions */}
       <div
         className={`space-y-3 transition-all duration-700 delay-500 ${
           mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"

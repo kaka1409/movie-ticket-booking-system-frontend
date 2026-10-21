@@ -18,15 +18,15 @@ export default function CancelView() {
   const { ticket } = useTicketDetail();
   const { view, isPending, refundAmount, computedRefund, paymentMethod, confirm, retry } =
     useCancelFlow();
-  const [policyOpen, setPolicyOpen] = useState(false);
-  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [isPolicyOpen, setIsPolicyOpen] = useState(false);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   const handleContinue = () => {
-    setConfirmOpen(true);
+    setIsConfirmOpen(true);
   };
 
   const handleConfirm = () => {
-    setConfirmOpen(false);
+    setIsConfirmOpen(false);
     confirm();
   };
 
@@ -37,14 +37,14 @@ export default function CancelView() {
           <CancelSummary
             ticket={ticket as UpcomingTicket}
             onContinue={handleContinue}
-            onPolicyClick={() => setPolicyOpen(true)}
+            onPolicyClick={() => setIsPolicyOpen(true)}
           />
-          <CancellationPolicySheet open={policyOpen} onClose={() => setPolicyOpen(false)} />
+          <CancellationPolicySheet isOpen={isPolicyOpen} onClose={() => setIsPolicyOpen(false)} />
           <ConfirmationSheet
-            open={confirmOpen}
+            isOpen={isConfirmOpen}
             refundAmount={computedRefund}
             onConfirm={handleConfirm}
-            onCancel={() => setConfirmOpen(false)}
+            onCancel={() => setIsConfirmOpen(false)}
           />
         </>
       )}

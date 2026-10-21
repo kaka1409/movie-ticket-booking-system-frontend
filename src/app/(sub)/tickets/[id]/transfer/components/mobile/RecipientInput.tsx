@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { findRecipient } from "@/features/tickets/api";
+import { getRecipient } from "@/features/tickets/api";
 import { useTransfer } from "@/features/tickets/contexts/TransferContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/contexts/LocaleContext";
@@ -34,7 +34,7 @@ export default function RecipientInput() {
     // The RAM Bearer token authenticates the client call (route also accepts
     // the refresh cookie for server-side callers).
     const lookup = canSearch
-      ? findRecipient(email, { token: token ?? undefined })
+      ? getRecipient(email, { token: token ?? undefined })
       : Promise.resolve(null);
 
     lookup
@@ -68,7 +68,6 @@ export default function RecipientInput() {
         </p>
       )}
 
-      {/* Selected recipient preview */}
       {recipient && (
         <div className="animate-fade-in flex items-center gap-3.5 p-4 rounded-2xl bg-(--color-surface) border border-(--color-gold)/40 shadow-[0_0_0_1px_rgba(255,204,77,0.15)]">
           <Image

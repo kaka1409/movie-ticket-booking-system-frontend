@@ -15,6 +15,10 @@ interface TicketDetailContextType {
 
 const TicketDetailContext = createContext<TicketDetailContextType | null>(null);
 
+/**
+ * Ticket detail for both viewer roles. List-derived rows carry no `viewerRole`,
+ * so it defaults to `"owner"` and the transfer views are simply absent.
+ */
 export function TicketDetailProvider({
   ticket,
   children,
@@ -40,6 +44,7 @@ export function TicketDetailProvider({
   );
 }
 
+/** Ticket plus the resolved viewer role and transfer views; throws outside the provider. */
 export function useTicketDetail(): TicketDetailContextType {
   const ctx = useContext(TicketDetailContext);
   if (!ctx) throw new Error("useTicketDetail must be used within TicketDetailProvider");

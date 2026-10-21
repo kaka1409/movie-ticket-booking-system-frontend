@@ -3,8 +3,8 @@
 import Image from "next/image";
 import { MonitorPlay, CalendarDays, Clock, Loader2, XCircle } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
-import DetailRow from "@/app/(sub)/booking/components/mobile/DetailRow";
-import PriceBreakdown from "@/app/(sub)/booking/components/mobile/PriceBreakdown";
+import DetailRow from "@/components/shared/DetailRow";
+import PriceBreakdown from "@/components/shared/PriceBreakdown";
 import QRCode from "./QRCode";
 import TearLine from "@/components/ui/TearLine";
 import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext";
@@ -21,9 +21,7 @@ export default function TicketInfo() {
 
   return (
     <main className="flex-1 overflow-y-auto pb-8 p-4">
-      {/* Hero ticket card */}
       <div className="rounded-3xl overflow-visible bg-(--color-surface) border border-(--color-border) shadow-(--shadow-card)">
-        {/* Poster */}
         <div className="relative w-full h-80 bg-(--color-surface) rounded-t-3xl overflow-hidden">
           <Image
             src={ticket.poster}
@@ -48,10 +46,8 @@ export default function TicketInfo() {
           </div>
         </div>
 
-        {/* Tear line */}
         <TearLine className="px-0 my-0" lineClassName="mx-3" />
 
-        {/* Booking details */}
         <div className="px-4 py-4 space-y-4">
           <div className="flex justify-center">
             <DetailRow
@@ -74,7 +70,6 @@ export default function TicketInfo() {
             />
           </div>
 
-          {/* Price breakdown: seats → snacks → payment + total */}
           <PriceBreakdown
             seats={seatItems}
             snacks={ticket?.foodDrink ?? []}
@@ -83,7 +78,6 @@ export default function TicketInfo() {
           />
         </div>
 
-        {/* Tear line */}
         <TearLine className="px-0 my-0" lineClassName="mx-3" />
 
         {isTransferPending && transfer ? (

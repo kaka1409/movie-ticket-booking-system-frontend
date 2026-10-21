@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext";
-import { cancelTicket } from "@/features/tickets/action";
+import { cancelTicketAction } from "@/features/tickets/action";
 import { CANCELLATION_FEE } from "@/features/tickets/constants";
 
 export type CancelFlowView = "idle" | "processing" | "success" | "failed";
@@ -39,7 +39,7 @@ export function useCancelFlow(): CancelFlow {
   const confirm = () => {
     setView("processing");
     startTransition(async () => {
-      const state = await cancelTicket(
+      const state = await cancelTicketAction(
         { success: false, error: "" },
         { ticketId: ticket.id, token: token ?? "" },
       );

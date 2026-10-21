@@ -1,4 +1,5 @@
 import type { BookingDetail, DateOption } from "@/features/booking/types";
+import { toLocaleTag } from "@/libs/utils";
 import type {
   EligibleShowtime,
   FoodDrinkItem,
@@ -81,14 +82,13 @@ export interface TicketPageMeta {
 
 /* ─── Display maps ─── */
 
-/** Backend ticket statuses → listing card statuses. */
-function mapUpcomingStatus(): UpcomingTicket["status"] {
+function toUpcomingStatus(): UpcomingTicket["status"] {
   // Upcoming only ever holds usable tickets (active + paid) — a failed
   // payment leaves the booking pending and mints no ticket at all.
   return "success";
 }
 
-function mapPastStatus(ticketStatus: string, transferredAway = false): PastTicket["status"] {
+function toPastStatus(ticketStatus: string, transferredAway = false): PastTicket["status"] {
   // A ticket I gave away is history from the moment the transfer settles — the
   // remaining entitlement status (still `active` for the recipient) is theirs,
   // not mine, so it must not be shown as if this ticket were still mine.
@@ -109,9 +109,9 @@ function mapPastStatus(ticketStatus: string, transferredAway = false): PastTicke
   }
 }
 
-function mapDetailStatus(ticketStatus: string): UpcomingTicket["status"] | PastTicket["status"] {
+function toDetailStatus(ticketStatus: string): UpcomingTicket["status"] | PastTicket["status"] {
   if (ticketStatus === "active") return "success";
-  return mapPastStatus(ticketStatus);
+  return toPastStatus(ticketStatus);
 }
 
 const PAYMENT_BRANDS: Record<string, string> = {
@@ -162,7 +162,7 @@ export function formatTicketDatetime(
   showtimeStart: string,
   locale: "en" | "vn",
 ): string {
-  const tag = locale === "vn" ? "vi-VN" : "en-US";
+  const tag = toLocaleTag(locale);
   const at = buildShowtimeStart(showtimeDate, showtimeStart);
   const datePart = new Intl.DateTimeFormat(tag, {
     weekday: "short",
@@ -188,7 +188,7 @@ export function toUpcomingTicket(summary: TicketSummaryWire, locale: "en" | "vn"
   const startsAtMs = buildShowtimeStart(summary.showtimeDate, summary.showtimeStart).getTime();
   return {
     id: summary.ticketId,
-    status: mapUpcomingStatus(),
+    status: toUpcomingStatus(),
     movie: summary.movieTitle,
     datetime: formatTicketDatetime(summary.showtimeDate, summary.showtimeStart, locale),
     startsAtMs,
@@ -208,7 +208,7 @@ export function toPastTicket(summary: TicketSummaryWire, locale: "en" | "vn"): P
   const transferProvenance = summary.transfer ?? undefined;
   return {
     id: summary.ticketId,
-    status: mapPastStatus(summary.ticketStatus, transferProvenance?.direction === "sent"),
+    status: toPastStatus(summary.ticketStatus, transferProvenance?.direction === "sent"),
     movie: summary.movieTitle,
     format: summary.format,
     datetime: formatTicketDatetime(summary.showtimeDate, summary.showtimeStart, locale),
@@ -283,7 +283,7 @@ export function toDetailTicket(
   if (detail.ticketStatus === "active") {
     const ticket: UpcomingTicket = {
       ...base,
-      status: mapDetailStatus(detail.ticketStatus) as UpcomingTicket["status"],
+      status: toDetailStatus(detail.ticketStatus) as UpcomingTicket["status"],
       viewerRole: detail.viewerRole,
       transfer: toTransfer(detail),
       incomingTransfer: toIncomingTransfer(detail),
@@ -299,7 +299,7 @@ export function toDetailTicket(
   // card shape has no such field.
   return {
     ...base,
-    status: mapDetailStatus(detail.ticketStatus) as PastTicket["status"],
+    status: toDetailStatus(detail.ticketStatus) as PastTicket["status"],
     ticketCount: seatItems.length,
   };
 }
@@ -397,7 +397,7 @@ export function toEligibleDateOptions(
   showtimes: EligibleShowtime[],
   locale: "en" | "vn",
 ): DateOption[] {
-  const tag = locale === "vn" ? "vi-VN" : "en-US";
+  const tag = toLocaleTag(locale);
   const seen = new Set<string>();
   const options: DateOption[] = [];
 

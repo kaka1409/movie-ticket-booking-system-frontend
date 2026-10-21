@@ -1,7 +1,7 @@
 "use client";
 
 import { useModification } from "@/features/tickets/contexts/ModificationContext";
-import DatePicker from "@/components/ui/DatePicker";
+import DatePicker from "@/features/showtimes/components/DatePicker";
 
 export default function DatePickerWrapper() {
   const { dates, selectedDate, setSelectedDate } = useModification();

@@ -5,12 +5,12 @@ import { formatVND } from "@/libs/utils";
 import ActionSheet from "@/components/ui/ActionSheet";
 
 export default function ConfirmationSheet({
-  open,
+  isOpen,
   refundAmount,
   onConfirm,
   onCancel,
 }: {
-  open: boolean;
+  isOpen: boolean;
   refundAmount: number;
   onConfirm: () => void;
   onCancel: () => void;
@@ -18,7 +18,7 @@ export default function ConfirmationSheet({
   const { translate, locale } = useLocale();
 
   return (
-    <ActionSheet open={open} onClose={onCancel}>
+    <ActionSheet isOpen={isOpen} onClose={onCancel}>
       <div className="space-y-5 text-center">
         <h2 className="text-lg font-extrabold text-(--color-text-primary)">
           {translate("tickets.cancel.confirm_heading")}

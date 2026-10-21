@@ -2,7 +2,7 @@
 
 import { useLocale } from "@/contexts/LocaleContext";
 import { useModification } from "@/features/tickets/contexts/ModificationContext";
-import CinemaCard from "@/components/ui/CinemaCard";
+import CinemaCard from "@/features/showtimes/components/CinemaCard";
 import MicroLabel from "@/components/ui/MicroLabel";
 import type { Cinema } from "@/features/booking/types";
 import type { EligibleShowtime } from "@/features/tickets/types";
@@ -20,11 +20,11 @@ function groupToCinemas(showtimes: EligibleShowtime[], stripDate?: boolean): Cin
     distance: items[0].distance,
     badge: "",
     badgeColor: "",
-    showtimes: items.map((s) => ({
-      time: s.time,
-      room: s.room,
+    showtimes: items.map((slot) => ({
+      time: slot.time,
+      room: slot.room,
       available: true,
-      date: stripDate ? undefined : s.date,
+      date: stripDate ? undefined : slot.date,
     })),
   }));
 }
@@ -48,15 +48,15 @@ export default function ShowtimeList() {
 
   const searched = normalizedQuery
     ? showtimes.filter(
-        (s) =>
-          s.cinemaName.toLowerCase().includes(normalizedQuery) ||
-          s.address.toLowerCase().includes(normalizedQuery),
+        (showtime) =>
+          showtime.cinemaName.toLowerCase().includes(normalizedQuery) ||
+          showtime.address.toLowerCase().includes(normalizedQuery),
       )
     : showtimes;
 
   const filtered =
     selectedDate && searched.length > 0
-      ? searched.filter((s) => s.date === selectedDate)
+      ? searched.filter((showtime) => showtime.date === selectedDate)
       : searched;
 
   if (filtered.length === 0) {

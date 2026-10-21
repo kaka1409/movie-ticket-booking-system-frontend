@@ -8,7 +8,7 @@ import { getSeatMap } from "@/features/booking/api";
 import { adaptSeatMap } from "@/features/booking/utils/seatMap";
 import type { Seat } from "@/features/booking/types";
 import { getSeatLabel } from "@/features/booking/utils/seat";
-import SeatGrid from "@/components/ui/SeatGrid";
+import SeatGrid from "@/features/booking/components/seats/SeatGrid";
 
 export default function SeatMapWrapper() {
   const { translate } = useLocale();
@@ -69,8 +69,8 @@ export default function SeatMapWrapper() {
     );
   }
 
-  const selectedLabels = selectedSeats.map((s) => s.label);
-  const originalLabels = ticket.seatItems.map((s) => s.label);
+  const selectedLabels = selectedSeats.map((selectedSeat) => selectedSeat.label);
+  const originalLabels = ticket.seatItems.map((seatItem) => seatItem.label);
 
   return (
     <SeatGrid

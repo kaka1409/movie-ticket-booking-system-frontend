@@ -4,8 +4,8 @@ import Image from "next/image";
 import { MonitorPlay, CalendarDays, User } from "lucide-react";
 import type { Recipient } from "@/features/tickets/types";
 import { useLocale } from "@/contexts/LocaleContext";
-import DetailRow from "@/app/(sub)/booking/components/mobile/DetailRow";
-import PriceBreakdown from "@/app/(sub)/booking/components/mobile/PriceBreakdown";
+import DetailRow from "@/components/shared/DetailRow";
+import PriceBreakdown from "@/components/shared/PriceBreakdown";
 import TearLine from "@/components/ui/TearLine";
 import MicroLabel from "@/components/ui/MicroLabel";
 import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext";
@@ -31,7 +31,6 @@ export default function ConfirmCard({
   return (
     <section className="px-4">
       <div className="rounded-3xl overflow-visible bg-(--color-surface) border border-(--color-border) shadow-[--shadow-card]">
-        {/* Top: movie info */}
         <div className="flex gap-3 p-4">
           <div className="w-20 h-30 flex-shrink-0 rounded-sm overflow-hidden relative">
             <Image
@@ -51,12 +50,9 @@ export default function ConfirmCard({
           </div>
         </div>
 
-        {/* Tear line */}
         <TearLine className="px-0 my-0" lineClassName="mx-3" />
 
-        {/* Ticket details */}
         <div className="px-4 py-4 space-y-4">
-          {/* Theater + DateTime */}
           <div className="flex justify-between gap-4">
             <DetailRow
               icon={MonitorPlay}
@@ -78,7 +74,6 @@ export default function ConfirmCard({
             />
           </div>
 
-          {/* Seats being transferred + optional snacks + payment/total */}
           <PriceBreakdown
             seats={selectedSeats}
             seatsHeaderText={
@@ -93,10 +88,8 @@ export default function ConfirmCard({
           />
         </div>
 
-        {/* Tear line */}
         <TearLine className="px-0 my-0" lineClassName="mx-3" />
 
-        {/* Recipient */}
         <div className="px-4 py-4 space-y-3">
           <MicroLabel className="flex items-center gap-1.5 text-white/60">
             <User size={10} />

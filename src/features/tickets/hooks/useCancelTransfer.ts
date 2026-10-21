@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { cancelTransfer } from "@/features/tickets/action";
+import { cancelTransferAction } from "@/features/tickets/action";
 import type { CancelTransferActionResult } from "@/features/tickets/action";
 
 const initialState: CancelTransferActionResult = { success: false, error: "" };
@@ -16,7 +16,7 @@ const initialState: CancelTransferActionResult = { success: false, error: "" };
  */
 export function useCancelTransfer() {
   const router = useRouter();
-  const [state, formAction, isPending] = useActionState(cancelTransfer, initialState);
+  const [state, formAction, isPending] = useActionState(cancelTransferAction, initialState);
 
   useEffect(() => {
     if (state.success) router.refresh();

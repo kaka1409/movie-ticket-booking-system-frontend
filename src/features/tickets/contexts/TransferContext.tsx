@@ -15,14 +15,15 @@ interface TransferContextType {
 
 const TransferContext = createContext<TransferContextType | null>(null);
 
+/** Transfer draft (seats, recipient, snack toggle) — one instance wraps both device trees. */
 export function TransferProvider({ children }: { children: ReactNode }) {
   const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
   const [recipient, setRecipient] = useState<Recipient | null>(null);
   const [transferSnacks, setTransferSnacks] = useState(false);
 
   const toggleSeat = useCallback((label: string) => {
-    setSelectedSeats((prev) =>
-      prev.includes(label) ? prev.filter((seat) => seat !== label) : [...prev, label],
+    setSelectedSeats((previous) =>
+      previous.includes(label) ? previous.filter((seat) => seat !== label) : [...previous, label],
     );
   }, []);
 
@@ -42,6 +43,7 @@ export function TransferProvider({ children }: { children: ReactNode }) {
   return <TransferContext.Provider value={value}>{children}</TransferContext.Provider>;
 }
 
+/** Transfer draft; throws outside `TransferProvider`. */
 export function useTransfer() {
   const ctx = useContext(TransferContext);
   if (!ctx) throw new Error("useTransfer must be used within TransferProvider");

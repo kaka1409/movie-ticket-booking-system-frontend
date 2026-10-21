@@ -1,5 +1,3 @@
-"use client";
-
 import TypeCards from "./components/mobile/TypeCards";
 import ModifyBottomBar from "./components/mobile/BottomBar";
 

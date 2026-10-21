@@ -5,7 +5,7 @@ import type { ReactNode, ElementType } from "react";
 import { useLocale } from "@/contexts/LocaleContext";
 
 interface ActionSheetProps {
-  open: boolean;
+  isOpen: boolean;
   onClose: () => void;
   children: ReactNode;
 }
@@ -18,26 +18,26 @@ interface ActionRowProps {
   onClick: () => void;
 }
 
-export default function ActionSheet({ open, onClose, children }: ActionSheetProps) {
+export default function ActionSheet({ isOpen, onClose, children }: ActionSheetProps) {
   const { translate } = useLocale();
 
   return (
-    <div className={`fixed inset-0 z-50 ${open ? "" : "pointer-events-none"}`} aria-hidden={!open}>
-      {/* Backdrop */}
+    <div
+      className={`fixed inset-0 z-50 ${isOpen ? "" : "pointer-events-none"}`}
+      aria-hidden={!isOpen}
+    >
       <div
         onClick={onClose}
         className={`absolute inset-0 bg-black/60 transition-opacity duration-300 ${
-          open ? "opacity-100" : "opacity-0"
+          isOpen ? "opacity-100" : "opacity-0"
         }`}
       />
 
-      {/* Sheet */}
       <div
         className={`absolute inset-x-0 bottom-0 max-w-md mx-auto bg-(--color-bg) rounded-t-3xl shadow-[--shadow-card] transition-transform duration-300 ease-out ${
-          open ? "translate-y-0" : "translate-y-full"
+          isOpen ? "translate-y-0" : "translate-y-full"
         }`}
       >
-        {/* Header: drag handle + close */}
         <div className="relative flex items-center justify-center px-4 pt-4 pb-2">
           <div className="w-10 h-1 rounded-full bg-(--color-border)" />
           <button
@@ -50,7 +50,6 @@ export default function ActionSheet({ open, onClose, children }: ActionSheetProp
           </button>
         </div>
 
-        {/* Body */}
         <div className="px-4 pt-2 pb-8 overflow-y-auto max-h-[70dvh]">{children}</div>
       </div>
     </div>

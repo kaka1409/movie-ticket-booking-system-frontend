@@ -82,7 +82,7 @@ export async function getTicketById(
  * Client callers pass the RAM `token`; server components pass the forwarded
  * refresh `cookie` (the route accepts Bearer OR refresh cookie).
  */
-export async function findRecipient(
+export async function getRecipient(
   email: string,
   options?: { token?: string; cookie?: string },
 ): Promise<Recipient | null> {

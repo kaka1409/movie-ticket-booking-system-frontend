@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { findRecipient } from "@/features/tickets/api";
+import { getRecipient } from "@/features/tickets/api";
 import { getRequestCookie } from "@/libs/session";
 
 // Mobile components
@@ -27,7 +27,7 @@ export default async function ConfirmPage({ params, searchParams }: ConfirmPageP
     redirect(`/tickets/${id}/transfer`);
   }
 
-  const recipient = await findRecipient(recipientEmail, {
+  const recipient = await getRecipient(recipientEmail, {
     cookie: await getRequestCookie(),
   });
   if (!recipient) {

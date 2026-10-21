@@ -29,7 +29,6 @@ export default function CancelSummary({
   return (
     <main className="flex-1 overflow-y-auto pb-8 p-4">
       <div className="rounded-3xl overflow-hidden bg-(--color-surface) border border-(--color-border) shadow-(--shadow-card)">
-        {/* Movie info */}
         <div className="flex gap-3 p-4">
           <div className="relative w-16 h-20 rounded-xl overflow-hidden shrink-0">
             <Image
@@ -49,7 +48,6 @@ export default function CancelSummary({
           </div>
         </div>
 
-        {/* Seats */}
         <div className="px-4 pb-4 space-y-1.5">
           <MicroLabel className="text-white/60">
             {translate("tickets.cancel.seats_label")}
@@ -61,7 +59,6 @@ export default function CancelSummary({
 
         <TearLine />
 
-        {/* Price breakdown */}
         <div className="px-4 py-4 space-y-3">
           <div className="flex justify-between text-sm">
             <span className="text-white/60">{translate("tickets.cancel.ticket_price")}</span>
@@ -81,7 +78,6 @@ export default function CancelSummary({
 
         <TearLine />
 
-        {/* Totals */}
         <div className="px-4 py-4 space-y-3">
           <div className="flex justify-between text-sm font-bold">
             <span className="text-(--color-text-primary)">
@@ -99,7 +95,6 @@ export default function CancelSummary({
 
         <TearLine />
 
-        {/* Refund amount */}
         <div className="px-4 py-4">
           <div className="flex justify-between items-center">
             <span className="text-sm font-bold text-(--color-text-primary)">
@@ -111,7 +106,6 @@ export default function CancelSummary({
           </div>
         </div>
 
-        {/* Refund to */}
         <div className="px-4 pb-4 space-y-1.5">
           <MicroLabel className="text-white/60">{translate("tickets.cancel.refund_to")}</MicroLabel>
           <div className="flex items-center gap-2">
@@ -130,7 +124,6 @@ export default function CancelSummary({
         </div>
       </div>
 
-      {/* Cancellation policy link */}
       <button
         type="button"
         onClick={onPolicyClick}
@@ -142,7 +135,6 @@ export default function CancelSummary({
         <ChevronRight size={16} className="text-white/60" />
       </button>
 
-      {/* Continue button */}
       <div className="mt-4">
         <Button onClick={onContinue}>{translate("tickets.cancel.continue")}</Button>
       </div>

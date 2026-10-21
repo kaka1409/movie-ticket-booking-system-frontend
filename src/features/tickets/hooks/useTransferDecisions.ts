@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { acceptTransfer, declineTransfer } from "@/features/tickets/action";
+import { acceptTransferAction, declineTransferAction } from "@/features/tickets/action";
 import type { TransferDecisionActionResult } from "@/features/tickets/action";
 
 const initialDecisionState: TransferDecisionActionResult = { success: false, error: "" };
@@ -36,11 +36,11 @@ export function useTransferDecisions(): TransferDecisions {
   const router = useRouter();
 
   const [acceptState, acceptFormAction, isAccepting] = useActionState(
-    acceptTransfer,
+    acceptTransferAction,
     initialDecisionState,
   );
   const [declineState, declineFormAction, isDeclining] = useActionState(
-    declineTransfer,
+    declineTransferAction,
     initialDecisionState,
   );
 

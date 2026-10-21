@@ -31,6 +31,7 @@ interface ModificationContextType {
 
 const ModificationContext = createContext<ModificationContextType | null>(null);
 
+/** Cross-step draft for the modify wizard (type, seats, showtime). */
 export function ModificationProvider({
   children,
   initialSeatCount = 0,
@@ -55,9 +56,13 @@ export function ModificationProvider({
 
   const toggleSeat = useCallback((seat: ModificationSeat) => {
     setSelectedSeats((previous) => {
-      const exists = previous.some((s) => s.label === seat.label && s.type === seat.type);
+      const exists = previous.some(
+        (candidate) => candidate.label === seat.label && candidate.type === seat.type,
+      );
       if (exists) {
-        return previous.filter((s) => !(s.label === seat.label && s.type === seat.type));
+        return previous.filter(
+          (candidate) => !(candidate.label === seat.label && candidate.type === seat.type),
+        );
       }
       return [...previous, seat];
     });
@@ -106,6 +111,7 @@ export function ModificationProvider({
   return <ModificationContext.Provider value={value}>{children}</ModificationContext.Provider>;
 }
 
+/** Modify-wizard draft; throws outside `ModificationProvider`. */
 export function useModification() {
   const context = useContext(ModificationContext);
   if (!context) {

@@ -5,10 +5,10 @@ import ActionSheet from "@/components/ui/ActionSheet";
 import Button from "@/components/ui/Button";
 
 export default function CancellationPolicySheet({
-  open,
+  isOpen,
   onClose,
 }: {
-  open: boolean;
+  isOpen: boolean;
   onClose: () => void;
 }) {
   const { translate } = useLocale();
@@ -21,7 +21,7 @@ export default function CancellationPolicySheet({
   ];
 
   return (
-    <ActionSheet open={open} onClose={onClose}>
+    <ActionSheet isOpen={isOpen} onClose={onClose}>
       <div className="space-y-5">
         <h2 className="text-lg font-extrabold text-(--color-text-primary) text-center">
           {translate("tickets.cancel.policy_title")}
