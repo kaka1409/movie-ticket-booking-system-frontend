@@ -36,7 +36,6 @@ export default function EditProfileContent() {
       description={translate("profile.pages.edit_desc")}
     >
       <div className="grid gap-6 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-8">
-        {/* Avatar panel */}
         <aside>
           <div className="flex flex-col items-center rounded-xl border border-(--color-border) bg-(--color-surface) p-5 text-center">
             <AvatarRing src={user.avatarUrl} name={user.name} size="h-24 w-24" />
@@ -55,7 +54,6 @@ export default function EditProfileContent() {
           </div>
         </aside>
 
-        {/* Form */}
         <form
           onSubmit={(event) => {
             event.preventDefault();

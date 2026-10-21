@@ -1,13 +1,4 @@
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  phone: string | null;
-  dob: string | null;
-  avatarUrl: string | null;
-  role: "USER" | "ADMIN";
-}
-
+/** Editable profile fields. `fullname` is the wire name of `User.name`. */
 export interface UpdateProfileRequest {
   fullname?: string;
   phone?: string;

@@ -1,12 +1,13 @@
 "use server";
 
-import type { UpdateProfileRequest, User } from "./types";
+import type { UpdateProfileRequest } from "./types";
+import type { User } from "@/features/auth/types";
 import { apiMutation } from "@/libs/api";
 
 export type ProfileActionResult =
   { success: true; data: User } | { success: false; error: string; status?: number };
 
-export async function updateProfile(
+export async function updateProfileAction(
   prevState: ProfileActionResult,
   data: UpdateProfileRequest & { token: string },
 ): Promise<ProfileActionResult> {

@@ -1,3 +1,7 @@
+/**
+ * Session/account shape used across the app. The wire sends `fullname`; the
+ * response schema maps it to `name` before it reaches any component.
+ */
 export interface User {
   id: string;
   name: string;

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { createProfileSchema } from "@/features/profile/schema";
-import { updateProfile } from "@/features/profile/action";
+import { updateProfileAction } from "@/features/profile/action";
 import { toDateInputValue } from "@/libs/date";
 
 /**
@@ -47,7 +47,7 @@ export function useProfileForm() {
 
     setServerError("");
     startTransition(async () => {
-      const state = await updateProfile(
+      const state = await updateProfileAction(
         { success: false, error: "" },
         { fullname: fullName, phone, dob, token: token ?? "" },
       );

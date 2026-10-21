@@ -40,7 +40,7 @@ export default function PasswordForm() {
           value={currentPassword}
           onChange={setCurrentPassword}
           visible={showCurrent}
-          onToggleVisible={() => setShowCurrent((v) => !v)}
+          onToggleVisible={() => setShowCurrent((previous) => !previous)}
           error={showErrors ? errors.current?.[0] : undefined}
         />
 
@@ -51,7 +51,7 @@ export default function PasswordForm() {
           value={newPassword}
           onChange={setNewPassword}
           visible={showNew}
-          onToggleVisible={() => setShowNew((v) => !v)}
+          onToggleVisible={() => setShowNew((previous) => !previous)}
           error={showErrors ? errors.newPass?.[0] : undefined}
         />
 
@@ -62,7 +62,7 @@ export default function PasswordForm() {
           value={confirmPassword}
           onChange={setConfirmPassword}
           visible={showConfirm}
-          onToggleVisible={() => setShowConfirm((v) => !v)}
+          onToggleVisible={() => setShowConfirm((previous) => !previous)}
           error={showErrors ? errors.confirm?.[0] : undefined}
         />
       </div>
