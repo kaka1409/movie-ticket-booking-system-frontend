@@ -43,7 +43,6 @@ export default function HeroSection() {
         className="relative h-[480px] w-full overflow-hidden rounded-(--radius-lg) border border-(--color-border) bg-(--color-surface)"
         aria-label={movie.title}
       >
-        {/* Backdrop artwork from the API */}
         <Image
           src={movie.src || "/images/hero-interstellar.jpg"}
           alt={movie.title}
@@ -85,7 +84,6 @@ export default function HeroSection() {
         </div>
 
         <div className="absolute inset-x-0 bottom-0 z-10 flex items-end gap-6 p-8">
-          {/* Poster from the API */}
           <div className="hidden w-32 shrink-0 overflow-hidden rounded-(--radius-lg) border border-white/15 shadow-(--shadow-card) md:block">
             <div className="relative aspect-2/3 w-full">
               <Image

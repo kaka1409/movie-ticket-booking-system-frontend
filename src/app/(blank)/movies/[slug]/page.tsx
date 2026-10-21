@@ -7,6 +7,7 @@ import SectionFallback from "@/components/ui/SectionFallback";
 import { REVIEWS_PAGE_SIZE } from "@/features/reviews/constants";
 import { MovieDetailProvider, MovieSelectionProvider } from "@/features/movies/context";
 import { getRequestLocale } from "@/libs/session";
+import { todayInCinemaZone } from "@/libs/date";
 import { SITE_NAME, SITE_URL } from "@/libs/site";
 import type { Metadata } from "next";
 
@@ -22,7 +23,7 @@ import MobileMovieNotFound from "./components/mobile/MovieNotFound";
 // Desktop
 import DesktopMovieDetail from "./components/desktop/MovieDetailDesktop";
 
-/** Statically generated movie pages rebuild every 60s (catalog edits show up). */
+/** 60s fetch cache for the catalog calls; the page itself renders per request (locale cookie). */
 export const revalidate = 60;
 
 /** Trim to a social-preview friendly length without cutting mid-word. */
@@ -30,12 +31,6 @@ function truncate(text: string, limit: number): string {
   if (text.length <= limit) return text;
   const cut = text.slice(0, limit);
   return `${cut.slice(0, Math.max(cut.lastIndexOf(" "), limit - 20))}…`;
-}
-
-function todayISO(): string {
-  return new Date().toLocaleDateString("sv-SE", {
-    timeZone: "Asia/Ho_Chi_Minh",
-  });
 }
 
 /* Backend only returns the upcoming dates that actually have showtimes. */
@@ -55,10 +50,9 @@ function resolveDate(availableDates: string[], today: string): string {
 }
 
 /**
- * Pre-render the catalog's movie pages at build time; unknown slugs still
- * render on demand (`dynamicParams` stays on) and follow the same ISR policy.
- * When the API is down during the build nothing is pre-rendered — the pages
- * degrade to on-demand rendering and heal on their 60s revalidation.
+ * Build-time pre-render of the catalog (EN default) for the static HTML and
+ * build-time metadata path; unknown slugs still render on demand
+ * (`dynamicParams` stays on), and a locale-cookie request renders per request.
  */
 export async function generateStaticParams(): Promise<{ slug: string }[]> {
   const result = await getMovies({ page: 1, limit: 100 });
@@ -113,7 +107,7 @@ export async function generateMetadata({
 
 export default async function MovieDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const today = todayISO();
+  const today = todayInCinemaZone();
   // Cookie locale → per-request rendering (see home/page.tsx); build-time
   // generateStaticParams/generateMetadata above stay on the EN default.
   const locale = await getRequestLocale();

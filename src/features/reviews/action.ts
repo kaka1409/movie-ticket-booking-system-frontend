@@ -21,7 +21,7 @@ function failure(error: unknown): {
   };
 }
 
-async function fetchReviews(input: {
+async function getReviewsPage(input: {
   movieSlug: string;
   skip: number;
   limit: number;
@@ -53,20 +53,25 @@ async function mutateAndRefetch(
     // Server-action-only tag invalidation: the refetch below immediately sees
     // fresh data, and every ISR page that rendered with the tag regenerates.
     updateTag("reviews");
-    return await fetchReviews({ movieSlug, skip: refetchSkip, limit: refetchLimit });
+    return await getReviewsPage({ movieSlug, skip: refetchSkip, limit: refetchLimit });
   } catch (error: unknown) {
     return failure(error);
   }
 }
 
+/** One page of the detail list; a server action so paging needs no API route. */
 export async function loadReviewsAction(input: {
   movieSlug: string;
   skip: number;
   limit: number;
 }): Promise<ActionResult<ReviewsResponse>> {
-  return fetchReviews(input);
+  return getReviewsPage(input);
 }
 
+/**
+ * Creates the review, invalidates the `reviews` tag, then returns the page
+ * re-rendered — pass the caller's current `refetchSkip`/`refetchLimit`.
+ */
 export async function createReviewAction(
   input: {
     movieSlug: string;
@@ -97,6 +102,7 @@ export async function createReviewAction(
   );
 }
 
+/** Same contract as {@link createReviewAction}. */
 export async function updateReviewAction(
   input: {
     reviewId: string;
@@ -127,6 +133,7 @@ export async function updateReviewAction(
   );
 }
 
+/** Same contract as {@link createReviewAction}. */
 export async function deleteReviewAction(
   input: {
     reviewId: string;

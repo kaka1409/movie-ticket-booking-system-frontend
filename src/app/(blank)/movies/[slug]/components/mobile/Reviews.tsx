@@ -7,11 +7,11 @@ import SectionHeader from "@/components/ui/SectionHeader";
 import Stars from "@/components/ui/Stars";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useMovieDetail } from "@/features/movies/context";
-import { useMovieReviews, formatReviewCount } from "@/features/reviews/useMovieReviews";
-import { useReviewHighlight } from "@/features/reviews/useReviewHighlight";
+import { useMovieReviews, formatReviewCount } from "@/features/reviews/hooks/useMovieReviews";
+import { useReviewHighlight } from "@/features/reviews/hooks/useReviewHighlight";
 import type { ReviewsResponse } from "@/features/reviews/types";
-import WriteReview from "@/components/shared/WriteReview";
-import ReviewCard from "@/components/shared/ReviewCard";
+import WriteReview from "@/features/reviews/components/mobile/WriteReview";
+import ReviewCard from "@/features/reviews/components/mobile/ReviewCard";
 
 function RatingBar({ stars, pct }: { stars: number; pct: number }) {
   return (

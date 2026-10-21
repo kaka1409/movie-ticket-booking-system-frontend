@@ -4,12 +4,12 @@ import { useRef } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight, LogIn, Pencil, RotateCcw, X } from "lucide-react";
 import Stars from "@/components/ui/Stars";
-import ReviewCard from "./ReviewCard";
-import WriteReview from "./WriteReview";
+import ReviewCard from "@/features/reviews/components/desktop/ReviewCard";
+import WriteReview from "@/features/reviews/components/desktop/WriteReview";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useMovieDetail } from "@/features/movies/context";
-import { useMovieReviews, formatReviewCount } from "@/features/reviews/useMovieReviews";
-import { useReviewHighlight } from "@/features/reviews/useReviewHighlight";
+import { useMovieReviews, formatReviewCount } from "@/features/reviews/hooks/useMovieReviews";
+import { useReviewHighlight } from "@/features/reviews/hooks/useReviewHighlight";
 import type { ReviewsResponse } from "@/features/reviews/types";
 
 function RatingBar({ stars, pct }: { stars: number; pct: number }) {
@@ -88,7 +88,6 @@ export default function Reviews({
         {translate("movies.detail.reviews")}
       </h2>
 
-      {/* Rating summary */}
       <div className="mt-5 mb-6 flex items-center gap-8 rounded-(--radius-lg) border border-(--color-border) bg-(--color-surface) p-5">
         <div className="flex shrink-0 flex-col items-center gap-1">
           <span className="text-5xl leading-none font-extrabold text-(--color-gold)">
@@ -116,7 +115,6 @@ export default function Reviews({
         </button>
       </div>
 
-      {/* Write review */}
       <div ref={formRef} className="mb-6">
         {isAuthenticated ? (
           <WriteReview onSubmit={create} disabled={mutating} />

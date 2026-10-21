@@ -13,7 +13,6 @@ function DesktopLoading() {
   return (
     <div className="hidden min-h-dvh bg-(--color-bg) md:block">
       <div className="mx-auto w-full max-w-screen-xl px-8 pt-6">
-        {/* Hero card */}
         <Skeleton className="h-[480px] w-full rounded-(--radius-lg)" />
 
         <div className="py-10">
@@ -66,7 +65,6 @@ function MobileLoading() {
   return (
     <div className="min-h-dvh bg-(--color-bg) block md:hidden">
       <main className="pb-10">
-        {/* Hero */}
         <div className="relative">
           <Skeleton className="h-85 w-full" />
           <div className="absolute inset-0 bg-hero-gradient" />
@@ -95,9 +93,7 @@ function MobileLoading() {
           </div>
         </div>
 
-        {/* Content */}
         <div className="flex flex-col gap-8 py-6 pb-12 px-(--space-md)">
-          {/* Synopsis */}
           <div className="space-y-3">
             <Skeleton className="h-4 w-24 rounded-full" />
             <div className="space-y-2">
@@ -107,7 +103,6 @@ function MobileLoading() {
             </div>
           </div>
 
-          {/* TopCast */}
           <div className="space-y-3">
             <Skeleton className="h-4 w-24 rounded-full" />
             <div className="flex gap-4 overflow-hidden">
@@ -117,7 +112,6 @@ function MobileLoading() {
             </div>
           </div>
 
-          {/* Showtimes */}
           <div className="space-y-3">
             <Skeleton className="h-4 w-28 rounded-full" />
             <div className="flex gap-2">
@@ -140,10 +134,8 @@ function MobileLoading() {
             ))}
           </div>
 
-          {/* Book CTA */}
           <Skeleton className="h-12 w-full rounded-2xl" />
 
-          {/* Reviews */}
           <div className="space-y-3">
             <Skeleton className="h-4 w-24 rounded-full" />
             {Array.from({ length: 2 }).map((_, index) => (

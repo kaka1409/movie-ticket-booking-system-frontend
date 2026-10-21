@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import { Pencil, Star } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
+import { REVIEW_MAX_LENGTH } from "@/features/reviews/constants";
+import { useReviewComposer } from "@/features/reviews/hooks/useReviewComposer";
 
 export default function WriteReview({
   onSubmit,
@@ -11,19 +12,8 @@ export default function WriteReview({
   onSubmit: (rating: number, text: string) => Promise<boolean>;
   disabled?: boolean;
 }) {
-  const [hovered, setHovered] = useState(0);
-  const [userRating, setUserRating] = useState(0);
-  const [text, setText] = useState("");
   const { translate } = useLocale();
-
-  const handleSubmit = async () => {
-    if (!userRating || !text.trim() || disabled) return;
-    const posted = await onSubmit(userRating, text.trim());
-    if (posted) {
-      setUserRating(0);
-      setText("");
-    }
-  };
+  const composer = useReviewComposer({ onSubmit, disabled });
 
   return (
     <div className="rounded-(--radius-lg) border border-(--color-border) bg-(--color-surface) p-5">
@@ -37,16 +27,16 @@ export default function WriteReview({
           <button
             key={star}
             type="button"
-            onMouseEnter={() => setHovered(star)}
-            onMouseLeave={() => setHovered(0)}
-            onClick={() => setUserRating(star)}
+            onMouseEnter={() => composer.setHoveredRating(star)}
+            onMouseLeave={() => composer.setHoveredRating(0)}
+            onClick={() => composer.selectRating(star)}
             aria-label={translate("movies.detail.rate_star")}
             className="cursor-pointer transition-transform duration-100 hover:scale-110"
           >
             <Star
               size={22}
               className={
-                star <= (hovered || userRating)
+                star <= (composer.hoveredRating || composer.rating)
                   ? "text-(--color-gold) fill-(--color-gold)"
                   : "text-(--color-border) fill-(--color-border)"
               }
@@ -54,26 +44,34 @@ export default function WriteReview({
           </button>
         ))}
 
-        {userRating > 0 && (
+        {composer.rating > 0 && (
           <span className="self-center text-sm font-bold text-(--color-gold)">
-            {userRating}.0 / 5.0
+            {composer.rating}.0 / 5.0
           </span>
         )}
       </div>
 
       <textarea
-        value={text}
-        onChange={(event) => setText(event.target.value)}
+        value={composer.text}
+        onChange={(event) => composer.setText(event.target.value)}
         placeholder={translate("movies.detail.review_placeholder")}
         rows={3}
+        maxLength={REVIEW_MAX_LENGTH}
         className="w-full resize-none rounded-(--radius-md) border border-(--color-border) bg-(--color-surface-2) px-4 py-3 text-sm text-(--color-text-primary) font-[inherit] placeholder-(--color-text-muted) outline-none transition-colors focus:border-(--color-gold)/50"
       />
 
-      <div className="mt-3 flex justify-end">
+      <div className="mt-3 flex items-center justify-between gap-3">
+        <span
+          className={`text-xs tabular-nums ${
+            composer.remaining <= 50 ? "font-bold text-red-400" : "text-(--color-text-muted)"
+          }`}
+        >
+          {composer.remaining} / {REVIEW_MAX_LENGTH}
+        </span>
         <button
           type="button"
-          onClick={() => void handleSubmit()}
-          disabled={disabled || !userRating || !text.trim()}
+          onClick={() => void composer.submit()}
+          disabled={!composer.canSubmit}
           className="cursor-pointer rounded-(--radius-md) bg-(--color-gold) px-6 py-2.5 text-sm font-bold text-(--color-bg) transition-all duration-150 hover:bg-(--color-gold-dark) active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-40"
         >
           {translate("movies.detail.post_review")}

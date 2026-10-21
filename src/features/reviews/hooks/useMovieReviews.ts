@@ -1,18 +1,17 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
-import { REVIEWS_PAGE_SIZE } from "./constants";
+import { REVIEWS_PAGE_SIZE } from "../constants";
 import {
   loadReviewsAction,
   createReviewAction,
   updateReviewAction,
   deleteReviewAction,
-} from "./action";
-import type { MovieReview, ReviewSummary, ReviewsResponse } from "./types";
+} from "../action";
+import type { MovieReview, ReviewSummary, ReviewsResponse, UiReview } from "../types";
 import { formatRelativeTime } from "@/libs/utils";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useAuth } from "@/contexts/AuthContext";
-import type { UiReview } from "@/components/shared/ReviewCard";
 
 const PAGE_SIZE = REVIEWS_PAGE_SIZE;
 
@@ -28,12 +27,13 @@ function mapReview(review: MovieReview, locale: "en" | "vn"): UiReview {
   };
 }
 
+/** Review total for display: `1.2k` from a thousand up, plain digits below. */
 export function formatReviewCount(count: number): string {
   if (count >= 1000) return `${(count / 1000).toFixed(1)}k`;
   return String(count);
 }
 
-export interface RatingBreakdown {
+interface RatingBreakdown {
   stars: number;
   pct: number;
 }
@@ -42,6 +42,11 @@ interface ScrollAnchor {
   current: HTMLElement | null;
 }
 
+/**
+ * Detail-page review controller: list, paging, rating summary and the
+ * create/update/delete mutations. `useReviewHighlight` owns the `#review-<id>`
+ * scroll and ring, so the two must not be merged.
+ */
 export function useMovieReviews({
   movieSlug,
   initialData,

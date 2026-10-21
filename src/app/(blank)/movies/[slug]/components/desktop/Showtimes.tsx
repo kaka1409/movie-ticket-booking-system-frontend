@@ -73,7 +73,6 @@ export default function Showtimes() {
         </div>
 
         <div className="space-y-4 p-4">
-          {/* Date chips */}
           {showDateStrip && (
             <div className="flex flex-wrap gap-2">
               {dateChips.map((chip) => {
@@ -196,7 +195,6 @@ export default function Showtimes() {
             </div>
           )}
 
-          {/* Book CTA */}
           {bookingHref ? (
             <Link
               href={bookingHref}

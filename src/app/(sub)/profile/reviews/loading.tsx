@@ -35,14 +35,12 @@ export default function ReviewsLoading() {
     <>
       <div className="min-h-dvh max-w-md mx-auto bg-(--color-bg) block md:hidden">
         <main className="px-(--space-md) pb-10 pt-2 space-y-4">
-          {/* Filter bar */}
           <div className="flex gap-3 overflow-hidden py-2">
             {Array.from({ length: 3 }).map((_, index) => (
               <Skeleton key={index} className="h-8 w-24 shrink-0 rounded-sm" />
             ))}
           </div>
 
-          {/* Review cards */}
           {Array.from({ length: 4 }).map((_, index) => (
             <ReviewCardSkeleton key={index} />
           ))}

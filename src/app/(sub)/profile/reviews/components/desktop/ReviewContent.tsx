@@ -39,9 +39,9 @@ export default function ReviewContent({
     cardSelector: "[data-review-card]",
   });
 
-  const tabItems = filters.map((f) => ({
-    key: f.key,
-    label: translate(`reviews.filters.${f.key}`),
+  const tabItems = filters.map((filter) => ({
+    key: filter.key,
+    label: translate(`reviews.filters.${filter.key}`),
   }));
 
   if (reviews.length === 0) {

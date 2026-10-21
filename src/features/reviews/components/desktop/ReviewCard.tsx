@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
 import { Check, Pencil, Star, Trash2, X } from "lucide-react";
 import Stars from "@/components/ui/Stars";
-import { useLocale } from "@/contexts/LocaleContext";
 import ExpandableText from "@/components/ui/ExpandableText";
+import { useLocale } from "@/contexts/LocaleContext";
 import { REVIEW_MAX_LENGTH } from "@/features/reviews/constants";
-import type { UiReview } from "@/components/shared/ReviewCard";
+import { useReviewEditor } from "@/features/reviews/hooks/useReviewEditor";
+import type { UiReview } from "@/features/reviews/types";
 
 function getInitials(name: string): string {
   return name
@@ -32,25 +32,10 @@ export default function ReviewCard({
   onSave: (rating: number, text: string) => Promise<boolean>;
   onDelete: () => Promise<boolean>;
 }) {
-  const [editing, setEditing] = useState(false);
-  const [editRating, setEditRating] = useState(review.rating);
-  const [editHovered, setEditHovered] = useState(0);
-  const [editText, setEditText] = useState(review.text);
   const { translate } = useLocale();
+  const editor = useReviewEditor({ review, onSave });
 
-  const handleSave = async () => {
-    if (!editRating || !editText.trim() || editText.length > REVIEW_MAX_LENGTH) return;
-    const saved = await onSave(editRating, editText.trim());
-    if (saved) setEditing(false);
-  };
-
-  const handleCancel = () => {
-    setEditRating(review.rating);
-    setEditText(review.text);
-    setEditing(false);
-  };
-
-  if (editing) {
+  if (editor.isEditing) {
     return (
       <article className="space-y-3 border-b border-(--color-border) py-5 last:border-0">
         <div className="flex gap-1">
@@ -58,16 +43,16 @@ export default function ReviewCard({
             <button
               key={star}
               type="button"
-              onMouseEnter={() => setEditHovered(star)}
-              onMouseLeave={() => setEditHovered(0)}
-              onClick={() => setEditRating(star)}
+              onMouseEnter={() => editor.setHoveredRating(star)}
+              onMouseLeave={() => editor.setHoveredRating(0)}
+              onClick={() => editor.selectRating(star)}
               aria-label={translate("movies.detail.rate_star")}
               className="cursor-pointer transition-transform duration-100 hover:scale-110"
             >
               <Star
                 size={20}
                 className={
-                  star <= (editHovered || editRating)
+                  star <= (editor.hoveredRating || editor.rating)
                     ? "text-(--color-gold) fill-(--color-gold)"
                     : "text-(--color-border) fill-(--color-border)"
                 }
@@ -77,8 +62,8 @@ export default function ReviewCard({
         </div>
 
         <textarea
-          value={editText}
-          onChange={(event) => setEditText(event.target.value.slice(0, REVIEW_MAX_LENGTH))}
+          value={editor.text}
+          onChange={(event) => editor.setText(event.target.value)}
           rows={3}
           maxLength={REVIEW_MAX_LENGTH}
           className="w-full resize-none rounded-(--radius-md) border border-(--color-border) bg-(--color-surface-2) px-4 py-3 text-sm text-(--color-text-primary) font-[inherit] outline-none transition-colors focus:border-(--color-gold)/50"
@@ -87,24 +72,22 @@ export default function ReviewCard({
         <div className="flex items-center justify-end gap-2">
           <span
             className={`mr-auto text-xs tabular-nums ${
-              REVIEW_MAX_LENGTH - editText.length < 0
-                ? "text-red-400 font-bold"
-                : "text-(--color-text-muted)"
+              editor.remaining <= 0 ? "text-red-400 font-bold" : "text-(--color-text-muted)"
             }`}
           >
-            {REVIEW_MAX_LENGTH - editText.length} / {REVIEW_MAX_LENGTH}
+            {editor.remaining} / {REVIEW_MAX_LENGTH}
           </span>
           <button
             type="button"
-            onClick={handleCancel}
+            onClick={editor.cancel}
             className="flex cursor-pointer items-center gap-1.5 rounded-(--radius-md) border border-(--color-border) px-5 py-2.5 text-sm font-bold text-(--color-text-secondary) transition-colors hover:bg-(--color-surface-2)"
           >
             <X size={13} /> {translate("movies.detail.cancel")}
           </button>
           <button
             type="button"
-            onClick={() => void handleSave()}
-            disabled={!editRating || !editText.trim() || editText.length > REVIEW_MAX_LENGTH}
+            onClick={() => void editor.save()}
+            disabled={!editor.canSave}
             className="flex cursor-pointer items-center gap-1.5 rounded-(--radius-md) bg-(--color-gold) px-5 py-2.5 text-sm font-bold text-(--color-bg) transition-all duration-150 hover:bg-(--color-gold-dark) disabled:cursor-not-allowed disabled:opacity-40"
           >
             <Check size={13} /> {translate("movies.detail.save")}
@@ -154,7 +137,7 @@ export default function ReviewCard({
           <div className="flex shrink-0 items-center gap-2">
             <button
               type="button"
-              onClick={() => setEditing(true)}
+              onClick={editor.start}
               aria-label={translate("movies.detail.edit_review")}
               className="cursor-pointer rounded-full p-1.5 transition-colors hover:bg-(--color-surface-2)"
             >

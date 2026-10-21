@@ -23,7 +23,7 @@ export default function Synopsis() {
           <button
             type="button"
             className="text-(--color-gold) font-bold ml-1 hover:underline"
-            onClick={() => setExpanded((v) => !v)}
+            onClick={() => setExpanded((previous) => !previous)}
           >
             {expanded ? translate("movies.detail.show_less") : translate("movies.detail.read_more")}
           </button>

@@ -59,7 +59,7 @@ export function useMyReviews(initialReviews: MyReview[], initialTotal: number) {
       notify(translate("profile.myreviews.toast_load_failed"), { variant: "error" });
       return;
     }
-    setReviews((prev) => [...prev, ...result.data.reviews]);
+    setReviews((previous) => [...previous, ...result.data.reviews]);
     setTotalCount(result.data.total);
   }, [isLoadingMore, reviews.length, activeFilter, locale, notify, translate]);
 
@@ -72,8 +72,8 @@ export function useMyReviews(initialReviews: MyReview[], initialTotal: number) {
         notify(translate("profile.myreviews.toast_delete_failed"), { variant: "error" });
         return;
       }
-      setReviews((prev) => prev.filter((review) => review.id !== reviewId));
-      setTotalCount((prev) => Math.max(0, prev - 1));
+      setReviews((previous) => previous.filter((review) => review.id !== reviewId));
+      setTotalCount((previous) => Math.max(0, previous - 1));
       notify(translate("profile.myreviews.toast_deleted"));
     },
     [token, notify, translate],

@@ -17,20 +17,20 @@ export default function FilterBar({
   const { translate } = useLocale();
   return (
     <nav className="flex items-center gap-3 overflow-x-auto py-2 text-sm">
-      {filters.map((f) => {
-        const isActive = f.key === active;
+      {filters.map((filter) => {
+        const isActive = filter.key === active;
         return (
           <button
-            key={f.key}
+            key={filter.key}
             type="button"
-            onClick={() => onChange(f.key as FilterKey)}
+            onClick={() => onChange(filter.key as FilterKey)}
             className={`whitespace-nowrap rounded-sm px-4 py-1.5 transition-colors ${
               isActive
                 ? "border border-(--color-gold) text-(--color-gold)"
                 : "border border-transparent text-(--color-text-muted)"
             }`}
           >
-            {translate(`reviews.filters.${f.key}`)}
+            {translate(`reviews.filters.${filter.key}`)}
           </button>
         );
       })}

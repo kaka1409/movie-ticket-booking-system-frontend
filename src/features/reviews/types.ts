@@ -55,3 +55,14 @@ export interface ReviewsResponse {
   total: number;
   ratingSummary: ReviewSummary;
 }
+
+/** A review as the movie-detail cards render it (wire row already mapped to labels). */
+export interface UiReview {
+  id: string;
+  userId: string;
+  user: string;
+  src: string | undefined;
+  rating: number;
+  time: string;
+  text: string;
+}

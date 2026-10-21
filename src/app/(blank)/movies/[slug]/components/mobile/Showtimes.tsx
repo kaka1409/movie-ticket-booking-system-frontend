@@ -59,8 +59,8 @@ export default function Showtimes() {
       let collapsedHeight = 0;
       const count = Math.min(INITIAL_CINEMAS_VISIBLE, cards.length);
 
-      for (let i = 0; i < count; i++) {
-        const card = cards[i] as HTMLElement;
+      for (let index = 0; index < count; index++) {
+        const card = cards[index] as HTMLElement;
         collapsedHeight += card.getBoundingClientRect().height;
       }
 
