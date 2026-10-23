@@ -3,7 +3,8 @@ import type {
   ComboItem,
   FoodItem,
   FoodCategory,
-  PaymentMethod,
+  PaymentCatalog,
+  PaymentIntent,
   PaymentMethodOption,
   SeatMapResponse,
   CurrentSeatHoldResponse,
@@ -33,11 +34,6 @@ interface WireCombo extends Omit<ComboItem, "description" | "image" | "tag"> {
 interface WireFoodItem extends Omit<FoodItem, "image"> {
   image: string | null;
 }
-
-const PAYMENT_IMAGES: Record<PaymentMethodOption["id"], string> = {
-  vnpay: "/images/VNPay.png",
-  momo: "/images/momo.png",
-};
 
 /** Static-ish catalogs (prices/names change rarely) — served for 60s. */
 const CATALOG_CACHE = { next: { revalidate: 60 } } as const;
@@ -77,22 +73,22 @@ export function getFoodCategories(
   );
 }
 
-/** LIVE - `GET /payment-methods` (contract §4.5) — maps `imageSrc` from a local brand map. */
+/**
+ * LIVE - `GET /payment-methods` (contract §4.5). The server catalog is the only
+ * source: every row is kept (a disabled one is "coming soon", still displayed),
+ * and the demo flag is lifted out of the envelope `meta` so the QR page can gate
+ * its controls.
+ */
 export async function getPaymentMethods(
   locale: "en" | "vn" = "en",
-): Promise<ApiResponse<PaymentMethod[]>> {
+): Promise<ApiResponse<PaymentCatalog>> {
   const result = await apiFetch<PaymentMethodOption[]>(
     withLang("/payment-methods", locale),
     CATALOG_CACHE,
   );
   if ("error" in result) return result;
 
-  return {
-    data: result.data.map((method) => ({
-      ...method,
-      imageSrc: PAYMENT_IMAGES[method.id] ?? "",
-    })),
-  };
+  return { data: { methods: result.data, demo: result.meta?.demo === true } };
 }
 
 /**
@@ -109,6 +105,25 @@ export function getBookingById(
     undefined,
     token,
     cookie,
+  );
+}
+
+/* ─── Payment intent (LIVE, client-interactive) ────────────── */
+
+/**
+ * LIVE - `GET /payments/:bookingId/intent` (contract §4.13) — the QR page polls
+ * this with the RAM Bearer token, because the route is JWT-only (the refresh
+ * cookie is not accepted). Answers the live attempt, else the newest one; a
+ * `404` means the booking has no payment row at all.
+ */
+export function getPaymentIntent(
+  bookingId: string,
+  token: string,
+): Promise<ApiResponse<PaymentIntent>> {
+  return apiFetch<PaymentIntent>(
+    `/payments/${encodeURIComponent(bookingId)}/intent`,
+    undefined,
+    token,
   );
 }
 

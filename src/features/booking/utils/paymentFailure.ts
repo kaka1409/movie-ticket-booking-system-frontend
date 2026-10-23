@@ -10,6 +10,8 @@ const FAIL_REASON_MESSAGE_KEYS: Record<PaymentFailReason, string> = {
   insufficient_funds: "booking.status.failed.reason_insufficient_funds",
   network_error: "booking.status.failed.reason_network_error",
   expired_card: "booking.status.failed.reason_expired_card",
+  user_cancelled: "booking.status.failed.reason_user_cancelled",
+  gateway_error: "booking.status.failed.reason_gateway_error",
 };
 
 const FAIL_REASON_ERROR_CODES: Record<PaymentFailReason, string> = {
@@ -17,6 +19,8 @@ const FAIL_REASON_ERROR_CODES: Record<PaymentFailReason, string> = {
   insufficient_funds: "ERR_INSUFFICIENT_FUNDS",
   network_error: "ERR_NETWORK",
   expired_card: "ERR_CARD_EXPIRED",
+  user_cancelled: "ERR_USER_CANCELLED",
+  gateway_error: "ERR_GATEWAY",
 };
 
 /** Narrows a free-form reason token (URL param or booking payload) to a known one. */

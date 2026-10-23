@@ -5,11 +5,11 @@ import { useParams, useRouter } from "next/navigation";
 import { useBooking } from "@/features/booking/context";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/contexts/LocaleContext";
-import { createBookingAction, payBookingAction } from "@/features/booking/action";
+import { createBookingAction } from "@/features/booking/action";
 import { normalizePhone } from "@/libs/zod";
 
 interface SubmitBookingResult {
-  /** Whether a supported gateway is selected, so the pay CTA may be enabled. */
+  /** Whether a gateway is selected, so the pay CTA may be enabled. */
   canPay: boolean;
   isLoading: boolean;
   errorMessage: string | null;
@@ -17,9 +17,9 @@ interface SubmitBookingResult {
 }
 
 /**
- * Payment-step controller: create → pay → route to the status page. A pay
- * failure still routes (the booking exists); only a transport failure stays
- * inline. Create `409 SEAT_TAKEN` → seats, `409 INVALID_STATE` → cinema.
+ * Payment-step controller: create the booking, then hand the payment attempt to
+ * the QR screen. Create `409 SEAT_TAKEN` → seats, `409 INVALID_STATE` → cinema;
+ * any other failure stays inline.
  */
 export function useSubmitBooking(): SubmitBookingResult {
   const params = useParams();
@@ -41,7 +41,9 @@ export function useSubmitBooking(): SubmitBookingResult {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const method = paymentMethodId === "vnpay" || paymentMethodId === "momo" ? paymentMethodId : null;
+  // The catalog decides which ids exist (the payment step only offers enabled
+  // ones); the backend validates the value against the PaymentMethod enum.
+  const method = paymentMethodId === "" ? null : paymentMethodId;
   const canPay = method !== null;
 
   const submit = async () => {
@@ -88,24 +90,12 @@ export function useSubmitBooking(): SubmitBookingResult {
         return;
       }
 
-      const paid = await payBookingAction({ bookingId: created.data.id, method }, token);
-      if (!paid.success) {
-        // Booking exists but the pay call failed (network / 409 BOOKING_EXPIRED).
-        router.push(
-          `/booking/${slug}/status/failed?bookingId=${encodeURIComponent(created.data.id)}`,
-        );
-        return;
-      }
-
-      const bookingId = encodeURIComponent(created.data.id);
-      if (paid.data.status === "success") {
-        router.push(`/booking/${slug}/status/success?bookingId=${bookingId}`);
-      } else {
-        const reason = paid.data.reason ?? "payment_declined";
-        router.push(
-          `/booking/${slug}/status/failed?bookingId=${bookingId}&reason=${encodeURIComponent(reason)}`,
-        );
-      }
+      // The booking exists and its seats are reserved: the QR screen owns the
+      // intent from here (get-or-create + polling), so a retry there can never
+      // create a second booking.
+      router.push(
+        `/booking/${slug}/payment/qr?bookingId=${encodeURIComponent(created.data.id)}&method=${method}`,
+      );
     } catch {
       // The action unions cover backend failures — this catches the server
       // action transport itself going down (Next POST unreachable).

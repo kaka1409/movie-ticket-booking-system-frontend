@@ -1,5 +1,6 @@
 import { getPaymentMethods } from "@/features/booking/api";
 import RequireDraft from "@/features/booking/components/RequireDraft";
+import PaymentDefaultAdopt from "@/features/booking/components/PaymentDefaultAdopt";
 import { getRequestLocale } from "@/libs/session";
 
 // Mobile components
@@ -24,10 +25,13 @@ export default async function PaymentPage({ params }: { params: Promise<{ slug: 
     return <PageError error={methodsResult.error} />;
   }
 
-  const paymentMethods = methodsResult.data;
+  const { methods: paymentMethods, demo: isDemo } = methodsResult.data;
 
   return (
     <RequireDraft slug={slug}>
+      {/* Both device trees render, so the catalog adoption must mount once here. */}
+      <PaymentDefaultAdopt methods={paymentMethods} />
+
       {/* Mobile */}
       <div className="block md:hidden">
         <div className="flex flex-col min-h-dvh">
@@ -39,7 +43,7 @@ export default async function PaymentPage({ params }: { params: Promise<{ slug: 
               <PaymentHeader />
               <div className="space-y-2.5">
                 {paymentMethods.map((method) => (
-                  <PaymentOption key={method.id} method={method} />
+                  <PaymentOption key={method.id} method={method} isDemo={isDemo} />
                 ))}
               </div>
             </section>
@@ -52,7 +56,7 @@ export default async function PaymentPage({ params }: { params: Promise<{ slug: 
 
       {/* Desktop */}
       <div className="hidden md:block">
-        <DesktopPaymentContent paymentMethods={paymentMethods} />
+        <DesktopPaymentContent paymentMethods={paymentMethods} isDemo={isDemo} />
       </div>
     </RequireDraft>
   );

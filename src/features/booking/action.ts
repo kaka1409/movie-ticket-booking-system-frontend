@@ -1,7 +1,13 @@
 "use server";
 
 import { apiMutation, type ApiResponse } from "@/libs/api";
-import type { BookingDetail, PayResult } from "./types";
+import type {
+  BookingDetail,
+  PaymentIntent,
+  PaymentMethodId,
+  PaymentOutcomeWithIntent,
+  SimulatedOutcome,
+} from "./types";
 
 export type BookingActionResult<T> =
   { success: true; data: T } | { success: false; error: string; status?: number; code?: string };
@@ -39,7 +45,7 @@ export interface CreateBookingRequest {
   contact: { name: string; email: string; phone: string };
   combos?: { comboId: string; quantity: number }[];
   foods?: { foodItemId: string; quantity: number }[];
-  paymentMethod: "vnpay" | "momo";
+  paymentMethod: PaymentMethodId;
 }
 
 /** `POST /bookings` (contract §4.9) — server prices everything, returns the detail. */
@@ -59,19 +65,60 @@ export async function createBookingAction(
   }
 }
 
-/** `POST /payments/:bookingId/pay` (contract §4.10) — simulation, 50/50. */
-export async function payBookingAction(
-  input: { bookingId: string; method: "vnpay" | "momo" },
+/** Shared transport for the three payment mutations: envelope in, union out. */
+async function mutatePayment<T>(
+  path: string,
+  body: unknown,
   token: string,
-): Promise<BookingActionResult<PayResult>> {
+): Promise<BookingActionResult<T>> {
   try {
-    const result = await apiMutation<ApiResponse<PayResult>>(
-      `/payments/${encodeURIComponent(input.bookingId)}/pay`,
-      { method: "POST", body: JSON.stringify({ method: input.method }) },
+    const result = await apiMutation<ApiResponse<T>>(
+      path,
+      body === undefined ? { method: "POST" } : { method: "POST", body: JSON.stringify(body) },
       token,
     );
     return union(result);
   } catch (error) {
     return failure(error);
   }
+}
+
+/**
+ * `POST /payments/:bookingId/create` (contract §4.12) — opens the provider
+ * intent. Replaying it while one is live returns that same intent, so calling
+ * it again is safe; `409 BOOKING_EXPIRED` means the payment window is gone.
+ */
+export async function createPaymentIntentAction(
+  input: { bookingId: string; method: PaymentMethodId },
+  token: string,
+): Promise<BookingActionResult<PaymentIntent>> {
+  return mutatePayment<PaymentIntent>(
+    `/payments/${encodeURIComponent(input.bookingId)}/create`,
+    { method: input.method },
+    token,
+  );
+}
+
+/** `POST /payments/:bookingId/simulate` (contract §4.14) — demo mode only. */
+export async function simulatePaymentAction(
+  input: { bookingId: string; outcome: SimulatedOutcome },
+  token: string,
+): Promise<BookingActionResult<PaymentOutcomeWithIntent>> {
+  return mutatePayment<PaymentOutcomeWithIntent>(
+    `/payments/${encodeURIComponent(input.bookingId)}/simulate`,
+    { outcome: input.outcome },
+    token,
+  );
+}
+
+/** `POST /payments/:bookingId/sync` (contract §4.15) — reconcile a lost webhook. */
+export async function syncPaymentAction(
+  input: { bookingId: string },
+  token: string,
+): Promise<BookingActionResult<PaymentOutcomeWithIntent>> {
+  return mutatePayment<PaymentOutcomeWithIntent>(
+    `/payments/${encodeURIComponent(input.bookingId)}/sync`,
+    undefined,
+    token,
+  );
 }

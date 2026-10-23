@@ -77,13 +77,12 @@ export interface FoodItem {
 
 /* ─── Payment Types ──────────────────────────────────────── */
 
-export interface PaymentMethod {
-  id: string;
-  name: string;
-  description: string;
-  imageSrc: string;
-  badge?: string;
-}
+/**
+ * Payment method ids are opaque wire values owned by the backend catalog
+ * (`GET /payment-methods`): the app never hardcodes the list, so adding a
+ * method server-side needs no FE change.
+ */
+export type PaymentMethodId = string;
 
 /**
  * Slim movie snapshot adopted at the cinema step — the only movie data the
@@ -170,25 +169,75 @@ export interface SeatHoldResponse {
   ttlSeconds: number;
 }
 
-/** `GET /payment-methods` — the FE adds `imageSrc` from a local map. */
+/** `GET /payment-methods` (contract §4.5) — ids, labels and order all come from the server. */
 export interface PaymentMethodOption {
-  id: "vnpay" | "momo";
+  id: PaymentMethodId;
   name: string;
   description: string;
+  /** False = still listed, never selectable (no adapter yet / sales switch off). */
+  enabled: boolean;
+}
+
+/** `GET /payment-methods` as the page consumes it — the full catalog plus the demo flag. */
+export interface PaymentCatalog {
+  methods: PaymentMethodOption[];
+  /** True when the simulated provider serves charges, so the demo controls may be shown. */
+  demo: boolean;
 }
 
 export type BookingStatus =
   "pending" | "paid" | "confirmed" | "used" | "expired" | "transferred" | "cancelled" | "refunded";
 
+/** Mirrors the backend `PaymentFailReason` enum — each value maps to an i18n message. */
 export type PaymentFailReason =
-  "payment_declined" | "insufficient_funds" | "network_error" | "expired_card";
+  | "payment_declined"
+  | "insufficient_funds"
+  | "network_error"
+  | "expired_card"
+  | "user_cancelled"
+  | "gateway_error";
 
-/** `POST /payments/:bookingId/pay` (contract §4.10) — 50/50 simulation. */
-export interface PayResult {
-  status: "success" | "failed";
-  transactionRef: string | null;
+/** Lifecycle of one provider attempt (contract §4.13). */
+export type PaymentIntentStatus = "pending" | "success" | "failed" | "expired";
+
+/** Which handle the provider handed back: a scannable code or a hosted page to open. */
+export type PaymentIntentKind = "qr" | "redirect";
+
+/** `GET /payments/:bookingId/intent` (contract §4.13). */
+export interface PaymentIntent {
+  paymentId: string;
+  bookingId: string;
+  method: PaymentMethodId;
+  status: PaymentIntentStatus;
+  amount: number;
   reason: PaymentFailReason | null;
+  transactionRef: string | null;
+  /** Derived from the provider handle — null on a row that never reached the provider. */
+  kind: PaymentIntentKind | null;
+  qrPayload: string | null;
+  deeplink: string | null;
+  payUrl: string | null;
+  expiresAt: string | null;
 }
+
+/** What the backend did with a webhook / simulate call (contract §4.16). */
+export type PaymentSettlement =
+  "settled" | "declined" | "late_success" | "duplicate_charge" | "no_change";
+
+/** `POST /payments/:bookingId/simulate | sync` (contract §4.14–4.16). */
+export interface PaymentOutcome {
+  settlement: PaymentSettlement;
+  paymentId: string;
+  refundId: string | null;
+  ticketId: string | null;
+  bookingStatus: BookingStatus;
+}
+
+/** Both mutation answers carry the resulting intent, so the page never re-reads it. */
+export type PaymentOutcomeWithIntent = PaymentOutcome & { intent: PaymentIntent };
+
+/** Scripted answers the demo provider may return. */
+export type SimulatedOutcome = "success" | "failure" | "cancelled";
 
 /** `GET /bookings/:id` (contract §4.11) — status pages + payment result. */
 export interface BookingDetail {
@@ -199,7 +248,7 @@ export interface BookingDetail {
   expiresAt: string | null;
   transactionRef: string | null;
   payment: {
-    method: "vnpay" | "momo";
+    method: PaymentMethodId;
     status: "pending" | "success" | "failed";
     reason: PaymentFailReason | null;
   } | null;

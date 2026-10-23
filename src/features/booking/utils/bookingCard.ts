@@ -1,10 +1,6 @@
 import type { Movie } from "@/types";
-import type { BookingDetail, SelectedCombo, SelectedSeat } from "../types";
-
-const PAYMENT_METHOD_LABELS: Record<"vnpay" | "momo", string> = {
-  vnpay: "VNPAY",
-  momo: "MoMo",
-};
+import { getPaymentLabel } from "../paymentBrand";
+import type { BookingDetail, PaymentMethodOption, SelectedCombo, SelectedSeat } from "../types";
 
 interface BookingCardData {
   /** Seats merged per label — both sweetbox chairs collapse back into one pair line. */
@@ -19,10 +15,13 @@ interface BookingCardData {
 
 /**
  * Map a `GET /bookings/:id` payload onto the shape the success/failed cards
- * render (they were written against BookingContext). Used only when the page
- * was reached with `?bookingId=` — otherwise the cards fall back to context.
+ * render (they were written against BookingContext). The payment label is
+ * resolved from the catalog because the ids are opaque wire values.
  */
-export function bookingCardData(booking: BookingDetail): BookingCardData {
+export function bookingCardData(
+  booking: BookingDetail,
+  paymentMethods: PaymentMethodOption[],
+): BookingCardData {
   const seatsByLabel = new Map<string, SelectedSeat>();
   for (const seat of booking.seats) {
     const existing = seatsByLabel.get(seat.label);
@@ -58,7 +57,7 @@ export function bookingCardData(booking: BookingDetail): BookingCardData {
       })),
     ],
     paymentMethod: booking.payment
-      ? (PAYMENT_METHOD_LABELS[booking.payment.method] ?? booking.payment.method)
+      ? getPaymentLabel(paymentMethods, booking.payment.method)
       : "N/A",
     total: booking.totalPrice,
     theater: [

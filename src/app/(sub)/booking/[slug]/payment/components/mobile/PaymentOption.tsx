@@ -1,27 +1,47 @@
 "use client";
 
 import Image from "next/image";
-import { CheckCircle2 } from "lucide-react";
-import type { PaymentMethod } from "@/features/booking/types";
+import { CheckCircle2, FlaskConical, Lock } from "lucide-react";
+import Badge from "@/components/ui/Badge";
+import { useLocale } from "@/contexts/LocaleContext";
+import type { PaymentMethodOption } from "@/features/booking/types";
 import { useBooking } from "@/features/booking/context";
+import { getPaymentBrandImage } from "@/features/booking/paymentBrand";
 
-export default function PaymentOption({ method }: { method: PaymentMethod }) {
+/**
+ * One catalog card. A method the server reports `enabled: false` stays visible
+ * ("coming soon") but is inert — the payment step must never hand the flow a
+ * gateway that would answer 503.
+ */
+export default function PaymentOption({
+  method,
+  isDemo,
+}: {
+  method: PaymentMethodOption;
+  isDemo: boolean;
+}) {
+  const { translate } = useLocale();
   const { paymentMethodId, setPayment } = useBooking();
-  const selected = paymentMethodId === method.id;
-  const { imageSrc } = method;
+  const selected = method.enabled && paymentMethodId === method.id;
+  const brandImage = getPaymentBrandImage(method.id);
 
   return (
     <button
       type="button"
+      disabled={!method.enabled}
+      aria-pressed={selected}
+      aria-disabled={!method.enabled}
       onClick={() => {
+        if (!method.enabled) return;
         // Id for the pay action; display name for PriceBreakdown / ticket cards.
         setPayment(method.id, method.name);
       }}
-      aria-pressed={selected}
-      className={`w-full flex items-center gap-4 px-4 py-4 rounded-2xl border transition-all duration-150 active:scale-[0.99] text-left ${
-        selected
-          ? "bg-(--color-surface) border-(--color-gold) shadow-[0_0_0_1px_rgba(255,204,77,0.12)]"
-          : "bg-(--color-surface) border-(--color-border) hover:border-(--color-gold)/30"
+      className={`w-full flex items-center gap-4 px-4 py-4 rounded-2xl border transition-all duration-150 text-left ${
+        !method.enabled
+          ? "bg-(--color-surface) border-(--color-border) opacity-55 cursor-not-allowed"
+          : selected
+            ? "bg-(--color-surface) border-(--color-gold) shadow-[0_0_0_1px_rgba(255,204,77,0.12)] active:scale-[0.99]"
+            : "bg-(--color-surface) border-(--color-border) hover:border-(--color-gold)/30 active:scale-[0.99]"
       }`}
     >
       <div
@@ -31,11 +51,25 @@ export default function PaymentOption({ method }: { method: PaymentMethod }) {
             : "border-(--color-text-muted) bg-transparent"
         }`}
       >
-        {selected && <div className="w-2 h-2 rounded-full bg-[#0F0F0F]" />}
+        {selected ? (
+          <div className="w-2 h-2 rounded-full bg-[#0F0F0F]" />
+        ) : (
+          !method.enabled && <Lock size={10} className="text-(--color-text-muted)" />
+        )}
       </div>
 
       <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 bg-(--color-surface-2) overflow-hidden">
-        <Image src={imageSrc} alt={method.name} width={28} height={28} className="object-contain" />
+        {brandImage ? (
+          <Image
+            src={brandImage}
+            alt={method.name}
+            width={28}
+            height={28}
+            className="object-contain"
+          />
+        ) : (
+          <FlaskConical size={20} className="text-(--color-gold)" />
+        )}
       </div>
 
       <div className="flex-1 min-w-0">
@@ -47,6 +81,16 @@ export default function PaymentOption({ method }: { method: PaymentMethod }) {
           >
             {method.name}
           </span>
+          {!method.enabled && (
+            <Badge variant="neutral" size="xs">
+              {translate("booking.payment.coming_soon")}
+            </Badge>
+          )}
+          {method.enabled && isDemo && (
+            <Badge variant="gold" size="xs">
+              {translate("booking.payment.demo")}
+            </Badge>
+          )}
         </div>
         <p className="text-xs text-(--color-text-muted) mt-0.5">{method.description}</p>
       </div>
