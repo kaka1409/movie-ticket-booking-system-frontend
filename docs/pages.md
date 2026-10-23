@@ -1,0 +1,362 @@
+# Per-page implementation detail
+
+## Auth Pages (Login & Register)
+
+Three routes under `(auth)/` — login, register and a prepared `forgot-password` placeholder. Every page renders **both** device trees, so the form logic lives once in `features/auth/hooks/` and the four skins (login/register × mobile/desktop) are presentation only.
+
+- **Login route**: `(auth)/login/page.tsx` — server component, reads `searchParams.returnUrl` and resolves it with `authReturnTarget()` (`libs/utils.ts`): `getSafeReturnUrl` sanitization (must start with a single `/`, rejects `//host`, `/\host` and every auth entry point — `/login`, `/register`, `/forgot-password`) plus `"/"` → `undefined`, so the tab links stay plain (`/login`, never `/login?returnUrl=%2F`). Renders the mobile + desktop `LoginForm`.
+- **Register route**: `(auth)/register/page.tsx` — same shape; `returnUrl` arrives from the login page's register link, so a visitor bounced off a protected page who signs up instead of signing in still lands where they were going.
+- **Forgot-password route**: `(auth)/forgot-password/page.tsx` — **placeholder**: the real form's shape (email field + submit) with the CTA `disabled` and an honest "still being built" note, because the backend reset endpoint does not exist yet. One body (`components/ForgotPasswordForm.tsx`, no device split — the layouts already differ around it) turns the login form's long-dead `/forgot-password` link into a page that is ready for the wiring.
+- **Auth layout**: `(auth)/layout.tsx` → `LayoutProvider(layout="auth")` → device switch.
+  - Mobile `AuthLayout` (unchanged): Logo + LanguageToggle header, centred content.
+  - Desktop `AuthLayout`: the shared `DesktopShell` (site header + footer, so the auth screens navigate like every other page) around a centred `max-w-7xl` card that holds **two tiles** — the artwork and the form — with the artwork owning the majority of the width (`lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]`, 3:2). The card owns the padding (`p-2 lg:p-3`) and the artwork is a real rounded tile inside it (`relative overflow-hidden rounded-xl`), not a full-bleed backdrop: nothing sits _under_ the form, so the poster can never be mistaken for the page background and the card keeps one radius. From `lg:` the row is `lg:min-h-[620px]` (the tile carries the floor; the form grows it when the register checklist makes it taller) and the tile must keep `lg:h-auto`, otherwise the fixed tablet `h-52` would win over the grid row height and the artwork would cover only a top strip. Below `lg:` — the 740–1023px band — the tile becomes an in-flow `h-52` banner above the form in a single column. The promo copy (`PromoBrand` + headline + subtitle) lives inside the tile at every breakpoint; the bullets stay `lg:`-only because the 208px tablet banner has no room for them. The form column carries `.surface-raised` because `FormField` paints `--color-surface` — without the lift the input wells would vanish into the flat card. The skins drop their `max-w-md` from `lg:` (`lg:max-w-none`) — the 2fr column is already the right width — and keep it below, where the column is full width.
+  - Promo content lives in `layouts/auth/constants.ts`: `AUTH_PROMO_IMAGE` (+ its `sizes` — the `lg:` tile is ~710 CSS px at the capped container width), currently `/images/og-cover.png` standing in for the real key art — spec: landscape 4:3, ≥1600×1200, ≤500 KB — and `AUTH_PROMO_BULLETS`, the three selling points (keys under `auth.promo.*`).
+- **Form logic** (`features/auth/hooks/`): `useLoginForm({ returnUrl })` / `useRegisterForm({ returnUrl })` own the fields, Zod validation (`touched` gates the field errors), the server-action call and the post-auth redirect; the skins read the controller and render controls. **Register also signs you in**: `POST /auth/register` answers with a message and no session, so the hook then calls `loginAction` with the same credentials, adopts the session via `setAuth` and lands on `returnUrl`; if that follow-up fails (the account does exist by then) it falls back to `buildLoginUrl(returnUrl)`. `useLogout()` is the one sign-out path — `clearAuth()` → `logoutAction()` → `router.push("/")`, returning `isLoggingOut` — shared by the mobile `ProfileMenu` and the desktop `AccountMenu`.
+- **Tab switch**: the login/register switch is `ui/Tabs` with `linkFor` (`buildLoginUrl`/`buildRegisterUrl`) — real links, so each form keeps its own URL, `returnUrl` travels between the tabs, and no shared chrome remounts. `onTabChange` is therefore optional (button variant only).
+- **Validation**: Zod schemas from `features/auth/schema.ts` — `createLoginSchema(translate)` and `createRegisterSchema(translate)` (factory functions). Pattern: `schema.safeParse()` → `result.error.flatten().fieldErrors` → `touched` + show errors.
+- **Password rules**: `PASSWORD_RULES` in `libs/zod.ts` — 8 characters, uppercase, number, special — is the single source: `ui/PasswordChecklist.tsx` renders it live (labels under `common.password.*`) for the desktop register form and the change-password page, and the exporting schemas validate with the same regexes sitting right above it, so a checklist can never disagree with the validator. The desktop register form prints it under the password pair, always visible; mobile keeps the plain field set.
+- **Header CTA**: the desktop `Header` hides its Login button on `/login`, `/register` and `/forgot-password` (and their sub-paths) — the card carries its own CTA, and a second one beside it is noise. The profile chip still wins when a session exists.
+- **Desktop header popups** (`layouts/main/desktop/`): `NotificationBell.tsx` — the bell opens the inbox (`ui/Dropdown`); it lists **every** notice in a capped, hidden-scrollbar panel (`max-h-[min(70vh,480px)] overflow-y-auto scrollbar-hide`) with mark-all-read plus an explicit close (X) button in its header — the panel is tall enough that clicking outside should not be the only way out — and each row marks itself read and follows its action href. Its rows are `features/notifications/components/NotificationRow.tsx` at `density="compact"` (the page renders the same component at `"comfortable"`), and a "View all notifications" footer hands off to the `/notifications` page, which owns the All/Unread switch (see _Notifications_). `AccountMenu.tsx` — the header chip (avatar with the `DEFAULT_AVATAR_SRC` brand fallback, name, chevron; no tier line) opens a `role="menu"` panel: identity header, then two labelled `role="group"` sections — Account (Profile, Change Password) and Activity (Review & Rating, Wishlist), the same `profile.account`/`profile.activity` keys the mobile menu uses — each row an icon tile (`h-7 w-7 rounded-lg bg-(--color-surface-2)`) that tints gold with the row plus a chevron that fades in on hover, and finally a red Logout reusing the shared `useLogout()`. The locale switch uses `variant="flag"`, matching mobile.
+- **API calls**: Server actions in `features/auth/action.ts` — `loginAction()`, `registerAction()`, `refreshAction()`, `logoutAction()` (all `"use server"`).
+- **Auth context**: `src/contexts/AuthContext.tsx` — `AuthProvider` wraps root layout, `useAuth()` hook provides `{ user, token, isAuthenticated, isLoading, setAuth, clearAuth, updateUser }`. AuthContext is **state-only** — consumer components (LoginForm, RegisterForm, ProfileMenu) call server actions directly, then update state via `setAuth()`/`clearAuth()`. Access token stored in RAM only (React state). Refresh token in HttpOnly cookie (managed by server actions via `cookies()` API). On mount, calls `refreshAction()` to restore session.
+- **Error handling**: 401 → "Invalid email or password", 409 → "Email already exists", other → generic server error — rendered by the shared `ui/ErrorAlert.tsx` (`role="alert"`, so the message is announced when it appears).
+- **CSS conventions**: Uses `bg-(--color-gold)`, `text-(--color-text-muted)`, `border-(--color-border)` parenthesized syntax (NOT `bg-[--color-gold]` bracket syntax).
+- **Backend endpoints**:
+  - `POST /api/v1/auth/login` — body `{ email, password }` → `{ data: { accessToken, user } }` + Set-Cookie: refreshToken (HttpOnly, Secure, SameSite=Strict, path=/)
+  - `POST /api/v1/auth/register` — body `{ fullname, email, password }` → `{ data: { message } }`
+  - `POST /api/v1/auth/refresh` — forwards refreshToken cookie → new accessToken + new refreshToken cookie (rotation)
+  - `POST /api/v1/auth/logout` — forwards refreshToken cookie → clears refresh token cookie + revokes token in DB
+
+## Protected Route Guards
+
+Protection is layered (outside-in):
+
+1. **Server gate** — `hasSession(): Promise<boolean>` from `src/libs/session`, called at the top of `(sub)/layout.tsx`, `(main)/tickets/page.tsx`, `(main)/profile/page.tsx`. When the `refreshToken` cookie is absent it renders `LoginPrompt` in place of children — no redirect: the visitor stays on the protected URL and the prompt's CTA links to `/login?returnUrl={pathname}` (sanitized again by the login page).
+
+- Page-level gates (`tickets`, `profile`) return before any fetch → nothing leaves the server.
+- The layout-level gate (`(sub)/`) swaps only the DOM output: Next 16 still executes the child page segment, so its rows land in the flight `<script>` payload but are never committed to the DOM. With a live backend that cookie-less fetch answers 401 → error union → no protected data enters the payload; during the mock phase only placeholder mock data appears there.
+
+2. `src/components/shared/ProtectedRoute.tsx` — client component, UX layer (handles a cookie that exists but fails `refreshAction()`):
+
+- `isLoading` → auth-gate skeleton inside the same `AuthGateShell` card the prompt uses, so nothing shifts when the restore settles
+- `!isAuthenticated` → `LoginPrompt` (icon + "Login Required" + a CTA link to `/login?returnUrl={pathname}` and a "Sign Up" link to `/register?returnUrl={pathname}` — `usePathname()` feeds both)
+- `isAuthenticated` → render children
+- Rendered at page level by `tickets/page.tsx` and `profile/page.tsx`, and at layout level by `(sub)/layout.tsx`
+
+3. **Backend enforcement** — server-side fetches of user-scoped data forward the incoming cookies via `getRequestCookie()` (see API Layer).
+
+- `src/components/shared/LoginPrompt.tsx` — shared prompt UI: returned directly by the server gate, and reused by `ProtectedRoute` for the client-side fallback. Both CTAs are real `<Link>`s (`buildLoginUrl`/`buildRegisterUrl`), never programmatic pushes, so a visitor with no account reaches register in one step with the `returnUrl` intact — and the register page signs the new account in. Its chrome is `src/components/shared/AuthGateShell.tsx`: the plain mobile stack below `md:`, one centred `max-w-md` card from `md:` up (`.surface-raised` inside the card keeps the prompt's `bg-(--color-surface)` icon tile a step above the card). The prompt replaces the page, so it owns its own band; `md:` is the device split there, not a desktop enhancement, because the device layout renders it and exactly one instance exists per request.
+- **Component-level protection**: Movie detail `Reviews.tsx` conditionally renders `WriteReview` — shows login CTA for unauthenticated users, review list remains public
+
+| Route                                                                | Protected?               |
+| -------------------------------------------------------------------- | ------------------------ |
+| `/`, `/home`, `/movies`, `/movies/:slug`                             | Public                   |
+| `/tickets`, `/profile`                                               | Protected (page-level)   |
+| `/profile/*`, `/tickets/:id/*`, `/booking/:slug/*`, `/notifications` | Protected (layout-level) |
+
+Known gap: a present-but-revoked `refreshToken` cookie passes `hasSession()`. Handled without ever leaving the URL: client-side a backend 401 dispatches `UNAUTHORIZED_EVENT` (`libs/api.ts` `notifyUnauthorized`, `/auth/*` excluded) → `AuthContext` only clears state and `ProtectedRoute` swaps to the prompt in place; server-side callers check `isUnauthorizedResult(result)` (`libs/session.ts`) on `apiFetch` results and return `<LoginPrompt />` — wired on tickets listing/detail, booking seats/status pages (the stale cookie itself can't be cleared from a server component; the next login overwrites it). Rule: no `redirect()` to `/login` anywhere on the 401 path — a child-segment redirect used to win over the parent layout's prompt and yank the URL, which is exactly the bug this rule prevents.
+
+## Ticket Detail Page
+
+Two-level routing:
+
+- **Listing**: `(main)/tickets/page.tsx` — server URL pager (`?tab=&page=`, one tab fetched per render) inside main layout with BottomNav. Server gate (`hasSession()` → `LoginPrompt`) + `<ProtectedRoute>` client fallback. Mobile renders `Tabs` + `UpcomingTicketList`/`PastTicketList` + `Pager`; desktop `TicketsContent` is a null stub. Each upcoming card wears its status on the **poster**: a full-width `TicketCountdown` ribbon (client-only, ticks against the absolute showtime deadline, compact units — the poster is ~96 px wide) for a usable ticket, or the gold `tickets.transfer.pending_badge` ribbon while a transfer is in flight (a countdown would be misleading). The tag row keeps a gold pill carrying the one thing the ribbon cannot fit — the recipient name (`features/tickets/adapters.ts` → `isTransferring`/`transferRecipientName`).
+- **Detail**: `(sub)/tickets/[id]/page.tsx` — renders components directly (no props). **Layout** (`layout.tsx`) is the server component that calls `getTicketById(id, await getRequestCookie())`, wraps children in `<TicketDetailProvider>`. Components read ticket from `useTicketDetail()` context.
+
+Detail page components under `(sub)/tickets/[id]/components/`:
+
+- `mobile/TicketInfo.tsx` — hero poster, theater/location, seat, food & drink, QR code, payment summary
+- `mobile/TicketActions.tsx` — owner: Download Ticket (only while a scan payload exists) + Cancel & Refund (only for success/confirmed/pending) + Transfer Ticket (upcoming only). Recipient (`viewerRole === "recipient"`): Accept Transfer + Decline only.
+- `mobile/QRCode.tsx` — `qrcode.react` rendering the backend's signed scan payload (`ticketId.qrToken.signature`) as-is; the URL form (`https://primseat.com/tickets/{id}`) is only a fallback for values without a payload (never called with a bare id from the detail page)
+- `desktop/TicketDetail.tsx` — stub (returns null)
+
+Past tickets show the same detail layout but without action buttons.
+
+**QR gating**: the backend issues `qrCode`/`qrToken` **only** for a usable ticket (owner + `active` + not revoked) — a used/expired/refunded/cancelled ticket and a pending recipient get neither. The FE never fabricates a QR: `TicketInfo` renders `<QRCode value={ticket.qrCode}/>` only when the payload exists (no `ticket.id` fallback) and otherwise shows a neutral panel labelled with `PAST_STATUS_META` (`tickets.detail.qr_invalid_hint` when the status is not a past one), and `TicketActions` hides **Download Ticket** whenever `ticket.qrCode` is absent. Rationale: a dead QR is misleading — the gate (`POST /tickets/check-in`) rejects it with `TICKET_NOT_ACTIVE` / `TICKET_EXPIRED`.
+
+**Past-status badges**: the backend persists the terminal status (`used` | `expired` | `cancelled` | `refunded`) — `toPastStatus` (adapters) passes it straight through and `PastCard` reads `PAST_STATUS_META[status]` (`features/tickets/status.ts`) for the badge label (`translate(meta.labelKey)` → `tickets.used`/`tickets.expired`/`tickets.refunded`/`tickets.cancelled`). Use the `isPastStatus()` guard before indexing the map (the detail status union also carries upcoming values). Never derive "expired" from the showtime client-side: the backend expiry sweep (minute cron) is the authority, and a ticket that was checked in, refunded or cancelled must keep showing _that_ status. **No muted styling** — every past card renders at full opacity.
+
+**Transfer provenance**: `GET /tickets/past` also returns the tickets the viewer transferred away, so `toPastTicket` maps the summary's settled-transfer field to `PastTicket.transferProvenance` (deliberately not `transfer` — that name is the _open_ transfer detail on `UpcomingTicket`, and the detail context narrows on it) and `toPastStatus` returns the viewer-derived `"transferred"` status (a `TicketStatus` member that exists only on the FE) for `direction: "sent"`. `PastCard` shows the provenance badge (`tickets.transfer.sent_badge` / `received_badge`) **instead of** the terminal badge whenever `transferProvenance` is present, and for a sent ticket it names the recipient where the "View Details" link would be — ownership moved on accept, so the detail endpoint answers 404 for the sender and the link must not be rendered.
+
+**Transfer expiry** (no FE code): the backend closes a `pending` transfer once its accept window ends (one hour before the showtime starts) — the row becomes `expired`, the sender's QR is re-armed and both parties get a notice (`transfer_expired` for the sender, `transfer_offer_expired` for the recipient). `expired` never reaches the wire (listings expose `pending`/`accepted` only), so the only visible effect is the `pending_badge` ribbon and the recipient's offer panel disappearing — driven by the notification push above. Never compute this cutoff client-side.
+
+**Live refresh** (`features/tickets/components/TicketRealtimeRefresh.tsx`): the ticket _writer_ is often not the viewer, so both the listing (`<TicketRealtimeRefresh />`, no id) and the detail layout (`<TicketRealtimeRefresh ticketId={...} />`) stay honest about a transfer the other side accepted/declined/cancelled. Triggers: the notification push (`notification:new` → provider dispatches `TICKET_UPDATED_EVENT` with `{ ticketId }`) and returning to a hidden tab; a 15 s throttle coalesces them. A listener reacts unless the event names a _different_ ticket. On the detail page the ticket is re-read **before** refreshing — `getTicketById` answering 404 means ownership moved away, so the visitor is sent to `/tickets` (`router.replace`) instead of rendering the layout's `notFound()`; otherwise `router.refresh()`.
+
+## Ticket Transfer
+
+Two sub-routes under `(sub)/tickets/[id]/transfer/`:
+
+- `transfer/page.tsx` — wraps **both** device trees with one `TransferProvider` (they both render, so a per-branch provider would fork the draft), then renders `SeatSelector`, `RecipientInput`, `TransferBottomBar`. Mobile/desktop split via `block md:hidden`.
+- `transfer/confirm/page.tsx` — **server component** that reads `searchParams` (`seats`, `recipient` = email, `transferSnacks`), calls `getRecipient()` (exact email), redirects to transfer page if invalid. Renders `ConfirmCard`, `ConfirmBottomBar`.
+
+Both have `loading.tsx`. Desktop stubs return null.
+
+Components under `transfer/components/`:
+
+- `mobile/SeatSelector.tsx` — seat toggle for transferable seats
+- `mobile/RecipientInput.tsx` — exact-email recipient lookup (valid email → `getRecipient()` → `GET /user/search`; adopts the single match into the transfer context, shows "not found" otherwise)
+- `mobile/TransferBottomBar.tsx` — sticky bottom bar with transfer CTA → links to confirm page (passes the recipient email)
+- `desktop/TransferContent.tsx` — stub
+
+Components under `transfer/confirm/components/`:
+
+- `mobile/ConfirmCard.tsx` — transfer summary (seats, recipient, snacks toggle)
+- `mobile/ConfirmBottomBar.tsx` — the mobile layout around the shared confirm control: `features/tickets/hooks/useTransferSubmit.ts` resolves the selected seat labels to backend seat UUIDs at render and binds `createTransferAction`, `features/tickets/components/TransferConfirmForm.tsx` renders the repeated hidden `seatId` inputs inside a real `<form action={formAction}>` (plus hidden `ticketId`/`recipientEmail`/`transferSnacks`), and the hook redirects to the ticket detail from an effect on success (never during render). The CTA is `type="submit"` and disabled when no transferable seat resolves.
+- `desktop/ConfirmContent.tsx` — stub
+
+`TransferContext.tsx` (`features/tickets/contexts/`) manages `selectedSeats`, `recipient`, `transferSnacks` state. `TicketDetailContext.tsx` provides `{ ticket, viewerRole, transfer, incomingTransfer }` from layout.
+
+### Incoming transfers (recipient side)
+
+`GET /tickets/:id` also answers for the recipient of the ticket's open transfer, so the `transfer received` notification (which already links to `/tickets/{ticketId}`) opens a real page. The payload is view-shaped by the backend:
+
+- `viewerRole: "owner" | "recipient"` — `TicketDetailContext` exposes the resolved value (defaults to `owner` for list-derived data).
+- Owner: `transfer` (who it is going to) + the QR.
+- Recipient: `incomingTransfer` (`{ id, sender, transferredSeats, transferSnacks }`) and **no QR** (`qrToken`/`qrCode` are null/absent until they accept).
+- `TicketInfo` renders the offer panel instead of the QR; `TicketActions` renders Accept/Decline instead of Download/More actions.
+- Accept → `acceptTransferAction` (`POST /tickets/transfers/:id/accept`) then `router.refresh()` — the same URL re-renders as the owner view with the QR. Decline → `declineTransferAction` then `router.replace("/tickets")`. Both are real `<form action={formAction}>` submits (hidden `transferId`), and `isAccepting || isDeclining` disables **both** buttons while a decision is in flight.
+- The owner's Cancel Transfer button (`TicketInfo` pending-transfer panel) is likewise a `<form action={formAction}>` with a hidden `ticketId`, refreshing on success.
+- `409 TRANSFER_NOT_PENDING` is treated as "already handled" (the actions carry `status`/`code` through the union), not as an error.
+
+## Ticket Modify
+
+Five sub-routes under `(sub)/tickets/[id]/modify/` — there is **no payment step**: the backend accepts only changes that keep the amount paid identical (same cinema, same seat-type mix), so the review CTA submits and lands straight on success.
+
+- `modify/page.tsx` — type picker (`TypeCards`): showtime / seats / both. The choice lives in `ModificationContext` (`ModificationProvider` wraps the segment in `modify/layout.tsx`), so every later step reads the same draft.
+- `modify/showtime/page.tsx` — `ShowtimeDataLoader` fetches `GET /tickets/:id/modify/eligible-showtimes` (same movie, same cinema, still outside the cutoff). `EligibleShowtime.requiresSeatSelection` is the server's answer: a target room other than the ticket's needs a fresh seat pick, so `BottomBar` routes to `seats` instead of `review` in that case.
+- `modify/seats/page.tsx` — `SeatMapWrapper` loads the chosen showtime's map (the current one for a seats-only change); the SweetBox pair rule and the seat count come from the ticket.
+- `modify/review/page.tsx` — `ComparisonCard` (current vs new showtime/seats) + `PriceSummary` (total paid, "same-price change — no extra charge") + `limit_notice` (one change per ticket). `BottomBar` → `useModifySubmit` posts `{ newShowtimeId?, newSeatIds? }` (absent keys mean unchanged) through `modifyTicketAction` and routes to `success`; a 409/400 message from the server renders inline through `BookingBottomBar`'s `errorText`.
+- `modify/success/page.tsx` — confirmation linking back to the ticket.
+
+Rules the FE must not re-implement (backend `api-contract.md` §7.2): same movie, same cinema, one change per ticket, same seat-type multiset, ≥ 1 h before the current showtime, QR rotated after success. A price change answers `409 MODIFICATION_REQUIRES_PAYMENT`; cancel + rebook is the only path until top-up/refund exists. Desktop skins for this cluster are still null stubs.
+
+## Ticket Cancel & Refund
+
+Single route under `(sub)/tickets/[id]/cancel/` — no separate routes for success/failed:
+
+- `cancel/page.tsx` — **client component**; the 4-view machine (`idle` summary / `processing` overlay / `success` / `failed`) lives in `features/tickets/hooks/useCancelFlow.ts` so both device skins drive it from one place. Reads ticket from `useTicketDetail()` context (parent layout). Computes cancellation fee (fixed ₫20,000), total paid, and refund amount locally.
+- `cancel/loading.tsx` — skeleton matching summary layout
+- `cancel/components/mobile/CancelSummary.tsx` — movie info card (poster, title, cinema, datetime), seats, price breakdown (ticket + combo), total paid, cancellation fee, refund amount, refund-to section (payment method from ticket), cancellation policy link, Continue button
+- `cancel/components/mobile/CancellationPolicySheet.tsx` — bottom sheet with 4 policy rules, Done button. Uses `ActionSheet` wrapper.
+- `cancel/components/mobile/ConfirmationSheet.tsx` — bottom sheet with refund amount, "Cancel Booking" (red) + "Keep My Ticket" buttons. Uses `ActionSheet` wrapper.
+- `cancel/components/mobile/CancelResult.tsx` — success state: animated green checkmark (same pattern as booking status success), refund info card with "Processing" badge, View Ticket + Back to Home buttons. Failed state: animated red alert with shake keyframe (same pattern as booking status failed), refund info card with "Refund Failed" badge, Try Again + Contact Support buttons.
+- `cancel/components/desktop/CancelContent.tsx` — stub (returns null)
+
+Entry point: `TicketActions.tsx` Cancel & Refund row → `router.push(/tickets/${id}/cancel)`. Currently shown only when `canCancel` is true (status success/confirmed/pending) and no pending transfer.
+
+Cancellation fee is fixed ₫20,000 (policy time from backend in future). `cancelTicketAction` is the live server action (`POST /tickets/:id/cancel`) — the backend decides the refund outcome. After success, "View Ticket" calls `router.replace()` + `router.refresh()` to re-fetch server-side ticket data.
+
+## Profile Page
+
+`page.tsx` is a **server component** wrapped with `<ProtectedRoute>`, renders `Avatar`, `UserInfo`, `ProfileMenu` directly (no props). All client components read user from `useAuth().user` context.
+
+- `components/mobile/Avatar.tsx` — conic-gradient ring around the shared `ui/Avatar` (reads `user.avatarUrl` from auth context with the `DEFAULT_AVATAR_SRC` brand fallback; external URL from Contentful via `images.ctfassets.net` in `remotePatterns`)
+- `components/mobile/UserInfo.tsx` — name + tier badge (Star icon, reads `user.name` from auth context)
+- `components/mobile/MenuSection.tsx` — reusable menu card with icon rows, hover via Tailwind `hover:bg-(--color-surface-2)`
+- `components/desktop/ProfileContent.tsx` — desktop overview: identity hero + 3 stat tiles (upcoming tickets / reviews / wishlist, counts from server, `—` on fetch failure) + account details; wraps in `AccountShell`
+- Shared desktop chrome for the whole account area: `features/profile/components/desktop/{AccountShell,AccountNav,AccountSkeleton}.tsx` — `AccountShell` is the eyebrow + gold-bar `h1` + description/action row over a sticky nav and one `rounded-2xl bg-(--color-surface)` panel whose `.surface-raised` inner wrapper lifts every nested card; the tablet band (740–1023) flattens the nav into a pill strip. `AccountNav` derives the active entry from `usePathname()` through `accountSectionForPathname()` (longest href wins, trailing slash tolerated) instead of taking an `active` prop, so a page cannot disagree with the nav about where it is, and `features/profile/accountSections.ts` is the single source of nav entries. Each desktop account page owns its `mx-auto w-full max-w-7xl px-6 py-8 lg:px-8` band (the sub layout is a bare `DesktopShell`), and the desktop branch of every `loading.tsx` repeats that band around `AccountSkeleton`.
+
+No BottomNav or TopNav — layout provides both. Menu items use i18n keys `profile.*`.
+
+## Change Password Page
+
+`(sub)/profile/password/page.tsx` — thin compose (mobile + desktop):
+
+- `components/mobile/PasswordField.tsx` — reusable password input with Eye/EyeOff toggle, focus + error border states
+- `components/mobile/PasswordRequirements.tsx` — card around the shared `ui/PasswordChecklist` (the page owns the card + title, the rules and their live state come from `PASSWORD_RULES`)
+- `components/mobile/PasswordForm.tsx` — orchestrator with `validate()`, `touched` state, validation on submit, UPDATE PASSWORD + CANCEL actions; the CTA is `disabled` while `PASSWORD_CHANGE_ENABLED` is false
+- `components/desktop/ChangePasswordContent.tsx` — form column (fields + `ui/ErrorAlert`) beside the shared `ui/PasswordChecklist`; the CTA is honestly disabled and an info box carries `profile.password.unavailable`, both gated by `PASSWORD_CHANGE_ENABLED = false` in `features/profile/constants.ts` because the backend has no change-password endpoint. Neither skin pretends the form works.
+
+Validation: Current Password (required), New Password (required + min 8 chars + uppercase + number + special char), Confirm Password (required + must match). `showErrors = touched && !isValid`.
+
+Sub layout routing: `getSubTitle()` returns "Change Password". Back button goes to `/profile` (handled by existing `/profile` prefix rule).
+
+## Edit Profile Page
+
+`(sub)/profile/edit/page.tsx` — thin compose (mobile + desktop):
+
+- `components/mobile/ProfileForm.tsx` — profile form with fields, uses `updateProfileAction` server action via `useTransition`
+- `components/mobile/AvatarEditor.tsx` — avatar editor; the camera control is disabled and the panel states `profile.edit.photo_unavailable` because the backend has no avatar upload
+- `components/desktop/EditProfileContent.tsx` — avatar column + two-column field grid driven by the same `useProfileForm` controller as the mobile form (so the DOB round-trip fix cannot drift between skins); actions sit right-aligned (`ui/Button fullWidth={false}`).
+
+Validation: Full name (required), phone (required), DOB as date picker. `loading.tsx` present.
+
+## Reviews & Rating Page
+
+`(sub)/profile/reviews/page.tsx` — reviews listing:
+
+- `components/mobile/ReviewList.tsx` — review list wrapper
+- `components/mobile/ReviewCard.tsx` — individual review card with rating, text, date
+- `components/mobile/FilterBar.tsx` — filter bar for rating-based filtering
+- `components/mobile/StarRating.tsx` — star rating display component
+- `components/mobile/LoadMoreButton.tsx` — load more pagination
+- `components/desktop/ReviewContent.tsx` — count line + `ui/Tabs stretch={false}` sort + `ReviewRow` cards (poster, title, rating, `ExpandableText` body, two-tap delete) + Load more + `EmptyState`; the listing state (paging, sort, delete) comes from `features/reviews/hooks/useMyReviews.ts`, shared with the mobile list. `ReviewRow`'s destructive confirm is its own red `<button>` (Button `size="sm"` metrics) rather than a recoloured gold `primary`.
+
+The page fetches `getMyReviews({ skip: 0, limit: 10, sort: "recent" }, cookie, locale)` and `getReviewFilters(locale)` server-side and hands both to either skin. `loading.tsx` present.
+
+## Wishlist Page
+
+`(sub)/profile/wishlist/page.tsx` — server component: fetches live `getWishlist(cookie, locale)` (no mock — entries carry the full movie card via `WishlistItem`; failure → local draft fallback), mounts `WishlistHydrate`, then composes:
+
+- `components/mobile/WishlistHydrate.tsx` — effect-only mount adoption of server ids into the draft (booking `CinemaAdopt` pattern)
+- `components/mobile/WishlistMovieList.tsx` — count sentence (`count_prefix`/`count_suffix`) on top, search bar (title + genre, debounced) + All/Now Showing/Coming Soon chips (shared `ui/Chip` `variant="outline"`, reviews style) + single-column list; filtering is client-side; local-only ids without a BE payload never render; `isBookable` reads `movie.status`
+- `components/mobile/WishlistCard.tsx` — vertical card (16:9 poster banner on top + title/meta row), Book CTA for now-showing or a muted "Coming Soon" label otherwise, heart toggle (undoable removal via parent snackbar)
+- `components/mobile/EmptyState.tsx` — empty state when wishlist is empty
+- `components/desktop/WishlistContent.tsx` — `SearchBar` + outline `ui/Chip` status tabs + poster grid (`grid-cols-3 xl:grid-cols-4`) of `WishlistPosterCard`, undoable removal via `ui/UndoSnackbar`; filtering/undo state comes from `features/wishlist/hooks/useWishlistBrowser.ts`, shared with the mobile list. `WishlistEmptyState` lives in `features/wishlist/components/` because both skins render it.
+
+Uses `WishlistProvider` from `features/wishlist/context.tsx` at root layout. `loading.tsx` present.
+
+## Notifications
+
+One inbox, two surfaces, one state.
+
+- **Data** — `NotificationProvider` (`features/notifications/context.tsx`) is the client source of truth: SSR-seeded by the root layout (cookie fetch, current locale), kept live by the `notification:new` socket, re-read on reconnect and on a locale switch. Both surfaces read `useNotifications()`, so the bell badge, the tab counts and the rows can never disagree. The list is gated on `isAuthenticated || isLoading` — the server has no session state, so `isAuthenticated` is `false` while the server renders and a plain `isAuthenticated` gate would discard the seed and flash an empty inbox; `isLoading` keeps it open until the restore settles, and a logged-out visitor seeds `[]` anyway. The FE asks for `?limit=50`; older notices are out of reach until paging is added (the backend already reports `page`/`hasNextPage`).
+- **Mobile** — `(sub)/notifications/page.tsx` → `components/mobile/NotificationList.tsx` + `NotificationCard` (unchanged): mark-all-read strip, cards, tapping a card marks it read.
+- **Desktop** — `components/desktop/NotificationList.tsx`: one reading column (`mx-auto w-full max-w-4xl px-6 py-8 lg:px-8` — an inbox stretched to 7xl is mostly whitespace), a gold-bar `h1` + `notif.subtitle` + an outline mark-all-read CTA, then a `bg-(--color-surface)` panel (`.surface-raised` inside) holding an All/Unread `ui/Tabs` bar over `divide-y` rows. The tabs pass `idBase="notifications"`, so the region is a real `role="tabpanel"` wired with `aria-controls`/`aria-labelledby`. Filtering is **local state**: the list is already loaded, so switching tabs must not cost a navigation and the URL would add nothing the back button can use. The Unread tab keeps only unread rows and each tab has its own empty state (`notif.no_notifications` vs `notif.empty_unread_*`).
+- **Rows** — `features/notifications/components/NotificationRow.tsx` with `density="compact"` (popup: 36 px tile, clamped message, read rows `opacity-55`) or `"comfortable"` (page: 44 px tile, three-line message, chevron cue, read rows keep contrast — only the title drops to the secondary colour). The whole row is the target and is a `<Link>` when the notice carries an action, a `<button>` otherwise — never a link nested inside a link.
+- **Bell** — the header popup stays the quick view; its footer links here.
+
+## Cinema & Showtime Page
+
+`(sub)/booking/[slug]/cinema/page.tsx` — server component: resolves the movie via live `getMovieDetail(slug)` (the booking flow's **only** movie-detail fetch — `REVALIDATE_MOVIE_DETAIL` = 1 h, adopted into the draft for every later step), date options via `getShowtimeDates(slug)`, and slots via `getShowtimes(slug, date)`, then composes mobile components directly:
+
+- `components/mobile/StepBar.tsx` — 5-step booking progress bar (SELECT CINEMA → SELECT SEATS → FOOD & DRINKS → CONTACT INFO → PAYMENT)
+- `components/mobile/MovieSummary.tsx` — mini poster + movie info (duration, genre, ageRating, rating)
+- `components/mobile/SearchBar.tsx` — cinema/location search input
+- `components/mobile/CinemaList.tsx` — list wrapper + empty state (cinema cards rendered inline)
+- `components/mobile/BottomBar.tsx` — sticky bottom bar with selection summary + "SELECT SEATS" CTA → links to `/booking/[slug]/seats`
+- `components/desktop/CinemaContent.tsx` — stub (returns null)
+
+Sub layout provides back button (→ movie detail) + "Cinema & Showtime" title. State lives in the booking reducer (`useBooking()`); the page mounts `CinemaAdopt` (URL selection **and** the `BookingMovie` snapshot) and passes `movie`/`cinemas`/`dates` down as props.
+
+## Seat Selection Page
+
+`(sub)/booking/[slug]/seats/page.tsx` — server component: redirects to `/booking/[slug]/cinema` when `?showtimeId=` is missing, otherwise fetches `getSeatMap(showtimeId)` + `getShowtimeById(showtimeId)` in parallel (401 → `redirectIfUnauthorized`), adapts the wire map via `adaptSeatMap`, and composes mobile components:
+
+- `components/mobile/StepBar.tsx` — step=2
+- `components/mobile/CountdownBanner.tsx` — session-deadline countdown: shows `countdownStartTime + countdownSeconds` once the session started (hold re-presses never move it), `holdExpiresAt` is only a fallback for a session the tab forgot, static `countdownSeconds` (10:00) pre-CTA. The value derives from the absolute deadline (no setState-in-effect).
+- Seat map rendered inline in page (fixed layout, no zoom/pan — `SeatGrid` fits the viewport width). Screen rendered as curved SVG arc. Max seats comes from the seat-map wire (`maxSeats`, currently 8), counted in CHAIRS (`seatIds.length`, so a sweetbox pair counts 2).
+- `components/mobile/BottomBar.tsx` — sticky bottom bar, selected seats + total (per-cell `price` from the wire — sweetbox cell price is the price of both chairs), "Continue to Snacks" CTA. The CTA is a handler, not a link: it is where the seat hold is finally created (`PUT /seat-holds`), then `setHoldExpiresAt` + `startCountdown` + `router.push('/snack')` on success; `409` → `recoverSeatMap` + inline `booking.seats.hold_taken`; any other failure → inline `booking.seats.hold_failed`. Picking seats writes nothing to the server.
+- `components/desktop/SeatContent.tsx` — stub (returns null)
+
+Seat-hold lifecycle — the hold is created **at the seats-step CTA** (`PUT /seat-holds`); re-pressing only re-syncs the hold to the new selection, never the session. The 10-minute session is enforced by `SessionExpiryWatcher` (mounted once in `booking/[slug]/layout.tsx`, so it fires on every step — not just seats):
+
+- CTA (seats `BottomBar`): `PUT /seat-holds` (set-replacement, TTL 600 s) → adopt `expiresAt` as `holdExpiresAt`, `startCountdown()` (first press starts the session, later presses no-op), advance to the snack step. A `409 SEAT_TAKEN` refetches the map via `recoverSeatMap` (`utils/seatMap.ts`) and stays on the step — the taken cells come back `occupied`, the survivors stay selected for a retry.
+- Mount: `GET /seat-holds?showtimeId=` restores the caller's live hold (seat ids re-selected, `expiresAt` adopted as `holdExpiresAt`); expired/empty holds are ignored. The session clock itself restores from `sessionStorage`, so a hard refresh keeps the original deadline.
+- Selection change: **no network call.** Emptying the selection while a hold is live (`holdExpiresAt !== null`) sends `DELETE /seat-holds?showtimeId=` — the PUT body is `@ArrayNotEmpty` server-side. Abandoned holds are reaped by the backend cleanup cron (1 min).
+- Session expiry (1 s interval in `SessionExpiryWatcher` vs the session deadline) → `DELETE /seat-holds` even when the hold TTL is still valid + selection cleared + `expireSession()` (clock reset, draft kept) so a re-pick + CTA starts a new session.
+- Hold expiry (1 s interval in `useSeatHolds` vs `holdExpiresAt`) → safety net for the backend dropping a hold early: selection cleared + `holdExpiresAt` nulled.
+- The backend now enforces the SweetBox pair rule server-side (`PUT /seat-holds`, `POST /bookings`, modify-seats): a partial cell answers `400 VALIDATION_ERROR` with the offending cell in the message. The FE always toggles whole cells, so this should never fire — if it does, recover the map like a `SEAT_TAKEN`.
+- `GET /bookings/:id` returns `expiresAt: null` once the booking is `paid` (the backend clears it on settle); keep the countdown/null-guard logic as-is (`expiresAt: string | null`).
+- The settle path is `POST /payments/:bookingId/create` (intent) + the QR page: the booking step never charges, it only creates the booking. `POST /payments/:bookingId/pay` still exists as the pre-intent **legacy** route (single-settle and idempotent — a double submit answers `200` twice with the same `transactionRef`), but the app no longer calls it. A `409 INVALID_STATE` on either path also means "the showtime already started".
+- Booking summary syncs from `?showtimeId=` when the step is opened directly.
+
+Booking flow navigation:
+
+- Movie detail `BookTicketCTA` → `/booking/[slug]/cinema` (passes `?showtimeId=X` when a showtime slot was picked on the detail page)
+- Cinema BottomBar → `/booking/[slug]/seats?showtimeId=...` (active only when cinema+time selected)
+- Seats BottomBar → `PUT /seat-holds` (creates the hold + starts the countdown) → `/booking/[slug]/snack`
+- Snack BottomBar → `/booking/[slug]/credentials`
+- Credentials BottomBar → `/booking/[slug]/payment`
+- Payment BottomBar → `createBookingAction` → `/booking/[slug]/payment/qr?bookingId=...&method=...` → the QR page opens the intent and routes to the success/failed page (see Payment QR Page)
+
+## Snack Page
+
+`(sub)/booking/[slug]/snack/page.tsx` — server component, fetches the live catalogs in parallel (`getCombos`, `getFoodItems`, `getFoodCategories` — contract §4.2–4.4), composes mobile components:
+
+- `components/mobile/ComboCard.tsx` — combo card with image (null-safe), name, description, price, quantity stepper
+- `components/mobile/FoodItemCard.tsx` — food item card with Next.js `<Image>` (null-safe), name, price, quantity stepper
+- `components/mobile/CategorySection.tsx` — category header + food item list
+- `components/mobile/Stepper.tsx` — quantity stepper (minus/plus buttons)
+- `components/mobile/BottomBar.tsx` — sticky bottom bar, snack total + "Continue" CTA → `/booking/[slug]/credentials`
+
+Section titles (`Quick Combos`, `Pick & Mix`) use `--color-gold-dark`. Prices use `--color-gold-light`. Stepper quantities are derived from the selected arrays in the booking draft — zeroing a stepper updates the totals immediately and back-navigation restores the quantities without any sync effect.
+
+## Credentials Page
+
+`(sub)/booking/[slug]/credentials/page.tsx` — **server component** that fetches nothing (the movie comes from the draft, the contact lives in `BookingProvider`) and wraps its output in `<RequireDraft slug={slug}>` so a cold deep link or hard refresh bounces back to the cinema step instead of rendering an unfillable form:
+
+- Shared state: `ContactForm` syncs its local fields into the booking draft via `setCredentials`; `BottomBar` derives `isValid` from the same draft with `createContactSchema(translate)` — no separate credentials context
+- `components/mobile/TextInput.tsx` — reusable text input with label
+- `components/mobile/PhoneField.tsx` — phone input with country code selector (CDN flags via `flagcdn.com/w20/{flag}.png`)
+- `components/mobile/FieldLabel.tsx` — field label component
+- `components/mobile/ContactForm.tsx` — prefill priority: saved BookingContext contact info → logged-in auth user (`fullname`/`email`) → empty
+- `features/booking/components/OrderSummary.tsx` — takes no props; reads the movie snapshot (`BookingMovie` adopted at the cinema step) plus cinema, room, date/time, seats, seat type, combos, foods and total from BookingContext. Shared with the payment step on purpose: the recap must not change shape between two adjacent steps.
+- `components/mobile/BottomBar.tsx` — sticky bottom bar, total + "Continue to Payment" CTA → `/booking/[slug]/payment`, derives `isValid` from the booking contact draft
+
+## Payment Page
+
+`(sub)/booking/[slug]/payment/page.tsx` — **server component** that fetches only `getPaymentMethods(locale)` (contract §4.5), wraps its output in `<RequireDraft slug={slug}>` (same draft guard as credentials), and imports components directly (no extra provider):
+
+- **The server catalog is the only source of methods** — ids, labels, descriptions and order all come from `GET /payment-methods`; the page keeps no list of its own. `PaymentDefaultAdopt` (effect-only, mounted **once at page level** because both device trees render) preselects the single sellable method (the usual demo state) and clears a draft pointing at a method the server no longer sells, so the CTA is usable without a click.
+- **`enabled: false` means "coming soon"**: every row still renders — `PaymentOption` leaves a disabled card visible with a lock plus the `booking.payment.coming_soon` badge but inert (`disabled`/`aria-disabled`), and the sellable demo method wears `booking.payment.demo` when `meta.demo` is set. Availability is server-computed; the FE never decides it.
+- Shared state: the selection lives in the booking draft (`paymentMethodId` + `paymentMethod` display name via `setPayment(id, name)`), shared between `PaymentOption` and `BottomBar`; the id persists across back-navigation (a re-entered payment page keeps the radio pre-selected) and is cleared by `resetBooking()`.
+- `components/mobile/PaymentOption.tsx` — one catalog card: brand logo from `features/booking/paymentBrand.ts` (`public/images/VNPay.png`, `public/images/momo.png` via `next/image`) or a `FlaskConical` tile for an id the app has no art for, so a method added later still renders readably; reads `paymentMethodId`/`setPayment` from `useBooking()` (one dispatch writes both the id and the display name)
+- `components/desktop/PaymentContent.tsx` — the same picker inside `BookingStepLayout` (two-up from `xl:`) with the pay CTA in the rail; both skins drive `useSubmitBooking`, so the create → QR hand-off exists once
+- `features/booking/components/OrderSummary.tsx` — same component as the credentials step (no props; movie snapshot + booking details from BookingContext)
+- `components/mobile/SecureBadge.tsx` — security badge
+- `components/mobile/TermsNote.tsx` — terms & conditions note
+- `components/mobile/BottomBar.tsx` — sticky bottom bar. On CTA: `createBookingAction(seats + snacks + contact, RAM token)` and then hand off to the QR screen — the booking is created here, the payment attempt is not:
+  - success → `/payment/qr?bookingId=...&method={gateway}`
+  - create `409 SEAT_TAKEN` → `/seats?showtimeId=...` (seats stolen; the restore idle-check keeps survivors)
+  - create `409 INVALID_STATE` → `/cinema` (showtime unusable)
+  - no selection / no token / no showtime → inline error (`booking.payment.error_missing_selection`) — the payment page never fabricates a booking from mock data
+  - Other errors → inline error text from the union
+
+`StepBar current={5}` maps to "PAYMENT" step. The success route also works when `?bookingId=` is absent (direct URL) — the cards then fall back to the BookingContext draft.
+
+## Payment QR Page
+
+`(sub)/booking/[slug]/payment/qr?bookingId=&method=` — the focused checkout screen (deliberately **no** `StepBar`/`StepRail`: the mobile sub-header keeps the generic "Payment" title and its back button returns to the movie). Server component: a missing `?bookingId=` redirects to `/payment`; it fetches `getBookingById` + `getPaymentMethods` in parallel, `404` → `notFound()`, `status === "paid"` → `/status/success`. Method precedence: a `?method=` the catalog actually lists → `booking.payment.method` → the first sellable catalog method; when nothing is sellable it redirects to `/payment`, the one place that can explain why. A catalog outage must not block a payment that is already open: the screen then falls back to the booking's (or the URL's) method and hides the demo panel.
+
+- **The page owns the attempt**, not the payment step. `usePaymentIntent` (device-agnostic; mounted once by `PaymentQrScreen` above both skins) opens it on mount — `GET /payments/:bookingId/intent` and, when that answers `404` **or** a `pending` row with `kind: null` (the handleless row `POST /bookings` writes), `POST .../create` — then polls every 3 s while `pending`. A retry here can therefore never create a second booking, and a refresh re-shows the open QR instead of minting a charge.
+- **Routing follows the attempt's own state**: `success` → re-read the booking and open `/status/success` only when it is `paid` (a charge captured after the window is refunded instead, so the page shows the refund notice); `failed` → `/status/failed?reason={intent.reason}`. `expired` stays on the page: its panel offers a new attempt, which answers `409 BOOKING_EXPIRED` once the booking itself is gone — that flips the page to a closed state with a "Choose seats again" CTA.
+- **Simulate / sync**: `createPaymentIntentAction` / `simulatePaymentAction` / `syncPaymentAction` (`features/booking/action.ts`, token as an argument like the rest of the booking mutations); `getPaymentIntent` (`api.ts`) is the one booking query that runs in the browser with the RAM Bearer, because the route is JWT-only. `settled` → success page, `declined` → failed page, `late_success` (or `duplicate_charge` without a paid booking) → refund notice, `no_change` → "not confirmed yet" while polling continues.
+- **Demo controls** are gated by `meta.demo` on `GET /payment-methods` (surfaced as `PaymentCatalog.demo`), so the panel is never rendered on a server that would answer `403`. The page threads the **whole** catalog into the screen (`paymentMethods`) so the recap and the receipt labels resolve through `getPaymentLabel`; whether a method is sellable is already decided by the payment step and by the booking's own record, never re-derived here.
+- Shared presentation lives in `features/booking/components/payment/`: `PaymentQrCard` (QR + amount + method + reference + its own 1 s window clock — display only; the backend owns expiry), `PaymentIntentActions` (the always-on "check status" CTA + the demo-only simulate panel), `PaymentStatusPanel` (closed / expired / refund-queued / error / notice). The order recap is `features/booking/components/ReceiptCard.tsx`, shared with the success page.
+
+## Success & Fail Pages
+
+Both pages are plain server components with no `<Suspense>` — nothing client-side reads `useSearchParams()` anymore. White text theme throughout. Each `page.tsx` reads `?bookingId=` (plus `?transactionId=` / `?reason=`) and fetches `getBookingById(bookingId, await getRequestCookie())` when a `bookingId` is present (401 → `redirectIfUnauthorized(result, pathname)`); `getMovieDetail(slug)` runs **only when** `bookingId` **is absent** (direct/mock-era URL — the real flow redirects with a `bookingId`, and its payload already carries the movie). It derives `transactionId` (URL param → `booking.transactionRef` → `booking.id` → `"N/A"`) and `reason` (URL param → `booking.payment.reason`) server-side, passes everything as props, and renders `<PaidBookingReset booking={booking}/>`.
+
+**Desktop is a separate design, not the mobile stack widened.** Both screens share one skeleton: a left-aligned hero (`SuccessHero` / `FailHero` — icon beside the copy, driven by `useMounted()`) over a `max-w-6xl` body that is **one column below `lg:`** and `lg:grid-cols-[minmax(0,1fr)_360px]` above it — the receipt card + the side panel, so the side panel drops under the receipt in the 740–1023px band (same rule as the booking steps).
+
+- `(sub)/booking/[slug]/status/success/page.tsx` — mobile: `SuccessIcon` (shared) + `TicketCard` + `SuccessActions`; desktop `components/desktop/`: `SuccessHero`, `ReceiptCard` (movie identity + theater/day + `PriceBreakdown`), `SuccessSidePanel` (QR + booking ref + Download / Back to Home), composed by `SuccessContent`.
+- `(sub)/booking/[slug]/status/failed/page.tsx` — mobile: `FailedIcon` + `FailedOrderCard` + `FailActions`; desktop `components/desktop/`: `FailHero`, `FailedReceipt` (red-tinted border + error-code pill), `FailSidePanel` (Retry / Back to Home + the support card), composed by `FailContent`.
+- Data derivation is shared, never re-implemented per skin: `resolveTicketIdentity(movie, booking)` (poster/title/ageRating precedence) in `features/booking/utils/bookingCard.ts`, and `failReasonMessageKey(reason)` / `paymentErrorCode(reason)` in `features/booking/utils/paymentFailure.ts` (the two maps used to be copy-pasted per component).
+- `PaidBookingReset.tsx` (`features/booking/components/PaidBookingReset.tsx`) — effect-only (renders nothing), mounted by both pages: dispatches `resetBooking()` when the fetched booking status is `paid`, so a paid booking ends the flow and drops the local draft (a still-failed booking keeps its draft for the retry path).
+
+## Shared Booking Components
+
+`booking/components/mobile/` (shared across all booking steps):
+
+- `StepBar.tsx` — 5-step booking progress bar, reads `BOOKING_STEP_KEYS`, highlights current step
+- `CountdownBanner.tsx` — session-deadline countdown (session first-CTA + 10 min wins over the hold TTL; static 10:00 pre-CTA or after a lapsed session, ticking once a session starts)
+
+`src/components/shared/` — booking-shaped blocks the ticket pages render too:
+
+- `DetailRow.tsx` — reusable label/value row with icon, used in ticket cards
+- `PriceBreakdown.tsx` — shared seats→snacks→payment/total block used by ticket detail, booking success/failed cards, transfer confirm and the credentials/payment OrderSummary
+
+## Movies Page Deep Linking
+
+URL scheme for movies page with query params:
+
+```
+/movies?status=now_showing
+/movies?status=coming_soon&genres=Action,Drama&ratingMin=4.5&ratingMax=9&format=IMAX&ageRating=R
+```
+
+| Param                     | Values                                | Default       |
+| ------------------------- | ------------------------------------- | ------------- |
+| `status`                  | `now_showing`, `coming_soon`          | `now_showing` |
+| `genres`                  | Comma-separated (e.g. `Action,Drama`) | empty         |
+| `ratingMin` / `ratingMax` | numbers 0–10 (inclusive window)       | empty         |
+| `format`                  | `2D`, `IMAX`, `4DX`                   | empty         |
+| `ageRating`               | `P`, `PG-13`, `R`, `NC-17`            | empty         |
+
+`ratingMin`/`ratingMax` are clamped into 0–10 on read and an inverted pair is dropped before it can reach the API (the backend answers `400` for `min > max`); a bound sitting on its edge (min `0`, max `10`) means "unbounded" and is omitted. The old single-bound `?rating=` param is gone — the panel and the API move together (`forbidNonWhitelisted` turns a stray `rating` into a `400`).
+
+Home page "See All" / "Explore All" buttons link to movies page with appropriate `status` param.
+
+URL → state is applied **once, server-side at render** (via `features/movies/url.ts`); the provider then drives the URL itself with `router.replace` on tab/filter changes. Browser back/forward does not re-apply URL state to the already-mounted provider.

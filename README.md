@@ -102,13 +102,13 @@ src/
 - Responsive layout: `LayoutProvider` selects layout type (main/auth/sub/blank), each layout's `index.tsx` uses `useDevice()` hook to switch between mobile/desktop variants — seeded from the server UA guess (`DeviceProvider`) so first paint never flashes, `matchMedia` corrects on resize
 - Brand theme uses CSS variables (gold/black palette) in `global.css`
 - Movie poster images configured in `next.config.ts` `images.remotePatterns`
-- API layer (`features/*/api.ts`): movies, booking flow (seat map/holds/catalogs/create/pay/detail), tickets listing/detail and reviews list are LIVE against the backend; remaining mocks are ticket recipients/eligible-showtimes, notifications, wishlist, and ticket-modify screens (each marked `MOCK`/`TODO(api)` at the function). Auth mutations (`features/auth/action.ts`) connect to real backend via `apiMutation()` with cookies.
+- API layer (`features/*/api.ts`): every catalog and flow is LIVE against the backend — movies, booking (seat map/holds/catalogs/create/payment intent/detail), tickets (listing/detail/transfer/modify/cancel), wishlist, notifications and reviews. Only field fallbacks remain (`movies/mock.tsx` for the desktop hover preview, `reviews/mock.ts` for the review filters). Auth mutations (`features/auth/action.ts`) connect to real backend via `apiMutation()` with cookies.
 - Server components: `page.tsx` files are server components that fetch data via API layer (`await`) and pass props to client components (`tickets/[id]/cancel` is a client state machine by design). Protected pages (`/tickets`, `/profile`, `(sub)/*`) are gated server-side (`hasSession()` → `LoginPrompt`) plus the `<ProtectedRoute>` client fallback.
 - Auth system: RAM-only access token, HttpOnly cookie refresh token, automatic session restore on mount via `/api/v1/auth/refresh`
 - Protected routes: `/tickets`, `/profile`, and all `(sub)/*` routes require authentication. Unauthenticated users see a login prompt with CTA.
 - Movie detail review form is gated by auth — unauthenticated users see "Sign in to write a review" prompt, but review list remains public.
-- Complete booking flow: cinema → seats → snack → credentials → payment → status/success or status/failed (6 pages, BookingContext persists state across steps)
-- Payment step calls the real backend: `createBookingAction` then `payBookingAction` (the BE payment itself is still a simulated gateway) → success or failed status page
+- Complete booking flow: cinema → seats → snack → credentials → payment → QR → status/success or status/failed (`BookingProvider` persists the draft across steps)
+- Payment step creates the booking (`createBookingAction`) and hands off to the QR page, which owns the attempt (`createPaymentIntentAction` → 3 s poll → simulate/sync). The method list comes from `GET /payment-methods`, so availability ("coming soon", demo controls) is decided by the server — the UI keeps no method list of its own
 - Edit profile page with field validation (full name, phone, DOB as date picker) — SAVE CHANGES button only active when changes detected
 - Change password page with 4 requirement checks (8+ chars, uppercase, number, special char), errors shown on submit
 - Wishlist page with persistent WishlistContext at root layout, heart toggle on movie detail
