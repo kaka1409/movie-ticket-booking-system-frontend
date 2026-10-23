@@ -34,7 +34,7 @@
       "privacy": "Chính Sách Bảo Mật",
       "terms": "Điều Khoản Dịch Vụ",
       "cookies": "Cài Đặt Cookie",
-      "copyright": "\u00a9 2026 PrimeSeat Cinemas Entertainment Group. Mọi quyền được bảo lưu."
+      "copyright": "© 2026 PrimeSeat Cinemas Entertainment Group. Mọi quyền được bảo lưu."
     }
   },
   "nav": {
@@ -44,8 +44,6 @@
     "profile": "Cá Nhân"
   },
   "home": {
-    "featured_coming_soon": "Sắp Chiếu",
-    "promo": "KHUYẾN MÃI",
     "see_all": "XEM TẤT CẢ",
     "featured_films": "Phim nổi bật",
     "movie_row": {
@@ -72,30 +70,22 @@
       "coming_soon_desc": "Đặt vé trước cho các phim sắp ra mắt",
       "for_you": "DÀNH CHO BẠN",
       "explore_all": "Khám Phá Thêm",
-      "estimated_total": "Tổng ước tính:",
       "view_schedule": "Xem Lịch Chiếu",
       "quick_book_now": "Đặt Nhanh",
       "quick_booking_section": "Thanh đặt vé nhanh",
-      "decrease_tickets": "Giảm số vé",
-      "increase_tickets": "Tăng số vé",
       "now_showing_section": "Phim Đang Chiếu",
       "view_movie_details": "Xem chi tiết",
       "featured_section": "Băng chuyền phim nổi bật",
       "go_to_slide": "Đến trang",
       "for_you_section": "Gợi ý dành cho bạn",
       "coming_soon_section": "Phim Sắp Chiếu",
+      "season": "Mùa phim 2026",
       "prev_coming_soon": "Phim sắp chiếu trước",
       "next_coming_soon": "Phim sắp chiếu tiếp",
       "notify_me": "Nhận thông báo về",
       "preview_director": "Đạo diễn",
-      "preview_cast": "Diễn viên",
       "preview_release_date": "Khởi chiếu",
-      "preview_language": "Ngôn ngữ",
-      "preview_watch_trailer": "Xem Trailer",
-      "preview_book_now": "Đặt Vé Ngay",
-      "preview_details": "Chi Tiết",
-      "preview_add_wishlist": "Thêm vào yêu thích",
-      "preview_remove_wishlist": "Xoá khỏi yêu thích"
+      "preview_language": "Ngôn ngữ"
     }
   },
   "movies": {
@@ -130,16 +120,7 @@
       "medium": "90-120 phút",
       "long": "> 120 phút"
     },
-    "genre_name": {
-      "action": "Hành Động",
-      "adventure": "Phiêu Lưu",
-      "comedy": "Hài",
-      "drama": "Tâm Lý",
-      "horror": "Kinh Dị",
-      "romance": "Tình Cảm",
-      "scifi": "Khoa Học Viễn Tưởng",
-      "thriller": "Giật Gân"
-    },
+    "genre_name": {},
     "not_found": "Không tìm thấy phim",
     "detail": {
       "min": "phút",
@@ -160,8 +141,6 @@
       "next_page": "Trang sau",
       "delete_confirm": "Bạn có chắc muốn xóa đánh giá này?",
       "login_to_review": "Đăng nhập để viết đánh giá",
-      "you": "Bạn",
-      "just_now": "Vừa xong",
       "ratings": "đánh giá",
       "remove_wishlist": "Xóa khỏi danh sách yêu thích",
       "add_wishlist": "Thêm vào danh sách yêu thích",
@@ -182,10 +161,7 @@
     "past": "Vé Đã Xem",
     "no_upcoming": "Chưa có vé sắp tới",
     "no_past": "Chưa có vé đã xem",
-    "load_more": "Xem Thêm",
-    "load_older": "Xem Vé Cũ Hơn",
     "booking_id": "Mã Đặt Vé",
-    "pay_now": "Thử lại",
     "view_details": "Xem Chi Tiết",
     "seats_label": "Ghế: ",
     "used": "Đã Dùng",
@@ -199,17 +175,9 @@
       "starting_soon": "Sắp chiếu",
       "in_progress": "Đang chiếu"
     },
-    "not_found": "Không tìm thấy vé",
     "detail_title": "Chi Tiết Vé",
     "detail": {
-      "theater": "Rạp",
-      "date_time": "Ngày & Giờ",
-      "seat": "Ghế",
-      "food_drink": "Đồ Ăn & Thức Uống",
       "booking_id": "Mã Đặt Vé",
-      "payment_summary": "Tóm Tắt Thanh Toán",
-      "total_price": "Tổng Tiền",
-      "payment_method": "Phương Thức Thanh Toán",
       "scan_enter": "Quét Để In Vé",
       "download_ticket": "Tải Vé",
       "qr_invalid": "Không Có Mã QR",
@@ -220,9 +188,7 @@
       "edit_ticket_desc": "Thay đổi suất chiếu, ghế, hoặc đồ ăn",
       "transfer_ticket": "Nhượng lại Vé",
       "transfer_ticket_desc": "Nhượng vé này cho người khác và hoàn tiền",
-      "cancel_refund_desc": "Hủy đặt vé và hoàn tiền",
-      "standard": "Standard",
-      "ticket": "Vé"
+      "cancel_refund_desc": "Hủy đặt vé và hoàn tiền"
     },
     "transfer": {
       "title": "Chuyển Vé",
@@ -233,15 +199,12 @@
       "seats_selected": "Đã chọn {count}/{total} ghế",
       "transfer_to": "Chuyển vé cho",
       "email_placeholder": "Địa chỉ email người nhận",
-      "find": "Tìm",
       "recipient": "Người nhận",
       "recipient_not_found": "Không tìm thấy tài khoản \"{query}\"",
       "warning": "Sau khi người nhận chấp nhận, vé sẽ không còn thuộc về bạn.",
       "continue": "Tiếp Tục",
       "recipient_label": "Người nhận",
       "seats_label": "Vé",
-      "movie_label": "Phim",
-      "showtime_label": "Suất",
       "transfer_snacks_label": "Chuyển luôn bắp nước?",
       "transfer_snacks_desc": "Toàn bộ đơn hàng sẽ được chuyển cùng vé",
       "confirm_recipient_label": "Chuyển đến",
@@ -263,22 +226,21 @@
       "loading_seat_map": "Đang tải sơ đồ ghế...",
       "select_type": "Bạn muốn sửa gì?",
       "change_showtime": "Đổi Suất Chiếu",
-      "change_showtime_desc": "Chuyển ngày, giờ, hoặc rạp khác",
+      "change_showtime_desc": "Chuyển sang suất khác cùng rạp",
       "change_seats": "Đổi Ghế",
       "change_seats_desc": "Chọn ghế khác cho cùng suất chiếu",
       "change_both": "Đổi Cả Hai",
-      "change_both_desc": "Đổi suất chiếu và ghế cùng lúc",
+      "change_both_desc": "Đổi suất chiếu và chọn lại ghế",
+      "limit_notice": "Mỗi vé chỉ được sửa một lần.",
       "showtime": {
         "title": "Chọn Suất Chiếu",
         "current_showtime": "Suất Hiện Tại",
         "available_showtimes": "Suất Khả Dụng",
         "no_showtimes": "Không có suất chiếu nào khác",
-        "no_results": "Không tìm thấy rạp chiếu nào",
-        "select_date": "Chọn Ngày"
+        "no_results": "Không tìm thấy rạp chiếu nào"
       },
       "seats": {
         "title": "Chọn Ghế",
-        "seat_count": "Gốc: {count} ghế",
         "selected": "Đã chọn {count} ghế",
         "select_prompt": "Chọn ghế của bạn"
       },
@@ -287,17 +249,10 @@
         "changes_summary": "Tóm Tắt Thay Đổi",
         "current": "Hiện Tại",
         "new": "Mới",
-        "price_adjustment": "Điều Chỉnh Giá",
-        "you_pay": "Bạn cần thanh toán",
-        "you_refund": "Bạn sẽ được hoàn tiền",
-        "no_change": "Không cần thanh toán thêm",
+        "price": "Giá",
+        "total_paid": "Tổng đã thanh toán",
+        "no_extra_cost": "Đổi cùng giá — không phát sinh phí.",
         "confirm_cta": "Xác Nhận Sửa"
-      },
-      "payment": {
-        "title": "Thanh Toán Chênh Lệch",
-        "pay_difference": "Thanh Toán Chênh Lệch",
-        "refund_notice": "Hoàn tiền sẽ được xử lý trong 3-5 ngày làm việc",
-        "confirm_cta": "Xác Nhận Thanh Toán"
       },
       "success": {
         "title": "Sửa Vé Thành Công",
@@ -422,9 +377,6 @@
       "count_prefix": "Bạn đang có",
       "count_suffix": "phim đã lưu",
       "search_placeholder": "Tìm trong danh sách",
-      "filter_all": "Tất cả",
-      "filter_now_showing": "Đang chiếu",
-      "filter_coming_soon": "Sắp chiếu",
       "empty_filtered_title": "Không tìm thấy",
       "empty_filtered_desc": "Thử từ khóa hoặc bộ lọc khác.",
       "clear_filters": "Xóa bộ lọc"
@@ -544,13 +496,45 @@
     "payment": {
       "title": "Thanh Toán",
       "select_method": "Chọn Phương Thức Thanh Toán",
+      "coming_soon": "Sắp ra mắt",
+      "demo": "Demo",
       "eticket_notice": "Vé điện tử sẽ được gửi đến email sau khi thanh toán.",
-      "secure_badge": "Mã hóa SSL 256-bit \u2022 Tuân thủ PCI DSS",
+      "secure_badge": "Mã hóa SSL 256-bit • Tuân thủ PCI DSS",
       "terms_prefix": "Bằng cách nhấn Xác Nhận Thanh Toán, bạn đồng ý với ",
       "terms_link": "Điều Khoản & Điều Kiện",
       "processing": "Đang xử lý...",
       "confirm": "Xác Nhận Thanh Toán",
-      "error_missing_selection": "Thiếu thông tin đặt vé — quay lại và chọn ghế lại."
+      "error_missing_selection": "Thiếu thông tin đặt vé — quay lại và chọn ghế lại.",
+      "qr": {
+        "title": "Hoàn Tất Thanh Toán",
+        "subtitle": "Quét mã bằng ứng dụng thanh toán rồi giữ trang này mở — trang tự xác nhận.",
+        "amount": "Số tiền cần trả",
+        "method": "Phương thức thanh toán",
+        "reference": "Mã giao dịch",
+        "scan_label": "Quét để thanh toán",
+        "opening": "Đang mở thanh toán…",
+        "waiting": "Đang chờ nhà cung cấp thanh toán xác nhận.",
+        "open_wallet": "Mở trang thanh toán",
+        "check_status": "Tôi đã thanh toán — kiểm tra",
+        "window_closed": "Hết thời gian",
+        "expired_title": "Đã hết thời gian thanh toán",
+        "expired_desc": "Mã này không còn dùng được. Hãy tạo lượt thanh toán mới khi ghế vẫn đang được giữ.",
+        "retry": "Thanh toán lại",
+        "closed_title": "Đơn đặt vé đã hết hạn",
+        "closed_desc": "Thời gian thanh toán đã kết thúc và ghế đã được trả lại. Hãy chọn suất chiếu để đặt lại.",
+        "start_over": "Chọn ghế lại",
+        "refund_title": "Đã nhận tiền sau khi hết hạn",
+        "refund_desc": "Đơn đặt vé đã hết hạn nên khoản tiền này đã được đưa vào hàng chờ hoàn lại.",
+        "back_home": "Về trang chủ",
+        "not_confirmed": "Nhà cung cấp chưa xác nhận khoản thanh toán này.",
+        "demo_title": "Điều khiển demo",
+        "demo_hint": "Mô phỏng câu trả lời của nhà cung cấp cho lượt thanh toán này.",
+        "demo_success": "Thành công",
+        "demo_failure": "Từ chối",
+        "demo_cancelled": "Huỷ bỏ",
+        "demo_unavailable": "Máy chủ này đã tắt điều khiển demo.",
+        "no_open_payment": "Lượt thanh toán này không còn mở — hãy tạo lượt mới."
+      }
     },
     "status": {
       "success": {
@@ -569,6 +553,8 @@
         "reason_insufficient_funds": "Không đủ số dư trong tài khoản.",
         "reason_network_error": "Đã xảy ra lỗi mạng. Vui lòng thử lại.",
         "reason_expired_card": "Thẻ của bạn đã hết hạn. Vui lòng sử dụng thẻ khác.",
+        "reason_user_cancelled": "Bạn đã huỷ giao dịch thanh toán này.",
+        "reason_gateway_error": "Nhà cung cấp thanh toán không xử lý được giao dịch này.",
         "reason_unknown": "Đã xảy ra lỗi không mong muốn."
       }
     }
@@ -583,8 +569,6 @@
       "login_btn": "Đăng Nhập",
       "no_account": "Chưa có tài khoản?",
       "register_link": "Đăng Ký",
-      "or": "hoặc",
-      "success": "Đăng nhập thành công! Đang chuyển hướng…",
       "error_email_required": "Email là bắt buộc.",
       "error_email_invalid": "Vui lòng nhập email hợp lệ.",
       "error_password_required": "Mật khẩu là bắt buộc.",
@@ -601,10 +585,6 @@
       "register_btn": "Đăng Ký",
       "has_account": "Đã có tài khoản?",
       "login_link": "Đăng Nhập",
-      "strength_weak": "Yếu",
-      "strength_fair": "Trung bình",
-      "strength_strong": "Mạnh",
-      "success": "Tài khoản đã được tạo! Đang chuyển hướng…",
       "error_name_required": "Họ và tên là bắt buộc.",
       "error_name_min": "Tên phải có ít nhất 2 ký tự.",
       "error_email_required": "Email là bắt buộc.",
@@ -617,7 +597,6 @@
       "error_password_special": "Phải chứa ký tự đặc biệt.",
       "error_confirm_required": "Vui lòng xác nhận mật khẩu.",
       "error_confirm_match": "Mật khẩu không khớp.",
-      "error_terms": "Bạn phải đồng ý để tiếp tục.",
       "error_server": "Đã xảy ra lỗi. Vui lòng thử lại.",
       "terms_prefix": "Tôi đồng ý với ",
       "terms_of_service": "Điều Khoản Dịch Vụ",
