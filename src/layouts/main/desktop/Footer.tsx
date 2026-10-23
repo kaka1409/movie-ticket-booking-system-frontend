@@ -33,7 +33,6 @@ export default function Footer() {
     <footer className="mt-16 border-t border-(--color-border) bg-(--color-bg) pb-6 pt-12">
       <div className="mx-auto max-w-7xl px-8">
         <div className="mb-10 grid grid-cols-[1.8fr_1fr_1fr_1.6fr] gap-10">
-          {/* Brand */}
           <div>
             <div className="mb-3.5 flex items-center gap-2">
               <Image
@@ -63,7 +62,6 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Cinema links */}
           <div>
             <h4 className="mb-4 text-[11px] font-bold tracking-widest uppercase text-white">
               {translate("layout.footer.cinema")}
@@ -82,7 +80,6 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Support links */}
           <div>
             <h4 className="mb-4 text-[11px] font-bold tracking-widest uppercase text-white">
               {translate("layout.footer.support")}
@@ -101,7 +98,6 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Newsletter */}
           <div>
             <h4 className="mb-2 text-[11px] font-bold tracking-widest uppercase text-white">
               {translate("layout.footer.subscribe")}
@@ -127,7 +123,6 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Bottom bar */}
         <div className="flex items-center justify-between border-t border-(--color-border) pt-5">
           <div className="flex gap-5">
             {BOTTOM_LINKS.map(({ labelKey, href }) => (

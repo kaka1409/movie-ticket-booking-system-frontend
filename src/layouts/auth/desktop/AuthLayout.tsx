@@ -24,22 +24,10 @@ function PromoBrand() {
 }
 
 /**
- * Desktop auth chrome: the shared site shell (header + footer) around a card
- * that holds **two tiles** — the artwork, which owns the majority of the width
- * (`3fr : 2fr`), and the form. Both sit inside the card, which is what the
- * card's own padding is for; the artwork is a real rounded tile, so nothing
- * bleeds underneath the form.
- *
- * From `lg:` the card is one row (artwork | form) with a `620px` floor, so the
- * form never has to fight the artwork for height; below `lg:` — the 740–1023px
- * band — the artwork becomes an in-flow `h-52` banner above the form in a
- * single column (its copy carries over, the bullets stay `lg:`-only).
- *
- * The form column carries `.surface-raised` so the shared input wells, which
- * paint `--color-surface`, step up to `--color-surface-2` and stay visible on
- * the flat card.
- *
- * Mobile keeps its own AuthLayout, untouched.
+ * Desktop auth chrome: DesktopShell around one card with two tiles — artwork
+ * (3fr) + form (2fr) with a `620px` floor from `lg:`; below `lg:` the artwork
+ * is an in-flow `h-52` banner in one column. The form column carries
+ * `.surface-raised` so the input wells stay visible on the flat card.
  */
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   const { translate } = useLocale();
@@ -49,9 +37,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       <div className="mx-auto w-full max-w-7xl px-6 py-10 lg:px-8 lg:py-12">
         <div className="rounded-2xl border border-(--color-border) bg-(--color-surface) p-2 lg:p-3">
           <div className="lg:grid lg:min-h-[620px] lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:gap-3">
-            {/* Artwork tile: a banner below `lg:`, the left column from `lg:`.
-                `lg:h-auto` matters: without it the fixed `h-52` would win over
-                the grid row height and the tile would only cover a top strip. */}
+            {/* Without lg:h-auto the fixed h-52 wins over the row height. */}
             <div className="relative h-52 w-full overflow-hidden rounded-xl lg:h-auto lg:min-h-[620px]">
               <Image
                 src={AUTH_PROMO_IMAGE}

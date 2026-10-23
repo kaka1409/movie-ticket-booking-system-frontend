@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { PASSWORD_UPPERCASE, PASSWORD_NUMBER, PASSWORD_SPECIAL } from "@/libs/zod";
 
+/** Login fields; messages come from i18n. */
 export function createLoginSchema(translate: (key: string) => string) {
   return z.object({
     email: z
@@ -12,6 +13,10 @@ export function createLoginSchema(translate: (key: string) => string) {
   });
 }
 
+/**
+ * Register fields. The accepted-terms checkbox is **not** validated here — the
+ * form checks it separately, so this schema alone does not gate submission.
+ */
 export function createRegisterSchema(translate: (key: string) => string) {
   return z
     .object({

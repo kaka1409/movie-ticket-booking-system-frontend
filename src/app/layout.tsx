@@ -72,14 +72,10 @@ export const viewport: Viewport = {
 };
 
 /**
- * Server-side locale resolution: saved `locale` cookie first, then the
- * browser's `Accept-Language` (any `vi*` primary tag → VN), EN fallback.
- * Reading cookies/headers opts the app out of static prerendering, but that
- * cost was already paid — every catalog page threads the locale cookie for
- * `?lang=` (see Catalog Localization in AGENTS.md) — while the 60s fetch
- * cache keeps backend load flat. The payoff: SSR paints the visitor's
- * language on the first byte, so hydration corrects nothing and never
- * flashes (returning VN users) or mis-defaults (first-time vi browsers).
+ * Locale resolution: `locale` cookie → `Accept-Language` (`vi*` → VN) → EN.
+ * Reading cookies rules out static prerendering (already true for every catalog
+ * page), while the 60s fetch cache keyed on `?lang=` keeps load flat — and SSR
+ * paints the right language, so hydration never corrects it.
  */
 async function resolveRequestLocale(): Promise<Locale> {
   const cookieStore = await cookies();
@@ -93,14 +89,9 @@ async function resolveRequestLocale(): Promise<Locale> {
 }
 
 /**
- * Server-side device guess from the request User-Agent — feeds `DeviceProvider`
- * so SSR paints the right layout variant on the first byte (no mobile→desktop
- * flash, no hydration correction). Reading headers costs no extra static
- * generation: this layout already reads cookies/headers for the locale.
- * Tablets guess desktop: at the 740px breakpoint both iPad portrait (744px)
- * and landscape render the desktop variant. A wrong guess (e.g. an unusually
- * narrow tablet, iPadOS reporting desktop Safari) is corrected client-side by
- * the `matchMedia` effect in `useDevice`.
+ * User-Agent device guess so SSR paints the right variant (no mobile→desktop
+ * flash). Tablets guess desktop — iPad portrait is 744px, past the 740px split;
+ * a wrong guess is corrected client-side by `useDevice`'s `matchMedia` effect.
  */
 async function resolveInitialDevice(): Promise<Device> {
   const headerStore = await headers();
@@ -121,11 +112,12 @@ export default async function RootLayout({
   const initialLocale = await resolveRequestLocale();
   const initialDevice = await resolveInitialDevice();
   // SSR inbox seed for the badge + list; empty for logged-out visitors so no
-  // cookie-less request is ever sent. The client provider keeps it live after
-  // hydration (Socket.IO pushes + REST resync).
-  const initialNotifications = (await hasSession())
-    ? (await getNotifications(await getRequestCookie(), initialLocale)).items
-    : [];
+  // cookie-less request is ever sent. A failed seed renders as empty too — the
+  // client provider resyncs after hydration (Socket.IO pushes + REST).
+  const inbox = (await hasSession())
+    ? await getNotifications(await getRequestCookie(), initialLocale)
+    : null;
+  const initialNotifications = inbox && "data" in inbox ? inbox.data.items : [];
   return (
     <html
       lang={initialLocale === "vn" ? "vi" : "en"}

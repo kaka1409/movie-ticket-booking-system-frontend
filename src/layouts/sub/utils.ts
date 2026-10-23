@@ -34,9 +34,6 @@ export function getBackHref(pathname: string): string | null {
   if (pathname.endsWith("/modify/review")) {
     return pathname.slice(0, -"/review".length);
   }
-  if (pathname.endsWith("/modify/payment")) {
-    return pathname.slice(0, -"/payment".length);
-  }
   if (pathname.endsWith("/modify/success")) {
     return pathname.slice(0, -"/success".length);
   }
@@ -79,8 +76,6 @@ export function getSubTitle(pathname: string, translate?: (key: string) => strin
       return resolve("profile.change_password");
     case pathname.includes("/modify/review"):
       return resolve("tickets.modify.review.title");
-    case pathname.includes("/modify/payment"):
-      return resolve("tickets.modify.payment.title");
     case pathname.includes("/modify/success"):
       return resolve("tickets.modify.success.title");
     case pathname.includes("/modify/showtime"):
