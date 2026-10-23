@@ -11,16 +11,18 @@ import PriceBreakdown from "@/components/shared/PriceBreakdown";
 import TearLine from "@/components/ui/TearLine";
 import { MonitorPlay, CalendarDays } from "lucide-react";
 import type { Movie } from "@/features/movies/types";
-import type { BookingDetail } from "@/features/booking/types";
+import type { BookingDetail, PaymentMethodOption } from "@/features/booking/types";
 
 export default function TicketCard({
   movie,
   booking,
   transactionId,
+  paymentMethods,
 }: {
   movie: Movie | undefined;
   booking: BookingDetail | null;
   transactionId: string;
+  paymentMethods: PaymentMethodOption[];
 }) {
   const {
     cinemaName,
@@ -37,7 +39,7 @@ export default function TicketCard({
   const mounted = useMounted();
   const { translate } = useLocale();
 
-  const cardData = booking ? bookingCardData(booking) : null;
+  const cardData = booking ? bookingCardData(booking, paymentMethods) : null;
   const { posterSrc, title, ageRating } = resolveTicketIdentity(movie, booking);
   const bookingRef = cardData?.bookingRef ?? transactionId;
   const qrValue = booking

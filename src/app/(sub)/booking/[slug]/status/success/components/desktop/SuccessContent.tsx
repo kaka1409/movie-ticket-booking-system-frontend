@@ -1,7 +1,7 @@
 import type { Movie } from "@/features/movies/types";
-import type { BookingDetail } from "@/features/booking/types";
+import type { BookingDetail, PaymentMethodOption } from "@/features/booking/types";
 import SuccessHero from "./SuccessHero";
-import ReceiptCard from "./ReceiptCard";
+import ReceiptCard from "@/features/booking/components/ReceiptCard";
 import SuccessSidePanel from "./SuccessSidePanel";
 
 /**
@@ -16,17 +16,19 @@ export default function SuccessContent({
   movie,
   booking,
   transactionId,
+  paymentMethods,
 }: {
   movie: Movie | undefined;
   booking: BookingDetail | null;
   transactionId: string;
+  paymentMethods: PaymentMethodOption[];
 }) {
   return (
     <div className="mx-auto w-full max-w-6xl px-6 py-12 lg:px-8">
       <SuccessHero />
 
       <div className="mt-10 grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
-        <ReceiptCard movie={movie} booking={booking} />
+        <ReceiptCard movie={movie} booking={booking} paymentMethods={paymentMethods} />
         <SuccessSidePanel booking={booking} transactionId={transactionId} />
       </div>
     </div>

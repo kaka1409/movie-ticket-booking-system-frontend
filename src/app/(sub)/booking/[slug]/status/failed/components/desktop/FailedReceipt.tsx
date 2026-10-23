@@ -12,7 +12,7 @@ import PriceBreakdown from "@/components/shared/PriceBreakdown";
 import TearLine from "@/components/ui/TearLine";
 import Badge from "@/components/ui/Badge";
 import type { Movie } from "@/features/movies/types";
-import type { BookingDetail } from "@/features/booking/types";
+import type { BookingDetail, PaymentMethodOption } from "@/features/booking/types";
 
 /**
  * Desktop receipt for a failed payment: same wide shape as the success receipt
@@ -23,10 +23,12 @@ export default function FailedReceipt({
   movie,
   booking,
   reason,
+  paymentMethods,
 }: {
   movie: Movie | undefined;
   booking: BookingDetail | null;
   reason: string | null;
+  paymentMethods: PaymentMethodOption[];
 }) {
   const {
     cinemaName,
@@ -43,7 +45,7 @@ export default function FailedReceipt({
   const mounted = useMounted();
   const { translate } = useLocale();
 
-  const cardData = booking ? bookingCardData(booking) : null;
+  const cardData = booking ? bookingCardData(booking, paymentMethods) : null;
   const { posterSrc, title, ageRating } = resolveTicketIdentity(movie, booking);
 
   return (

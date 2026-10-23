@@ -1,5 +1,5 @@
 import type { Movie } from "@/features/movies/types";
-import type { BookingDetail } from "@/features/booking/types";
+import type { BookingDetail, PaymentMethodOption } from "@/features/booking/types";
 import FailHero from "./FailHero";
 import FailedReceipt from "./FailedReceipt";
 import FailSidePanel from "./FailSidePanel";
@@ -15,17 +15,24 @@ export default function FailContent({
   movie,
   booking,
   reason,
+  paymentMethods,
 }: {
   movie: Movie | undefined;
   booking: BookingDetail | null;
   reason: string | null;
+  paymentMethods: PaymentMethodOption[];
 }) {
   return (
     <div className="mx-auto w-full max-w-6xl px-6 py-12 lg:px-8">
       <FailHero reason={reason} />
 
       <div className="mt-10 grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
-        <FailedReceipt movie={movie} booking={booking} reason={reason} />
+        <FailedReceipt
+          movie={movie}
+          booking={booking}
+          reason={reason}
+          paymentMethods={paymentMethods}
+        />
         <FailSidePanel />
       </div>
     </div>
