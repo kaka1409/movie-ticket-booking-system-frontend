@@ -1,6 +1,5 @@
 "use server";
 
-import type { ModificationType } from "./types";
 import { apiMutation } from "@/libs/api";
 import { getRequestCookie } from "@/libs/session";
 
@@ -147,7 +146,7 @@ export async function declineTransferAction(
 
 /* ─── Modification ──────────────────────────────────────── */
 
-/** `PATCH /tickets/:id/modify` result — the backend owns the money delta. */
+/** `PATCH /tickets/:id/modify` result — a modify never moves money, so `delta` is always 0. */
 export interface ModifyResult {
   ticketId: string;
   showtimeId: string;
@@ -155,7 +154,6 @@ export interface ModifyResult {
   oldTotal: number;
   newTotal: number;
   delta: number;
-  refundStatus: "none" | "pending";
 }
 
 export type ModifyActionResult =
@@ -165,14 +163,20 @@ export async function modifyTicketAction(
   prevState: ModifyActionResult,
   data: {
     ticketId: string;
-    modificationType: ModificationType;
-    newShowtime?: { showtimeId: string };
-    newSeats?: { seatIds: string[] };
+    newShowtimeId?: string;
+    newSeatIds?: string[];
     token: string;
   },
 ): Promise<ModifyActionResult> {
+  const { ticketId, token, newShowtimeId, newSeatIds } = data;
+  // Absent fields mean "unchanged": the backend derives the operation from
+  // whichever keys are present, so an empty payload must stay empty.
+  const body = {
+    ...(newShowtimeId ? { newShowtimeId } : {}),
+    ...(newSeatIds && newSeatIds.length > 0 ? { newSeatIds } : {}),
+  };
+
   try {
-    const { ticketId, token, ...body } = data;
     const response = await apiMutation<{ data: ModifyResult }>(
       `/tickets/${ticketId}/modify`,
       { method: "PATCH", body: JSON.stringify(body) },

@@ -20,10 +20,14 @@ export default function BottomBar() {
     if (!canContinue || isLoading) return;
     setIsLoading(true);
 
-    // Brief loading animation
     await new Promise((resolve) => setTimeout(resolve, 300));
 
-    if (modificationType === "both") {
+    // A different room means the current seats do not exist on that map, so
+    // the server requires a new pick before the change can be submitted.
+    const needsSeatSelection =
+      modificationType === "both" || selectedShowtime?.requiresSeatSelection;
+
+    if (needsSeatSelection) {
       router.push(`/tickets/${id}/modify/seats`);
     } else {
       router.push(`/tickets/${id}/modify/review`);

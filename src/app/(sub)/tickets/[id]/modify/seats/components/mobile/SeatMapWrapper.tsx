@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useRef } from "react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useModification } from "@/features/tickets/contexts/ModificationContext";
 import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext";
@@ -13,8 +13,10 @@ import SeatGrid from "@/features/booking/components/seats/SeatGrid";
 export default function SeatMapWrapper() {
   const { translate } = useLocale();
   const {
+    modificationType,
     toggleSeat,
     selectedSeats,
+    setSelectedSeats,
     seatRows,
     setSeatRows,
     seatPrices,
@@ -23,13 +25,20 @@ export default function SeatMapWrapper() {
   } = useModification();
   const { ticket } = useTicketDetail();
 
-  // "Both"/"showtime" picked a target showtime; a seats-only change reopens the
-  // ticket's current showtime map.
-  const showtimeId = selectedShowtime?.showtimeId ?? ticket.showtimeId ?? "";
+  // A seats-only change always reopens the ticket's current showtime map; a
+  // stale target showtime from an earlier "both" attempt must not leak in.
+  const isSeatsOnly = modificationType === "seats";
+  const showtimeId = (!isSeatsOnly && selectedShowtime?.showtimeId) || ticket.showtimeId || "";
+
+  const loadedShowtimeId = useRef<string | null>(null);
 
   useEffect(() => {
-    if (seatRows.length > 0 && seatPrices) return;
-    if (!showtimeId) return;
+    if (!showtimeId || loadedShowtimeId.current === showtimeId) return;
+
+    // Seat ids belong to a room, so a different map invalidates every pick.
+    if (loadedShowtimeId.current !== null) setSelectedSeats([]);
+    loadedShowtimeId.current = showtimeId;
+    setSeatRows([]);
 
     let cancelled = false;
     getSeatMap(showtimeId).then((result) => {
@@ -42,7 +51,7 @@ export default function SeatMapWrapper() {
     return () => {
       cancelled = true;
     };
-  }, [showtimeId, seatRows.length, seatPrices, setSeatRows, setSeatPrices]);
+  }, [showtimeId, setSeatRows, setSeatPrices, setSelectedSeats]);
 
   const handleToggle = useCallback(
     (rowLabel: string, seat: Seat) => {

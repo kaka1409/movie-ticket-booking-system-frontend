@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { Check, AlertCircle, Home, HeadphonesIcon } from "lucide-react";
+import { Check, AlertCircle, Home, HeadphonesIcon, Wallet } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { formatVND } from "@/libs/utils";
 import { useMounted } from "@/hooks/useMounted";
@@ -84,19 +84,13 @@ export default function CancelResult({
             </MicroLabel>
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-(--color-surface-2) flex items-center justify-center">
-                <span className="text-xs font-bold text-(--color-text-muted)">
-                  {/* Branch on the gateway id (case-insensitive) — the display
-                      label is localized (`Via…`/`Qua…`) and must not be parsed. */}
-                  {paymentMethod?.toLowerCase().includes("vnpay")
-                    ? "VNP"
-                    : paymentMethod?.toLowerCase().includes("momo")
-                      ? "MM"
-                      : "—"}
-                </span>
+                {/* The refund goes back to whatever wallet paid, so no brand
+                    branch is possible here — ids are opaque wire values. */}
+                <Wallet size={16} className="text-(--color-text-muted)" />
               </div>
               <div>
                 <p className="text-sm font-bold text-(--color-text-primary)">
-                  {paymentMethod ?? "N/A"}
+                  {paymentMethod || "N/A"}
                 </p>
               </div>
             </div>

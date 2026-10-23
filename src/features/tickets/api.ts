@@ -1,5 +1,6 @@
 import type { ApiResponse } from "@/libs/api";
 import { apiFetch } from "@/libs/api";
+import { getPaymentMethods } from "@/features/booking/api";
 import type { UpcomingTicket, PastTicket, Recipient, EligibleShowtime } from "./types";
 import type {
   EligibleShowtimeWire,
@@ -62,14 +63,15 @@ export async function getTicketById(
   cookie?: string,
   locale: "en" | "vn" = "en",
 ): Promise<ApiResponse<UpcomingTicket | PastTicket>> {
-  const result = await apiFetch<TicketDetailWire>(
-    `/tickets/${encodeURIComponent(id)}`,
-    undefined,
-    undefined,
-    cookie,
-  );
+  const [result, catalog] = await Promise.all([
+    apiFetch<TicketDetailWire>(`/tickets/${encodeURIComponent(id)}`, undefined, undefined, cookie),
+    getPaymentMethods(locale),
+  ]);
   if ("error" in result) return result;
-  return { data: toDetailTicket(result.data, locale) };
+  // The receipt prints the gateway label, and ids are opaque wire values; a
+  // catalog outage degrades to readable ids instead of dropping the ticket.
+  const paymentMethods = "error" in catalog ? [] : catalog.data.methods;
+  return { data: toDetailTicket(result.data, locale, paymentMethods) };
 }
 
 /* ─── Transfer recipient (LIVE) ─────────────────────────── */

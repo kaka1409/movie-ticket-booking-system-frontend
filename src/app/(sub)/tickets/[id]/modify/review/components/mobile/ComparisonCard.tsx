@@ -105,6 +105,10 @@ export default function ComparisonCard() {
           </div>
         </div>
       )}
+
+      <p className="text-xs text-(--color-text-muted) text-center">
+        {translate("tickets.modify.limit_notice")}
+      </p>
     </section>
   );
 }

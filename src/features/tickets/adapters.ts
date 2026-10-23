@@ -1,4 +1,5 @@
-import type { BookingDetail, DateOption } from "@/features/booking/types";
+import type { BookingDetail, DateOption, PaymentMethodOption } from "@/features/booking/types";
+import { getPaymentLabel } from "@/features/booking/paymentBrand";
 import { toLocaleTag } from "@/libs/utils";
 import type {
   EligibleShowtime,
@@ -113,11 +114,6 @@ function toDetailStatus(ticketStatus: string): UpcomingTicket["status"] | PastTi
   if (ticketStatus === "active") return "success";
   return toPastStatus(ticketStatus);
 }
-
-const PAYMENT_BRANDS: Record<string, string> = {
-  vnpay: "VNPAY",
-  momo: "MoMo",
-};
 
 const POSTER_FALLBACK = "/images/movie-poster-placeholder.jpg";
 
@@ -244,6 +240,7 @@ function toFoodDrink(detail: TicketDetailWire): FoodDrinkItem[] {
 export function toDetailTicket(
   detail: TicketDetailWire,
   locale: "en" | "vn",
+  paymentMethods: PaymentMethodOption[],
 ): UpcomingTicket | PastTicket {
   const foodDrink = toFoodDrink(detail);
   const seatItems: SeatTicket[] = detail.seats.map((seat) => ({
@@ -272,10 +269,10 @@ export function toDetailTicket(
     totalSeatPrice: seatTotal,
     totalSnackPrice: snackTotal,
     totalPrice: detail.totalPrice,
-    // Mirrors the `common.via` dictionary key (adapters stay hook-free, so the
-    // word is inlined instead of translated — keep both in sync).
+    // Brand label only — the surrounding rows already say "Payment Method" /
+    // "Refund to", so a `Via`/`Qua` prefix here would read twice.
     paymentMethod: detail.payment
-      ? `${locale === "vn" ? "Qua" : "Via"} ${PAYMENT_BRANDS[detail.payment.method] ?? detail.payment.method}`
+      ? getPaymentLabel(paymentMethods, detail.payment.method)
       : undefined,
     foodDrink,
   };
@@ -376,6 +373,8 @@ export interface EligibleShowtimeWire {
   format: string;
   cinema: { id: string; name: string };
   room: { id: string; name: string };
+  /** The server knows both rooms, so it decides whether new seats are needed. */
+  requiresSeatSelection: boolean;
 }
 
 /** Wire row → the modification UI shape (no address/distance in the source payload). */
@@ -389,6 +388,7 @@ export function toEligibleShowtime(row: EligibleShowtimeWire): EligibleShowtime 
     cinemaName: row.cinema.name,
     address: "",
     distance: "",
+    requiresSeatSelection: row.requiresSeatSelection,
   };
 }
 

@@ -126,4 +126,6 @@ export interface EligibleShowtime {
   room: string;
   date: string;
   showtimeId?: string;
+  /** The target room differs from the ticket's, so its seats must be picked again. */
+  requiresSeatSelection: boolean;
 }
