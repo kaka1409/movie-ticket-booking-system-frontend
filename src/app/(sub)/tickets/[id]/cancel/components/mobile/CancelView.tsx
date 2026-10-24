@@ -16,8 +16,16 @@ import CancelResult from "./CancelResult";
 export default function CancelView() {
   const { translate } = useLocale();
   const { ticket } = useTicketDetail();
-  const { view, isPending, refundAmount, computedRefund, paymentMethod, confirm, retry } =
-    useCancelFlow();
+  const {
+    view,
+    isPending,
+    refundAmount,
+    computedRefund,
+    errorMessage,
+    paymentMethod,
+    confirm,
+    retry,
+  } = useCancelFlow();
   const [isPolicyOpen, setIsPolicyOpen] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
@@ -63,6 +71,7 @@ export default function CancelView() {
           status={view}
           refundAmount={refundAmount}
           paymentMethod={paymentMethod}
+          errorMessage={errorMessage}
           onRetry={retry}
         />
       )}

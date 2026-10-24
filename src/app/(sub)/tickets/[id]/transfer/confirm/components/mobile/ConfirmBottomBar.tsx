@@ -7,21 +7,11 @@ import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext
 import { useTransferSubmit } from "@/features/tickets/hooks/useTransferSubmit";
 import TransferConfirmForm from "@/features/tickets/components/TransferConfirmForm";
 
-interface ConfirmBottomBarProps {
-  seatLabels: string[];
-  recipient: Recipient;
-  transferSnacks: boolean;
-}
-
-export default function ConfirmBottomBar({
-  seatLabels,
-  recipient,
-  transferSnacks,
-}: ConfirmBottomBarProps) {
+export default function ConfirmBottomBar({ recipient }: { recipient: Recipient }) {
   const router = useRouter();
   const { translate } = useLocale();
   const { ticket } = useTicketDetail();
-  const { formAction, isPending, error, seatIds } = useTransferSubmit(seatLabels);
+  const { formAction, isPending, error } = useTransferSubmit();
 
   return (
     <div className="sticky bottom-0 z-50 bg-(--color-bg) border-t border-(--color-border) px-4 pb-6 pt-3">
@@ -44,9 +34,7 @@ export default function ConfirmBottomBar({
           formAction={formAction}
           isPending={isPending}
           ticketId={ticket.id}
-          seatIds={seatIds}
           recipientEmail={recipient.email}
-          transferSnacks={transferSnacks}
         />
       </div>
     </div>

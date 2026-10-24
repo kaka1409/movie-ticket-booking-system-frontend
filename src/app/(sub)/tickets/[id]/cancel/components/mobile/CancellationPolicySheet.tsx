@@ -15,7 +15,7 @@ export default function CancellationPolicySheet({
 
   const rules = [
     translate("tickets.cancel.policy_rule_1"),
-    translate("tickets.cancel.policy_rule_2").replace("{fee}", "\u20AB20,000"),
+    translate("tickets.cancel.policy_rule_2"),
     translate("tickets.cancel.policy_rule_3"),
     translate("tickets.cancel.policy_rule_4"),
   ];

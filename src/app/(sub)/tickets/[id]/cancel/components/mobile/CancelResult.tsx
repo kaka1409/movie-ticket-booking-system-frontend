@@ -12,11 +12,14 @@ export default function CancelResult({
   status,
   refundAmount,
   paymentMethod,
+  errorMessage,
   onRetry,
 }: {
   status: "success" | "failed";
   refundAmount: number;
   paymentMethod: string;
+  /** Backend reason when the cancel was refused; `null` when it went through. */
+  errorMessage: string | null;
   onRetry?: () => void;
 }) {
   const params = useParams();
@@ -157,42 +160,13 @@ export default function CancelResult({
           }`}
         >
           <h1 className="font-extrabold text-3xl text-(--color-text-primary) leading-tight mb-2">
-            {translate("tickets.cancel.failed_title")}
+            {translate("tickets.cancel.error.title")}
           </h1>
           <p className="text-sm text-(--color-text-muted) leading-relaxed max-w-xs mx-auto">
-            {translate("tickets.cancel.failed_message")}
+            {errorMessage ?? translate("tickets.cancel.error.fallback")}
           </p>
         </div>
       </section>
-
-      <div
-        className={`rounded-2xl bg-(--color-surface) border border-red-500/20 p-5 space-y-4 transition-all duration-700 delay-300 ${
-          mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-        }`}
-      >
-        <div className="text-center space-y-1">
-          <p className="text-xs text-(--color-text-muted) uppercase tracking-wider font-bold">
-            {translate("tickets.cancel.failed_refund_amount")}
-          </p>
-          <p className="text-3xl font-extrabold text-(--color-gold)">
-            {formatVND(refundAmount, locale)}
-          </p>
-        </div>
-
-        <div className="border-t border-(--color-border) pt-4 space-y-2">
-          <MicroLabel className="text-(--color-text-muted)">
-            {translate("tickets.cancel.failed_status")}
-          </MicroLabel>
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold tracking-wide uppercase bg-red-500/10 text-red-400 border border-red-500/20">
-            <AlertCircle size={10} />
-            {translate("tickets.cancel.failed_status")}
-          </span>
-        </div>
-
-        <p className="text-xs text-(--color-text-muted) leading-relaxed">
-          {translate("tickets.cancel.failed_retry_text")}
-        </p>
-      </div>
 
       <div
         className={`space-y-3 transition-all duration-700 delay-500 ${

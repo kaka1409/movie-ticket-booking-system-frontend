@@ -25,6 +25,9 @@ export function getBackHref(pathname: string): string | null {
   if (pathname.startsWith("/profile/")) {
     return "/profile";
   }
+  if (pathname.endsWith("/transfer/payment")) {
+    return pathname.slice(0, -"/transfer/payment".length);
+  }
   if (pathname.endsWith("/transfer/confirm")) {
     return pathname.slice(0, -"/confirm".length);
   }
@@ -86,6 +89,8 @@ export function getSubTitle(pathname: string, translate?: (key: string) => strin
       return resolve("tickets.cancel.title");
     case pathname.includes("/modify"):
       return resolve("tickets.modify.title");
+    case pathname.includes("/transfer/payment"):
+      return resolve("tickets.transfer.payment.title");
     case pathname.includes("/transfer/confirm"):
       return resolve("tickets.transfer.confirm_title");
     case pathname.includes("/transfer"):

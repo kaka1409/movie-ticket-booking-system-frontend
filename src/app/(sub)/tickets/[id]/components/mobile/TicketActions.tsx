@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import {
   ArrowUpRight,
   Check,
+  CreditCard,
   Download,
   Loader2,
   MoreHorizontal,
@@ -29,19 +31,36 @@ export default function TicketActions() {
     useTransferDecisions();
 
   if (viewerRole === "recipient" && incomingTransfer) {
+    const isAwaitingPayment = incomingTransfer.status === "awaiting_payment";
+
     return (
       <div className="px-4 pb-8 space-y-3">
-        <form action={acceptFormAction}>
-          <input type="hidden" name="transferId" value={incomingTransfer.id} />
-          <button
-            type="submit"
-            disabled={isBusy}
-            className="w-full flex items-center justify-center gap-2.5 py-4 rounded-xl font-extrabold text-sm tracking-wide transition-all duration-150 active:scale-[0.98] bg-(--color-gold) text-(--color-bg) shadow-(--shadow-glow) disabled:opacity-50"
-          >
-            {isAccepting ? <Loader2 size={18} className="animate-spin" /> : <Check size={18} />}
-            {translate("tickets.transfer.accept")}
-          </button>
-        </form>
+        {isAwaitingPayment ? (
+          <>
+            <Link
+              href={`/tickets/${ticket.id}/transfer/payment`}
+              className="w-full flex items-center justify-center gap-2.5 py-4 rounded-xl font-extrabold text-sm tracking-wide transition-all duration-150 active:scale-[0.98] bg-(--color-gold) text-(--color-bg) shadow-(--shadow-glow)"
+            >
+              <CreditCard size={18} />
+              {translate("tickets.transfer.incoming_awaiting_cta")}
+            </Link>
+            <p className="text-center text-xs text-(--color-text-muted)">
+              {translate("tickets.transfer.incoming_awaiting_hint")}
+            </p>
+          </>
+        ) : (
+          <form action={acceptFormAction}>
+            <input type="hidden" name="transferId" value={incomingTransfer.id} />
+            <button
+              type="submit"
+              disabled={isBusy}
+              className="w-full flex items-center justify-center gap-2.5 py-4 rounded-xl font-extrabold text-sm tracking-wide transition-all duration-150 active:scale-[0.98] bg-(--color-gold) text-(--color-bg) shadow-(--shadow-glow) disabled:opacity-50"
+            >
+              {isAccepting ? <Loader2 size={18} className="animate-spin" /> : <Check size={18} />}
+              {translate("tickets.transfer.accept")}
+            </button>
+          </form>
+        )}
 
         <form action={declineFormAction}>
           <input type="hidden" name="transferId" value={incomingTransfer.id} />
@@ -61,14 +80,16 @@ export default function TicketActions() {
   }
 
   const canCancel = ["success", "confirmed", "pending"].includes(ticket.status);
-  const isTransferPending = transfer?.status === "pending";
+  // Any open offer parks the ticket: it can be neither modified, re-sent nor
+  // cancelled until the deal closes.
+  const hasOpenTransfer = Boolean(transfer);
   // No payload = nothing scannable (dead entitlement, or the owner view of a
   // ticket whose QR is revoked) — downloading it would hand out a dead code.
   const hasScannableQr = "qrCode" in ticket && Boolean(ticket.qrCode);
 
   return (
     <div className="px-4 pb-8 space-y-3">
-      {!isTransferPending && hasScannableQr && (
+      {!hasOpenTransfer && hasScannableQr && (
         <button
           type="button"
           className="w-full flex items-center justify-center gap-2.5 py-4 rounded-xl font-extrabold text-sm tracking-wide transition-all duration-150 active:scale-[0.98] bg-(--color-gold) text-(--color-bg) shadow-(--shadow-glow)"
@@ -78,7 +99,7 @@ export default function TicketActions() {
         </button>
       )}
 
-      {!isTransferPending && canCancel && (
+      {!hasOpenTransfer && canCancel && (
         <>
           <button
             type="button"

@@ -7,7 +7,6 @@ import { formatVND } from "@/libs/utils";
 import TearLine from "@/components/ui/TearLine";
 import Button from "@/components/ui/Button";
 import MicroLabel from "@/components/ui/MicroLabel";
-import { CANCELLATION_FEE } from "@/features/tickets/constants";
 import type { UpcomingTicket } from "@/features/tickets/types";
 
 export default function CancelSummary({
@@ -24,7 +23,8 @@ export default function CancelSummary({
   const totalPrice = ticket.totalPrice ?? 0;
   const totalSnackPrice = ticket.totalSnackPrice ?? 0;
   const totalSeatPrice = ticket.totalSeatPrice ?? 0;
-  const refundAmount = totalPrice - CANCELLATION_FEE;
+  // The policy has no fee: the only gate is time, enforced by the backend.
+  const refundAmount = totalPrice;
 
   return (
     <main className="flex-1 overflow-y-auto pb-8 p-4">
@@ -84,12 +84,6 @@ export default function CancelSummary({
               {translate("tickets.cancel.total_paid")}
             </span>
             <span className="text-(--color-text-primary)">{formatVND(totalPrice, locale)}</span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-white/60">{translate("tickets.cancel.cancellation_fee")}</span>
-            <span className="text-(--color-text-primary) font-bold">
-              {formatVND(CANCELLATION_FEE, locale)}
-            </span>
           </div>
         </div>
 

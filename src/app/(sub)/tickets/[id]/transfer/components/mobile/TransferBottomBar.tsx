@@ -9,17 +9,15 @@ import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext
 export default function TransferBottomBar() {
   const router = useRouter();
   const { ticket } = useTicketDetail();
-  const { selectedSeats, recipient, transferSnacks } = useTransfer();
+  const { recipient } = useTransfer();
   const { translate } = useLocale();
 
-  const isValid = selectedSeats.length > 0 && recipient !== null;
+  const isValid = recipient !== null;
 
   const handleContinue = () => {
-    if (!isValid || !recipient) return;
-    const seatsParam = selectedSeats.join(",");
-    const snacksParam = transferSnacks ? "&transferSnacks=true" : "";
+    if (!recipient) return;
     router.push(
-      `/tickets/${ticket.id}/transfer/confirm?seats=${encodeURIComponent(seatsParam)}&recipient=${encodeURIComponent(recipient.email)}${snacksParam}`,
+      `/tickets/${ticket.id}/transfer/confirm?recipient=${encodeURIComponent(recipient.email)}`,
     );
   };
 

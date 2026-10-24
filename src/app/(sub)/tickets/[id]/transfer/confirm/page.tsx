@@ -11,35 +11,21 @@ import DesktopConfirmContent from "./components/desktop/ConfirmContent";
 
 interface ConfirmPageProps {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{
-    seats?: string;
-    recipient?: string;
-    transferSnacks?: string;
-  }>;
+  searchParams: Promise<{ recipient?: string }>;
 }
 
 export default async function ConfirmPage({ params, searchParams }: ConfirmPageProps) {
   const { id } = await params;
-  const { seats, recipient: recipientEmail, transferSnacks } = await searchParams;
+  const { recipient: recipientEmail } = await searchParams;
 
-  // Validate required searchParams
-  if (!seats || !recipientEmail) {
-    redirect(`/tickets/${id}/transfer`);
-  }
+  // The offer is the whole ticket, so the recipient is the only draft value that
+  // can be missing when this step is opened directly.
+  if (!recipientEmail) redirect(`/tickets/${id}/transfer`);
 
   const recipient = await getRecipient(recipientEmail, {
     cookie: await getRequestCookie(),
   });
-  if (!recipient) {
-    redirect(`/tickets/${id}/transfer`);
-  }
-
-  const seatLabels = seats
-    .split(",")
-    .map((label) => label.trim())
-    .filter(Boolean);
-
-  const showSnacks = transferSnacks === "true";
+  if (!recipient) redirect(`/tickets/${id}/transfer`);
 
   return (
     <>
@@ -47,17 +33,9 @@ export default async function ConfirmPage({ params, searchParams }: ConfirmPageP
       <div className="block md:hidden">
         <div className="flex flex-col min-h-dvh">
           <main className="flex-1 overflow-y-auto pb-5 pt-4 space-y-6">
-            <ConfirmCard
-              seatLabels={seatLabels}
-              recipient={recipient}
-              transferSnacks={showSnacks}
-            />
+            <ConfirmCard recipient={recipient} />
           </main>
-          <ConfirmBottomBar
-            seatLabels={seatLabels}
-            recipient={recipient}
-            transferSnacks={showSnacks}
-          />
+          <ConfirmBottomBar recipient={recipient} />
         </div>
       </div>
 

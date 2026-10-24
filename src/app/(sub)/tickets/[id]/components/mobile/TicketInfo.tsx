@@ -3,21 +3,23 @@
 import Image from "next/image";
 import { MonitorPlay, CalendarDays, Clock, Loader2, XCircle } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
+import { formatVND } from "@/libs/utils";
 import DetailRow from "@/components/shared/DetailRow";
 import PriceBreakdown from "@/components/shared/PriceBreakdown";
+import MicroLabel from "@/components/ui/MicroLabel";
 import QRCode from "./QRCode";
 import TearLine from "@/components/ui/TearLine";
 import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext";
 import { isPastStatus, PAST_STATUS_META } from "@/features/tickets/status";
 import { useCancelTransfer } from "@/features/tickets/hooks/useCancelTransfer";
+import { formatDeadlineTime } from "@/features/tickets/utils";
 
 export default function TicketInfo() {
   const { ticket, transfer, incomingTransfer } = useTicketDetail();
-  const { translate } = useLocale();
-  const { cancelFormAction, isCancelPending } = useCancelTransfer();
+  const { translate, locale } = useLocale();
+  const { cancelFormAction, isCancelPending, error: cancelError } = useCancelTransfer();
 
   const seatItems = ticket?.seatItems ?? [];
-  const isTransferPending = transfer?.status === "pending";
 
   return (
     <main className="flex-1 overflow-y-auto pb-8 p-4">
@@ -80,26 +82,51 @@ export default function TicketInfo() {
 
         <TearLine className="px-0 my-0" lineClassName="mx-3" />
 
-        {isTransferPending && transfer ? (
-          /* Owner: transfer pending panel — replaces QR while waiting */
+        {transfer ? (
+          /* Owner: the offer is out, so the QR is parked until the deal closes. */
           <div className="px-4 pb-5 pt-4 flex flex-col items-center gap-3 text-center">
             <span className="px-3 py-1.5 rounded-full inline-flex items-center gap-1.5 bg-(--color-gold)/10 border border-(--color-gold)/40">
               <Clock size={13} className="text-(--color-gold)" />
               <span className="text-[11px] font-bold uppercase tracking-wide text-(--color-gold)">
-                {translate("tickets.transfer.pending_badge")}
+                {translate(
+                  transfer.status === "pending"
+                    ? "tickets.transfer.pending_badge"
+                    : "tickets.transfer.awaiting_badge",
+                )}
               </span>
             </span>
-            {transfer.transferredSeats.length > 0 && (
-              <p className="font-extrabold text-lg text-(--color-text-primary)">
-                {transfer.transferredSeats.join(" · ")}
+
+            <p className="text-sm text-(--color-text-muted)">
+              {translate(
+                transfer.status === "pending"
+                  ? "tickets.transfer.pending_waiting"
+                  : "tickets.transfer.awaiting_payment",
+              ).replace("{name}", transfer.recipient.name)}
+            </p>
+
+            <div className="w-full rounded-2xl border border-(--color-border) bg-(--color-surface-2) px-4 py-3 text-left">
+              <MicroLabel className="text-(--color-text-muted)">
+                {translate("tickets.transfer.amount_label")}
+              </MicroLabel>
+              <p className="mt-1 text-lg font-extrabold text-(--color-gold)">
+                {formatVND(transfer.amount, locale)}
+              </p>
+              <p className="mt-1 text-xs text-(--color-text-muted)">
+                {transfer.status === "pending"
+                  ? translate("tickets.transfer.amount_hint")
+                  : translate("tickets.transfer.awaiting_deadline").replace(
+                      "{time}",
+                      formatDeadlineTime(transfer.paymentExpiresAt, locale),
+                    )}
+              </p>
+            </div>
+
+            {transfer.status === "awaiting_payment" && (
+              <p className="text-xs text-(--color-text-muted)">
+                {translate("tickets.transfer.awaiting_cancel_hint")}
               </p>
             )}
-            <p className="text-sm text-(--color-text-muted)">
-              {translate("tickets.transfer.pending_waiting").replace(
-                "{name}",
-                transfer.recipient.name,
-              )}
-            </p>
+
             <form action={cancelFormAction} className="mt-1">
               <input type="hidden" name="ticketId" value={ticket.id} />
               <button
@@ -114,30 +141,50 @@ export default function TicketInfo() {
                 )}
               </button>
             </form>
+
+            {cancelError && (
+              <p role="alert" className="text-xs text-red-400">
+                {cancelError}
+              </p>
+            )}
           </div>
         ) : incomingTransfer ? (
-          /* Recipient: offer panel — no QR until the transfer is accepted. */
+          /* Recipient: no QR until the money lands and ownership moves. */
           <div className="px-4 pb-5 pt-4 flex flex-col items-center gap-3 text-center">
             <span className="px-3 py-1.5 rounded-full inline-flex items-center gap-1.5 bg-(--color-gold)/10 border border-(--color-gold)/40">
               <Clock size={13} className="text-(--color-gold)" />
               <span className="text-[11px] font-bold uppercase tracking-wide text-(--color-gold)">
-                {translate("tickets.transfer.incoming_badge")}
+                {translate(
+                  incomingTransfer.status === "pending"
+                    ? "tickets.transfer.incoming_badge"
+                    : "tickets.transfer.incoming_awaiting",
+                )}
               </span>
             </span>
-            {incomingTransfer.transferredSeats.length > 0 && (
-              <p className="font-extrabold text-lg text-(--color-text-primary)">
-                {incomingTransfer.transferredSeats.join(" · ")}
-              </p>
-            )}
+
             <p className="text-sm text-(--color-text-muted)">
               {translate("tickets.transfer.incoming_from").replace(
                 "{name}",
                 incomingTransfer.sender.name,
               )}
             </p>
-            <p className="text-xs text-(--color-text-muted)">
-              {translate("tickets.transfer.incoming_hint")}
-            </p>
+
+            <div className="w-full rounded-2xl border border-(--color-border) bg-(--color-surface-2) px-4 py-3 text-left">
+              <MicroLabel className="text-(--color-text-muted)">
+                {translate("tickets.transfer.amount_label")}
+              </MicroLabel>
+              <p className="mt-1 text-lg font-extrabold text-(--color-gold)">
+                {formatVND(incomingTransfer.amount, locale)}
+              </p>
+              <p className="mt-1 text-xs text-(--color-text-muted)">
+                {incomingTransfer.status === "pending"
+                  ? translate("tickets.transfer.incoming_hint")
+                  : translate("tickets.transfer.awaiting_deadline").replace(
+                      "{time}",
+                      formatDeadlineTime(incomingTransfer.paymentExpiresAt, locale),
+                    )}
+              </p>
+            </div>
           </div>
         ) : (
           /* QR Code — only when the backend issued a payload (usable, owner
