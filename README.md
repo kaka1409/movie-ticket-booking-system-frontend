@@ -113,4 +113,4 @@ src/
 - Change password page with 4 requirement checks (8+ chars, uppercase, number, special char), errors shown on submit
 - Wishlist page with persistent WishlistContext at root layout, heart toggle on movie detail
 - Review & Rating page using ALL_MOVIES mock, filter by rating, load more pattern
-- Cancel & refund flow: tickets/[id]/cancel — single page with 4-state machine (idle/processing/success/failed), two bottom sheets (cancellation policy + confirmation), animated result views matching booking status patterns, fixed ₫20,000 cancellation fee, refund to original payment method
+- Cancel & refund flow: tickets/[id]/cancel — single page with 4-state machine (idle/processing/success/rejected), two bottom sheets (cancellation policy + confirmation), animated result views matching booking status patterns, **100% refund with no fee** (the only gate is the 2-hour cutoff the backend enforces), refund to original payment method

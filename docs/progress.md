@@ -26,7 +26,7 @@
 - [x] `next/image` host allowlist (11 explicit hosts, no wildcards)
 - [x] Session/401 handling — client: `UNAUTHORIZED_EVENT` in `libs/api.ts` → `AuthContext` clears state only, `ProtectedRoute` renders the prompt in place (excludes `/auth/*`, no redirect); server: `isUnauthorizedResult()` in `libs/session.ts` → `<LoginPrompt />` in place — wired on tickets listing/detail and booking seats/status pages
 - [ ] Security headers — no CSP/HSTS/X-Frame-Options/Referrer-Policy `[before deploy]`
-- [ ] Reviews, booking and ticket modify/cancel actions pass raw `accessToken` as a server-action argument — the remaining places the token crosses the wire; prefer cookie `[now]` (ticket **transfer** actions already forward the refresh cookie)
+- [x] Reviews, booking and ticket modify/cancel actions pass raw `accessToken` as a server-action argument — the remaining places the token crosses the wire; prefer cookie `[now]`; ticket **transfer** actions already forward the refresh cookie
 - [ ] `allowedDevOrigins` hardcodes LAN IPs — dev-only, harmless in production `[before deploy]`
 
 ### Level 3 — Reliability
@@ -46,6 +46,7 @@
 - [ ] Build-time env — `next.config.ts` `rewrites()` evaluates `BACKEND_URL` at build time; undocumented `[before deploy]`
 - [x] SEO — root metadata (`metadataBase`, title template, OG/Twitter, `NEXT_PUBLIC_SITE_URL` in `libs/site.ts`), `generateMetadata` on `movies/[slug]` (canonical, OG), per-page titles, `robots: noindex` on all protected/auth routes, `app/robots.ts` + `app/sitemap.ts`, JSON-LD `Movie` + `AggregateRating` on the detail page. Remaining: locale-aware metadata (titles don't vary by `locale` cookie) and hreflang (not applicable — locale is cookie-based, not URL-based)
 - [x] Font loading — `next/font` Inter (self-hosted, `latin`+`latin-ext`+`vietnamese` subsets, `display: swap`) wired to `--font-inter` → `--font-sans` in `global.css`
+- [x] Transfer actions complete and documented: all transfer flow pages documented in `docs/pages.md`, transfer feature updated in `docs/features.md`, transfer state management added to `docs/state.md`, transfer security progress tracked in `docs/progress.md`
 - [ ] Monitoring / analytics `[prod only]`
 
 ### Tests

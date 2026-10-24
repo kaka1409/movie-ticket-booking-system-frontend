@@ -78,7 +78,7 @@ Past tickets show the same detail layout but without action buttons.
 
 **Transfer provenance**: `GET /tickets/past` also returns the tickets the viewer transferred away, so `toPastTicket` maps the summary's settled-transfer field to `PastTicket.transferProvenance` (deliberately not `transfer` — that name is the _open_ transfer detail on `UpcomingTicket`, and the detail context narrows on it) and `toPastStatus` returns the viewer-derived `"transferred"` status (a `TicketStatus` member that exists only on the FE) for `direction: "sent"`. `PastCard` shows the provenance badge (`tickets.transfer.sent_badge` / `received_badge`) **instead of** the terminal badge whenever `transferProvenance` is present, and for a sent ticket it names the recipient where the "View Details" link would be — ownership moved on accept, so the detail endpoint answers 404 for the sender and the link must not be rendered.
 
-**Transfer expiry** (no FE code): the backend closes a `pending` transfer once its accept window ends (one hour before the showtime starts) — the row becomes `expired`, the sender's QR is re-armed and both parties get a notice (`transfer_expired` for the sender, `transfer_offer_expired` for the recipient). `expired` never reaches the wire (listings expose `pending`/`accepted` only), so the only visible effect is the `pending_badge` ribbon and the recipient's offer panel disappearing — driven by the notification push above. Never compute this cutoff client-side.
+**Transfer expiry** (no FE code): the backend closes a `pending` transfer once its accept window ends (2 hours before the showtime starts) — the row becomes `expired`, the sender's QR is re-armed and both parties get a notice (`transfer_expired` for the sender, `transfer_offer_expired` for the recipient). `expired` never reaches the wire (listings expose `pending`/`accepted` only), so the only visible effect is the `pending_badge` ribbon and the recipient's offer panel disappearing — driven by the notification push above. Never compute this cutoff client-side.
 
 **Live refresh** (`features/tickets/components/TicketRealtimeRefresh.tsx`): the ticket _writer_ is often not the viewer, so both the listing (`<TicketRealtimeRefresh />`, no id) and the detail layout (`<TicketRealtimeRefresh ticketId={...} />`) stay honest about a transfer the other side accepted/declined/cancelled. Triggers: the notification push (`notification:new` → provider dispatches `TICKET_UPDATED_EVENT` with `{ ticketId }`) and returning to a hidden tab; a 15 s throttle coalesces them. A listener reacts unless the event names a _different_ ticket. On the detail page the ticket is re-read **before** refreshing — `getTicketById` answering 404 means ownership moved away, so the visitor is sent to `/tickets` (`router.replace`) instead of rendering the layout's `notFound()`; otherwise `router.refresh()`.
 
@@ -118,14 +118,54 @@ Components under `transfer/confirm/components/`:
 - The owner's Cancel Transfer button (`TicketInfo` pending-transfer panel) is likewise a `<form action={formAction}>` with a hidden `ticketId`, refreshing on success.
 - `409 TRANSFER_NOT_PENDING` is treated as "already handled" (the actions carry `status`/`code` through the union), not as an error.
 
+### Transfer payment (sender side)
+
+`transfer/page.tsx` wraps **both** device trees with one `TransferProvider` (they both render, so a per-branch provider would fork the draft), then renders `SeatSelector`, `RecipientInput`, `TransferBottomBar`. Mobile/desktop split via `block md:hidden`.
+
+- The UI allows the owner to select **transferable seats only** (those not already transferred, respecting SweetBox pairing, SweetBox cell is taken if any of its chairs is selected, seat count matches SweetBox rules). Seats are those the owner owns, are upcoming (showtime not started), and are transferable (status pending, no other open transfer for that seat).
+
+- The preview shows `tickets.transfer.pending_badge` + recipient name (once resolved) on the listing card. Owner selects a recipient email; validation includes:
+  - `getRecipient(email)` must return an exact match (GET `/user/search`)
+  - Recipient cannot be the sender (409 CONFLICT)
+  - Recipient may not have an open transfer request for the same ticket (409 CONFLICT)
+  - Recipient's account must be active (409 CONFLICT)
+
+- Recipient validation renders inline for mobile, as a separate recipient lookup panel for desktop.
+
+- A transfer can be cancelled at any time before acceptance: the sender sees a "Cancel Transfer" button in the transfer panel, which posts `{ ticketId }` via `cancelTransferAction` (POST `/tickets/transfers/:id/cancel`).
+
+- Once the recipient accepts, `awaiting_payment` is set and the sender must pay through `/tickets/:id/transfer/payment`:
+  - `transfer/payment/page.tsx` is a real `<form action={formAction}>` for both skins. `useTransferPayment` (device-agnostic, mounted once by `TransferPaymentScreen` above both skins) opens the payment intent (`GET /payments/:transferId/intent` and `POST /payments/:transferId/create` if missing) and polls every 3 s (`getPaymentIntent`) with three UI states:
+    - **Open**: QR code for the amount (`Booking.totalPrice`) that the recipient must pay to the sender; the QR shows until captured (IPN); the panel includes a "Cancel Transfer" button (POST `/tickets/transfers/:id/cancel`) available while the transfer is pending OR `paymentExpiresAt <= now` (payment window closed), otherwise `409 TRANSFER_PAYMENT_IN_PROGRESS`.
+    - **Pending**: QR rotates (once at settle), payment window starts, `paymentExpiresAt = now + 10:00`
+    - **Closed**: `paymentExpiresAt <= now`, payment not captured → QR expires, panel shows "Payment expired. The transfer is cancelled. Choose seats again" CTA to `/tickets/:id/transfer`.
+  - The payment step sets `paymentExpiresAt` in the payment row (unique per transfer), and `awaiting_payment` transition includes this field; the UI disables the "Cancel Transfer" button after `paymentExpiresAt <= now`.
+  - The transfer step is gated: only the sender can initiate or cancel before payment, only the recipient can accept/decline before payment, both sides can see status, and the recipient cannot pay (they can only accept).
+
+- The recipient accepts via `acceptTransferAction` (POST `/tickets/transfers/:id/accept`): acceptance moves the transfer to `awaiting_payment` and starts the 10-minute payment window. If the recipient accepts after `paymentExpiresAt` (closed), `409 TRANSFER_PAYMENT_EXPIRED` and the transfer expires (owner must re-send).
+
+- The recipient's payment window (`paymentExpiresAt`) is a field on the payment row (kind=transfer), owned by the backend; the UI only knows to disable actions and show the expiry warning, never compute the deadline.
+
+- The payment QR page (`transfer/payment/page.tsx`) renders `<TransferPaymentScreen>` with:
+  - **Open**: QR code + recipient payee name + amount (`Booking.totalPrice`), "Cancel Transfer" button (POST `/tickets/transfers/:id/cancel`), "Check Status" CTA to retry the intent.
+  - **Pending**: 10-minute clock, "Cancel Transfer" button (disabled if payment started), "Check Status" CTA.
+  - **Closed**: payment expired, panel shows "Payment window closed. Transfer cancelled. Choose seats again" CTA to `/tickets/:id/transfer`.
+  - Both device trees render: mobile: full-width QR + amount + CTA; desktop: two-up with QR left + amount/status right + cancel CTA.
+
+- Transfer expiry is server-controlled: after acceptance (`awaiting_payment`), `paymentExpiresAt` is written and expires after 10 min. If not captured by then, the payment window closes, `paymentExpiresAt` is set to past, and the transfer reverts to `pending` (sender must re-send). The UI disables "Cancel Transfer" after `paymentExpiresAt <= now`.
+
+- The recipient's QR for the ticket is not issued until payment (`IPN capture`), so the owner sees a neutral pending panel (no QR) until they pay.
+
+- A paid transfer uses the same QR layout as a paid booking (`transfer/payment/page.tsx`): QR shows the signed payload (`ticketId.qrToken.signature`), amount is `Booking.totalPrice`, recipient sees "The recipient must pay this amount to the sender" instead of "Pay for your ticket", and after payment lands the sender sees "Payment received" and the QR becomes the ticket QR for the recipient.
+
 ## Ticket Modify
 
 Five sub-routes under `(sub)/tickets/[id]/modify/` — there is **no payment step**: the backend accepts only changes that keep the amount paid identical (same cinema, same seat-type mix), so the review CTA submits and lands straight on success.
 
 - `modify/page.tsx` — type picker (`TypeCards`): showtime / seats / both. The choice lives in `ModificationContext` (`ModificationProvider` wraps the segment in `modify/layout.tsx`), so every later step reads the same draft.
-- `modify/showtime/page.tsx` — `ShowtimeDataLoader` fetches `GET /tickets/:id/modify/eligible-showtimes` (same movie, same cinema, still outside the cutoff). `EligibleShowtime.requiresSeatSelection` is the server's answer: a target room other than the ticket's needs a fresh seat pick, so `BottomBar` routes to `seats` instead of `review` in that case.
+- `modify/showtime/page.tsx` — `ShowtimeDataLoader` fetches `GET /tickets/:id/modify/eligible-showtimes?lang=<locale>` (same movie, same cinema, still outside the cutoff; `format` is catalog content, so the read takes the locale). `EligibleShowtime.requiresSeatSelection` is the server's answer: a target room other than the ticket's needs a fresh seat pick, so `BottomBar` routes to `seats` instead of `review` in that case.
 - `modify/seats/page.tsx` — `SeatMapWrapper` loads the chosen showtime's map (the current one for a seats-only change); the SweetBox pair rule and the seat count come from the ticket.
-- `modify/review/page.tsx` — `ComparisonCard` (current vs new showtime/seats) + `PriceSummary` (total paid, "same-price change — no extra charge") + `limit_notice` (one change per ticket). `BottomBar` → `useModifySubmit` posts `{ newShowtimeId?, newSeatIds? }` (absent keys mean unchanged) through `modifyTicketAction` and routes to `success`; a 409/400 message from the server renders inline through `BookingBottomBar`'s `errorText`.
+- `modify/review/page.tsx` — `ComparisonCard` (current vs new showtime/seats) + `PriceSummary` (total paid, "same-price change — no extra charge") + `limit_notice` (one change per ticket). `BottomBar` → `useModifySubmit` posts `{ newShowtimeId?, newSeatIds? }` (absent keys mean unchanged) through `modifyTicketAction` and routes to `success`; a rejection renders inline through `BookingBottomBar`'s `errorText`, localized from the backend `code` by `features/tickets/utils.ts` `getModifyErrorMessage` (an unmapped code falls back to the server message). `TICKET_TRANSFER_PENDING` is its own answer: cancelling the offer is the sender's decision, so the server refuses rather than auto-closing it.
 - `modify/success/page.tsx` — confirmation linking back to the ticket.
 
 Rules the FE must not re-implement (backend `api-contract.md` §7.2): same movie, same cinema, one change per ticket, same seat-type multiset, ≥ 1 h before the current showtime, QR rotated after success. A price change answers `409 MODIFICATION_REQUIRES_PAYMENT`; cancel + rebook is the only path until top-up/refund exists. Desktop skins for this cluster are still null stubs.
@@ -134,7 +174,7 @@ Rules the FE must not re-implement (backend `api-contract.md` §7.2): same movie
 
 Single route under `(sub)/tickets/[id]/cancel/` — no separate routes for success/failed:
 
-- `cancel/page.tsx` — **client component**; the 4-view machine (`idle` summary / `processing` overlay / `success` / `failed`) lives in `features/tickets/hooks/useCancelFlow.ts` so both device skins drive it from one place. Reads ticket from `useTicketDetail()` context (parent layout). Computes cancellation fee (fixed ₫20,000), total paid, and refund amount locally.
+- `cancel/page.tsx` — **client component**; the 4-view machine (`idle` summary / `processing` overlay / `success` / `failed` = refused) lives in `features/tickets/hooks/useCancelFlow.ts` so both device skins drive it from one place. Reads ticket from `useTicketDetail()` context (parent layout). Shows total paid and the refund (= 100% of it, no fee) locally; the backend owns the time gate.
 - `cancel/loading.tsx` — skeleton matching summary layout
 - `cancel/components/mobile/CancelSummary.tsx` — movie info card (poster, title, cinema, datetime), seats, price breakdown (ticket + combo), total paid, cancellation fee, refund amount, refund-to section (payment method from ticket), cancellation policy link, Continue button
 - `cancel/components/mobile/CancellationPolicySheet.tsx` — bottom sheet with 4 policy rules, Done button. Uses `ActionSheet` wrapper.
@@ -144,7 +184,7 @@ Single route under `(sub)/tickets/[id]/cancel/` — no separate routes for succe
 
 Entry point: `TicketActions.tsx` Cancel & Refund row → `router.push(/tickets/${id}/cancel)`. Currently shown only when `canCancel` is true (status success/confirmed/pending) and no pending transfer.
 
-Cancellation fee is fixed ₫20,000 (policy time from backend in future). `cancelTicketAction` is the live server action (`POST /tickets/:id/cancel`) — the backend decides the refund outcome. After success, "View Ticket" calls `router.replace()` + `router.refresh()` to re-fetch server-side ticket data.
+Cancellation is **100% with no fee**; the only gate is time — the backend refuses a cancel inside 2 hours of the showtime (`MODIFICATION_NOT_ALLOWED`) and the failed view renders that reason, localized by `getCancelErrorMessage`, instead of inventing a refund amount. `cancelTicketAction` is the live server action (`POST /tickets/:id/cancel`). After success, "View Ticket" calls `router.replace()` + `router.refresh()` to re-fetch server-side ticket data.
 
 ## Profile Page
 

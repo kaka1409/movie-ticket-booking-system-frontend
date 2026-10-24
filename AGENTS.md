@@ -11,6 +11,8 @@ pnpm format   # Prettier write (printWidth 100, double quotes)
 
 No test runner: `tests/{unit,integration,e2e}/` are empty. Agent never commits.
 
+Never run `pnpm build` while `pnpm dev` is running: both write `.next`, and Next writes `.next/dev/types/routes.d.ts` non-atomically, so the build's type check can read a torn file. `tsconfig.json` excludes `.next/dev` for that reason - that directory is dev-only generated state, never a typecheck input.
+
 ## Architecture
 
 - Next.js 16.2.9 App Router + React 19.2.4; `@/` alias -> `src/`.
