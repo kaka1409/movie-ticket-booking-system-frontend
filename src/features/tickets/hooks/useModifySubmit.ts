@@ -3,8 +3,10 @@
 import { useState, useTransition } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLocale } from "@/contexts/LocaleContext";
 import { useModification } from "@/features/tickets/contexts/ModificationContext";
 import { modifyTicketAction } from "@/features/tickets/action";
+import { getModifyErrorMessage } from "@/features/tickets/utils";
 
 interface ModifySubmit {
   /** False when the draft holds nothing the backend could act on. */
@@ -24,6 +26,7 @@ export function useModifySubmit(): ModifySubmit {
   const params = useParams();
   const router = useRouter();
   const { token } = useAuth();
+  const { translate } = useLocale();
   const { modificationType, selectedShowtime, selectedSeats } = useModification();
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -54,7 +57,9 @@ export function useModifySubmit(): ModifySubmit {
       );
 
       if (!result.success) {
-        setErrorMessage(result.error);
+        setErrorMessage(
+          getModifyErrorMessage(translate, { message: result.error, code: result.code }),
+        );
         return;
       }
 

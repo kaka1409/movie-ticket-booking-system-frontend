@@ -1,5 +1,5 @@
 import type { ApiResponse } from "@/libs/api";
-import { apiFetch } from "@/libs/api";
+import { apiFetch, withLang } from "@/libs/api";
 import { getPaymentMethods } from "@/features/booking/api";
 import type { UpcomingTicket, PastTicket, Recipient, EligibleShowtime } from "./types";
 import type {
@@ -74,6 +74,23 @@ export async function getTicketById(
   return { data: toDetailTicket(result.data, locale, paymentMethods) };
 }
 
+/**
+ * LIVE - `GET /tickets/:id` read with the RAM Bearer token. A transfer charge
+ * that reports success does not say whether the deal settled or was refunded
+ * after it closed; ownership is the difference, so the checkout asks whose the
+ * ticket is instead of guessing from the attempt.
+ */
+export function getTicketOwnership(
+  ticketId: string,
+  token: string,
+): Promise<ApiResponse<Pick<TicketDetailWire, "viewerRole">>> {
+  return apiFetch<Pick<TicketDetailWire, "viewerRole">>(
+    `/tickets/${encodeURIComponent(ticketId)}`,
+    undefined,
+    token,
+  );
+}
+
 /* ─── Transfer recipient (LIVE) ─────────────────────────── */
 
 /**
@@ -103,13 +120,18 @@ export async function getRecipient(
 
 /* ─── Modification Queries ──────────────────────────────── */
 
-/** Showtimes this ticket may move to (same movie, >1h out) — `GET /tickets/:id/modify/eligible-showtimes`. */
+/**
+ * Showtimes this ticket may move to (same movie, outside the change window) —
+ * `GET /tickets/:id/modify/eligible-showtimes`. `format` is catalog content, so
+ * the read takes the visitor's locale.
+ */
 export async function getEligibleShowtimes(
   ticketId: string,
+  locale: "en" | "vn",
   cookie?: string,
 ): Promise<ApiResponse<EligibleShowtime[]>> {
   const result = await apiFetch<EligibleShowtimeWire[]>(
-    `/tickets/${encodeURIComponent(ticketId)}/modify/eligible-showtimes`,
+    withLang(`/tickets/${encodeURIComponent(ticketId)}/modify/eligible-showtimes`, locale),
     undefined,
     undefined,
     cookie,

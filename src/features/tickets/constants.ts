@@ -12,6 +12,3 @@ export const TICKET_STATUS = {
 } as const;
 
 export type TicketStatus = (typeof TICKET_STATUS)[keyof typeof TICKET_STATUS];
-
-/** Flat fee deducted from any ticket cancellation/refund (policy value; backend enforces it too). */
-export const CANCELLATION_FEE = 20000;

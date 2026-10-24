@@ -21,20 +21,34 @@ export interface Recipient {
   avatar: string;
 }
 
+/**
+ * The two states an open offer can be in: waiting for the recipient's decision,
+ * then waiting for their money. `accepted` is settled and never open.
+ */
+export type OpenTransferStatus = "pending" | "awaiting_payment";
+
 /** Outgoing transfer as seen by the ticket owner. */
 export interface TicketTransfer {
-  status: "pending";
+  id: string;
+  status: OpenTransferStatus;
   recipient: Recipient;
-  transferredSeats: string[];
-  transferSnacks: boolean;
+  /** Frozen at creation: the recipient buys the whole ticket, seats + snacks. */
+  amount: number;
+  /** Null until the recipient accepted; a new payment attempt never extends it. */
+  paymentExpiresAt: string | null;
+  createdAt: string;
 }
 
-/** Incoming offer as seen by the recipient (sender + seats, no QR credential). */
+/** Incoming offer as seen by the recipient (sender + price, no QR credential). */
 export interface IncomingTransfer {
   id: string;
+  status: OpenTransferStatus;
   sender: Recipient;
-  transferredSeats: string[];
-  transferSnacks: boolean;
+  /** What this viewer pays to receive the ticket — seats + snacks, frozen. */
+  amount: number;
+  /** The payment deadline once accepted; null while the decision is open. */
+  paymentExpiresAt: string | null;
+  createdAt: string;
 }
 
 export interface UpcomingTicket {

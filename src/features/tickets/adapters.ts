@@ -5,6 +5,7 @@ import type {
   EligibleShowtime,
   FoodDrinkItem,
   IncomingTransfer,
+  OpenTransferStatus,
   PastTicket,
   Recipient,
   SeatTicket,
@@ -48,6 +49,7 @@ export interface TicketDetailWire extends BookingDetail {
   viewerRole: "owner" | "recipient";
   pendingTransfer: {
     id: string;
+    status: string;
     recipientId: string;
     recipient: {
       id: string;
@@ -55,20 +57,21 @@ export interface TicketDetailWire extends BookingDetail {
       email: string;
       avatarUrl: string | null;
     };
-    seatIds: string[];
-    transferSnacks: boolean;
+    amount: number;
+    paymentExpiresAt: string | null;
     createdAt: string;
   } | null;
   incomingTransfer: {
     id: string;
+    status: string;
     sender: {
       id: string;
       name: string;
       email: string;
       avatarUrl: string | null;
     };
-    seatIds: string[];
-    transferSnacks: boolean;
+    amount: number;
+    paymentExpiresAt: string | null;
     createdAt: string;
   } | null;
 }
@@ -301,45 +304,46 @@ export function toDetailTicket(
   };
 }
 
-/**
- * Pending transfer → card shape. Seat IDs resolve to labels through the
- * detail's own seats; the recipient comes from the backend include.
- */
+/** Wire status → the two open states; anything unexpected reads as undecided. */
+function toOpenTransferStatus(status: string): OpenTransferStatus {
+  return status === "awaiting_payment" ? "awaiting_payment" : "pending";
+}
+
+/** Open transfer → owner panel shape (who it went to, how much they pay). */
 function toTransfer(detail: TicketDetailWire): TicketTransfer | undefined {
   const pending = detail.pendingTransfer;
   if (!pending) return undefined;
-  const labelById = new Map(detail.seats.map((seat) => [seat.id, seat.label] as const));
   return {
-    status: "pending",
+    id: pending.id,
+    status: toOpenTransferStatus(pending.status),
     recipient: {
       id: pending.recipient.id,
       name: pending.recipient.name,
       email: pending.recipient.email,
       avatar: pending.recipient.avatarUrl ?? DEFAULT_AVATAR,
     },
-    transferredSeats: pending.seatIds.map((seatId) => labelById.get(seatId) ?? seatId),
-    transferSnacks: pending.transferSnacks,
+    amount: pending.amount,
+    paymentExpiresAt: pending.paymentExpiresAt,
+    createdAt: pending.createdAt,
   };
 }
 
-/**
- * Incoming offer → card shape. Same seat-label resolution as the outgoing
- * panel; the sender replaces the recipient.
- */
+/** Incoming offer → recipient panel shape; the sender replaces the recipient. */
 function toIncomingTransfer(detail: TicketDetailWire): IncomingTransfer | undefined {
   const incoming = detail.incomingTransfer;
   if (!incoming) return undefined;
-  const labelById = new Map(detail.seats.map((seat) => [seat.id, seat.label] as const));
   return {
     id: incoming.id,
+    status: toOpenTransferStatus(incoming.status),
     sender: {
       id: incoming.sender.id,
       name: incoming.sender.name,
       email: incoming.sender.email,
       avatar: incoming.sender.avatarUrl ?? DEFAULT_AVATAR,
     },
-    transferredSeats: incoming.seatIds.map((seatId) => labelById.get(seatId) ?? seatId),
-    transferSnacks: incoming.transferSnacks,
+    amount: incoming.amount,
+    paymentExpiresAt: incoming.paymentExpiresAt,
+    createdAt: incoming.createdAt,
   };
 }
 

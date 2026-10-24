@@ -19,19 +19,23 @@ function readField(formData: FormData, key: string): string {
 
 /* ─── Transfer ──────────────────────────────────────────── */
 
-/** `POST /tickets/:id/transfer` result. */
+/** `POST /tickets/:id/transfer` result — the offer plus the amount it froze. */
 export interface TransferDetail {
   id: string;
   status: string;
   recipientId: string;
-  seatIds: string[];
-  transferSnacks: boolean;
+  amount: number;
   createdAt: string;
 }
 
 export type TransferActionResult =
-  { success: true; data: TransferDetail } | { success: false; error: string };
+  | { success: true; data: TransferDetail }
+  | { success: false; error: string; status?: number; code?: string };
 
+/**
+ * Open a whole-ticket offer. The backend freezes `amount` from the booking's
+ * total, so the payload carries no seats or snack flag: the ticket moves as-is.
+ */
 export async function createTransferAction(
   prevState: TransferActionResult,
   formData: FormData,
@@ -42,26 +46,26 @@ export async function createTransferAction(
       `/tickets/${ticketId}/transfer`,
       {
         method: "POST",
-        body: JSON.stringify({
-          recipientEmail: readField(formData, "recipientEmail"),
-          // One hidden input per seat → `getAll` preserves render order.
-          seatIds: formData
-            .getAll("seatId")
-            .filter((value): value is string => typeof value === "string"),
-          transferSnacks: readField(formData, "transferSnacks") === "true",
-        }),
+        body: JSON.stringify({ recipientEmail: readField(formData, "recipientEmail") }),
       },
       undefined,
       await getRequestCookie(),
     );
     return { success: true, data: response.data };
   } catch (error: unknown) {
-    return { success: false, error: (error as Error).message };
+    const failure = error as Error & { status?: number; code?: string };
+    return {
+      success: false,
+      error: failure.message,
+      status: failure.status,
+      code: failure.code,
+    };
   }
 }
 
 export type CancelTransferActionResult =
-  { success: true; data: { id: string; status: string } } | { success: false; error: string };
+  | { success: true; data: { id: string; status: string } }
+  | { success: false; error: string; status?: number; code?: string };
 
 export async function cancelTransferAction(
   prevState: CancelTransferActionResult,
@@ -76,7 +80,13 @@ export async function cancelTransferAction(
     );
     return { success: true, data: response.data };
   } catch (error: unknown) {
-    return { success: false, error: (error as Error).message };
+    const failure = error as Error & { status?: number; code?: string };
+    return {
+      success: false,
+      error: failure.message,
+      status: failure.status,
+      code: failure.code,
+    };
   }
 }
 
@@ -156,8 +166,13 @@ export interface ModifyResult {
   delta: number;
 }
 
+/**
+ * `status`/`code` are carried through so the review step can explain a known
+ * rejection in the visitor's language instead of the backend's English prose.
+ */
 export type ModifyActionResult =
-  { success: true; data: ModifyResult } | { success: false; error: string };
+  | { success: true; data: ModifyResult }
+  | { success: false; error: string; status?: number; code?: string };
 
 export async function modifyTicketAction(
   prevState: ModifyActionResult,
@@ -184,22 +199,30 @@ export async function modifyTicketAction(
     );
     return { success: true, data: response.data };
   } catch (error: unknown) {
-    return { success: false, error: (error as Error).message };
+    const failure = error as Error & { status?: number; code?: string };
+    return {
+      success: false,
+      error: failure.message,
+      status: failure.status,
+      code: failure.code,
+    };
   }
 }
 
 /* ─── Cancel & Refund ───────────────────────────────────── */
 
+/** `POST /tickets/:id/cancel` result — the refund is recorded, the money moves in the worker. */
 export type CancelActionResult =
   | {
       success: true;
       data: {
         success: boolean;
-        refundStatus: "processing" | "failed";
+        /** `none` = nothing was owed (a zero-total ticket), not a failure. */
+        refundStatus: "processing" | "none";
         refundAmount: number;
       };
     }
-  | { success: false; error: string };
+  | { success: false; error: string; status?: number; code?: string };
 
 export async function cancelTicketAction(
   prevState: CancelActionResult,
@@ -209,12 +232,18 @@ export async function cancelTicketAction(
     const response = await apiMutation<{
       data: {
         success: boolean;
-        refundStatus: "processing" | "failed";
+        refundStatus: "processing" | "none";
         refundAmount: number;
       };
     }>(`/tickets/${data.ticketId}/cancel`, { method: "POST" }, data.token);
     return { success: true, data: response.data };
   } catch (error: unknown) {
-    return { success: false, error: (error as Error).message };
+    const failure = error as Error & { status?: number; code?: string };
+    return {
+      success: false,
+      error: failure.message,
+      status: failure.status,
+      code: failure.code,
+    };
   }
 }
