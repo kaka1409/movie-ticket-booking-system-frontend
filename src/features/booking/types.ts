@@ -206,7 +206,10 @@ export type PaymentIntentKind = "qr" | "redirect";
 /** `GET /payments/:bookingId/intent` (contract §4.13). */
 export interface PaymentIntent {
   paymentId: string;
+  /** The order the charge hangs off — its original order even for a transfer. */
   bookingId: string;
+  /** Set when the charge buys a ticket transfer instead of an order. */
+  transferId: string | null;
   method: PaymentMethodId;
   status: PaymentIntentStatus;
   amount: number;
@@ -222,7 +225,15 @@ export interface PaymentIntent {
 
 /** What the backend did with a webhook / simulate call (contract §4.16). */
 export type PaymentSettlement =
-  "settled" | "declined" | "late_success" | "duplicate_charge" | "no_change";
+  | "settled"
+  | "declined"
+  | "late_success"
+  | "duplicate_charge"
+  /** A transfer charge captured: ownership moved and the sender's refund opened. */
+  | "transfer_settled"
+  /** Money captured for a transfer that had already closed, so it was refunded. */
+  | "transfer_expired"
+  | "no_change";
 
 /** `POST /payments/:bookingId/simulate | sync` (contract §4.14–4.16). */
 export interface PaymentOutcome {
@@ -230,6 +241,8 @@ export interface PaymentOutcome {
   paymentId: string;
   refundId: string | null;
   ticketId: string | null;
+  /** Set when the charge paid for a transfer instead of an order. */
+  transferId: string | null;
   bookingStatus: BookingStatus;
 }
 

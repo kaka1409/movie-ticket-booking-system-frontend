@@ -127,6 +127,22 @@ export function getPaymentIntent(
   );
 }
 
+/**
+ * LIVE - `GET /payments/transfers/:transferId/intent` (contract §4.17) — the
+ * recipient's attempt, read with the RAM Bearer token. `404` means no charge was
+ * ever opened for this deal, which is where the method picker starts.
+ */
+export function getTransferPaymentIntent(
+  transferId: string,
+  token: string,
+): Promise<ApiResponse<PaymentIntent>> {
+  return apiFetch<PaymentIntent>(
+    `/payments/transfers/${encodeURIComponent(transferId)}/intent`,
+    undefined,
+    token,
+  );
+}
+
 /* ─── Seat holds (LIVE, client-interactive) ────────────────── */
 
 /**

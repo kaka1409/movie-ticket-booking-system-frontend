@@ -122,3 +122,45 @@ export async function syncPaymentAction(
     token,
   );
 }
+
+/* ─── Transfer charge ─────────────────────────────────────── */
+
+/**
+ * `POST /payments/transfers/:transferId/create` (contract §4.17) — the
+ * recipient's checkout for an accepted transfer. Replays a live attempt, and
+ * `409 TRANSFER_NOT_PENDING | INVALID_STATE` means the window closed.
+ */
+export async function createTransferPaymentIntentAction(
+  input: { transferId: string; method: PaymentMethodId },
+  token: string,
+): Promise<BookingActionResult<PaymentIntent>> {
+  return mutatePayment<PaymentIntent>(
+    `/payments/transfers/${encodeURIComponent(input.transferId)}/create`,
+    { method: input.method },
+    token,
+  );
+}
+
+/** `POST /payments/transfers/:transferId/simulate` — demo mode only. */
+export async function simulateTransferPaymentAction(
+  input: { transferId: string; outcome: SimulatedOutcome },
+  token: string,
+): Promise<BookingActionResult<PaymentOutcomeWithIntent>> {
+  return mutatePayment<PaymentOutcomeWithIntent>(
+    `/payments/transfers/${encodeURIComponent(input.transferId)}/simulate`,
+    { outcome: input.outcome },
+    token,
+  );
+}
+
+/** `POST /payments/transfers/:transferId/sync` — reconcile a lost webhook. */
+export async function syncTransferPaymentAction(
+  input: { transferId: string },
+  token: string,
+): Promise<BookingActionResult<PaymentOutcomeWithIntent>> {
+  return mutatePayment<PaymentOutcomeWithIntent>(
+    `/payments/transfers/${encodeURIComponent(input.transferId)}/sync`,
+    undefined,
+    token,
+  );
+}
