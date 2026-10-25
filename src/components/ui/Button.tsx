@@ -4,7 +4,7 @@ import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
-type ButtonVariant = "primary" | "outline" | "loadMore";
+type ButtonVariant = "primary" | "outline" | "loadMore" | "danger";
 type ButtonSize = "sm" | "md" | "lg";
 
 const variantClasses: Record<ButtonVariant, string> = {
@@ -12,6 +12,8 @@ const variantClasses: Record<ButtonVariant, string> = {
   outline: "border border-(--color-gold) text-(--color-gold) bg-transparent",
   loadMore:
     "border border-(--color-border) bg-(--color-surface) text-(--color-gold-light) hover:border-(--color-gold)/40 hover:text-(--color-gold)",
+  /** Irreversible action (cancel a booking) — outlined, never a filled red block. */
+  danger: "border border-red-500/60 text-red-400 bg-transparent",
 };
 
 const sizeClasses: Record<ButtonSize, string> = {

@@ -18,6 +18,12 @@
   --color-surface: #1c1b1b;
   --color-surface-2: #242424;
   --color-border: #2e2e2e;
+  /* Holds `--color-surface`'s neutral value for `.surface-raised`, which
+     re-points `--color-surface` and would otherwise lose the panel colour. */
+  --color-surface-base: var(--color-surface);
+  /* Colour that shows *through* a ticket's tear-line notch — whatever sits behind
+     the card. On the page background, which is where every ticket card renders. */
+  --color-notch: var(--color-bg);
 
   /* Text */
   --color-text-primary: #ffffff;
@@ -86,6 +92,9 @@ body {
    right lift — so the shift is scoped here instead of inside the components. */
 .surface-raised {
   --color-surface: var(--color-surface-2);
+  /* A nested ticket card sits on this panel, so its tear-line notch must punch
+     with the panel colour — which this scope has just re-pointed. */
+  --color-notch: var(--color-surface-base);
 }
 
 @utility scrollbar-hide {
