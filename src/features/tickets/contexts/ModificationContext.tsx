@@ -1,7 +1,13 @@
 "use client";
 
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
-import type { ModificationType, ModificationSeat, EligibleShowtime } from "../types";
+import type {
+  ModificationType,
+  ModificationSeat,
+  EligibleShowtime,
+  SeatMapLoadStatus,
+  ShowtimeLoadStatus,
+} from "../types";
 import type { SeatRow, SeatPrice, DateOption } from "@/features/booking/types";
 
 interface ModificationContextType {
@@ -17,10 +23,29 @@ interface ModificationContextType {
   setOriginalSeatCount: (count: number) => void;
   showtimes: EligibleShowtime[];
   setShowtimes: (showtimes: EligibleShowtime[]) => void;
+  showtimesStatus: ShowtimeLoadStatus;
+  setShowtimesStatus: (status: ShowtimeLoadStatus) => void;
+  /** Re-runs the eligible-showtime fetch after a failure or an empty answer. */
+  retryShowtimes: () => void;
+  /** Read by the adopter alone: a bump is the only signal that forces a refetch. */
+  showtimesRetryToken: number;
   seatRows: SeatRow[];
   setSeatRows: (rows: SeatRow[]) => void;
   seatPrices: SeatPrice | null;
   setSeatPrices: (prices: SeatPrice) => void;
+  seatMapStatus: SeatMapLoadStatus;
+  setSeatMapStatus: (status: SeatMapLoadStatus) => void;
+  /**
+   * The showtime the painted grid actually belongs to, written only after a
+   * successful load. A gate compares it with the current target so a map never
+   * paints for a showtime it was not fetched for.
+   */
+  paintedShowtimeId: string | null;
+  setPaintedShowtimeId: (showtimeId: string | null) => void;
+  /** Re-runs the seat-map fetch after a failure. */
+  retrySeatMap: () => void;
+  /** Read by the adopter alone: a bump is the only signal that forces a refetch. */
+  seatMapRetryToken: number;
   dates: DateOption[];
   setDates: (dates: DateOption[]) => void;
   selectedDate: string;
@@ -47,12 +72,23 @@ export function ModificationProvider({
   const [selectedDate, setSelectedDate] = useState("");
   const [showtimes, setShowtimes] = useState<EligibleShowtime[]>([]);
   const [selectedShowtime, setSelectedShowtime] = useState<EligibleShowtime | null>(null);
+  const [showtimesStatus, setShowtimesStatus] = useState<ShowtimeLoadStatus>("loading");
+  const [showtimesRetryToken, setShowtimesRetryToken] = useState(0);
 
   // Seat state
   const [seatRows, setSeatRows] = useState<SeatRow[]>([]);
   const [seatPrices, setSeatPrices] = useState<SeatPrice | null>(null);
   const [selectedSeats, setSelectedSeats] = useState<ModificationSeat[]>([]);
   const [originalSeatCount, setOriginalSeatCount] = useState(initialSeatCount);
+  const [seatMapStatus, setSeatMapStatus] = useState<SeatMapLoadStatus>("loading");
+  const [paintedShowtimeId, setPaintedShowtimeId] = useState<string | null>(null);
+  const [seatMapRetryToken, setSeatMapRetryToken] = useState(0);
+
+  // The fetch lifecycles live here rather than in each adopter: both device
+  // trees render, so the adopter that runs the request and the gate that shows
+  // its state are siblings, and the context is the only channel between them.
+  const retryShowtimes = useCallback(() => setShowtimesRetryToken((token) => token + 1), []);
+  const retrySeatMap = useCallback(() => setSeatMapRetryToken((token) => token + 1), []);
 
   const toggleSeat = useCallback((seat: ModificationSeat) => {
     setSelectedSeats((previous) => {
@@ -82,10 +118,20 @@ export function ModificationProvider({
       setOriginalSeatCount,
       showtimes,
       setShowtimes,
+      showtimesStatus,
+      setShowtimesStatus,
+      retryShowtimes,
+      showtimesRetryToken,
       seatRows,
       setSeatRows,
       seatPrices,
       setSeatPrices,
+      seatMapStatus,
+      setSeatMapStatus,
+      paintedShowtimeId,
+      setPaintedShowtimeId,
+      retrySeatMap,
+      seatMapRetryToken,
       dates,
       setDates,
       selectedDate,
@@ -100,8 +146,15 @@ export function ModificationProvider({
       toggleSeat,
       originalSeatCount,
       showtimes,
+      showtimesStatus,
+      retryShowtimes,
+      showtimesRetryToken,
       seatRows,
       seatPrices,
+      seatMapStatus,
+      paintedShowtimeId,
+      retrySeatMap,
+      seatMapRetryToken,
       dates,
       selectedDate,
       query,

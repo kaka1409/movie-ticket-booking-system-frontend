@@ -3,6 +3,7 @@
 import { useModification } from "@/features/tickets/contexts/ModificationContext";
 import DatePicker from "@/features/showtimes/components/DatePicker";
 
+/** Draft-bound date strip: no eligible day means nothing to pick. */
 export default function DatePickerWrapper() {
   const { dates, selectedDate, setSelectedDate } = useModification();
 

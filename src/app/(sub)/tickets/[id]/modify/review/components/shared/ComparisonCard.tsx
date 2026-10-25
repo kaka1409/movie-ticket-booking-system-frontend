@@ -7,6 +7,11 @@ import { formatVND } from "@/libs/utils";
 import { CalendarDays, Armchair, ArrowRightLeft } from "lucide-react";
 import MicroLabel from "@/components/ui/MicroLabel";
 
+/**
+ * The change, side by side: what the ticket holds now and what it would hold
+ * after. Only the blocks the draft actually changes are rendered, so a
+ * seats-only swap never shows an unchanged showtime row.
+ */
 export default function ComparisonCard() {
   const { translate, locale } = useLocale();
   const { ticket } = useTicketDetail();
@@ -19,7 +24,7 @@ export default function ComparisonCard() {
   const newSeatsTotal = selectedSeats.reduce((sum, s) => sum + s.price, 0);
 
   return (
-    <section className="px-4 space-y-4">
+    <section className="space-y-4">
       <MicroLabel className="text-(--color-text-muted)">
         {translate("tickets.modify.review.changes_summary")}
       </MicroLabel>

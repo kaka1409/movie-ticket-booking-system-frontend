@@ -1,9 +1,11 @@
-import CurrentShowtime from "./components/mobile/CurrentShowtime";
-import SearchBar from "./components/mobile/SearchBar";
-import ShowtimeDataLoader from "./components/mobile/ShowtimeDataLoader";
-import DatePickerWrapper from "./components/mobile/DatePickerWrapper";
-import ShowtimeList from "./components/mobile/ShowtimeList";
+import CurrentShowtime from "./components/shared/CurrentShowtime";
+import CinemaSearchBar from "./components/shared/CinemaSearchBar";
+import DatePickerWrapper from "./components/shared/DatePickerWrapper";
+import ShowtimeList from "./components/shared/ShowtimeList";
 import ShowtimeBottomBar from "./components/mobile/BottomBar";
+
+import EligibleShowtimesAdopter from "@/features/tickets/components/EligibleShowtimesAdopter";
+import ShowtimeStepBody from "@/features/tickets/components/ShowtimeStepBody";
 
 import DesktopShowtimeContent from "./components/desktop/ShowtimeContent";
 
@@ -16,16 +18,20 @@ export default async function ShowtimePage({ params }: ShowtimePageProps) {
 
   return (
     <>
+      {/* Both device trees render, so the eligible slots and the date strip they
+          derive are adopted once here; the skins only paint what the draft holds. */}
+      <EligibleShowtimesAdopter ticketId={id} />
+
       {/* Mobile */}
       <div className="block md:hidden">
         <div className="flex flex-col min-h-dvh">
           <main className="flex-1 overflow-y-auto pb-5 p-4 space-y-5">
             <CurrentShowtime />
-            <SearchBar />
-            <ShowtimeDataLoader ticketId={id}>
+            <CinemaSearchBar />
+            <ShowtimeStepBody>
               <DatePickerWrapper />
               <ShowtimeList />
-            </ShowtimeDataLoader>
+            </ShowtimeStepBody>
           </main>
           <ShowtimeBottomBar />
         </div>

@@ -4,6 +4,7 @@ import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext
 import { useLocale } from "@/contexts/LocaleContext";
 import MicroLabel from "@/components/ui/MicroLabel";
 
+/** The showtime the ticket is on right now — the thing a change moves away from. */
 export default function CurrentShowtime() {
   const { ticket } = useTicketDetail();
   const { translate } = useLocale();

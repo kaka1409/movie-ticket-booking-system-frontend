@@ -3,6 +3,7 @@
 import { useLocale } from "@/contexts/LocaleContext";
 import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext";
 
+/** Which room's map is open below, and the reminder of how many seats are needed. */
 export default function SeatInfo() {
   const { translate } = useLocale();
   const { ticket } = useTicketDetail();

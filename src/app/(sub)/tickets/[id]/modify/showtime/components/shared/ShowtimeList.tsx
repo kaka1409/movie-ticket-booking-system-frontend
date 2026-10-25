@@ -29,6 +29,11 @@ function groupToCinemas(showtimes: EligibleShowtime[], stripDate?: boolean): Cin
   }));
 }
 
+/**
+ * Eligible slots grouped by cinema, filtered by the draft's search text and the
+ * picked day. Selection writes to the draft so the rail can read it; picking the
+ * already-selected slot clears it.
+ */
 export default function ShowtimeList() {
   const { translate } = useLocale();
   const { showtimes, selectedShowtime, setSelectedShowtime, selectedDate, query } =
