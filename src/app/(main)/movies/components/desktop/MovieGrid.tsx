@@ -6,23 +6,8 @@ import { useMovieList } from "@/features/movies/context";
 import { useAppendReveal } from "@/hooks/useAppendReveal";
 import Button from "@/components/ui/Button";
 import SectionFallback from "@/components/ui/SectionFallback";
+import { SkeletonBar } from "@/components/ui/Skeleton";
 import MovieCard from "./MovieCard";
-
-/**
- * Skeleton bar for the loading grid. `ui/Skeleton` paints `--color-surface-2`,
- * which is exactly the colour the panel's `surface-raised` scope gives every
- * card in here — the bars would vanish into their own card. A muted tint stays
- * readable on both the lifted card and the panel behind it.
- */
-function SkeletonBar({
-  className = "",
-  style,
-}: {
-  className?: string;
-  style?: React.CSSProperties;
-}) {
-  return <div className={`animate-pulse bg-(--color-text-muted)/30 ${className}`} style={style} />;
-}
 
 /**
  * Desktop movies grid: 3 columns, 4 from `xl:`. "Bookable" is the ACTIVE TAB,

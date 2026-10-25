@@ -1,5 +1,3 @@
-"use client";
-
 import MovieTabs from "../shared/Tabs";
 import MovieSearchBar from "../shared/SearchBar";
 

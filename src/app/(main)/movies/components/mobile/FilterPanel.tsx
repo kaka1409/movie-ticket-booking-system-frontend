@@ -15,7 +15,7 @@ import {
 import Chip from "@/components/ui/Chip";
 import RangeSlider from "@/components/ui/RangeSlider";
 import FilterCheckRow from "../shared/FilterCheckRow";
-import FilterLabel from "../shared/FilterLabel";
+import { FILTER_LABEL_CLASS } from "../shared/FilterLabel";
 import type { Filters } from "@/features/movies/types";
 
 export default function FilterPanel() {
@@ -90,7 +90,7 @@ export default function FilterPanel() {
         <div className="overflow-hidden min-h-0">
           <div className="space-y-5 border-t border-(--color-border) p-(--space-md)">
             <div>
-              <FilterLabel>{translate("movies.release_date")}</FilterLabel>
+              <p className={FILTER_LABEL_CLASS}>{translate("movies.release_date")}</p>
               <div className="flex flex-wrap gap-2">
                 {RELEASE_OPTIONS.map((option) => (
                   <Chip
@@ -109,7 +109,7 @@ export default function FilterPanel() {
             </div>
 
             <div>
-              <FilterLabel>{translate("movies.genre")}</FilterLabel>
+              <p className={FILTER_LABEL_CLASS}>{translate("movies.genre")}</p>
               <div className="grid grid-cols-2 gap-x-4 gap-y-2">
                 {filterOptions.genres.map((genre) => (
                   <FilterCheckRow
@@ -124,7 +124,7 @@ export default function FilterPanel() {
 
             {/* Rating range slider (backend scale 0–10) — the two edges mean "unbounded" */}
             <div>
-              <FilterLabel>{translate("movies.rating")}</FilterLabel>
+              <p className={FILTER_LABEL_CLASS}>{translate("movies.rating")}</p>
               <RangeSlider
                 min={RATING_MIN}
                 max={RATING_MAX}
@@ -166,7 +166,7 @@ export default function FilterPanel() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <FilterLabel>{translate("movies.length")}</FilterLabel>
+                <p className={FILTER_LABEL_CLASS}>{translate("movies.length")}</p>
                 <div className="flex flex-col gap-2">
                   {LENGTH_OPTIONS.map((option) => (
                     <FilterCheckRow
@@ -179,7 +179,7 @@ export default function FilterPanel() {
                 </div>
               </div>
               <div>
-                <FilterLabel>{translate("movies.age_rating")}</FilterLabel>
+                <p className={FILTER_LABEL_CLASS}>{translate("movies.age_rating")}</p>
                 <div className="flex flex-wrap gap-2">
                   {filterOptions.ageRatings.map((ageRating) => (
                     <Chip
@@ -194,7 +194,7 @@ export default function FilterPanel() {
             </div>
 
             <div>
-              <FilterLabel>{translate("movies.format")}</FilterLabel>
+              <p className={FILTER_LABEL_CLASS}>{translate("movies.format")}</p>
               <div className="flex flex-wrap gap-2">
                 {filterOptions.formats.map((format) => (
                   <Chip
