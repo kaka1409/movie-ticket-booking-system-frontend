@@ -5,7 +5,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useContactDraft } from "@/features/booking/hooks/useContactDraft";
 import { Skeleton } from "@/components/ui/Skeleton";
-import FieldLabel from "./FieldLabel";
 import TextInput from "./TextInput";
 import PhoneField from "./PhoneField";
 
@@ -42,7 +41,12 @@ function ContactFields({ className }: { className: string }) {
       </h2>
 
       <div>
-        <FieldLabel htmlFor="full-name">{translate("booking.credentials.full_name")}</FieldLabel>
+        <label
+          htmlFor="full-name"
+          className="block text-[10px] font-bold tracking-[0.16em] uppercase text-(--color-text-muted) mb-1.5"
+        >
+          {translate("booking.credentials.full_name")}
+        </label>
         <TextInput
           id="full-name"
           value={name}
@@ -56,7 +60,12 @@ function ContactFields({ className }: { className: string }) {
       </div>
 
       <div>
-        <FieldLabel htmlFor="email">{translate("booking.credentials.email")}</FieldLabel>
+        <label
+          htmlFor="email"
+          className="block text-[10px] font-bold tracking-[0.16em] uppercase text-(--color-text-muted) mb-1.5"
+        >
+          {translate("booking.credentials.email")}
+        </label>
         <TextInput
           id="email"
           type="email"
@@ -72,7 +81,12 @@ function ContactFields({ className }: { className: string }) {
       </div>
 
       <div>
-        <FieldLabel htmlFor="phone">{translate("booking.credentials.phone")}</FieldLabel>
+        <label
+          htmlFor="phone"
+          className="block text-[10px] font-bold tracking-[0.16em] uppercase text-(--color-text-muted) mb-1.5"
+        >
+          {translate("booking.credentials.phone")}
+        </label>
         <PhoneField
           countryCode={countryCode}
           onCountryChange={setCountryCode}
