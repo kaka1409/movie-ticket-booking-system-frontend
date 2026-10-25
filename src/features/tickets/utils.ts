@@ -1,4 +1,5 @@
 import { toLocaleTag } from "@/libs/utils";
+import type { ModificationType } from "./types";
 
 /**
  * Backend rejection → locale key. The backend's prose is canonical English, so
@@ -87,4 +88,21 @@ export function formatDeadlineTime(isoDate: string | null, locale: "en" | "vn"):
     minute: "2-digit",
     hour12: false,
   }).format(new Date(parsed));
+}
+
+/**
+ * The showtime whose seat map the modify flow must paint. A `seats`-only change
+ * always reopens the ticket's current showtime, so a target slot left in the
+ * draft by an earlier "both" attempt cannot leak into the map.
+ *
+ * Returns `""` when there is nothing to paint — callers keep their pending state
+ * rather than firing a request for no showtime.
+ */
+export function resolveModifyShowtimeId(
+  modificationType: ModificationType | null,
+  targetShowtimeId: string | undefined,
+  ticketShowtimeId: string | undefined,
+): string {
+  if (modificationType === "seats") return ticketShowtimeId ?? "";
+  return targetShowtimeId || ticketShowtimeId || "";
 }

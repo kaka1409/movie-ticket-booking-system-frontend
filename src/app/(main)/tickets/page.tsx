@@ -20,12 +20,13 @@ export const metadata: Metadata = {
 import Tabs from "@/app/(main)/tickets/components/mobile/Tabs";
 import UpcomingTicketList from "@/app/(main)/tickets/components/mobile/UpcomingTicketList";
 import PastTicketList from "@/app/(main)/tickets/components/mobile/PastTicketList";
-import TicketsSkeleton from "@/app/(main)/tickets/components/mobile/TicketsSkeleton";
+import MobileTicketsSkeleton from "@/app/(main)/tickets/components/mobile/TicketsSkeleton";
 import Pager from "@/app/(main)/tickets/components/mobile/Pager";
 import TicketRealtimeRefresh from "@/features/tickets/components/TicketRealtimeRefresh";
 
 // Desktop components
 import TicketsContent from "@/app/(main)/tickets/components/desktop/TicketsContent";
+import DesktopTicketsSkeleton from "@/app/(main)/tickets/components/desktop/TicketsSkeleton";
 
 const DEFAULT_META: TicketPageMeta = {
   total: 0,
@@ -65,7 +66,18 @@ export default async function TicketsPage({
       {/* Someone else can change a ticket this user is looking at (transfer
           accepted/declined, sender cancelled) — keep both lists live. */}
       <TicketRealtimeRefresh />
-      <Suspense fallback={<TicketsSkeleton />}>
+      <Suspense
+        fallback={
+          <>
+            <div className="block md:hidden">
+              <MobileTicketsSkeleton />
+            </div>
+            <div className="hidden md:block">
+              <DesktopTicketsSkeleton />
+            </div>
+          </>
+        }
+      >
         {/* Mobile */}
         <div className="block md:hidden">
           <div className="space-y-4 py-(--space-md)">
@@ -81,7 +93,7 @@ export default async function TicketsPage({
 
         {/* Desktop */}
         <div className="hidden md:block">
-          <TicketsContent />
+          <TicketsContent tab={tab} upcoming={upcoming} past={past} meta={meta} />
         </div>
       </Suspense>
     </ProtectedRoute>
