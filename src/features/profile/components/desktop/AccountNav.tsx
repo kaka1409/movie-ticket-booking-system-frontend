@@ -2,14 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { LogOut, Loader2 } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLogout } from "@/features/auth/hooks/useLogout";
 import Avatar, { DEFAULT_AVATAR_SRC } from "@/components/ui/Avatar";
 import { ACCOUNT_SECTIONS, accountSectionForPathname } from "@/features/profile/accountSections";
 
 /**
- * Desktop account navigation: identity block + two labelled groups. Tablet
- * (740–1023) flattens it into a horizontal pill strip with no identity block
+ * Desktop account navigation: identity block + two labelled groups + quick logout.
+ * Tablet (740–1023) flattens it into a horizontal pill strip with no identity block
  * and no group captions, so nothing is hidden behind a scrollbar.
  *
  * The active entry is derived from the current pathname — the sections and
@@ -20,6 +22,7 @@ export default function AccountNav() {
   const pathname = usePathname();
   const { translate } = useLocale();
   const { user } = useAuth();
+  const { logout, isLoggingOut } = useLogout();
 
   const activeKey = accountSectionForPathname(pathname);
 
@@ -54,7 +57,7 @@ export default function AccountNav() {
 
       {/* Desktop card */}
       <aside className="hidden lg:block lg:sticky lg:top-24 lg:self-start">
-        <div className="rounded-2xl border border-(--color-border) bg-(--color-surface) p-2">
+        <div className="rounded-2xl border border-(--color-border) bg-(--color-surface) p-2 shadow-lg">
           {user && (
             <div className="flex items-center gap-3 border-b border-(--color-border) px-2.5 py-3">
               <Avatar
@@ -112,6 +115,25 @@ export default function AccountNav() {
                 })}
               </div>
             ))}
+          </div>
+
+          {/* Quick Logout Button */}
+          <div className="mt-1 border-t border-(--color-border)/60 p-1.5">
+            <button
+              type="button"
+              onClick={logout}
+              disabled={isLoggingOut}
+              className="group flex w-full items-center gap-3 rounded-xl px-2.5 py-2 text-[13px] font-semibold text-(--color-text-muted) transition-colors hover:bg-red-500/10 hover:text-red-400 active:scale-[0.98] disabled:opacity-50"
+            >
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-(--color-surface-2) text-(--color-text-muted) transition-colors group-hover:bg-red-500/20 group-hover:text-red-400">
+                {isLoggingOut ? (
+                  <Loader2 size={14} className="animate-spin" />
+                ) : (
+                  <LogOut size={14} />
+                )}
+              </span>
+              <span className="flex-1 text-left">{translate("profile.logout")}</span>
+            </button>
           </div>
         </div>
       </aside>

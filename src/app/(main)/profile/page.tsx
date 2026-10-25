@@ -53,6 +53,12 @@ export default async function ProfilePage() {
     wishlistSettled.status === "fulfilled" && !("error" in wishlistSettled.value)
       ? wishlistSettled.value.data.length
       : null;
+  const upcomingTickets =
+    ticketsSettled.status === "fulfilled" && !("error" in ticketsSettled.value)
+      ? ticketsSettled.value.data
+      : [];
+  const nextTicket = upcomingTickets[0] ?? null;
+
   const ticketTotal =
     ticketsSettled.status === "fulfilled" &&
     !("error" in ticketsSettled.value) &&
@@ -83,6 +89,7 @@ export default async function ProfilePage() {
                 wishlist: wishlistTotal,
                 tickets: ticketTotal,
               }}
+              nextTicket={nextTicket}
             />
           </div>
         </div>

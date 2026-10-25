@@ -1,6 +1,6 @@
 "use client";
 
-import { Lock, KeyRound, LockKeyhole, Info } from "lucide-react";
+import { Lock, KeyRound, LockKeyhole, ShieldCheck, CheckCircle2 } from "lucide-react";
 import PasswordField from "../mobile/PasswordField";
 import PasswordRequirements from "../mobile/PasswordRequirements";
 import Button from "@/components/ui/Button";
@@ -8,6 +8,11 @@ import AccountShell from "@/features/profile/components/desktop/AccountShell";
 import { useLocale } from "@/contexts/LocaleContext";
 import { usePasswordForm } from "@/features/profile/hooks/usePasswordForm";
 
+/**
+ * Desktop change-password view:
+ * Top security status banner, password input fields with live validation,
+ * right column with interactive requirements checklist and security recommendations.
+ */
 export default function ChangePasswordContent() {
   const { translate } = useLocale();
   const {
@@ -36,8 +41,26 @@ export default function ChangePasswordContent() {
       title={translate("profile.change_password")}
       description={translate("profile.pages.password_desc")}
     >
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_300px] lg:gap-8">
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-8">
         <div className="min-w-0">
+          {/* Prominent Security Notice Banner at the top */}
+          <div className="mb-6 rounded-2xl border border-(--color-gold)/30 bg-gradient-to-r from-(--color-gold)/10 via-(--color-surface-2) to-(--color-surface) p-4">
+            <div className="flex items-start gap-3">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-(--color-gold)/20 text-(--color-gold)">
+                <ShieldCheck size={20} />
+              </span>
+              <div>
+                <h3 className="text-sm font-bold text-white">
+                  {translate("profile.password.security_status")}
+                </h3>
+                <p className="mt-1 text-xs leading-relaxed text-(--color-gold-light)">
+                  {translate("profile.password.unavailable")}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Form Fields */}
           <div className="flex flex-col gap-5">
             <PasswordField
               label={translate("profile.password.current")}
@@ -73,11 +96,7 @@ export default function ChangePasswordContent() {
             />
           </div>
 
-          <div className="mt-5 flex items-start gap-2 rounded-xl border border-(--color-gold)/25 bg-(--color-gold)/8 p-3 text-xs text-(--color-gold-light)">
-            <Info size={14} className="mt-0.5 shrink-0" />
-            <p>{translate("profile.password.unavailable")}</p>
-          </div>
-
+          {/* Actions */}
           <div className="mt-8 flex flex-col gap-3 border-t border-(--color-border) pt-6 lg:flex-row lg:justify-end">
             <Button variant="outline" size="md" fullWidth={false} onClick={cancel}>
               {translate("profile.password.cancel")}
@@ -97,8 +116,19 @@ export default function ChangePasswordContent() {
           </div>
         </div>
 
-        <aside className="lg:sticky lg:top-24 lg:self-start">
+        {/* Right Rail: Requirements & Security Tips */}
+        <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
           <PasswordRequirements password={newPassword} />
+
+          <div className="rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 text-xs">
+            <div className="flex items-center gap-2 mb-2 font-bold text-white">
+              <CheckCircle2 size={15} className="text-emerald-400" />
+              <span>{translate("profile.password.session_active")}</span>
+            </div>
+            <p className="leading-relaxed text-(--color-text-muted)">
+              {translate("profile.password.recommendation")}
+            </p>
+          </div>
         </aside>
       </div>
     </AccountShell>

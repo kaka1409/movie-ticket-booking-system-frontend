@@ -1,6 +1,6 @@
 "use client";
 
-import { Star } from "lucide-react";
+import { Star, ThumbsUp, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import type { FilterKey, MyReview } from "@/features/reviews/types";
 import { useLocale } from "@/contexts/LocaleContext";
@@ -12,6 +12,11 @@ import ReviewRow from "./ReviewRow";
 import { useMyReviews } from "@/features/reviews/hooks/useMyReviews";
 import AccountShell from "@/features/profile/components/desktop/AccountShell";
 
+/**
+ * Desktop reviews view:
+ * Top critic overview banner with average rating score and positive feedback metrics,
+ * responsive tab filtering, and list of rich review cards.
+ */
 export default function ReviewContent({
   initialReviews,
   total,
@@ -44,6 +49,18 @@ export default function ReviewContent({
     label: translate(`reviews.filters.${filter.key}`),
   }));
 
+  const averageRating =
+    reviews.length > 0
+      ? (
+          reviews.reduce((accumulator, item) => accumulator + item.rating, 0) / reviews.length
+        ).toFixed(1)
+      : "—";
+
+  const positivePercent =
+    reviews.length > 0
+      ? Math.round((reviews.filter((item) => item.rating >= 4).length / reviews.length) * 100)
+      : 0;
+
   if (reviews.length === 0) {
     return (
       <AccountShell
@@ -57,7 +74,7 @@ export default function ReviewContent({
         >
           <Link
             href="/movies"
-            className="rounded-xl bg-(--color-gold) px-6 py-3 text-sm font-extrabold tracking-wide text-black"
+            className="rounded-xl bg-(--color-gold) px-6 py-3 text-sm font-extrabold tracking-wide text-black transition hover:brightness-110 active:scale-95"
           >
             {translate("profile.myreviews.browse")}
           </Link>
@@ -71,12 +88,53 @@ export default function ReviewContent({
       title={translate("profile.review_rating")}
       description={translate("profile.pages.reviews_desc")}
     >
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <p className="text-sm text-(--color-text-muted)">
+      {/* Review Stats Summary Banner */}
+      <div className="mb-6 grid gap-4 sm:grid-cols-3">
+        <div className="flex items-center gap-3.5 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 shadow-sm">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-(--color-gold)/15 text-(--color-gold)">
+            <MessageSquare size={18} />
+          </span>
+          <div>
+            <p className="text-xl font-black text-white">{totalCount}</p>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-(--color-text-muted)">
+              {translate("profile.stats.reviews")}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3.5 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 shadow-sm">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-(--color-gold)/15 text-(--color-gold)">
+            <Star size={18} fill="currentColor" />
+          </span>
+          <div>
+            <p className="text-xl font-black text-white">{averageRating} / 5.0</p>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-(--color-text-muted)">
+              {translate("profile.myreviews.average_rating")}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3.5 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 shadow-sm">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-(--color-gold)/15 text-(--color-gold)">
+            <ThumbsUp size={18} />
+          </span>
+          <div>
+            <p className="text-xl font-black text-white">{positivePercent}%</p>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-(--color-text-muted)">
+              {translate("profile.myreviews.positive_reviews")}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Filter Toolbar */}
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-(--color-border)/50 pb-4">
+        <p className="text-xs text-(--color-text-muted)">
           {translate("profile.myreviews.count_prefix")}{" "}
-          <span className="font-bold text-(--color-text-primary)">{totalCount}</span>{" "}
+          <span className="font-bold text-white">{totalCount}</span>{" "}
           {translate("profile.myreviews.count_suffix")}
         </p>
+
         <Tabs
           tabs={tabItems}
           activeTab={activeFilter}
@@ -86,7 +144,8 @@ export default function ReviewContent({
         />
       </div>
 
-      <div ref={listRef} className="mt-5 space-y-3">
+      {/* Review Cards List */}
+      <div ref={listRef} className="mt-5 space-y-4">
         {reviews.map((review, index) => (
           <div key={review.id} className={index >= animThreshold ? "animate-fade-in" : ""}>
             <ReviewRow
@@ -99,7 +158,7 @@ export default function ReviewContent({
       </div>
 
       {hasMore && (
-        <div className="mt-5">
+        <div className="mt-6 border-t border-(--color-border)/40 pt-4">
           <LoadMoreButton onClick={handleLoadMore} disabled={isLoadingMore} />
         </div>
       )}
