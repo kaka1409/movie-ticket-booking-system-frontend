@@ -5,7 +5,7 @@ import { User } from "lucide-react";
 import type { Recipient } from "@/features/tickets/types";
 import { useLocale } from "@/contexts/LocaleContext";
 import MicroLabel from "@/components/ui/MicroLabel";
-import TransferTicketCard from "@/features/tickets/components/TransferTicketCard";
+import TicketOverviewCard from "@/features/tickets/components/TicketOverviewCard";
 
 /**
  * Confirm step: the ticket exactly as it will move (seats + snacks at the amount
@@ -17,7 +17,7 @@ export default function ConfirmCard({ recipient }: { recipient: Recipient }) {
 
   return (
     <div className="space-y-4 px-4">
-      <TransferTicketCard labelKey="tickets.transfer.whole_ticket" />
+      <TicketOverviewCard labelKey="tickets.transfer.whole_ticket" />
 
       <section className="rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 space-y-3">
         <MicroLabel className="flex items-center gap-1.5 text-(--color-text-muted)">

@@ -41,7 +41,7 @@ export default async function ConfirmPage({ params, searchParams }: ConfirmPageP
 
       {/* Desktop */}
       <div className="hidden md:block">
-        <DesktopConfirmContent />
+        <DesktopConfirmContent recipient={recipient} />
       </div>
     </>
   );

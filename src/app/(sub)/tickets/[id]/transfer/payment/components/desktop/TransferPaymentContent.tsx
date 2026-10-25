@@ -2,7 +2,7 @@
 
 import { useLocale } from "@/contexts/LocaleContext";
 import MicroLabel from "@/components/ui/MicroLabel";
-import TransferTicketCard from "@/features/tickets/components/TransferTicketCard";
+import TicketOverviewCard from "@/features/tickets/components/TicketOverviewCard";
 import TransferPaymentBody from "../shared/TransferPaymentBody";
 import type { TransferPaymentViewProps } from "../TransferPaymentScreen";
 
@@ -31,7 +31,7 @@ export default function TransferPaymentDesktop(props: TransferPaymentViewProps) 
           </div>
 
           <aside className="lg:sticky lg:top-24">
-            <TransferTicketCard
+            <TicketOverviewCard
               amount={props.amount}
               labelKey="tickets.transfer.payment.order_label"
             />

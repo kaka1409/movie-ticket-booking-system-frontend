@@ -2,7 +2,7 @@
 
 import { useLocale } from "@/contexts/LocaleContext";
 import MicroLabel from "@/components/ui/MicroLabel";
-import TransferTicketCard from "@/features/tickets/components/TransferTicketCard";
+import TicketOverviewCard from "@/features/tickets/components/TicketOverviewCard";
 import TransferPaymentBody from "../shared/TransferPaymentBody";
 import type { TransferPaymentViewProps } from "../TransferPaymentScreen";
 
@@ -24,7 +24,7 @@ export default function TransferPaymentMobile(props: TransferPaymentViewProps) {
           </p>
         </header>
 
-        <TransferTicketCard amount={props.amount} labelKey="tickets.transfer.payment.order_label" />
+        <TicketOverviewCard amount={props.amount} labelKey="tickets.transfer.payment.order_label" />
 
         <TransferPaymentBody {...props} qrSize={216} />
       </main>
