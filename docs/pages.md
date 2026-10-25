@@ -60,7 +60,7 @@ Known gap: a present-but-revoked `refreshToken` cookie passes `hasSession()`. Ha
 
 Two-level routing:
 
-- **Listing**: `(main)/tickets/page.tsx` — server URL pager (`?tab=&page=`, one tab fetched per render) inside main layout with BottomNav. Server gate (`hasSession()` → `LoginPrompt`) + `<ProtectedRoute>` client fallback. Mobile renders `Tabs` + `UpcomingTicketList`/`PastTicketList` + `Pager`; desktop `TicketsContent` is a null stub. Each upcoming card wears its status on the **poster**: a full-width `TicketCountdown` ribbon (client-only, ticks against the absolute showtime deadline, compact units — the poster is ~96 px wide) for a usable ticket, or the gold `tickets.transfer.pending_badge` ribbon while a transfer is in flight (a countdown would be misleading). The tag row keeps a gold pill carrying the one thing the ribbon cannot fit — the recipient name (`features/tickets/adapters.ts` → `isTransferring`/`transferRecipientName`).
+- **Listing**: `(main)/tickets/page.tsx` — server URL pager (`?tab=&page=`, one tab fetched per render) inside main layout with BottomNav. Server gate (`hasSession()` → `LoginPrompt`) + `<ProtectedRoute>` client fallback. Mobile renders `Tabs` + `UpcomingTicketList`/`PastTicketList` + `Pager`; desktop renders `TicketsContent` (`components/desktop/TicketsContent.tsx` — the 2-column ticket-stub card grid over a title band with the tab links). Each upcoming card wears its status on the **poster**: a full-width `TicketCountdown` ribbon (client-only, ticks against the absolute showtime deadline, compact units — the poster is ~96 px wide) for a usable ticket, or the gold `tickets.transfer.pending_badge` ribbon while a transfer is in flight (a countdown would be misleading). The tag row keeps a gold pill carrying the one thing the ribbon cannot fit — the recipient name (`features/tickets/adapters.ts` → `isTransferring`/`transferRecipientName`).
 - **Detail**: `(sub)/tickets/[id]/page.tsx` — renders components directly (no props). **Layout** (`layout.tsx`) is the server component that calls `getTicketById(id, await getRequestCookie())`, wraps children in `<TicketDetailProvider>`. Components read ticket from `useTicketDetail()` context.
 
 Detail page components under `(sub)/tickets/[id]/components/`:
@@ -68,7 +68,7 @@ Detail page components under `(sub)/tickets/[id]/components/`:
 - `mobile/TicketInfo.tsx` — hero poster, theater/location, seat, food & drink, QR code, payment summary
 - `mobile/TicketActions.tsx` — owner: Download Ticket (only while a scan payload exists) + Cancel & Refund (only for success/confirmed/pending) + Transfer Ticket (upcoming only). Recipient (`viewerRole === "recipient"`): Accept Transfer + Decline only.
 - `mobile/QRCode.tsx` — `qrcode.react` rendering the backend's signed scan payload (`ticketId.qrToken.signature`) as-is; the URL form (`https://primseat.com/tickets/{id}`) is only a fallback for values without a payload (never called with a bare id from the detail page)
-- `desktop/TicketDetail.tsx` — stub (returns null)
+- `desktop/TicketDetail.tsx` — the desktop detail: `TicketHeader` band, the `TicketOverviewCard` (identity + price breakdown) on the page background, and a sticky rail (`lg:sticky lg:top-24`) holding `TicketQrPanel` + `TicketActionsPanel` (both drive the shared `useTransferDecisions` / `useCancelFlow` machines); the body is the `lg:grid-cols-[minmax(0,1fr)_360px]` two-column split.
 
 Past tickets show the same detail layout but without action buttons.
 
@@ -89,20 +89,20 @@ Two sub-routes under `(sub)/tickets/[id]/transfer/`:
 - `transfer/page.tsx` — wraps **both** device trees with one `TransferProvider` (they both render, so a per-branch provider would fork the draft), then renders `SeatSelector`, `RecipientInput`, `TransferBottomBar`. Mobile/desktop split via `block md:hidden`.
 - `transfer/confirm/page.tsx` — **server component** that reads `searchParams` (`seats`, `recipient` = email, `transferSnacks`), calls `getRecipient()` (exact email), redirects to transfer page if invalid. Renders `ConfirmCard`, `ConfirmBottomBar`.
 
-Both have `loading.tsx`. Desktop stubs return null.
+Both have `loading.tsx` with device-aware branches (`block md:hidden` + `hidden md:block` around the mobile skeleton and the desktop skeleton).
 
 Components under `transfer/components/`:
 
 - `mobile/SeatSelector.tsx` — seat toggle for transferable seats
 - `mobile/RecipientInput.tsx` — exact-email recipient lookup (valid email → `getRecipient()` → `GET /user/search`; adopts the single match into the transfer context, shows "not found" otherwise)
 - `mobile/TransferBottomBar.tsx` — sticky bottom bar with transfer CTA → links to confirm page (passes the recipient email)
-- `desktop/TransferContent.tsx` — stub
+- `desktop/TransferContent.tsx` — the recipient lookup (`components/shared/RecipientField.tsx`) beside the `TicketOverviewCard`; the CTA keeps the transfer warning and stays disabled until a recipient resolves (the draft lives in `TransferContext`, which both trees share at page level).
 
 Components under `transfer/confirm/components/`:
 
 - `mobile/ConfirmCard.tsx` — transfer summary (seats, recipient, snacks toggle)
 - `mobile/ConfirmBottomBar.tsx` — the mobile layout around the shared confirm control: `features/tickets/hooks/useTransferSubmit.ts` resolves the selected seat labels to backend seat UUIDs at render and binds `createTransferAction`, `features/tickets/components/TransferConfirmForm.tsx` renders the repeated hidden `seatId` inputs inside a real `<form action={formAction}>` (plus hidden `ticketId`/`recipientEmail`/`transferSnacks`), and the hook redirects to the ticket detail from an effect on success (never during render). The CTA is `type="submit"` and disabled when no transferable seat resolves.
-- `desktop/ConfirmContent.tsx` — stub
+- `desktop/ConfirmContent.tsx` — the confirm rail: the recipient + the shared `TransferConfirmForm` (real `<form action={formAction}>`) + cancel; the recipient arrives as a prop from the server page, which already validated `?recipient=`.
 
 `TransferContext.tsx` (`features/tickets/contexts/`) manages `selectedSeats`, `recipient`, `transferSnacks` state. `TicketDetailContext.tsx` provides `{ ticket, viewerRole, transfer, incomingTransfer }` from layout.
 
@@ -168,7 +168,7 @@ Five sub-routes under `(sub)/tickets/[id]/modify/` — there is **no payment ste
 - `modify/review/page.tsx` — `ComparisonCard` (current vs new showtime/seats) + `PriceSummary` (total paid, "same-price change — no extra charge") + `limit_notice` (one change per ticket). `BottomBar` → `useModifySubmit` posts `{ newShowtimeId?, newSeatIds? }` (absent keys mean unchanged) through `modifyTicketAction` and routes to `success`; a rejection renders inline through `BookingBottomBar`'s `errorText`, localized from the backend `code` by `features/tickets/utils.ts` `getModifyErrorMessage` (an unmapped code falls back to the server message). `TICKET_TRANSFER_PENDING` is its own answer: cancelling the offer is the sender's decision, so the server refuses rather than auto-closing it.
 - `modify/success/page.tsx` — confirmation linking back to the ticket.
 
-Rules the FE must not re-implement (backend `api-contract.md` §7.2): same movie, same cinema, one change per ticket, same seat-type multiset, ≥ 1 h before the current showtime, QR rotated after success. A price change answers `409 MODIFICATION_REQUIRES_PAYMENT`; cancel + rebook is the only path until top-up/refund exists. Desktop skins for this cluster are still null stubs.
+Rules the FE must not re-implement (backend `api-contract.md` §7.2): same movie, same cinema, one change per ticket, same seat-type multiset, ≥ 1 h before the current showtime, QR rotated after success. A price change answers `409 MODIFICATION_REQUIRES_PAYMENT`; cancel + rebook is the only path until top-up/refund exists. The whole modify cluster now ships a desktop skin: the type → showtime → seats → review → success ladder runs through the shared modify step hooks (`useModifySteps` + `useModifySubmit`) and the `ModifyStepLayout`/`ModifyRail`/`ModifyStepRail` trio, and the ladder is derived from the draft so a skipped step is never painted as done.
 
 ## Ticket Cancel & Refund
 
@@ -180,7 +180,7 @@ Single route under `(sub)/tickets/[id]/cancel/` — no separate routes for succe
 - `cancel/components/mobile/CancellationPolicySheet.tsx` — bottom sheet with 4 policy rules, Done button. Uses `ActionSheet` wrapper.
 - `cancel/components/mobile/ConfirmationSheet.tsx` — bottom sheet with refund amount, "Cancel Booking" (red) + "Keep My Ticket" buttons. Uses `ActionSheet` wrapper.
 - `cancel/components/mobile/CancelResult.tsx` — success state: animated green checkmark (same pattern as booking status success), refund info card with "Processing" badge, View Ticket + Back to Home buttons. Failed state: animated red alert with shake keyframe (same pattern as booking status failed), refund info card with "Refund Failed" badge, Try Again + Contact Support buttons.
-- `cancel/components/desktop/CancelContent.tsx` — stub (returns null)
+- `cancel/components/desktop/CancelContent.tsx` — the desktop cancel step: summary panel + inline policy rail + `ConfirmDialog` (mounted only while open, focus hand-back on unmount) driven by the same `useCancelFlow` machine as mobile.
 
 Entry point: `TicketActions.tsx` Cancel & Refund row → `router.push(/tickets/${id}/cancel)`. Currently shown only when `canCancel` is true (status success/confirmed/pending) and no pending transfer.
 

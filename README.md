@@ -46,11 +46,18 @@ Copy the template, then adjust values in `.env.local` (gitignored; `.env.example
 cp .env.example .env.local
 ```
 
-| Variable               | Default                 | Description                                                                                                                                                        |
-| ---------------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `BACKEND_URL`          | `http://localhost:8080` | Backend origin. Read server-side by `src/libs/api.ts` **and evaluated at build time** by `next.config.ts` `rewrites()` — set it before `pnpm build` when deploying |
-| `API_PREFIX`           | `/api/v1`               | API path prefix                                                                                                                                                    |
-| `NEXT_PUBLIC_SITE_URL` | `http://localhost:3000` | Public site origin for SEO metadata (`metadataBase`, OG/Twitter URLs, `robots.ts`, `sitemap.ts`) — **set to the real domain before `pnpm build`**                  |
+| Variable                  | Default                 | Description                                                                                                                                                                                                                |
+| ------------------------- | ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `BACKEND_URL`             | `http://localhost:8080` | Backend origin. Read server-side by `src/libs/api.ts` **and evaluated at build time** by `next.config.ts` `rewrites()` — set it before `pnpm build` when deploying                                                         |
+| `API_PREFIX`              | `/api/v1`               | API path prefix                                                                                                                                                                                                            |
+| `NEXT_PUBLIC_SITE_URL`    | `http://localhost:3000` | Public site origin for SEO metadata (`metadataBase`, OG/Twitter URLs, `robots.ts`, `sitemap.ts`) — **set to the real domain before `pnpm build`**                                                                          |
+| `NEXT_PUBLIC_BACKEND_URL` | `http://localhost:8080` | Backend origin the browser dials for the Socket.IO connection (notifications). REST is proxied via rewrites, but WebSockets cannot be upgraded by the proxy, so the client connects directly. **Set before `pnpm build`.** |
+
+### Build-time vs runtime
+
+All four variables above are evaluated at **build time** (`next.config.ts` `rewrites()` and `headers()`, plus `NEXT_PUBLIC_*` inlined into the client bundle). Changing them after `pnpm build` has no effect — rebuild with the new values. There is no runtime configuration: set them in `.env.local` (dev) or as build args / env (Docker, CI) before building.
+
+Security headers (CSP, HSTS, X-Frame-Options, Referrer-Policy) are emitted by `next.config.ts` `headers()` and are therefore also build-time.
 
 ### Other Commands
 
