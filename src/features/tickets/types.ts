@@ -143,3 +143,12 @@ export interface EligibleShowtime {
   /** The target room differs from the ticket's, so its seats must be picked again. */
   requiresSeatSelection: boolean;
 }
+
+/**
+ * Load lifecycle of the eligible-showtime list. `empty` is a real answer — a
+ * pending fetch is the only state that may show skeletons.
+ */
+export type ShowtimeLoadStatus = "loading" | "ready" | "empty" | "error";
+
+/** Load lifecycle of the seat map painted for the modify flow's target showtime. */
+export type SeatMapLoadStatus = "loading" | "ready" | "error";
