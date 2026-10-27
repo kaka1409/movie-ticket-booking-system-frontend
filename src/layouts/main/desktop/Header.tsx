@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Search, LogIn } from "lucide-react";
+import { Search, LogIn, ShieldCheck } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { buildLoginUrl } from "@/libs/utils";
@@ -80,6 +80,18 @@ export default function Header() {
           <LanguageToggle variant="flag" />
           <NotificationBell />
         </div>
+
+        {/* The console is a separate surface (`(admin)` group), so it needs an
+            entry point on the storefront — admins only. */}
+        {user?.role === "ADMIN" && (
+          <Link
+            href="/admin"
+            className="flex shrink-0 items-center gap-1.5 rounded-(--radius-pill) border border-(--color-gold)/40 px-3 py-1.5 text-[11px] font-extrabold tracking-wide text-(--color-gold) uppercase no-underline transition-colors hover:bg-(--color-gold)/10"
+          >
+            <ShieldCheck size={14} aria-hidden />
+            {translate("layout.header.admin")}
+          </Link>
+        )}
 
         {isLoading ? (
           <div

@@ -19,7 +19,7 @@ export default function Chip({
   const base = "whitespace-nowrap border transition-all duration-150 rounded-(--radius-sm) px-4";
   const filled = `py-2 text-xs font-semibold ${
     active
-      ? "border-(--color-gold) bg-(--color-gold) text-black shadow-(--shadow-glow)"
+      ? "border-(--color-gold) bg-(--color-gold) text-(--color-on-accent) shadow-(--shadow-glow)"
       : "border-(--color-border) bg-transparent text-white hover:border-(--color-gold)/40"
   }`;
   const outline = `py-1.5 text-sm ${
