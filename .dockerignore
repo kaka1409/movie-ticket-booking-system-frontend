@@ -1,0 +1,28 @@
+# Dependencies
+node_modules
+.pnpm-store
+
+# Next.js build output
+.next
+out
+
+# VCS / editor
+.git
+.gitignore
+.vscode
+.idea
+
+# Env (keep .env.example as the template)
+.env
+.env.*
+!.env.example
+
+# Tests / docs (not needed in image)
+tests
+docs
+*.md
+
+# OS
+.DS_Store
+Thumbs.db
+EOF
