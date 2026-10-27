@@ -13,6 +13,11 @@
   --color-gold-light: #ffe4af;
   --color-gold-dark: #e6b800;
 
+  /* Ink that sits ON a gold fill. `--color-bg` cannot do that job because the
+     admin light theme re-points it to a near-white canvas — gold buttons would
+     lose their label. Identical to `--color-bg` in the dark theme. */
+  --color-on-accent: #0f0f0f;
+
   /* Neutrals */
   --color-bg: #0f0f0f;
   --color-surface: #1c1b1b;
@@ -59,6 +64,13 @@
   /* Shadows */
   --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
   --shadow-glow: 0 0 20px rgba(255, 204, 77, 0.25);
+
+  /* Admin console — `styles/admin-theme.css` re-points these for the light
+     theme. Kept out of the storefront's vocabulary so a single token rename
+     never silently changes the public site. */
+  --admin-accent-ink: var(--color-gold);
+  --admin-row-hover: rgba(255, 255, 255, 0.04);
+  --admin-sticky-header: var(--color-surface);
 }
 
 html {

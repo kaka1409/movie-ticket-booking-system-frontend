@@ -1,0 +1,191 @@
+/**
+ * Admin theme scope — imported ONLY by `src/app/(admin)/layout.tsx`.
+ *
+ * `AdminLayout` emits `data-admin-theme`, so the public storefront (which never
+ * carries the attribute) stays dark no matter what the console preference is.
+ * The light palette re-points the existing semantic tokens instead of adding a
+ * second set: every shared primitive (`Button`, `Badge`, `Chip`, `Tabs`,
+ * `.surface-raised`) re-themes without touching a class name.
+ *
+ * Both blocks below carry the SAME declarations on purpose — an explicit
+ * `light` pick and a `system` pick that resolves to light must look identical,
+ * and CSS has no mixin to share them. Keep the two in sync.
+ */
+
+[data-admin-theme="light"] {
+  --color-bg: #f6f6f4;
+  --color-surface: #ffffff;
+  --color-surface-2: #f0efec;
+  --color-surface-base: var(--color-surface);
+  --color-border: #e4e3df;
+  --color-notch: var(--color-bg);
+
+  --color-text-primary: #14130f;
+  --color-text-secondary: #5a5346;
+  --color-text-muted: #78736a;
+
+  /* Gold is a fill, not ink: `#ffcc4d` on white is ~1.6:1. Darkening the token
+     itself keeps every `text-(--color-gold)` usage readable (~5:1) while
+     `--color-on-accent` carries the label on a gold fill. */
+  --color-gold: #8a6100;
+  --color-gold-light: #7a5600;
+  --color-gold-dark: #6b4d00;
+  --color-on-accent: #ffffff;
+
+  --admin-accent-ink: #7a5600;
+  --admin-row-hover: #f7f7f5;
+  --admin-sticky-header: #fbfbfa;
+
+  --shadow-card: 0 1px 2px rgba(20, 19, 15, 0.06), 0 10px 28px rgba(20, 19, 15, 0.07);
+  --shadow-glow: 0 0 0 1px rgba(138, 97, 0, 0.25);
+
+  /* Native controls (`date`, `time`, `select`, scrollbars) follow the scope. */
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: light) {
+  [data-admin-theme="system"] {
+    --color-bg: #f6f6f4;
+    --color-surface: #ffffff;
+    --color-surface-2: #f0efec;
+    --color-surface-base: var(--color-surface);
+    --color-border: #e4e3df;
+    --color-notch: var(--color-bg);
+
+    --color-text-primary: #14130f;
+    --color-text-secondary: #5a5346;
+    --color-text-muted: #78736a;
+
+    --color-gold: #8a6100;
+    --color-gold-light: #7a5600;
+    --color-gold-dark: #6b4d00;
+    --color-on-accent: #ffffff;
+
+    --admin-accent-ink: #7a5600;
+    --admin-row-hover: #f7f7f5;
+    --admin-sticky-header: #fbfbfa;
+
+    --shadow-card: 0 1px 2px rgba(20, 19, 15, 0.06), 0 10px 28px rgba(20, 19, 15, 0.07);
+    --shadow-glow: 0 0 0 1px rgba(138, 97, 0, 0.25);
+
+    color-scheme: light;
+  }
+}
+
+[data-admin-theme="dark"] {
+  color-scheme: dark;
+}
+
+[data-admin-theme="system"] {
+  color-scheme: light dark;
+}
+
+/*
+ * Console table: ONE markup serves both widths. From 740px it is a real table
+ * with a sticky header; below that every row becomes a card and each cell
+ * prints its own column header from `data-label` (written by `AdminTable`).
+ * `border-collapse: separate` is what lets the header stick.
+ */
+.admin-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 13px;
+}
+
+.admin-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 0.5rem 0.75rem;
+  background: var(--admin-sticky-header);
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-align: left;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.admin-table tbody td {
+  padding: 0.625rem 0.75rem;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+  text-align: left;
+  vertical-align: middle;
+}
+
+.admin-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.admin-table tbody tr:hover td {
+  background: var(--admin-row-hover);
+}
+
+.admin-table .admin-table-right {
+  text-align: right;
+}
+
+@media (max-width: 739.98px) {
+  .admin-table,
+  .admin-table tbody,
+  .admin-table tr,
+  .admin-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .admin-table thead {
+    display: none;
+  }
+
+  .admin-table tbody tr {
+    margin-bottom: 0.5rem;
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+  }
+
+  .admin-table tbody tr:hover td {
+    background: transparent;
+  }
+
+  .admin-table tbody td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px dashed var(--color-border);
+    text-align: right;
+  }
+
+  .admin-table tbody td:last-child {
+    border-bottom: 0;
+  }
+
+  /* Cells without a label (`data-label` omitted by the actions column) render
+     as a plain footer row instead of a header/value pair. */
+  .admin-table tbody td[data-label]::before {
+    content: attr(data-label);
+    flex-shrink: 0;
+    color: var(--color-text-muted);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-align: left;
+    text-transform: uppercase;
+  }
+}
+
+/* Native <dialog> sits in the top layer, so it escapes the page's clipping and
+   inherits the theme tokens from the shell root. Tailwind preflight zeroes its
+   margin, hence the explicit `m-auto` on the element itself. */
+.admin-modal::backdrop {
+  background: rgba(0, 0, 0, 0.65);
+}
+
