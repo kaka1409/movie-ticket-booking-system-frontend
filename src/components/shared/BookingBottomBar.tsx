@@ -109,7 +109,7 @@ export default function BookingBottomBar({
   };
 
   return (
-    <div className="sticky bottom-0 z-50 px-4 pb-6 pt-3 bg-(--color-bg) border-t border-(--color-border)">
+    <div className="sticky bottom-0 z-50 px-4 pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-3 bg-(--color-bg) border-t border-(--color-border)">
       {errorText && (
         <p className="mb-3 px-1 text-xs font-medium text-red-400 leading-relaxed">{errorText}</p>
       )}

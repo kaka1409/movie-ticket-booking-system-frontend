@@ -34,7 +34,7 @@ export default function ActionSheet({ isOpen, onClose, children }: ActionSheetPr
       />
 
       <div
-        className={`absolute inset-x-0 bottom-0 max-w-md mx-auto bg-(--color-bg) rounded-t-3xl shadow-[--shadow-card] transition-transform duration-300 ease-out ${
+        className={`absolute inset-x-0 bottom-0 max-w-md mx-auto bg-(--color-bg) rounded-t-3xl shadow-(--shadow-card) transition-transform duration-300 ease-out ${
           isOpen ? "translate-y-0" : "translate-y-full"
         }`}
       >

@@ -9,7 +9,7 @@ import Footer from "@/layouts/main/desktop/Footer";
  */
 export default function DesktopShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-dvh flex-col">
       <Header />
       <main className="w-full flex-1">{children}</main>
       <Footer />

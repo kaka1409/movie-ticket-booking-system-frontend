@@ -10,8 +10,6 @@ import type { Device } from "@/types";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { WishlistProvider } from "@/features/wishlist/context";
 import { NotificationProvider } from "@/features/notifications/context";
-import { getNotifications } from "@/features/notifications/api";
-import { getRequestCookie, hasSession } from "@/libs/session";
 import { SITE_NAME, SITE_URL, DEFAULT_DESCRIPTION, DEFAULT_OG_IMAGE } from "@/libs/site";
 
 /**
@@ -111,13 +109,6 @@ export default async function RootLayout({
 }>) {
   const initialLocale = await resolveRequestLocale();
   const initialDevice = await resolveInitialDevice();
-  // SSR inbox seed for the badge + list; empty for logged-out visitors so no
-  // cookie-less request is ever sent. A failed seed renders as empty too — the
-  // client provider resyncs after hydration (Socket.IO pushes + REST).
-  const inbox = (await hasSession())
-    ? await getNotifications(await getRequestCookie(), initialLocale)
-    : null;
-  const initialNotifications = inbox && "data" in inbox ? inbox.data.items : [];
   return (
     <html
       lang={initialLocale === "vn" ? "vi" : "en"}
@@ -130,7 +121,7 @@ export default async function RootLayout({
           <DeviceProvider initialDevice={initialDevice}>
             <LocaleProvider initialLocale={initialLocale}>
               <AuthProvider>
-                <NotificationProvider initialNotifications={initialNotifications}>
+                <NotificationProvider>
                   <WishlistProvider>{children}</WishlistProvider>
                 </NotificationProvider>
               </AuthProvider>

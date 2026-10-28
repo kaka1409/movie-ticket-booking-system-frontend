@@ -5,14 +5,10 @@ import Link from "next/link";
 import { useLocale } from "@/contexts/LocaleContext";
 import Button from "@/components/ui/Button";
 import { AlertTriangle, Home } from "lucide-react";
+import StatusPageShell, { StatusPanel } from "@/components/shared/StatusPageShell";
 
 const GLITCH_CHARS = "!@#$%^&*0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-/**
- * Decode-animation: every character of `target` cycles through random glyphs
- * before settling on its real value. The LAST character to settle flips
- * `isDone` (deferred by 100ms so the final paint lands before `onDone`).
- */
 function useGlitchDecode(target: string, duration = 2000) {
   const [chars, setChars] = useState(() =>
     target.split("").map(() => GLITCH_CHARS[Math.floor(Math.random() * GLITCH_CHARS.length)]),
@@ -99,32 +95,65 @@ function GlitchText({
   );
 }
 
-export default function RouteError({ reset }: { error: Error; reset: () => void }) {
+export default function RouteError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   const { translate } = useLocale();
   const [glitchDone, setGlitchDone] = useState(false);
 
+  const footer =
+    error?.digest ? (
+      <>
+        <p>{translate("error.hint")}</p>
+        <p className="mt-2">
+          {translate("error.ref")}:{" "}
+          <span className="font-mono break-all text-(--color-text-primary)/70">{error.digest}</span>
+        </p>
+      </>
+    ) : (
+      <p>{translate("error.hint")}</p>
+    );
+
   return (
-    <div className="min-h-dvh flex flex-col items-center justify-center px-6 bg-(--color-bg)">
-      <div className="mt-14 flex h-20 w-20 items-center justify-center rounded-full bg-red-500/10">
-        <AlertTriangle size={36} className="text-red-600" />
+    <StatusPageShell
+      aside={
+        <div
+          className={`transition-all duration-700 delay-200 ${
+            glitchDone ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+          }`}
+        >
+          <StatusPanel title={translate("error.panel_title")} footer={footer}>
+            <Button variant="primary" onClick={reset}>
+              {translate("error.try_again")}
+            </Button>
+            <Link href="/">
+              <Button variant="outline" icon={Home} iconPosition="left">
+                {translate("error.back_home")}
+              </Button>
+            </Link>
+          </StatusPanel>
+        </div>
+      }
+    >
+      <div className="flex h-20 w-20 items-center justify-center rounded-full bg-red-500/10 md:h-24 md:w-24">
+        <AlertTriangle
+          className="h-9 w-9 text-red-500 md:h-11 md:w-11 md:text-red-400"
+          strokeWidth={2}
+        />
       </div>
 
-      <div className="mt-6 text-5xl font-black tracking-widest">
+      <div className="mt-6 text-5xl font-black tracking-widest md:mt-8 md:text-7xl">
         <GlitchText text={translate("error.title")} onDone={() => setGlitchDone(true)} />
       </div>
 
-      {/* Description — fades in after decode */}
       <p
-        className={`mt-4 text-sm text-center text-(--color-text-muted) max-w-xs transition-all duration-700 ${
+        className={`mt-4 max-w-xs text-center text-sm text-(--color-text-muted) transition-all duration-700 md:max-w-lg md:text-left md:text-base md:leading-relaxed ${
           glitchDone ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
         }`}
       >
         {translate("error.description")}
       </p>
 
-      {/* CTAs — cascade in after decode */}
       <div
-        className={`mt-8 w-full max-w-xs space-y-3 transition-all duration-700 delay-200 ${
+        className={`mt-8 w-full max-w-xs space-y-3 transition-all duration-700 delay-200 md:hidden ${
           glitchDone ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
         }`}
       >
@@ -137,6 +166,6 @@ export default function RouteError({ reset }: { error: Error; reset: () => void 
           </Button>
         </Link>
       </div>
-    </div>
+    </StatusPageShell>
   );
 }

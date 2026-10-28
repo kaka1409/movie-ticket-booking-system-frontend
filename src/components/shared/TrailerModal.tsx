@@ -33,7 +33,7 @@ export default function TrailerModal({ isOpen, onClose, title }: TrailerModalPro
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm animate-fade-in"
       onClick={onClose}
     >
       <div

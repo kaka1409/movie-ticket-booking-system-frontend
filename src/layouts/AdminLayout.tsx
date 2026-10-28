@@ -23,10 +23,7 @@ import { useLocale } from "@/contexts/LocaleContext";
 import { useLogout } from "@/features/auth/hooks/useLogout";
 import { ADMIN_NAV_GROUPS, isAdminNavActive } from "@/features/admin/adminSections";
 import { setAdminSidebarAction } from "@/features/admin/actions/preferences.action";
-import {
-  ADMIN_SIDEBAR_COLLAPSED_PX,
-  ADMIN_SIDEBAR_EXPANDED_PX,
-} from "@/features/admin/constants";
+import { ADMIN_SIDEBAR_COLLAPSED_PX, ADMIN_SIDEBAR_EXPANDED_PX } from "@/features/admin/constants";
 import { useAdminTheme } from "@/features/admin/hooks/useAdminTheme";
 import type { AdminSidebarMode, AdminTheme } from "@/features/admin/types";
 import Avatar, { DEFAULT_AVATAR_SRC } from "@/components/ui/Avatar";
@@ -104,7 +101,7 @@ export default function AdminLayout({
       }
       if (event.key !== "Tab" || !drawer) return;
 
-      const focusable = drawer.querySelectorAll<HTMLElement>('a[href], button:not([disabled])');
+      const focusable = drawer.querySelectorAll<HTMLElement>("a[href], button:not([disabled])");
       if (focusable.length === 0) return;
 
       const first = focusable[0];
@@ -167,11 +164,7 @@ export default function AdminLayout({
               <ThemeToggle theme={theme} onSelect={setTheme} />
 
               {user && (
-                <AdminAccountMenu
-                  name={user.name}
-                  email={user.email}
-                  avatarUrl={user.avatarUrl}
-                />
+                <AdminAccountMenu name={user.name} email={user.email} avatarUrl={user.avatarUrl} />
               )}
             </div>
           </header>
@@ -205,9 +198,7 @@ export default function AdminLayout({
                 <button
                   type="button"
                   onClick={toggleSidebar}
-                  title={translate(
-                    isCollapsed ? "admin.sidebar.expand" : "admin.sidebar.collapse",
-                  )}
+                  title={translate(isCollapsed ? "admin.sidebar.expand" : "admin.sidebar.collapse")}
                   aria-label={translate(
                     isCollapsed ? "admin.sidebar.expand" : "admin.sidebar.collapse",
                   )}
@@ -220,9 +211,7 @@ export default function AdminLayout({
                   ) : (
                     <PanelLeftClose size={14} aria-hidden className="shrink-0" />
                   )}
-                  {!isCollapsed && (
-                    <span>{translate("admin.sidebar.collapse")}</span>
-                  )}
+                  {!isCollapsed && <span>{translate("admin.sidebar.collapse")}</span>}
                 </button>
               </div>
             </aside>
@@ -416,12 +405,7 @@ function AdminAccountMenu({
             isOpen ? "border-(--color-gold)/50" : "hover:border-(--color-gold)/40"
           }`}
         >
-          <Avatar
-            src={avatarUrl}
-            fallbackSrc={DEFAULT_AVATAR_SRC}
-            name={name}
-            size="h-7 w-7"
-          />
+          <Avatar src={avatarUrl} fallbackSrc={DEFAULT_AVATAR_SRC} name={name} size="h-7 w-7" />
           <span className="hidden max-w-[9rem] truncate text-xs font-bold text-(--color-text-primary) lg:block">
             {name}
           </span>
@@ -438,12 +422,7 @@ function AdminAccountMenu({
       {({ close }) => (
         <>
           <div className="flex items-center gap-3 border-b border-(--color-border) px-4 py-3">
-            <Avatar
-              src={avatarUrl}
-              fallbackSrc={DEFAULT_AVATAR_SRC}
-              name={name}
-              size="h-10 w-10"
-            />
+            <Avatar src={avatarUrl} fallbackSrc={DEFAULT_AVATAR_SRC} name={name} size="h-10 w-10" />
             <div className="min-w-0">
               <p className="truncate text-sm font-bold text-(--color-text-primary)">{name}</p>
               <p className="truncate text-[11px] text-(--color-text-muted)">{email}</p>

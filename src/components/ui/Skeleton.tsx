@@ -34,4 +34,26 @@ function SkeletonCard({
   );
 }
 
-export { Skeleton, SkeletonBar, SkeletonCard };
+/**
+ * The same bar box in either surface scope: a plain `Skeleton` normally, the
+ * muted `SkeletonBar` inside a `.surface-raised` subtree (where `surface-2` is
+ * the card's own colour). Skeleton components therefore stay reusable across
+ * both trees of a step.
+ */
+function SurfaceSkeleton({
+  raised = false,
+  className = "",
+  style,
+}: {
+  raised?: boolean;
+  className?: string;
+  style?: React.CSSProperties;
+}) {
+  return raised ? (
+    <SkeletonBar className={className} style={style} />
+  ) : (
+    <Skeleton className={className} style={style} />
+  );
+}
+
+export { Skeleton, SkeletonBar, SkeletonCard, SurfaceSkeleton };

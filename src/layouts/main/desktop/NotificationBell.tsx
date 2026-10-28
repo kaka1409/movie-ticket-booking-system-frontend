@@ -30,7 +30,7 @@ function UnreadBadge({ count }: { count: number }) {
  */
 export default function NotificationBell() {
   const { translate } = useLocale();
-  const { notifications, unreadCount, markRead, markAllRead } = useNotifications();
+  const { notifications, unreadCount, isInboxLoading, markRead, markAllRead } = useNotifications();
 
   return (
     <Dropdown
@@ -45,7 +45,7 @@ export default function NotificationBell() {
           }`}
         >
           <Bell size={18} />
-          {unreadCount > 0 && <UnreadBadge count={unreadCount} />}
+          {unreadCount > 0 && !isInboxLoading && <UnreadBadge count={unreadCount} />}
         </span>
       )}
     >
@@ -83,7 +83,11 @@ export default function NotificationBell() {
             </div>
           </div>
 
-          {notifications.length === 0 ? (
+          {isInboxLoading ? (
+            <div className="flex flex-col items-center justify-center gap-2 px-6 py-10">
+              <Bell size={28} className="text-(--color-border)" aria-hidden />
+            </div>
+          ) : notifications.length === 0 ? (
             <div className="flex flex-col items-center justify-center gap-2 px-6 py-10">
               <Bell size={28} className="text-(--color-border)" aria-hidden />
               <p className="text-xs text-(--color-text-muted)">

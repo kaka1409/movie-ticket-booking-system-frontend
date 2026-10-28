@@ -6,15 +6,16 @@ import type { Movie } from "@/features/movies/types";
 
 /**
  * `sizes` tells the browser the rendered width so it doesn't pick the 100vw
- * default candidate — pass it whenever the card renders wider than its
+ * default candidate â€” pass it whenever the card renders wider than its
  * intrinsic 130px (e.g. the 2-column /movies grid).
  */
-const MovieCard: React.FC<{ movie: Movie; minLabel?: string; sizes?: string }> = ({
-  movie,
-  minLabel = "min",
-  sizes = "130px",
-}) => (
-  <Link href={`/movies/${movie.slug}`} className="block w-[130px]">
+const MovieCard: React.FC<{
+  movie: Movie;
+  minLabel?: string;
+  sizes?: string;
+  isFluid?: boolean;
+}> = ({ movie, minLabel = "min", sizes = "130px", isFluid = false }) => (
+  <Link href={`/movies/${movie.slug}`} className={`block ${isFluid ? "w-full" : "w-[130px]"}`}>
     <article className="cursor-pointer">
       <div className="relative aspect-[2/3] overflow-hidden rounded-(--radius-lg) bg-(--color-surface-2)">
         <Image
@@ -52,7 +53,7 @@ const MovieCard: React.FC<{ movie: Movie; minLabel?: string; sizes?: string }> =
           </div>
         )}
       </div>
-      <p className="mt-(--space-sm) text-md font-medium text-white">{movie.title}</p>
+      <p className="mt-(--space-sm) text-base font-medium text-white">{movie.title}</p>
       <p className="mt-0.5 text-xs text-(--color-gold-light)">{movie.genre}</p>
     </article>
   </Link>

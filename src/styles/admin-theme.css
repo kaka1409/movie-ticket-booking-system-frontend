@@ -22,7 +22,7 @@
 
   --color-text-primary: #14130f;
   --color-text-secondary: #5a5346;
-  --color-text-muted: #78736a;
+  --color-text-muted: #6f6a60;
 
   /* Gold is a fill, not ink: `#ffcc4d` on white is ~1.6:1. Darkening the token
      itself keeps every `text-(--color-gold)` usage readable (~5:1) while
@@ -54,7 +54,7 @@
 
     --color-text-primary: #14130f;
     --color-text-secondary: #5a5346;
-    --color-text-muted: #78736a;
+    --color-text-muted: #6f6a60;
 
     --color-gold: #8a6100;
     --color-gold-light: #7a5600;
@@ -188,4 +188,3 @@
 .admin-modal::backdrop {
   background: rgba(0, 0, 0, 0.65);
 }
-

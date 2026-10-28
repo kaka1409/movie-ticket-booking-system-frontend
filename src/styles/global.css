@@ -8,6 +8,7 @@
 }
 
 :root {
+  color-scheme: dark;
   /* Brand colours */
   --color-gold: #ffcc4d;
   --color-gold-light: #ffe4af;
@@ -23,6 +24,7 @@
   --color-surface: #1c1b1b;
   --color-surface-2: #242424;
   --color-border: #2e2e2e;
+  --color-border-strong: #6b6b6b; /* 3.2:1 on surface — WCAG 1.4.11 for form control boundaries */
   /* Holds `--color-surface`'s neutral value for `.surface-raised`, which
      re-points `--color-surface` and would otherwise lose the panel colour. */
   --color-surface-base: var(--color-surface);
@@ -33,7 +35,7 @@
   /* Text */
   --color-text-primary: #ffffff;
   --color-text-secondary: #ffe4af;
-  --color-text-muted: #606060;
+  --color-text-muted: #9a9a9a;
 
   /* Toast — success/info share the green family, error the red one */
   --color-info-bg: #e8f5e9;
@@ -251,4 +253,29 @@ body {
   80% {
     transform: translateX(4px) rotate(1deg);
   }
+}
+
+/* ─── Reduced motion (WCAG 2.3.3) ───────────────────────────────
+   0.01ms (not `none`) so `forwards` still fills final state — `.animate-fade-in`
+   starts at `opacity: 0`, disabling animation must not leave it invisible. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .animate-fade-in {
+    opacity: 1;
+  }
+}
+
+/* ─── Scroll anchoring (sticky header) ───────────────────────── */
+html {
+  scroll-padding-top: 4.5rem;
 }

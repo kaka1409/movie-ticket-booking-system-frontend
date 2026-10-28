@@ -78,6 +78,31 @@ function parseApiError(status: number, body: unknown): ErrorResponse["error"] {
 }
 
 /**
+ * A thrown/rejected call expressed as an `{ error }` union, so a caller that
+ * awaits a query directly can render an error state instead of unwinding the
+ * render (status 0 = the request never produced an HTTP answer).
+ */
+export function toErrorResponse(reason: unknown): ErrorResponse {
+  const message = reason instanceof Error ? reason.message : String(reason);
+  return { error: { status: 0, code: "UNKNOWN_ERROR", message } };
+}
+
+/**
+ * Await a query and express a rejection as `{ error }`. Streamed sections await
+ * their feed inside a Suspense boundary, where a throw would unwind the whole
+ * boundary into the error page — they render the failure in place instead.
+ */
+export async function settleApiResponse<T, M = Record<string, unknown>>(
+  request: Promise<ApiResponse<T, M>>,
+): Promise<ApiResponse<T, M>> {
+  try {
+    return await request;
+  } catch (reason) {
+    return toErrorResponse(reason);
+  }
+}
+
+/**
  * Normalize a `Promise.allSettled` slot into an `ApiResponse`, turning a
  * rejection into `{ error: { status: 0, code: "UNKNOWN_ERROR" } }`.
  */
@@ -85,15 +110,7 @@ export function toApiResponse<T, M = Record<string, unknown>>(
   result: PromiseSettledResult<ApiResponse<T, M>>,
 ): ApiResponse<T, M> {
   if (result.status === "fulfilled") return result.value;
-  const reason: unknown = result.reason;
-  const message = reason instanceof Error ? reason.message : String(reason);
-  return {
-    error: {
-      status: 0,
-      code: "UNKNOWN_ERROR",
-      message,
-    },
-  };
+  return toErrorResponse(result.reason);
 }
 
 /**
