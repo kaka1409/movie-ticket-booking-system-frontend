@@ -153,8 +153,13 @@
       "no_showtimes": "No showtimes for this date",
       "no_reviews": "No reviews yet",
       "action_failed": "Something went wrong",
+      "review_posted": "Review posted",
+      "review_updated": "Review updated",
+      "review_deleted": "Review deleted",
       "book_showtime": "Book {time}",
-      "select_showtime": "Select a showtime"
+      "select_showtime": "Select a showtime",
+      "you_may_like": "You may also like",
+      "browse_all": "Browse all movies"
     }
   },
   "tickets": {
@@ -207,6 +212,9 @@
     },
     "transfer": {
       "title": "Transfer Ticket",
+      "cancel_failed": "Could not cancel the transfer. Please try again.",
+      "declined": "Transfer declined.",
+      "decision_failed": "Could not complete the decision. Please try again.",
       "confirm_title": "Confirm Transfer",
       "transfer_to": "Transfer to",
       "email_placeholder": "Recipient's email address",
@@ -270,6 +278,7 @@
     },
     "modify": {
       "title": "Modify Ticket",
+      "failed": "Modification failed. Please try again.",
       "loading_seat_map": "Loading seat map...",
       "select_type": "What would you like to modify?",
       "change_showtime": "Change Showtime",
@@ -320,6 +329,7 @@
     },
     "cancel": {
       "title": "Cancel & Refund",
+      "failed": "Cancellation failed. Please try again.",
       "seats_label": "Seats",
       "ticket_price": "Ticket",
       "snack_price": "Popcorn Combo",
@@ -385,6 +395,7 @@
     "change_password": "Change Password",
     "logout": "Logout",
     "edit": {
+      "saved": "Profile saved",
       "full_name": "Full Name",
       "email": "Email Address",
       "phone": "Phone Number",
@@ -719,10 +730,14 @@
     }
   },
   "not_found": {
+    "try_these": "Try one of these",
     "back_home": "Back to Home",
     "explore_movies": "Explore Movies"
   },
   "error": {
+    "panel_title": "What you can do",
+    "hint": "If this keeps happening, reload the page in a moment.",
+    "ref": "Ref",
     "title": "Error",
     "description": "Something went wrong. Please try again.",
     "try_again": "Try Again",

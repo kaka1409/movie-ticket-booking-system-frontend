@@ -153,8 +153,13 @@
       "no_showtimes": "Không có suất chiếu trong ngày này",
       "no_reviews": "Chưa có đánh giá nào",
       "action_failed": "Đã có lỗi xảy ra",
+      "review_posted": "Đã đăng đánh giá",
+      "review_updated": "Đã cập nhật đánh giá",
+      "review_deleted": "Đã xóa đánh giá",
       "book_showtime": "Đặt vé {time}",
-      "select_showtime": "Chọn suất chiếu"
+      "select_showtime": "Chọn suất chiếu",
+      "you_may_like": "Có thể bạn cũng thích",
+      "browse_all": "Xem tất cả phim"
     }
   },
   "tickets": {
@@ -207,6 +212,9 @@
     },
     "transfer": {
       "title": "Chuyển Vé",
+      "cancel_failed": "Không thể hủy chuyển nhượng. Vui lòng thử lại.",
+      "declined": "Đã từ chối chuyển nhượng.",
+      "decision_failed": "Không thể xử lý. Vui lòng thử lại.",
       "confirm_title": "Xác Nhận Chuyển Vé",
       "transfer_to": "Chuyển vé cho",
       "email_placeholder": "Địa chỉ email người nhận",
@@ -270,6 +278,7 @@
     },
     "modify": {
       "title": "Sửa Vé",
+      "failed": "Chỉnh sửa thất bại. Vui lòng thử lại.",
       "loading_seat_map": "Đang tải sơ đồ ghế...",
       "select_type": "Bạn muốn sửa gì?",
       "change_showtime": "Đổi Suất Chiếu",
@@ -320,6 +329,7 @@
     },
     "cancel": {
       "title": "Hủy & Hoàn Tiền",
+      "failed": "Hủy thất bại. Vui lòng thử lại.",
       "seats_label": "Ghế",
       "ticket_price": "Vé",
       "snack_price": "Combo Bỏng Ngô",
@@ -385,6 +395,7 @@
     "change_password": "Đổi Mật Khẩu",
     "logout": "Đăng Xuất",
     "edit": {
+      "saved": "Đã lưu hồ sơ",
       "full_name": "Họ Và Tên",
       "email": "Địa Chỉ Email",
       "phone": "Số Điện Thoại",
@@ -719,10 +730,14 @@
     }
   },
   "not_found": {
+    "try_these": "Thử một trong các mục sau",
     "back_home": "Về Trang Chủ",
     "explore_movies": "Khám Phá Phim"
   },
   "error": {
+    "panel_title": "Bạn có thể thử",
+    "hint": "Nếu lỗi vẫn tiếp diễn, hãy tải lại trang sau ít phút.",
+    "ref": "Mã lỗi",
     "title": "Lỗi",
     "description": "Đã xảy ra lỗi. Vui lòng thử lại.",
     "try_again": "Thử Lại",
