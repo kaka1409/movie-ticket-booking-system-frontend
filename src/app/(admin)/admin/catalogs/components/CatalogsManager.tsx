@@ -214,9 +214,7 @@ export default function CatalogsManager({
         isOpen={deleteTarget !== null}
         entityName={deleteTarget?.name ?? ""}
         onClose={() => setDeleteTarget(null)}
-        onDelete={() =>
-          deleteCatalogEntryAction(token ?? "", kind, deleteTarget?.id ?? "")
-        }
+        onDelete={() => deleteCatalogEntryAction(token ?? "", kind, deleteTarget?.id ?? "")}
         onDeactivate={() =>
           updateCatalogEntryAction(token ?? "", kind, deleteTarget?.id ?? "", { isActive: false })
         }

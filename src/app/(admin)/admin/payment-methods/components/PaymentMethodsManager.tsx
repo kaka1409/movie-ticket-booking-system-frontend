@@ -172,7 +172,16 @@ function PaymentMethodFormDialog({
   const router = useRouter();
 
   const [values, setValues] = useState<PaymentMethodFormState>(() =>
-    method ? toFormState(method) : { nameEn: "", nameVi: "", descriptionEn: "", descriptionVi: "", sortOrder: "0", isActive: true },
+    method
+      ? toFormState(method)
+      : {
+          nameEn: "",
+          nameVi: "",
+          descriptionEn: "",
+          descriptionVi: "",
+          sortOrder: "0",
+          isActive: true,
+        },
   );
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [submitError, setSubmitError] = useState<string | null>(null);

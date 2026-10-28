@@ -1,7 +1,12 @@
 "use server";
 
 import { mutateAdmin } from "../mutation";
-import type { AdminActionResult, AdminCatalogEntry, AdminCatalogInput, AdminCatalogKind } from "../types";
+import type {
+  AdminActionResult,
+  AdminCatalogEntry,
+  AdminCatalogInput,
+  AdminCatalogKind,
+} from "../types";
 
 /**
  * Genres, formats and age ratings share one CRUD contract on the backend, so

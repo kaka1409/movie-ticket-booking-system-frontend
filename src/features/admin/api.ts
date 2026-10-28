@@ -60,7 +60,14 @@ export async function getAdminMovies(params: {
       movies: result.data.movies.map((movie) => {
         const counts = countsById.get(movie.id);
         return counts
-          ? { ...movie, counts: { showtimes: counts.showtimes, reviews: counts.reviews, wishlists: counts.wishlists } }
+          ? {
+              ...movie,
+              counts: {
+                showtimes: counts.showtimes,
+                reviews: counts.reviews,
+                wishlists: counts.wishlists,
+              },
+            }
           : movie;
       }),
     },
@@ -91,12 +98,7 @@ export async function getAdminCatalog(
 }
 
 export async function getAdminCinemas(): Promise<ApiResponse<AdminCinema[]>> {
-  return apiFetch<AdminCinema[]>(
-    "/cinemas/admin",
-    NO_STORE,
-    undefined,
-    await getRequestCookie(),
-  );
+  return apiFetch<AdminCinema[]>("/cinemas/admin", NO_STORE, undefined, await getRequestCookie());
 }
 
 export async function getAdminShowtimeBoard(params: {

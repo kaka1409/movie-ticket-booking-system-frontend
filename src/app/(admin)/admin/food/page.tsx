@@ -1,39 +1,22 @@
 import type { Metadata } from "next";
-import LoginPrompt from "@/components/shared/LoginPrompt";
-import AdminDataError from "@/features/admin/components/AdminDataError";
+import { Suspense } from "react";
 import AdminPageHeader from "@/features/admin/components/AdminPageHeader";
-import { getAdminFoodItems } from "@/features/admin/api";
-import { isUnauthorizedResult } from "@/libs/session";
-import FoodManager from "./components/FoodManager";
+import { AdminTableSkeleton } from "@/features/admin/components/AdminSkeletons";
+import { FoodManagerSection } from "./sections";
 
 export const metadata: Metadata = { title: "Food & beverage" };
 
-export default async function AdminFoodPage() {
-  const result = await getAdminFoodItems();
-
-  if (isUnauthorizedResult(result)) return <LoginPrompt />;
-
-  const header = (
-    <AdminPageHeader
-      eyebrowKey="admin.nav.food"
-      titleKey="admin.food.title"
-      descriptionKey="admin.food.description"
-    />
-  );
-
-  if ("error" in result) {
-    return (
-      <>
-        {header}
-        <AdminDataError message={result.error.message} />
-      </>
-    );
-  }
-
+export default function AdminFoodPage() {
   return (
     <>
-      {header}
-      <FoodManager items={result.data} />
+      <AdminPageHeader
+        eyebrowKey="admin.nav.food"
+        titleKey="admin.food.title"
+        descriptionKey="admin.food.description"
+      />
+      <Suspense fallback={<AdminTableSkeleton />}>
+        <FoodManagerSection />
+      </Suspense>
     </>
   );
 }

@@ -57,7 +57,7 @@ export default function AdminTable<TRow>({
   }
 
   return (
-    <div className={`${ADMIN_CARD_CLASS} overflow-x-auto`}>
+    <div className={`${ADMIN_CARD_CLASS} overflow-x-auto overscroll-x-contain`}>
       <table className="admin-table">
         {captionKey && <caption className="sr-only">{translate(captionKey)}</caption>}
 
@@ -69,7 +69,11 @@ export default function AdminTable<TRow>({
                 scope="col"
                 className={`${column.align === "right" ? "admin-table-right" : ""} ${column.className ?? ""}`}
               >
-                {column.headerKey ? translate(column.headerKey) : <span className="sr-only">—</span>}
+                {column.headerKey ? (
+                  translate(column.headerKey)
+                ) : (
+                  <span className="sr-only">—</span>
+                )}
               </th>
             ))}
           </tr>

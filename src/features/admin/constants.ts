@@ -19,8 +19,7 @@ export const ADMIN_SIDEBAR_COLLAPSED_PX = 72;
  * a console-wide look has to live in strings rather than be re-typed per page —
  * one token change re-skins every form and panel.
  */
-export const ADMIN_CARD_CLASS =
-  "rounded-2xl border border-(--color-border) bg-(--color-surface)";
+export const ADMIN_CARD_CLASS = "rounded-2xl border border-(--color-border) bg-(--color-surface)";
 
 export const ADMIN_LABEL_CLASS =
   "text-[10px] font-bold tracking-[0.16em] text-(--color-text-muted) uppercase";

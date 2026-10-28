@@ -1,39 +1,22 @@
 import type { Metadata } from "next";
-import LoginPrompt from "@/components/shared/LoginPrompt";
-import AdminDataError from "@/features/admin/components/AdminDataError";
+import { Suspense } from "react";
 import AdminPageHeader from "@/features/admin/components/AdminPageHeader";
-import { getAdminCombos } from "@/features/admin/api";
-import { isUnauthorizedResult } from "@/libs/session";
-import CombosManager from "./components/CombosManager";
+import { AdminTableSkeleton } from "@/features/admin/components/AdminSkeletons";
+import { CombosManagerSection } from "./sections";
 
 export const metadata: Metadata = { title: "Combos" };
 
-export default async function AdminCombosPage() {
-  const result = await getAdminCombos();
-
-  if (isUnauthorizedResult(result)) return <LoginPrompt />;
-
-  const header = (
-    <AdminPageHeader
-      eyebrowKey="admin.nav.food"
-      titleKey="admin.combos.title"
-      descriptionKey="admin.combos.description"
-    />
-  );
-
-  if ("error" in result) {
-    return (
-      <>
-        {header}
-        <AdminDataError message={result.error.message} />
-      </>
-    );
-  }
-
+export default function AdminCombosPage() {
   return (
     <>
-      {header}
-      <CombosManager combos={result.data} />
+      <AdminPageHeader
+        eyebrowKey="admin.nav.food"
+        titleKey="admin.combos.title"
+        descriptionKey="admin.combos.description"
+      />
+      <Suspense fallback={<AdminTableSkeleton />}>
+        <CombosManagerSection />
+      </Suspense>
     </>
   );
 }

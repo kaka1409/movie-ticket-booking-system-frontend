@@ -23,12 +23,14 @@ import type {
 import MovieCastDialog from "./MovieCastDialog";
 import MovieFormDialog from "./MovieFormDialog";
 
-const STATUS_BADGE: Record<AdminMovieStatus, { variant: "success" | "gold" | "neutral"; key: string }> =
-  {
-    now_showing: { variant: "success", key: "admin.movies.status_now_showing" },
-    coming_soon: { variant: "gold", key: "admin.movies.status_coming_soon" },
-    ended: { variant: "neutral", key: "admin.movies.status_ended" },
-  };
+const STATUS_BADGE: Record<
+  AdminMovieStatus,
+  { variant: "success" | "gold" | "neutral"; key: string }
+> = {
+  now_showing: { variant: "success", key: "admin.movies.status_now_showing" },
+  coming_soon: { variant: "gold", key: "admin.movies.status_coming_soon" },
+  ended: { variant: "neutral", key: "admin.movies.status_ended" },
+};
 
 const STATUS_OPTIONS: AdminMovieStatus[] = ["now_showing", "coming_soon", "ended"];
 

@@ -120,7 +120,9 @@ export default function SeatLayoutEditor({
   const [seatTypes, setSeatTypes] = useState<AdminSeatType[] | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
 
-  const [rows, setRows] = useState<RowDraft[]>([{ rowLabel: "A", segments: [{ ...EMPTY_SEGMENT }] }]);
+  const [rows, setRows] = useState<RowDraft[]>([
+    { rowLabel: "A", segments: [{ ...EMPTY_SEGMENT }] },
+  ]);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -148,24 +150,23 @@ export default function SeatLayoutEditor({
 
     let cancelled = false;
 
-    Promise.all([
-      getAdminSeatTypesAction(token),
-      getAdminRoomSeatLayoutAction(token, roomId),
-    ]).then(([typesResult, layoutResult]) => {
-      if (cancelled) return;
+    Promise.all([getAdminSeatTypesAction(token), getAdminRoomSeatLayoutAction(token, roomId)]).then(
+      ([typesResult, layoutResult]) => {
+        if (cancelled) return;
 
-      if (!typesResult.success) {
-        setLoadError(typesResult.error);
-        return;
-      }
-      if (!layoutResult.success) {
-        setLoadError(layoutResult.error);
-        return;
-      }
+        if (!typesResult.success) {
+          setLoadError(typesResult.error);
+          return;
+        }
+        if (!layoutResult.success) {
+          setLoadError(layoutResult.error);
+          return;
+        }
 
-      setSeatTypes(typesResult.data);
-      setRows(toDraft(layoutResult.data));
-    });
+        setSeatTypes(typesResult.data);
+        setRows(toDraft(layoutResult.data));
+      },
+    );
 
     return () => {
       cancelled = true;
@@ -174,16 +175,17 @@ export default function SeatLayoutEditor({
 
   const updateRowLabel = (rowIndex: number, value: string) => {
     setRows((current) =>
-      current.map((row, index) =>
-        index === rowIndex ? { ...row, rowLabel: value } : row,
-      ),
+      current.map((row, index) => (index === rowIndex ? { ...row, rowLabel: value } : row)),
     );
   };
 
   const addRow = () => {
     setRows((current) => [
       ...current,
-      { rowLabel: String.fromCharCode(65 + (current.length % 26)), segments: [{ ...EMPTY_SEGMENT }] },
+      {
+        rowLabel: String.fromCharCode(65 + (current.length % 26)),
+        segments: [{ ...EMPTY_SEGMENT }],
+      },
     ]);
   };
 
@@ -194,9 +196,7 @@ export default function SeatLayoutEditor({
   const addSegment = (rowIndex: number) => {
     setRows((current) =>
       current.map((row, index) =>
-        index === rowIndex
-          ? { ...row, segments: [...row.segments, { ...EMPTY_SEGMENT }] }
-          : row,
+        index === rowIndex ? { ...row, segments: [...row.segments, { ...EMPTY_SEGMENT }] } : row,
       ),
     );
   };
@@ -410,12 +410,14 @@ export default function SeatLayoutEditor({
                 icon={isPreviewOpen ? EyeOff : Eye}
                 onClick={() => setIsPreviewOpen((current) => !current)}
               >
-                {translate(isPreviewOpen ? "admin.seatLayout.hide_preview" : "admin.seatLayout.show_preview")}
+                {translate(
+                  isPreviewOpen ? "admin.seatLayout.hide_preview" : "admin.seatLayout.show_preview",
+                )}
               </AdminButton>
             </div>
 
             {isPreviewOpen && (
-              <div className="space-y-1.5 overflow-x-auto rounded-xl border border-(--color-border) bg-(--color-surface-2) p-3">
+              <div className="space-y-1.5 overflow-x-auto overscroll-x-contain rounded-xl border border-(--color-border) bg-(--color-surface-2) p-3">
                 {previewRows.map((previewRow, rowIndex) => (
                   <div key={rowIndex} className="flex items-center gap-2">
                     <span className="w-6 shrink-0 text-center text-[10px] font-bold text-(--color-text-muted)">
@@ -449,7 +451,10 @@ export default function SeatLayoutEditor({
                     <span key={type.id} className="flex items-center gap-1">
                       <span
                         className="inline-block h-3 w-3 rounded"
-                        style={{ backgroundColor: "var(--color-surface)", border: "1px solid var(--color-border)" }}
+                        style={{
+                          backgroundColor: "var(--color-surface)",
+                          border: "1px solid var(--color-border)",
+                        }}
                       />
                       {type.name}
                     </span>

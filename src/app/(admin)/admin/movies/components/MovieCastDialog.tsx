@@ -190,7 +190,9 @@ export default function MovieCastDialog({
                 {castItem.name}
               </p>
               {castItem.roleName && (
-                <p className="truncate text-[11px] text-(--color-text-muted)">{castItem.roleName}</p>
+                <p className="truncate text-[11px] text-(--color-text-muted)">
+                  {castItem.roleName}
+                </p>
               )}
             </div>
 

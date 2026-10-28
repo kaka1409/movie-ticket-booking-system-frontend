@@ -42,8 +42,8 @@ export default function AdminPagination({
       className="mt-3 flex items-center justify-between gap-3"
     >
       <p className="text-[11px] font-semibold text-(--color-text-muted)">
-        {translate("admin.common.page")} <span className="text-(--color-text-secondary)">{page}</span>{" "}
-        / {totalPages}
+        {translate("admin.common.page")}{" "}
+        <span className="text-(--color-text-secondary)">{page}</span> / {totalPages}
       </p>
 
       <div className="flex items-center gap-1.5">

@@ -54,7 +54,9 @@ export default function AdminDeleteDialog({
       const result = await mutation();
 
       if (result.success) {
-        onDeleted(translate(isDeactivatePhase ? "admin.common.deactivated" : "admin.common.deleted"));
+        onDeleted(
+          translate(isDeactivatePhase ? "admin.common.deactivated" : "admin.common.deleted"),
+        );
         return;
       }
 

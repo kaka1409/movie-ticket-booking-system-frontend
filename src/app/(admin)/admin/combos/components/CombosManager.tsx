@@ -195,7 +195,9 @@ export default function CombosManager({ combos }: { combos: AdminCombo[] }) {
         getRowId={(combo) => combo.id}
         emptyIcon={Package}
         emptyTitleKey={isFiltered ? "admin.common.no_results" : "admin.combos.empty_title"}
-        emptyDescriptionKey={isFiltered ? "admin.common.no_results_body" : "admin.combos.empty_body"}
+        emptyDescriptionKey={
+          isFiltered ? "admin.common.no_results_body" : "admin.combos.empty_body"
+        }
         captionKey="admin.combos.title"
       />
 

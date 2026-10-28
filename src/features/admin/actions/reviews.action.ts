@@ -12,11 +12,7 @@ export async function deleteAdminReviewAction(
   token: string,
   reviewId: string,
 ): Promise<AdminActionResult<{ id: string; deleted: boolean }>> {
-  return mutateAdmin<{ id: string; deleted: boolean }>(
-    "DELETE",
-    `/reviews/${reviewId}`,
-    token,
-  );
+  return mutateAdmin<{ id: string; deleted: boolean }>("DELETE", `/reviews/${reviewId}`, token);
 }
 
 export async function restoreAdminReviewAction(

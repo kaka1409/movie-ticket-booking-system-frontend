@@ -62,7 +62,9 @@ function optionalInteger(min: number, max: number, message: string) {
     .string()
     .trim()
     .refine(
-      (value) => value === "" || (Number.isInteger(Number(value)) && Number(value) >= min && Number(value) <= max),
+      (value) =>
+        value === "" ||
+        (Number.isInteger(Number(value)) && Number(value) >= min && Number(value) <= max),
       message,
     );
 }
@@ -91,7 +93,10 @@ export function createMovieSchema(translate: Translate, isEditing: boolean) {
           .string()
           .trim()
           .max(255, translate("admin.movies.too_long"))
-          .refine((value) => value === "" || SLUG_PATTERN.test(value), translate("admin.movies.slug_invalid")),
+          .refine(
+            (value) => value === "" || SLUG_PATTERN.test(value),
+            translate("admin.movies.slug_invalid"),
+          ),
     status: z.enum(["now_showing", "coming_soon", "ended"]),
     director: z.string().trim().max(255, translate("admin.movies.too_long")),
     language: z.string().trim().max(50, translate("admin.movies.too_long")),
@@ -151,7 +156,10 @@ export function createFoodItemSchema(translate: Translate) {
       .trim()
       .min(1, translate("admin.food.category_required"))
       .max(60, translate("admin.common.too_long"))
-      .refine((value) => CATEGORY_TOKEN_PATTERN.test(value), translate("admin.food.category_invalid")),
+      .refine(
+        (value) => CATEGORY_TOKEN_PATTERN.test(value),
+        translate("admin.food.category_invalid"),
+      ),
     price: requiredAmount(translate("admin.food.price_required")),
     image: z.string().trim().max(1024, translate("admin.common.too_long")),
     isActive: z.boolean(),
@@ -212,4 +220,3 @@ export function createRoomSchema(translate: Translate) {
 }
 
 export type AdminRoomFormValues = z.infer<ReturnType<typeof createRoomSchema>>;
-

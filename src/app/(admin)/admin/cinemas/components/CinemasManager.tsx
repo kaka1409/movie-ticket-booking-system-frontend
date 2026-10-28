@@ -31,9 +31,7 @@ export default function CinemasManager({ cinemas }: { cinemas: AdminCinema[] }) 
   const { notify } = useToast();
   const router = useRouter();
 
-  const [selectedCinemaId, setSelectedCinemaId] = useState<string | null>(
-    cinemas[0]?.id ?? null,
-  );
+  const [selectedCinemaId, setSelectedCinemaId] = useState<string | null>(cinemas[0]?.id ?? null);
   const [cinemaFormTarget, setCinemaFormTarget] = useState<AdminCinema | "new" | null>(null);
   const [roomFormTarget, setRoomFormTarget] = useState<AdminRoom | "new" | null>(null);
   const [deleteCinemaTarget, setDeleteCinemaTarget] = useState<AdminCinema | null>(null);
@@ -71,7 +69,9 @@ export default function CinemasManager({ cinemas }: { cinemas: AdminCinema[] }) 
             {cinema.badge}
           </Badge>
         ) : (
-          <span className="text-[11px] text-(--color-text-muted)">{translate("admin.common.none")}</span>
+          <span className="text-[11px] text-(--color-text-muted)">
+            {translate("admin.common.none")}
+          </span>
         ),
     },
     {
@@ -117,9 +117,7 @@ export default function CinemasManager({ cinemas }: { cinemas: AdminCinema[] }) 
     {
       id: "room",
       headerKey: "admin.rooms.column_room",
-      cell: (room) => (
-        <p className="font-semibold text-(--color-text-primary)">{room.name}</p>
-      ),
+      cell: (room) => <p className="font-semibold text-(--color-text-primary)">{room.name}</p>,
     },
     {
       id: "showtimes",
@@ -246,9 +244,7 @@ export default function CinemasManager({ cinemas }: { cinemas: AdminCinema[] }) 
         isOpen={deleteCinemaTarget !== null}
         entityName={deleteCinemaTarget?.name ?? ""}
         onClose={() => setDeleteCinemaTarget(null)}
-        onDelete={() =>
-          deleteCinemaAction(token ?? "", deleteCinemaTarget?.id ?? "")
-        }
+        onDelete={() => deleteCinemaAction(token ?? "", deleteCinemaTarget?.id ?? "")}
         onDeleted={(message) => {
           setDeleteCinemaTarget(null);
           notify(message, { variant: "success" });
