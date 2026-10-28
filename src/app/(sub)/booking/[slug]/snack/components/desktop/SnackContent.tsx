@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { ArrowRight } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useBooking } from "@/features/booking/context";
@@ -9,30 +10,16 @@ import Button from "@/components/ui/Button";
 import MicroLabel from "@/components/ui/MicroLabel";
 import BookingStepLayout from "@/app/(sub)/booking/components/desktop/BookingStepLayout";
 import CountdownRow from "@/app/(sub)/booking/components/desktop/CountdownRow";
-import type { ComboItem, FoodCategory, FoodItem } from "@/features/booking/types";
-
-import CategorySection from "../mobile/CategorySection";
-import ComboCard from "../mobile/ComboCard";
 import SnackHeader from "../mobile/SnackHeader";
-import SnackSectionHeading from "../mobile/SnackSectionHeading";
 
 /**
- * Desktop snack step: combos in a two-up grid, then the pick-and-mix
- * categories; the running snack selection and its total sit in the rail.
+ * Desktop snack step: the catalog arrives as `slots`, so the shell — stepper,
+ * header, rail with the running selection and its total — paints before it.
  *
  * The selection itself is the booking draft (the same arrays the mobile cards
  * write through `withItemQty`), so the carts cannot diverge between skins.
  */
-export default function SnackContent({
-  combos,
-  foodItems,
-  foodCategories,
-}: {
-  combos: ComboItem[];
-  foodItems: FoodItem[];
-  /** `id` is the wire category token (a `FoodCategory` literal), not a row id. */
-  foodCategories: { id: FoodCategory; label: string }[];
-}) {
+export default function SnackContent({ slots }: { slots: ReactNode }) {
   const params = useParams();
   const slug = params.slug as string;
   const { translate, locale } = useLocale();
@@ -85,25 +72,7 @@ export default function SnackContent({
     >
       <div className="space-y-8">
         <SnackHeader className="" />
-
-        <section className="space-y-4">
-          <SnackSectionHeading sectionKey="booking.snack.quick_combos" />
-          <div className="grid gap-4 xl:grid-cols-2">
-            {combos.map((item) => (
-              <ComboCard key={item.id} item={item} className="" />
-            ))}
-          </div>
-        </section>
-
-        <section className="space-y-4">
-          {foodCategories.map((category) => (
-            <CategorySection
-              key={category.id}
-              label={category.label}
-              items={foodItems.filter((food) => food.category === category.id)}
-            />
-          ))}
-        </section>
+        {slots}
       </div>
     </BookingStepLayout>
   );

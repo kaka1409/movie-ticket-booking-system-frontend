@@ -48,7 +48,7 @@ export default function TicketCard({
 
   return (
     <div
-      className={`mx-4 rounded-3xl overflow-visible bg-(--color-surface) border border-(--color-border) shadow-[--shadow-card] transition-all duration-700 delay-300 ${
+      className={`mx-4 rounded-3xl overflow-visible bg-(--color-surface) border border-(--color-border) shadow-(--shadow-card) transition-all duration-700 delay-300 ${
         mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
       }`}
     >

@@ -1,75 +1,53 @@
-﻿import { getCombos, getFoodItems, getFoodCategories } from "@/features/booking/api";
+﻿import { Suspense } from "react";
 import { getRequestLocale } from "@/libs/session";
 
 // Shared
 import StepBar from "@/app/(sub)/booking/components/mobile/StepBar";
 import CountdownBanner from "@/app/(sub)/booking/components/mobile/CountdownBanner";
-import PageError from "@/app/(sub)/booking/components/mobile/PageError";
 
 // Local mobile
-import ComboCard from "./components/mobile/ComboCard";
-import CategorySection from "./components/mobile/CategorySection";
 import SnackHeader from "./components/mobile/SnackHeader";
-import SnackSectionHeading from "./components/mobile/SnackSectionHeading";
 import BottomBar from "./components/mobile/BottomBar";
 
 // Desktop
 import DesktopSnackContent from "./components/desktop/SnackContent";
 
+import {
+  DesktopSnackCatalogSkeleton,
+  MobileSnackCatalogSkeleton,
+} from "./components/SnackSkeletons";
+import { SnackCatalogSection } from "./sections";
+
+/**
+ * Snack step, streamed: the page awaits the locale only — the headers, the
+ * countdown and both bottom surfaces paint immediately, and the catalog lands in
+ * each tree's own boundary. Both boundaries read one memoized `getSnackCatalog`,
+ * so the two skins cost a single round trip.
+ */
 export default async function CombosPage() {
   const locale = await getRequestLocale();
-  const [combosResult, foodItemsResult, foodCategoriesResult] = await Promise.all([
-    getCombos(locale),
-    getFoodItems(locale),
-    getFoodCategories(locale),
-  ]);
-
-  if ("error" in combosResult) return <PageError error={combosResult.error} />;
-  if ("error" in foodItemsResult) return <PageError error={foodItemsResult.error} />;
-  if ("error" in foodCategoriesResult) return <PageError error={foodCategoriesResult.error} />;
-
-  const combos = combosResult.data;
-  const foodItems = foodItemsResult.data;
-  const foodCategories = foodCategoriesResult.data;
 
   return (
     <>
-      {/* Mobile */}
       <div className="block md:hidden">
         <StepBar current={3} />
         <main className="space-y-5 pt-1 pb-10">
           <CountdownBanner />
-
           <SnackHeader />
-
-          <div className="space-y-3">
-            <SnackSectionHeading sectionKey="booking.snack.quick_combos" />
-            <div className="space-y-3">
-              {combos.map((item) => (
-                <ComboCard key={item.id} item={item} />
-              ))}
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            {foodCategories.map((category) => (
-              <CategorySection
-                key={category.id}
-                label={category.label}
-                items={foodItems.filter((food) => food.category === category.id)}
-              />
-            ))}
-          </div>
+          <Suspense fallback={<MobileSnackCatalogSkeleton />}>
+            <SnackCatalogSection locale={locale} variant="mobile" />
+          </Suspense>
         </main>
         <BottomBar />
       </div>
 
-      {/* Desktop */}
       <div className="hidden md:block">
         <DesktopSnackContent
-          combos={combos}
-          foodItems={foodItems}
-          foodCategories={foodCategories}
+          slots={
+            <Suspense fallback={<DesktopSnackCatalogSkeleton />}>
+              <SnackCatalogSection locale={locale} variant="desktop" />
+            </Suspense>
+          }
         />
       </div>
     </>

@@ -1,37 +1,29 @@
 "use client";
 
-import { useMemo } from "react";
 import { useBooking } from "@/features/booking/context";
 import { useLocale } from "@/contexts/LocaleContext";
 import BookingBottomBar from "@/components/shared/BookingBottomBar";
 import { buildSeatsHref } from "@/features/booking/utils/cinema";
-import type { Cinema } from "@/features/booking/types";
 
-export default function BottomBar({
-  movieSlug,
-  cinemas,
-}: {
-  movieSlug: string;
-  cinemas: Cinema[];
-}) {
-  const { cinemaId, time, date, showtimeId, clearCinemaSlot } = useBooking();
+/**
+ * Cinema-step bottom bar. The draft already carries the picked cinema's name and
+ * address (`resolveSlotSelection` writes them with the id), so the bar does not
+ * need the schedule list — it paints, and updates, without the streamed slots.
+ */
+export default function BottomBar({ movieSlug }: { movieSlug: string }) {
+  const { cinemaId, cinemaName, location, time, date, showtimeId, clearCinemaSlot } = useBooking();
   const { translate } = useLocale();
 
-  const selectedCinema = useMemo(
-    () => cinemas.find((cinema) => cinema.id === cinemaId),
-    [cinemas, cinemaId],
-  );
-  const hasSelection = Boolean(selectedCinema && time);
-
+  const hasSelection = Boolean(cinemaId && time);
   const seatsHref = buildSeatsHref(movieSlug, { showtimeId, cinemaId, time, date });
 
   return (
     <BookingBottomBar
       selectionInfo={
-        hasSelection && selectedCinema
+        hasSelection
           ? {
-              label: selectedCinema.name,
-              subLabel: selectedCinema.address,
+              label: cinemaName,
+              subLabel: location,
               secondaryLabel: time,
               secondaryLabelKey: translate("booking.cinema.showtime"),
               showClearButton: true,

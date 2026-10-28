@@ -94,7 +94,7 @@ export default function PhoneField({
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
             onChange={(event) => onPhoneChange(event.target.value)}
-            className="flex-1 bg-transparent text-sm text-(--color-text-primary) placeholder-(--color-text-muted) outline-none font-[inherit]"
+            className="flex-1 bg-transparent text-base text-(--color-text-primary) placeholder-(--color-text-muted) outline-none font-[inherit]"
           />
         </div>
       </div>

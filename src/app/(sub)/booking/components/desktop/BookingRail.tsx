@@ -6,6 +6,7 @@ import type { ReactNode } from "react";
 import { useBooking } from "@/features/booking/context";
 import { useLocale } from "@/contexts/LocaleContext";
 import MicroLabel from "@/components/ui/MicroLabel";
+import type { Movie } from "@/types";
 
 /**
  * The desktop booking summary rail — the single summary surface on every
@@ -14,12 +15,14 @@ import MicroLabel from "@/components/ui/MicroLabel";
  *
  * Purely presentational: it reads the adopted movie snapshot from the draft and
  * renders whatever the step hands it, so both the summary and the CTA stay
- * with the step that knows the rules.
+ * with the step that knows the rules. A step that already fetched the movie
+ * passes it in — the identity then paints before the adoption effect runs.
  */
 export default function BookingRail({
   summary,
   action,
   errorText,
+  movie,
 }: {
   /** Step-specific selection block rendered under the movie identity. */
   summary?: ReactNode;
@@ -27,9 +30,12 @@ export default function BookingRail({
   action: ReactNode;
   /** Inline failure line under the CTA. */
   errorText?: string | null;
+  /** Movie the step itself holds; falls back to the draft snapshot. */
+  movie?: Movie;
 }) {
-  const { movie } = useBooking();
+  const { movie: draftMovie } = useBooking();
   const { translate } = useLocale();
+  const movieSnapshot = movie ?? draftMovie;
 
   return (
     <aside className="lg:sticky lg:top-24 lg:self-start">
@@ -38,44 +44,44 @@ export default function BookingRail({
           {translate("booking.common.ticket_details")}
         </MicroLabel>
 
-        {movie && (
+        {movieSnapshot && (
           <div className="mt-4 flex gap-4">
             <div
               className="relative w-20 shrink-0 overflow-hidden rounded-md bg-(--color-surface-2)"
               style={{ aspectRatio: "2/3" }}
             >
-              {movie.src ? (
+              {movieSnapshot.src ? (
                 <Image
-                  src={movie.src}
-                  alt={movie.title}
+                  src={movieSnapshot.src}
+                  alt={movieSnapshot.title}
                   fill
                   sizes="80px"
                   className="object-cover"
                 />
               ) : (
                 <span className="flex h-full items-center px-1.5 text-[9px] leading-tight font-black tracking-tight uppercase text-(--color-text-muted)">
-                  {movie.title}
+                  {movieSnapshot.title}
                 </span>
               )}
             </div>
 
             <div className="min-w-0 flex-1">
               <h2 className="text-base leading-snug font-bold text-(--color-text-primary)">
-                {movie.title}
+                {movieSnapshot.title}
               </h2>
               <p className="mt-1 flex items-center gap-1.5 text-xs text-(--color-text-muted)">
                 <Clock size={11} />
-                {movie.duration} {translate("booking.min")}
-                {movie.genre && (
+                {movieSnapshot.duration} {translate("booking.min")}
+                {movieSnapshot.genre && (
                   <>
                     <span>•</span>
-                    {movie.genre}
+                    {movieSnapshot.genre}
                   </>
                 )}
               </p>
-              {movie.ageRating && (
+              {movieSnapshot.ageRating && (
                 <span className="mt-2 inline-block rounded-md border border-(--color-border) bg-(--color-surface-2) px-2.5 py-0.5 text-[10px] font-bold text-(--color-text-secondary)">
-                  {movie.ageRating}
+                  {movieSnapshot.ageRating}
                 </span>
               )}
             </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { ArrowRight } from "lucide-react";
 import { useBooking } from "@/features/booking/context";
 import { useLocale } from "@/contexts/LocaleContext";
@@ -9,12 +10,10 @@ import Button from "@/components/ui/Button";
 import MicroLabel from "@/components/ui/MicroLabel";
 import BookingStepLayout from "@/app/(sub)/booking/components/desktop/BookingStepLayout";
 import CountdownRow from "@/app/(sub)/booking/components/desktop/CountdownRow";
-import type { SeatRow } from "@/features/booking/types";
-import SeatMapWrapper from "../mobile/SeatMapWrapper";
 
 /**
- * Desktop seats step: the map in the content column, the CTA and the running
- * session clock in the rail.
+ * Desktop seats step: the map arrives as `slots`, so the shell — stepper, title,
+ * rail with the running clock and the CTA — paints before the rows land.
  *
  * The map is capped at `max-w-md` because `SeatGrid` uses fixed 26px cells with
  * a `justify-between` row layout — stretching it across a wide column would tear
@@ -23,7 +22,7 @@ import SeatMapWrapper from "../mobile/SeatMapWrapper";
  * The hold itself is created by `useSeatHoldSubmit` (shared with the mobile bar,
  * so the network side exists once); nothing here touches the backend.
  */
-export default function SeatContent({ initialRows }: { initialRows: SeatRow[] }) {
+export default function SeatContent({ slots }: { slots: ReactNode }) {
   const { translate, locale } = useLocale();
   const { selectedSeats } = useBooking();
   const { labels, hasSeats, isReserving, errorText, submit } = useSeatHoldSubmit();
@@ -76,7 +75,7 @@ export default function SeatContent({ initialRows }: { initialRows: SeatRow[] })
         </h1>
 
         <div className="mx-auto w-full max-w-md rounded-2xl border border-(--color-border) bg-(--color-surface) p-5">
-          <SeatMapWrapper initialRows={initialRows} />
+          {slots}
         </div>
       </div>
     </BookingStepLayout>

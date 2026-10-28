@@ -1,9 +1,9 @@
-import BookingSkeleton from "@/app/(sub)/booking/components/mobile/BookingSkeleton";
+import CinemaPageSkeleton from "./components/CinemaSkeletons";
 
+/**
+ * Route fallback during navigation — the same composition the page streams into,
+ * so the navigation skeleton and the in-page boundary cannot drift apart.
+ */
 export default function CinemaLoading() {
-  return (
-    <div className="block md:hidden">
-      <BookingSkeleton step={1} />
-    </div>
-  );
+  return <CinemaPageSkeleton />;
 }
