@@ -18,7 +18,7 @@ Never run `pnpm build` while `pnpm dev` is running: both write `.next`, and Next
 - Next.js 16.2.9 App Router + React 19.2.4; `@/` alias -> `src/`.
 - Route groups under `src/app/`: `(main)` home/movies/tickets/profile, `(blank)` `movies/[slug]`, `(sub)` ALL protected (notifications, tickets detail/transfer/cancel, booking steps, profile sub-pages), `(auth)` login/register/forgot-password.
 - Layout chain: root layout (`DeviceProvider` -> `AuthProvider` -> `WishlistProvider`) -> `LayoutProvider(layout=...)`; every layout switches mobile/desktop via `useDevice()` (`matchMedia("(min-width: 740px)")`, same pixel as `--breakpoint-md`).
-- **All API calls happen on the server** in `page.tsx` (pass data down as props). Client components never `useEffect`-fetch, except request-keyed refetches and the two RAM-Bearer cases: seat holds (`useSeatHolds`) and `getPaymentIntent` (JWT-only route).
+- **All API calls happen on the server** in `page.tsx` (pass data down as props) or in the async section components it wraps in `<Suspense>` (streamed pages - see `/home`). Client components never `useEffect`-fetch, except request-keyed refetches and the two RAM-Bearer cases: seat holds (`useSeatHolds`) and `getPaymentIntent` (JWT-only route).
 - Mutations are server actions; the access token lives in RAM only, the refresh token in an HttpOnly cookie.
 - i18n EN/VN: `useLocale()` + `src/locales/{en,vn}.json`; SSR locale comes from the `locale` cookie (never localStorage); catalog fetches take `?lang=`.
 
@@ -66,6 +66,16 @@ Never run `pnpm build` while `pnpm dev` is running: both write `.next`, and Next
 - Desktop container `mx-auto max-w-7xl px-6 lg:px-8` (notifications = `max-w-4xl`); `.surface-raised` goes on a wrapper; tokens `--color-bg #0f0f0f`, `--color-surface #1c1b1b`, `--color-surface-2 #242424`, `--color-border #2e2e2e`.
 - Forms: zod v4 schemas from `features/*/schema.ts` factories taking `translate`; `safeParse` -> `flatten().fieldErrors`; `touched && !isValid` gates the messages.
 - Showtime `date` + `HH:mm` fields are cinema wall clock (`Asia/Ho_Chi_Minh`), not instants; compose them with `buildShowtimeStart`/`buildShowtimeEnd`.
+- Multi-feed pages **stream** — the page awaits only what it cannot paint without, every data block is an async section in its own `<Suspense>`:
+  1. Page awaits `params`, `searchParams`, the `locale` cookie, `hasSession()`, plus a read that decides a redirect/404 (`getMovieDetail` on a booking step). Never two independent feeds in one page body.
+  2. Each block gets a skeleton that mirrors its box; the route's `loading.tsx` renders the same composition, so the navigation fallback cannot drift from the in-page one.
+  3. A feed read by several boundaries goes through a `cache()`-memoized loader (`features/<domain>/<page>.ts`) — N boundaries, one backend call.
+  4. A boundary holds no side effect: adoption/realtime effects mount once at page level in their own `fallback={null}` boundary.
+  5. Errors render in place (`SectionFallback` or the page's error panel); a 401 renders `null` and the route's gate shows the prompt.
+  6. Both device trees always render, so a block streamed into both gets one boundary per tree over the same memoized loader.
+  7. `loading.tsx` is the fallback for the page segment only — it wraps `page.tsx`, NOT the `layout.tsx` in the same folder. A layout that awaits (e.g. `(sub)/tickets/[id]/layout.tsx`) needs its boundary in the **parent** segment, otherwise navigation into that subtree freezes with no fallback.
+  8. The root layout does no network I/O. The inbox is not SSR-seeded: `NotificationProvider` reads it once after hydration (`isInboxLoading` covers the gap), removing a duplicate `GET /notifications` per load.
+  Route-by-route table (what each page awaits, which loader, which skeleton): `docs/architecture.md` §Streaming.
 
 ## BE admin surface (implemented, not yet consumed)
 

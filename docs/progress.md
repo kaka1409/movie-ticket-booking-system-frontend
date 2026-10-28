@@ -32,7 +32,7 @@
 ### Level 3 — Reliability
 
 - [x] 404 page (root `not-found.tsx` + in-component `MovieNotFound`)
-- [x] Loading states — 25 `loading.tsx` skeletons built on `components/ui/Skeleton.tsx`
+- [x] Loading states — every route has a `loading.tsx`; the streamed routes (`/`, `/movies`, `/movies/[slug]`, `/tickets`, `/profile`, the four booking steps, `/admin/*`) share their skeleton composition with the in-page `<Suspense>` fallback, so the navigation skeleton and the streamed one cannot drift. Desktop branches were added to `cinema`, `seats`, `snack` and `payment` (previously mobile-only) and `admin` now composes `AdminHeaderSkeleton` + `AdminTableSkeleton` from `features/admin/components/AdminSkeletons.tsx`. Follow-up (2026-10-28): `(sub)/tickets/loading.tsx` added as the boundary for `(sub)/tickets/[id]/layout.tsx`'s `getTicketById` await; `credentials`/`status/success`/`status/failed` gained desktop branches; `/profile/reviews` is streamed (AccountShell paints first); notification seed removed from the root layout.
 - [x] API layer never rejects — `apiFetch` returns a discriminated union; actions return `{ success }` unions
 - [x] Error boundaries — root `error.tsx` (shared `components/shared/RouteError.tsx`) + per-group `error.tsx` in all 4 route groups + `global-error.tsx`
 - [x] Unhandled rejections — all 3 `.then()` chains now have `.catch()` (movies context surfaces `fetchFailure`, RecipientInput clears results, ShowtimeDataLoader shows error + retry instead of hanging skeleton)

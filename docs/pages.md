@@ -56,6 +56,15 @@ Protection is layered (outside-in):
 
 Known gap: a present-but-revoked `refreshToken` cookie passes `hasSession()`. Handled without ever leaving the URL: client-side a backend 401 dispatches `UNAUTHORIZED_EVENT` (`libs/api.ts` `notifyUnauthorized`, `/auth/*` excluded) → `AuthContext` only clears state and `ProtectedRoute` swaps to the prompt in place; server-side callers check `isUnauthorizedResult(result)` (`libs/session.ts`) on `apiFetch` results and return `<LoginPrompt />` — wired on tickets listing/detail, booking seats/status pages (the stale cookie itself can't be cleared from a server component; the next login overwrites it). Rule: no `redirect()` to `/login` anywhere on the 401 path — a child-segment redirect used to win over the parent layout's prompt and yank the URL, which is exactly the bug this rule prevents.
 
+## Home Page (streamed)
+
+`(main)/home/page.tsx` (re-exported by `(main)/page.tsx`) awaits **only** the `locale` cookie, then returns a shell whose data blocks are independent `<Suspense>` boundaries — the page streams instead of blocking on the slowest catalog call. Fallbacks live in `(main)/home/components/HomeSkeletons.tsx`, mirroring each section's box so a section landing never shifts the rows below it; `HomePageSkeleton` (same composition) is what both `home/loading.tsx` and `(main)/loading.tsx` render, so navigation fallbacks cannot drift from the in-page ones.
+
+- **Sections** — `(main)/home/sections.tsx` holds one async wrapper per block: `FeaturedHeroSection` / `FeaturedBannerSection` (featured), `NowShowingSection` + `NowShowingRowSection` + `ForYouSection` + `QuickBookingSection` (now showing), `ComingSoonSection` / `ComingSoonRowSection` (coming soon). Each awaits one memoized feed from `features/movies/home.ts` (`cache()`-keyed on locale) and passes plain props to the existing skin — no client component changed. Four blocks read the now-showing list and still cost one backend call per request.
+- **Quick booking is a single page-level node** (`components/QuickBookingShell.tsx`): the dates → cinemas → slots controller must exist once because both device trees render, so the shell mounts `QuickBookingProvider` and paints both skins (`hidden md:block` bar / `block md:hidden` widget) itself. That is why the trees are split into fragments around it (hero · quick booking · the rest) instead of one wrapper each: mobile keeps its rhythm via `mt-(--space-lg)` on the quick-booking shell and on the following fragment.
+- **Failure is local**: each section keeps its `error` union from `apiFetch`/`settle()`, so a dead backend renders `SectionFallback` in that block only — the shell, the other sections and the quick-booking form stay usable. An empty list still renders nothing, as before.
+- `MoviePreviewProvider` wraps the three desktop data sections (hover preview); it holds no data, so it sits outside their boundaries.
+
 ## Ticket Detail Page
 
 Two-level routing:
@@ -258,26 +267,31 @@ One inbox, two surfaces, one state.
 
 ## Cinema & Showtime Page
 
-`(sub)/booking/[slug]/cinema/page.tsx` — server component: resolves the movie via live `getMovieDetail(slug)` (the booking flow's **only** movie-detail fetch — `REVALIDATE_MOVIE_DETAIL` = 1 h, adopted into the draft for every later step), date options via `getShowtimeDates(slug)`, and slots via `getShowtimes(slug, date)`, then composes mobile components directly:
+`(sub)/booking/[slug]/cinema/page.tsx` — streamed. The page awaits `params`/`searchParams`, the locale and `getMovieDetail(slug)` (the booking flow's **only** movie-detail fetch — `REVALIDATE_MOVIE_DETAIL` = 1 h, adopted into the draft for every later step; it decides the 404 and feeds the mobile summary and the desktop rail), then paints both trees' chrome. The schedule streams from `sections.tsx`:
+
+- `CinemaScheduleSection` — day strip + search + cinema cards, one boundary per tree.
+- `CinemaAdoptSection` — the `?cinema=`/`time=`/`showtimeId=` adoption plus the `BookingMovie` snapshot, in a `fallback={null}` boundary at page level (effect-only, must mount once for both skins).
+- Both read one memoized `getMovieSchedule(slug, locale, today, requestedDate)` (`features/showtimes/detail.ts`: dates and the opening day's slots go out together, `?date=` wins over the resolved default), so the two skins cost one round trip. The page passes `requestedDate` only after `DATE_PATTERN` validates it.
+
+Mobile composition:
 
 - `components/mobile/StepBar.tsx` — 5-step booking progress bar (SELECT CINEMA → SELECT SEATS → FOOD & DRINKS → CONTACT INFO → PAYMENT)
 - `components/mobile/MovieSummary.tsx` — mini poster + movie info (duration, genre, ageRating, rating)
 - `components/mobile/SearchBar.tsx` — cinema/location search input
 - `components/mobile/CinemaList.tsx` — list wrapper + empty state (cinema cards rendered inline)
-- `components/mobile/BottomBar.tsx` — sticky bottom bar with selection summary + "SELECT SEATS" CTA → links to `/booking/[slug]/seats`
-- `components/desktop/CinemaContent.tsx` — stub (returns null)
+- `components/mobile/BottomBar.tsx` — sticky bottom bar with selection summary + "SELECT SEATS" CTA → links to `/booking/[slug]/seats`; it reads the cinema name/address/time from the draft (written by `resolveSlotSelection`), so it paints without the streamed schedule
+- `components/desktop/CinemaContent.tsx` — the step shell (`BookingStepLayout`) + rail; the schedule arrives as the `slots` prop, the movie identity comes from the page's fetch
 
-Sub layout provides back button (→ movie detail) + "Cinema & Showtime" title. State lives in the booking reducer (`useBooking()`); the page mounts `CinemaAdopt` (URL selection **and** the `BookingMovie` snapshot) and passes `movie`/`cinemas`/`dates` down as props.
+State lives in the booking reducer (`useBooking()`).
+
 
 ## Seat Selection Page
 
-`(sub)/booking/[slug]/seats/page.tsx` — server component: redirects to `/booking/[slug]/cinema` when `?showtimeId=` is missing, otherwise fetches `getSeatMap(showtimeId)` + `getShowtimeById(showtimeId)` in parallel (401 → `redirectIfUnauthorized`), adapts the wire map via `adaptSeatMap`, and composes mobile components:
+`(sub)/booking/[slug]/seats/page.tsx` — streamed: the page awaits `params`/`searchParams` only (a deep link without `?showtimeId=` redirects to `/booking/[slug]/cinema`) and paints the chrome — `StepBar` (step 2), `CountdownBanner`, the bottom bar. The grid streams from `sections.tsx` (`MobileSeatMapSection` / `DesktopSeatMapSection`, one boundary per tree) and `SeatMapAdoptSection` rides a `fallback={null}` boundary at page level, because the map adoption + hold subscription must exist exactly once for both skins. All three read one memoized `getSeatStep(showtimeId)` (`features/booking/seats.ts`): seat map + showtime in parallel, `adaptSeatMap` applied once, 401 → `null` (the route gate prompts), any other failure → `SectionFallback`. `components/desktop/SeatContent.tsx` is the shell (rail + CTA + session clock) and takes the map as a `slots` prop.
 
-- `components/mobile/StepBar.tsx` — step=2
 - `components/mobile/CountdownBanner.tsx` — session-deadline countdown: shows `countdownStartTime + countdownSeconds` once the session started (hold re-presses never move it), `holdExpiresAt` is only a fallback for a session the tab forgot, static `countdownSeconds` (10:00) pre-CTA. The value derives from the absolute deadline (no setState-in-effect).
-- Seat map rendered inline in page (fixed layout, no zoom/pan — `SeatGrid` fits the viewport width). Screen rendered as curved SVG arc. Max seats comes from the seat-map wire (`maxSeats`, currently 8), counted in CHAIRS (`seatIds.length`, so a sweetbox pair counts 2).
+- Seat map rendered inside the streamed section (fixed layout, no zoom/pan — `SeatGrid` fits the viewport width). Screen rendered as curved SVG arc. Max seats comes from the seat-map wire (`maxSeats`, currently 8), counted in CHAIRS (`seatIds.length`, so a sweetbox pair counts 2).
 - `components/mobile/BottomBar.tsx` — sticky bottom bar, selected seats + total (per-cell `price` from the wire — sweetbox cell price is the price of both chairs), "Continue to Snacks" CTA. The CTA is a handler, not a link: it is where the seat hold is finally created (`PUT /seat-holds`), then `setHoldExpiresAt` + `startCountdown` + `router.push('/snack')` on success; `409` → `recoverSeatMap` + inline `booking.seats.hold_taken`; any other failure → inline `booking.seats.hold_failed`. Picking seats writes nothing to the server.
-- `components/desktop/SeatContent.tsx` — stub (returns null)
 
 Seat-hold lifecycle — the hold is created **at the seats-step CTA** (`PUT /seat-holds`); re-pressing only re-syncs the hold to the new selection, never the session. The 10-minute session is enforced by `SessionExpiryWatcher` (mounted once in `booking/[slug]/layout.tsx`, so it fires on every step — not just seats):
 
@@ -302,7 +316,7 @@ Booking flow navigation:
 
 ## Snack Page
 
-`(sub)/booking/[slug]/snack/page.tsx` — server component, fetches the live catalogs in parallel (`getCombos`, `getFoodItems`, `getFoodCategories` — contract §4.2–4.4), composes mobile components:
+`(sub)/booking/[slug]/snack/page.tsx` — streamed: the page awaits the locale only, so `StepBar` (step 3), `CountdownBanner`, `SnackHeader` and the bottom bar paint immediately. The catalog lands in one boundary per tree (`SnackCatalogSection`, `variant="mobile" | "desktop"`) over one memoized `getSnackCatalog(locale)` (`features/booking/snack.ts`: `getCombos` + `getFoodItems` + `getFoodCategories` in parallel — contract §4.2–4.4), so two skins cost one round trip. `components/desktop/SnackContent.tsx` is the shell (rail with the running count/total + CTA) and takes the catalog as `slots`.
 
 - `components/mobile/ComboCard.tsx` — combo card with image (null-safe), name, description, price, quantity stepper
 - `components/mobile/FoodItemCard.tsx` — food item card with Next.js `<Image>` (null-safe), name, price, quantity stepper
@@ -326,13 +340,13 @@ Section titles (`Quick Combos`, `Pick & Mix`) use `--color-gold-dark`. Prices us
 
 ## Payment Page
 
-`(sub)/booking/[slug]/payment/page.tsx` — **server component** that fetches only `getPaymentMethods(locale)` (contract §4.5), wraps its output in `<RequireDraft slug={slug}>` (same draft guard as credentials), and imports components directly (no extra provider):
+`(sub)/booking/[slug]/payment/page.tsx` — streamed: the page awaits `params` + the locale only, so `<RequireDraft slug={slug}>` (the same draft guard as credentials), the order summary, the secure/terms notes and both CTAs paint immediately. The gateway picker streams in one boundary per tree (`PaymentMethodsSection`) and `PaymentDefaultAdoptSection` rides a `fallback={null}` boundary at page level; both read one memoized `getPaymentCatalog(locale)` (`features/booking/payment.ts`, wrapping `getPaymentMethods` — contract §4.5). `components/desktop/PaymentContent.tsx` is the shell (rail summary + pay CTA) and takes the picker as `slots`.
 
 - **The server catalog is the only source of methods** — ids, labels, descriptions and order all come from `GET /payment-methods`; the page keeps no list of its own. `PaymentDefaultAdopt` (effect-only, mounted **once at page level** because both device trees render) preselects the single sellable method (the usual demo state) and clears a draft pointing at a method the server no longer sells, so the CTA is usable without a click.
 - **`enabled: false` means "coming soon"**: every row still renders — `PaymentOption` leaves a disabled card visible with a lock plus the `booking.payment.coming_soon` badge but inert (`disabled`/`aria-disabled`), and the sellable demo method wears `booking.payment.demo` when `meta.demo` is set. Availability is server-computed; the FE never decides it.
 - Shared state: the selection lives in the booking draft (`paymentMethodId` + `paymentMethod` display name via `setPayment(id, name)`), shared between `PaymentOption` and `BottomBar`; the id persists across back-navigation (a re-entered payment page keeps the radio pre-selected) and is cleared by `resetBooking()`.
 - `components/mobile/PaymentOption.tsx` — one catalog card: brand logo from `features/booking/paymentBrand.ts` (`public/images/VNPay.png`, `public/images/momo.png` via `next/image`) or a `FlaskConical` tile for an id the app has no art for, so a method added later still renders readably; reads `paymentMethodId`/`setPayment` from `useBooking()` (one dispatch writes both the id and the display name)
-- `components/desktop/PaymentContent.tsx` — the same picker inside `BookingStepLayout` (two-up from `xl:`) with the pay CTA in the rail; both skins drive `useSubmitBooking`, so the create → QR hand-off exists once
+- `components/desktop/PaymentContent.tsx` — the same picker inside `BookingStepLayout` (two-up from `xl:`) with the pay CTA in the rail; both skins drive `useSubmitBooking`, so the create → QR hand-off exists once. It receives the picker as `slots`, so the rail and CTA paint before the catalog lands.
 - `features/booking/components/OrderSummary.tsx` — same component as the credentials step (no props; movie snapshot + booking details from BookingContext)
 - `components/mobile/SecureBadge.tsx` — security badge
 - `components/mobile/TermsNote.tsx` — terms & conditions note
@@ -365,6 +379,11 @@ Both pages are plain server components with no `<Suspense>` — nothing client-s
 - `(sub)/booking/[slug]/status/failed/page.tsx` — mobile: `FailedIcon` + `FailedOrderCard` + `FailActions`; desktop `components/desktop/`: `FailHero`, `FailedReceipt` (red-tinted border + error-code pill), `FailSidePanel` (Retry / Back to Home + the support card), composed by `FailContent`.
 - Data derivation is shared, never re-implemented per skin: `resolveTicketIdentity(movie, booking)` (poster/title/ageRating precedence) in `features/booking/utils/bookingCard.ts`, and `failReasonMessageKey(reason)` / `paymentErrorCode(reason)` in `features/booking/utils/paymentFailure.ts` (the two maps used to be copy-pasted per component).
 - `PaidBookingReset.tsx` (`features/booking/components/PaidBookingReset.tsx`) — effect-only (renders nothing), mounted by both pages: dispatches `resetBooking()` when the fetched booking status is `paid`, so a paid booking ends the flow and drops the local draft (a still-failed booking keeps its draft for the retry path).
+
+## Movie Detail Page
+
+- `(blank)/movies/[slug]/page.tsx` — streamed: awaits `params` + locale + `getMovieDetail` (404 → in-page `MobileMovieNotFound`; decides metadata) then paints both trees. Showtimes and reviews stream into their own `<Suspense>` per tree; JSON-LD for Movie schema flushes in a `fallback={null}` boundary.
+- New "You may also like" section (`components/{mobile,desktop}/Recommended.tsx`) streams at the bottom (mobile) / below the content+rail block (desktop) from `features/movies/detail.ts` (`cache()` loader over `GET /movies/:slug/related`). Empty/error -> render `null`. Mobile uses `ui/MovieCard` in a 2-column grid with client-side pagination (4 cards/page, `RECOMMENDED_MOBILE_PAGE_SIZE`); desktop uses the shared `features/movies/components/MoviePosterCard.tsx` in a 6-card grid (`RECOMMENDED_DESKTOP_COUNT`).
 
 ## Shared Booking Components
 
@@ -400,3 +419,28 @@ URL scheme for movies page with query params:
 Home page "See All" / "Explore All" buttons link to movies page with appropriate `status` param.
 
 URL → state is applied **once, server-side at render** (via `features/movies/url.ts`); the provider then drives the URL itself with `router.replace` on tab/filter changes. Browser back/forward does not re-apply URL state to the already-mounted provider.
+
+## Error & 404 Pages
+
+- `src/app/error.tsx` (root) + per-group `error.tsx` (`(main)`, `(blank)`, `(sub)`, `(auth)`, `(admin)`) all render `components/shared/RouteError.tsx`; `src/app/global-error.tsx` covers errors thrown inside the root layout.
+- `src/app/not-found.tsx` is the 404 for both unknown URLs and in-page `notFound()` calls from any group — it renders **inside** that group's chrome when triggered there, and standalone when the URL itself is unknown.
+- Desktop (`md:`) layout: `components/shared/StatusPageShell.tsx` splits the screen into a left-aligned message column and a right-hand `.surface-raised` panel (quick links for 404, Try again + Back to Home + Ref code for errors). Mobile keeps the original centred column and stacked buttons (`md:hidden`).
+- Constraints: no side effect, no `"use client"` split into device trees; animation keyframes (`filmStripScroll`, `glitchDecode`) are unchanged. `min-h-dvh` is retained so the standalone case fills the viewport.
+
+`(admin)` is its own route group: `layout.tsx` reads only cookies (`hasSession()`, the theme, the sidebar mode) and mounts `layouts/AdminLayout.tsx`; a visitor with no refresh cookie gets `LoginPrompt` from the server layout, and a cookie without the admin role is answered in place by `AdminLayout`'s client gate (`LoginPrompt` / `AdminForbiddenPanel`) — never a redirect, so the URL survives. `admin/page.tsx` (the dashboard) has no feed.
+
+Every console route follows one shape: the page awaits nothing but `searchParams` (only `/admin/movies` has any) and renders `<AdminPageHeader>` — a client component taking i18n **keys**, so it paints without a server translator — then streams its manager in one `<Suspense fallback={<AdminTableSkeleton />}>`:
+
+| Route | Streamed manager section | Feeds |
+|---|---|---|
+| `/admin/catalogs` | `CatalogsManagerSection` | genres + formats + age ratings |
+| `/admin/movies` | `MoviesManagerSection` (takes `search`/`status`/`page`) | movie list (+`meta`) + genres + age ratings |
+| `/admin/cinemas` | `CinemasManagerSection` | cinema tree (rooms, seat layout) |
+| `/admin/combos` | `CombosManagerSection` | combos |
+| `/admin/food` | `FoodManagerSection` | food items |
+| `/admin/payment-methods` | `PaymentMethodsManagerSection` | gateway catalog |
+
+- Each manager section lives beside its page (`sections.tsx`) and is the only place that reads admin data. One consumer per feed, so no `cache()` loader is involved.
+- **401 renders `null`** — the console layout owns the prompt (the section would otherwise double it). A real failure renders `AdminDataError` in the table's place, keeping the header and the URL filters alive.
+- `features/admin/components/AdminSkeletons.tsx` holds `AdminHeaderSkeleton` + `AdminTableSkeleton`, shared by every route boundary and by `(admin)/loading.tsx`, so the navigation fallback and the in-page one cannot drift.
+- Mutations are server actions in `features/admin/actions/*` returning `{ success, data } | { success, error }`; managers re-render from `router.refresh()` after a write, which re-runs the same section.
