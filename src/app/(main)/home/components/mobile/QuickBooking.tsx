@@ -99,7 +99,7 @@ export default function QuickBooking({
               </label>
               <select
                 id="qb-movie"
-                className="w-full rounded-(--radius-sm) bg-(--color-surface) px-3 py-2.5 text-sm text-white outline-none border border-(--color-border)"
+                className="w-full rounded-(--radius-sm) bg-(--color-surface) px-3 py-2.5 text-base text-white outline-none border border-(--color-border) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-gold)"
                 value={effectiveMovieSlug}
                 onChange={(event) => selectMovie(event.target.value)}
               >
@@ -133,7 +133,7 @@ export default function QuickBooking({
                   {translate("movies.detail.no_showtimes")}
                 </p>
               ) : (
-                <div className="flex gap-(--space-sm) overflow-x-auto scrollbar-hide pb-1">
+                <div className="flex gap-(--space-sm) overflow-x-auto overscroll-x-contain scrollbar-hide pb-1">
                   {dateChips.map((chip) => (
                     <button
                       type="button"
@@ -168,7 +168,7 @@ export default function QuickBooking({
               </label>
               <select
                 id="qb-cinema"
-                className="w-full rounded-(--radius-sm) bg-(--color-surface) px-3 py-2.5 text-sm text-white outline-none border border-(--color-border) disabled:opacity-40"
+                className="w-full rounded-(--radius-sm) bg-(--color-surface) px-3 py-2.5 text-base text-white outline-none border border-(--color-border) disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-gold)"
                 value={selectedCinemaId}
                 disabled={shownCinemas === null}
                 onChange={(event) => selectCinema(event.target.value)}

@@ -1,9 +1,27 @@
-import { getMovies, getFeaturedMovies } from "@/features/movies/api";
-import { MOVIES_PAGE_SIZE } from "@/features/movies/constants";
-import { toApiResponse } from "@/libs/api";
+import { Suspense } from "react";
+import type { Metadata } from "next";
+import { MoviePreviewProvider } from "@/features/movies/moviePreviewContext";
 import { getRequestLocale } from "@/libs/session";
 import { SITE_NAME } from "@/libs/site";
-import type { Metadata } from "next";
+import {
+  ComingSoonSkeleton,
+  FeaturedBannerSkeleton,
+  FeaturedHeroSkeleton,
+  MovieGridSkeleton,
+  MovieRowSkeleton,
+  QuickBookingSkeleton,
+} from "./components/HomeSkeletons";
+import SearchBar from "./components/mobile/SearchBar";
+import {
+  ComingSoonRowSection,
+  ComingSoonSection,
+  FeaturedBannerSection,
+  FeaturedHeroSection,
+  ForYouSection,
+  NowShowingRowSection,
+  NowShowingSection,
+  QuickBookingSection,
+} from "./sections";
 
 /** 60s fetch cache for the catalog calls (keyed per `?lang=`); the route renders per request. */
 export const revalidate = 60;
@@ -15,82 +33,59 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
-// Desktop
-import HeroSection from "@/app/(main)/home/components/desktop/HeroSection";
-import NowShowing from "@/app/(main)/home/components/desktop/NowShowing";
-import ComingSoon from "@/app/(main)/home/components/desktop/ComingSoon";
-import QuickBookingBar from "@/app/(main)/home/components/desktop/QuickBookingBar";
-import ForYou from "@/app/(main)/home/components/desktop/ForYou";
-import { MoviePreviewProvider } from "@/features/movies/moviePreviewContext";
-
-// Mobile
-import HeroBanner from "@/app/(main)/home/components/mobile/HeroBanner";
-import QuickBooking from "@/app/(main)/home/components/mobile/QuickBooking";
-import SearchBar from "@/app/(main)/home/components/mobile/SearchBar";
-import MovieRow from "@/app/(main)/home/components/mobile/MovieRow";
-
-// Shared: one quick-booking controller for both device trees
-import { QuickBookingProvider } from "@/app/(main)/home/components/QuickBookingProvider";
-
+/**
+ * Streaming home page: the page awaits nothing but the locale cookie, so the
+ * shell reaches the browser at once and each Suspense boundary fills in on its
+ * own feed. Sections that share a feed (now showing: four of them) still cost a
+ * single backend call thanks to the memoized loaders in `features/movies/home.ts`.
+ */
 export default async function HomePage() {
-  // Cookie read makes this route dynamic per request (ISR HTML would serve
-  // one locale to everyone); the 60s fetch cache below still shields the
-  // backend, keyed per ?lang= URL.
   const locale = await getRequestLocale();
-  // QuickBooking's dates/slots are request-keyed client-side (they depend on the
-  // picked movie), so the page itself only serves movies + featured.
-  const [nowShowingSettled, comingSoonSettled, featuredSettled] = await Promise.allSettled([
-    getMovies({ status: "now_showing", page: 1, limit: MOVIES_PAGE_SIZE }, locale),
-    getMovies({ status: "coming_soon", page: 1, limit: MOVIES_PAGE_SIZE }, locale),
-    getFeaturedMovies(locale),
-  ]);
-
-  const nowShowing = toApiResponse(nowShowingSettled);
-  const comingSoon = toApiResponse(comingSoonSettled);
-  const featuredMovies = toApiResponse(featuredSettled);
-
-  const featuredError = "error" in featuredMovies ? featuredMovies.error : null;
-  const featured = "error" in featuredMovies ? [] : featuredMovies.data;
-  const nowShowingError = "error" in nowShowing ? nowShowing.error : null;
-  const nowShowingList = "error" in nowShowing ? [] : nowShowing.data;
-  const comingSoonError = "error" in comingSoon ? comingSoon.error : null;
-  const comingSoonList = "error" in comingSoon ? [] : comingSoon.data;
 
   return (
-    <QuickBookingProvider movies={nowShowingList}>
-      {/* Mobile */}
+    <>
       <div className="block md:hidden">
+        <Suspense fallback={<FeaturedBannerSkeleton />}>
+          <FeaturedBannerSection locale={locale} />
+        </Suspense>
+      </div>
+
+      <div className="hidden md:block">
+        <Suspense fallback={<FeaturedHeroSkeleton />}>
+          <FeaturedHeroSection locale={locale} />
+        </Suspense>
+      </div>
+
+      {/* Between the trees: one controller for both skins, so one boundary. */}
+      <Suspense fallback={<QuickBookingSkeleton />}>
+        <QuickBookingSection locale={locale} />
+      </Suspense>
+
+      <div className="mt-(--space-lg) block md:hidden">
         <div className="flex flex-col gap-(--space-lg)">
-          <HeroBanner movies={featured} error={featuredError} />
-          <QuickBooking movies={nowShowingList} error={nowShowingError} />
           <SearchBar />
-
-          <MovieRow
-            titleKey="home.movie_row.now_showing"
-            movies={nowShowingList}
-            error={nowShowingError}
-            status="now_showing"
-          />
-
-          <MovieRow
-            titleKey="home.movie_row.coming_soon"
-            movies={comingSoonList}
-            error={comingSoonError}
-            status="coming_soon"
-          />
+          <Suspense fallback={<MovieRowSkeleton />}>
+            <NowShowingRowSection locale={locale} />
+          </Suspense>
+          <Suspense fallback={<MovieRowSkeleton />}>
+            <ComingSoonRowSection locale={locale} />
+          </Suspense>
         </div>
       </div>
 
-      {/* Desktop */}
       <div className="hidden md:block">
         <MoviePreviewProvider>
-          <HeroSection movies={featured} error={featuredError} />
-          <QuickBookingBar movies={nowShowingList} error={nowShowingError} />
-          <NowShowing movies={nowShowingList} error={nowShowingError} />
-          <ComingSoon movies={comingSoonList} error={comingSoonError} />
-          <ForYou movies={nowShowingList} />
+          <Suspense fallback={<MovieGridSkeleton />}>
+            <NowShowingSection locale={locale} />
+          </Suspense>
+          <Suspense fallback={<ComingSoonSkeleton />}>
+            <ComingSoonSection locale={locale} />
+          </Suspense>
+          <Suspense fallback={<MovieGridSkeleton />}>
+            <ForYouSection locale={locale} />
+          </Suspense>
         </MoviePreviewProvider>
       </div>
-    </QuickBookingProvider>
+    </>
   );
 }
