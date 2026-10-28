@@ -12,6 +12,7 @@ import type { MovieReview, ReviewSummary, ReviewsResponse, UiReview } from "../t
 import { formatRelativeTime } from "@/libs/utils";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/contexts/ToastContext";
 
 const PAGE_SIZE = REVIEWS_PAGE_SIZE;
 
@@ -60,6 +61,7 @@ export function useMovieReviews({
 }) {
   const { translate, locale } = useLocale();
   const { token, isAuthenticated, user } = useAuth();
+  const { notify } = useToast();
 
   const [rawReviews, setRawReviews] = useState<MovieReview[]>(initialData?.reviews ?? []);
   const [total, setTotal] = useState(initialData?.total ?? 0);
@@ -165,20 +167,23 @@ export function useMovieReviews({
         );
         if (!result.success) {
           setActionError(result.error);
+          notify(translate("movies.detail.action_failed"), { variant: "error" });
           return false;
         }
         applyData(result.data);
         setPage(1);
         scrollToAnchor();
+        notify(translate("movies.detail.review_posted"), { variant: "success" });
         return true;
       } catch {
         setActionError(translate("movies.detail.action_failed"));
+        notify(translate("movies.detail.action_failed"), { variant: "error" });
         return false;
       } finally {
         setMutating(false);
       }
     },
-    [token, movieSlug, applyData, scrollToAnchor, translate],
+    [token, movieSlug, applyData, scrollToAnchor, translate, notify],
   );
 
   const save = useCallback(
@@ -199,16 +204,19 @@ export function useMovieReviews({
         );
         if (!result.success) {
           setActionError(result.error);
+          notify(translate("movies.detail.action_failed"), { variant: "error" });
           return false;
         }
         applyData(result.data);
+        notify(translate("movies.detail.review_updated"), { variant: "success" });
         return true;
       } catch {
         setActionError(translate("movies.detail.action_failed"));
+        notify(translate("movies.detail.action_failed"), { variant: "error" });
         return false;
       }
     },
-    [token, movieSlug, page, applyData, translate],
+    [token, movieSlug, page, applyData, translate, notify],
   );
 
   const remove = useCallback(
@@ -230,6 +238,7 @@ export function useMovieReviews({
         );
         if (!result.success) {
           setActionError(result.error);
+          notify(translate("movies.detail.action_failed"), { variant: "error" });
           return false;
         }
         if (result.data.reviews.length === 0 && page > 1) {
@@ -237,13 +246,15 @@ export function useMovieReviews({
         } else {
           applyData(result.data);
         }
+        notify(translate("movies.detail.review_deleted"), { variant: "success" });
         return true;
       } catch {
         setActionError(translate("movies.detail.action_failed"));
+        notify(translate("movies.detail.action_failed"), { variant: "error" });
         return false;
       }
     },
-    [token, movieSlug, page, applyData, fetchPage, translate],
+    [token, movieSlug, page, applyData, fetchPage, translate, notify],
   );
 
   const average = summary?.average ?? 0;

@@ -100,7 +100,7 @@ export default function ReviewCard({
   return (
     <article
       id={`review-${review.id}`}
-      className={`border-b border-(--color-border) py-5 last:border-0 rounded-xl transition-colors ${
+      className={`scroll-mt-24 border-b border-(--color-border) py-5 last:border-0 rounded-xl transition-colors ${
         highlighted ? "bg-white/[0.04]" : ""
       }`}
     >

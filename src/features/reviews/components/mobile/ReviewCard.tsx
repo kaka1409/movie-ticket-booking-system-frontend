@@ -97,7 +97,6 @@ export default function ReviewCard({
 
   return (
     <div
-      id={`review-${review.id}`}
       className={`py-4 border-b border-(--color-border) last:border-0 rounded-xl transition-colors ${
         highlighted ? "bg-white/[0.04]" : ""
       }`}
