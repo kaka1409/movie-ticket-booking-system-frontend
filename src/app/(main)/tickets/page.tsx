@@ -1,14 +1,7 @@
 import { Suspense } from "react";
-import { getUpcomingTickets, getPastTickets } from "@/features/tickets/api";
-import type { TicketPageMeta } from "@/features/tickets/adapters";
 import ProtectedRoute from "@/components/shared/ProtectedRoute";
 import LoginPrompt from "@/components/shared/LoginPrompt";
-import {
-  getRequestCookie,
-  getRequestLocale,
-  hasSession,
-  isUnauthorizedResult,
-} from "@/libs/session";
+import { getRequestCookie, getRequestLocale, hasSession } from "@/libs/session";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -18,24 +11,21 @@ export const metadata: Metadata = {
 
 // Mobile components
 import Tabs from "@/app/(main)/tickets/components/mobile/Tabs";
-import UpcomingTicketList from "@/app/(main)/tickets/components/mobile/UpcomingTicketList";
-import PastTicketList from "@/app/(main)/tickets/components/mobile/PastTicketList";
-import MobileTicketsSkeleton from "@/app/(main)/tickets/components/mobile/TicketsSkeleton";
-import Pager from "@/app/(main)/tickets/components/mobile/Pager";
+import { MobileTicketListSkeleton } from "@/app/(main)/tickets/components/mobile/TicketsSkeleton";
 import TicketRealtimeRefresh from "@/features/tickets/components/TicketRealtimeRefresh";
 
 // Desktop components
-import TicketsContent from "@/app/(main)/tickets/components/desktop/TicketsContent";
 import DesktopTicketsSkeleton from "@/app/(main)/tickets/components/desktop/TicketsSkeleton";
 
-const DEFAULT_META: TicketPageMeta = {
-  total: 0,
-  totalPages: 1,
-  page: 1,
-  limit: 12,
-  hasNextPage: false,
-};
+import { DesktopTicketsSection, MobileTicketListSection } from "./sections";
 
+/**
+ * Streamed listings: the page awaits only the cookies and the query, so the tab
+ * bar (mobile) and the header band (desktop) reach the browser at once and the
+ * rows fill in per tree. Each tree keeps its own boundary because the fetched
+ * rows sit in different DOM positions; the loader is `cache()`-memoized, so the
+ * pair is still one backend call.
+ */
 export default async function TicketsPage({
   searchParams,
 }: {
@@ -49,53 +39,28 @@ export default async function TicketsPage({
   const tab = query.tab === "past" ? "past" : "upcoming";
   const page = Math.max(1, Number(query.page) || 1);
 
-  // Only the visible tab is fetched — the other list renders nothing.
-  const upcomingResult =
-    tab === "upcoming" ? await getUpcomingTickets(page, requestCookie, locale) : null;
-  const pastResult = tab === "past" ? await getPastTickets(page, requestCookie, locale) : null;
-  // A dead session (stale refresh cookie → backend 401) renders the prompt
-  // in place — no redirect, the visitor stays on /tickets.
-  if (upcomingResult && isUnauthorizedResult(upcomingResult)) return <LoginPrompt />;
-  if (pastResult && isUnauthorizedResult(pastResult)) return <LoginPrompt />;
-  const upcoming = upcomingResult && !("error" in upcomingResult) ? upcomingResult.data : [];
-  const past = pastResult && !("error" in pastResult) ? pastResult.data : [];
-  const activeResult = upcomingResult ?? pastResult;
-  const meta = (activeResult && !("error" in activeResult) && activeResult.meta) || DEFAULT_META;
   return (
     <ProtectedRoute>
       {/* Someone else can change a ticket this user is looking at (transfer
           accepted/declined, sender cancelled) — keep both lists live. */}
       <TicketRealtimeRefresh />
-      <Suspense
-        fallback={
-          <>
-            <div className="block md:hidden">
-              <MobileTicketsSkeleton />
-            </div>
-            <div className="hidden md:block">
-              <DesktopTicketsSkeleton />
-            </div>
-          </>
-        }
-      >
-        {/* Mobile */}
-        <div className="block md:hidden">
-          <div className="space-y-4 py-(--space-md)">
-            <Tabs activeTab={tab} />
-            {tab === "upcoming" ? (
-              <UpcomingTicketList tickets={upcoming} />
-            ) : (
-              <PastTicketList tickets={past} />
-            )}
-            <Pager meta={meta} tab={tab} />
-          </div>
-        </div>
 
-        {/* Desktop */}
-        <div className="hidden md:block">
-          <TicketsContent tab={tab} upcoming={upcoming} past={past} meta={meta} />
+      {/* Mobile */}
+      <div className="block md:hidden">
+        <div className="space-y-4 py-(--space-md)">
+          <Tabs activeTab={tab} />
+          <Suspense fallback={<MobileTicketListSkeleton />}>
+            <MobileTicketListSection tab={tab} page={page} cookie={requestCookie} locale={locale} />
+          </Suspense>
         </div>
-      </Suspense>
+      </div>
+
+      {/* Desktop */}
+      <div className="hidden md:block">
+        <Suspense fallback={<DesktopTicketsSkeleton />}>
+          <DesktopTicketsSection tab={tab} page={page} cookie={requestCookie} locale={locale} />
+        </Suspense>
+      </div>
     </ProtectedRoute>
   );
 }

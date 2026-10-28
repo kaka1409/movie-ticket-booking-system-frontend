@@ -1,8 +1,9 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale } from "@/contexts/LocaleContext";
+import { useToast } from "@/contexts/ToastContext";
 import { acceptTransferAction, declineTransferAction } from "@/features/tickets/action";
 import type { TransferDecisionActionResult } from "@/features/tickets/action";
 import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext";
@@ -39,6 +40,9 @@ export function useTransferDecisions(): TransferDecisions {
   const router = useRouter();
   const { translate } = useLocale();
   const { ticket } = useTicketDetail();
+  const { notify } = useToast();
+  const declinedToastedRef = useRef(false);
+  const erroredRef = useRef(false);
 
   const [acceptState, acceptFormAction, isAccepting] = useActionState(
     acceptTransferAction,
@@ -60,12 +64,16 @@ export function useTransferDecisions(): TransferDecisions {
 
   useEffect(() => {
     if (!isSettled(declineState)) return;
+    if (!declinedToastedRef.current) {
+      declinedToastedRef.current = true;
+      notify(translate("tickets.transfer.declined"), { variant: "success" });
+    }
     router.replace("/tickets");
-  }, [declineState, router]);
+  }, [declineState, router, translate, notify]);
 
-  const isSettledNow = isSettled(acceptState) || isSettled(declineState);
   // A settled decision is "already handled", not a failure — only surface an
   // error while neither side has settled.
+  const isSettledNow = isSettled(acceptState) || isSettled(declineState);
   const failure =
     !acceptState.success && acceptState.error
       ? acceptState
@@ -76,6 +84,17 @@ export function useTransferDecisions(): TransferDecisions {
     isSettledNow || failure === null
       ? ""
       : getTransferErrorMessage(translate, { message: failure.error, code: failure.code });
+
+  // Surface a failed decision once, without nagging on every render.
+  useEffect(() => {
+    if (isSettledNow || failure === null) {
+      erroredRef.current = false;
+      return;
+    }
+    if (erroredRef.current) return;
+    erroredRef.current = true;
+    notify(translate("tickets.transfer.decision_failed"), { variant: "error" });
+  }, [isSettledNow, failure, translate, notify]);
 
   return {
     acceptFormAction,

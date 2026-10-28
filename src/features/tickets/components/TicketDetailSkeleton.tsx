@@ -1,8 +1,13 @@
 import { Skeleton, SkeletonCard } from "@/components/ui/Skeleton";
 import TearLine from "@/components/ui/TearLine";
-import DesktopTicketDetailSkeleton from "./components/desktop/TicketDetailSkeleton";
+import DesktopTicketDetailSkeleton from "./desktop/TicketDetailSkeleton";
 
-export default function TicketDetailLoading() {
+/**
+ * Route fallback for the ticket cluster (`/tickets/[id]*`). Both device trees
+ * share it; the mobile body is the only one with a card mock, the desktop one
+ * is the moved rail skeleton.
+ */
+export default function TicketDetailSkeleton() {
   return (
     <>
       <div className="min-h-dvh max-w-md mx-auto bg-(--color-bg) block md:hidden">

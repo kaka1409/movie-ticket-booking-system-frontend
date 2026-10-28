@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/contexts/LocaleContext";
+import { useToast } from "@/contexts/ToastContext";
 import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext";
 import { cancelTicketAction } from "@/features/tickets/action";
 import { getCancelErrorMessage } from "@/features/tickets/utils";
@@ -38,6 +39,7 @@ export function useCancelFlow(): CancelFlow {
   const { ticket } = useTicketDetail();
   const { token } = useAuth();
   const { translate } = useLocale();
+  const { notify } = useToast();
   const [view, setView] = useState<CancelFlowView>("idle");
   const [refundAmount, setRefundAmount] = useState(0);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -60,6 +62,9 @@ export function useCancelFlow(): CancelFlow {
       }
       setErrorMessage(getCancelErrorMessage(translate, { message: state.error, code: state.code }));
       setView("failed");
+      notify(getCancelErrorMessage(translate, { message: state.error, code: state.code }), {
+        variant: "error",
+      });
     });
   };
 

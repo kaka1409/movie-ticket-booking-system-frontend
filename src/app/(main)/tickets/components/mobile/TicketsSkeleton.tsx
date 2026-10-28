@@ -36,6 +36,18 @@ function UpcomingCardSkeleton() {
   );
 }
 
+/** The list itself — the boundary fallback, so the tabs above it stay live. */
+export function MobileTicketListSkeleton() {
+  return (
+    <div className="space-y-4">
+      {Array.from({ length: 3 }).map((_, index) => (
+        <UpcomingCardSkeleton key={index} />
+      ))}
+    </div>
+  );
+}
+
+/** Route-level fallback: the tab bar plus the list, in the page's own rhythm. */
 export default function TicketsSkeleton() {
   return (
     <div className="min-h-dvh bg-(--color-bg) px-(--space-md)">
@@ -45,9 +57,7 @@ export default function TicketsSkeleton() {
           <Skeleton className="h-9 w-28 rounded-xl" />
         </div>
 
-        {Array.from({ length: 3 }).map((_, index) => (
-          <UpcomingCardSkeleton key={index} />
-        ))}
+        <MobileTicketListSkeleton />
       </div>
     </div>
   );

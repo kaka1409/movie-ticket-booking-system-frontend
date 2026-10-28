@@ -3,6 +3,7 @@
 import { useActionState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale } from "@/contexts/LocaleContext";
+import { useToast } from "@/contexts/ToastContext";
 import { cancelTransferAction } from "@/features/tickets/action";
 import type { CancelTransferActionResult } from "@/features/tickets/action";
 import { getTransferErrorMessage } from "../utils";
@@ -21,11 +22,17 @@ const initialState: CancelTransferActionResult = { success: false, error: "" };
 export function useCancelTransfer() {
   const router = useRouter();
   const { translate } = useLocale();
+  const { notify } = useToast();
   const [state, formAction, isPending] = useActionState(cancelTransferAction, initialState);
 
   useEffect(() => {
     if (state.success) router.refresh();
-  }, [state, router]);
+    else if (state.error) {
+      notify(getTransferErrorMessage(translate, { message: state.error, code: state.code }), {
+        variant: "error",
+      });
+    }
+  }, [state, router, translate, notify]);
 
   const error = state.success
     ? ""

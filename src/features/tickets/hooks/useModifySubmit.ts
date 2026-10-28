@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/contexts/LocaleContext";
+import { useToast } from "@/contexts/ToastContext";
 import { useModification } from "@/features/tickets/contexts/ModificationContext";
 import { modifyTicketAction } from "@/features/tickets/action";
 import { getModifyErrorMessage } from "@/features/tickets/utils";
@@ -27,6 +28,7 @@ export function useModifySubmit(): ModifySubmit {
   const router = useRouter();
   const { token } = useAuth();
   const { translate } = useLocale();
+  const { notify } = useToast();
   const { modificationType, selectedShowtime, selectedSeats } = useModification();
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -60,6 +62,9 @@ export function useModifySubmit(): ModifySubmit {
         setErrorMessage(
           getModifyErrorMessage(translate, { message: result.error, code: result.code }),
         );
+        notify(getModifyErrorMessage(translate, { message: result.error, code: result.code }), {
+          variant: "error",
+        });
         return;
       }
 
