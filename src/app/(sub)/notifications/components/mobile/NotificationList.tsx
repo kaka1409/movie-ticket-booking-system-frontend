@@ -7,7 +7,7 @@ import NotificationCard from "./NotificationCard";
 
 export default function NotificationList() {
   const { translate } = useLocale();
-  const { notifications, unreadCount, markRead, markAllRead } = useNotifications();
+  const { notifications, unreadCount, isInboxLoading, markRead, markAllRead } = useNotifications();
 
   return (
     <div className="flex flex-col">
@@ -32,7 +32,7 @@ export default function NotificationList() {
           />
         ))}
 
-        {notifications.length === 0 && (
+        {notifications.length === 0 && !isInboxLoading && (
           <div className="flex flex-col items-center justify-center h-64 gap-3">
             <Bell size={40} className="text-(--color-border)" />
             <p className="text-(--color-text-muted) text-sm">

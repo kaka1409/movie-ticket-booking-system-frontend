@@ -6,6 +6,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -21,6 +22,7 @@ import type { Notification, NotificationWire, NotificationMeta } from "./types";
 interface NotificationContextValue {
   notifications: Notification[];
   unreadCount: number;
+  isInboxLoading: boolean;
   markRead: (id: string) => void;
   markAllRead: () => void;
 }
@@ -28,30 +30,29 @@ interface NotificationContextValue {
 const NotificationContext = createContext<NotificationContextValue | null>(null);
 
 /**
- * Single client-side source of truth for the inbox. The SSR seed comes from the
- * root layout (cookie fetch); after hydration the provider keeps the list live:
- * `notification:new` pushes from the Socket.IO gateway add rows, and a
- * reconnect re-fetches `/notifications` to resync anything missed offline
- * (REST stays authoritative — api-contract §11).
- *
- * The list is language-sensitive: the backend renders each notice from a code +
- * params, so it is fetched with the current locale and re-read whenever that
- * locale changes (`router.refresh()` cannot reseed this provider — its state is
- * seeded once).
+ * Single client-side source of truth for the inbox. There is no SSR seed: the
+ * root layout no longer fetches, so the inbox is read once after hydration
+ * (and on every reconnect / locale change). `isInboxLoading` stays true until
+ * that first read settles, so callers can render a skeleton instead of an
+ * empty state. REST stays authoritative — api-contract §11.
  */
-export function NotificationProvider({
-  initialNotifications,
-  children,
-}: {
-  initialNotifications: Notification[];
-  children: ReactNode;
-}) {
-  const { token, isAuthenticated, isLoading } = useAuth();
+export function NotificationProvider({ children }: { children: ReactNode }) {
+  const { user, token, isAuthenticated, isLoading } = useAuth();
   const { locale } = useLocale();
   const { notify } = useToast();
-  const [notifications, setNotifications] = useState(initialNotifications);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [hasLoaded, setHasLoaded] = useState(false);
+  const ownerRef = useRef<string | null>(null);
 
   useEffect(() => {
+    // A different account (or a fresh login) must not inherit the previous
+    // inbox — clear it and re-seed from the new session.
+    if (ownerRef.current !== (user?.id ?? null)) {
+      ownerRef.current = user?.id ?? null;
+      setNotifications([]);
+      setHasLoaded(false);
+    }
+
     if (!isAuthenticated || !token) return;
 
     let cancelled = false;
@@ -106,6 +107,7 @@ export function NotificationProvider({
       void getNotifications(undefined, locale).then((result) => {
         // Keep whatever is on screen: a failed resync must not empty the inbox.
         if (!cancelled && "data" in result) setNotifications(result.data.items);
+        if (!cancelled) setHasLoaded(true);
       });
     };
 
@@ -126,7 +128,7 @@ export function NotificationProvider({
       socket.io.off("reconnect", handleReconnect);
       socket.disconnect();
     };
-  }, [isAuthenticated, token, locale, notify]);
+  }, [isAuthenticated, token, locale, notify, user?.id]);
 
   const markRead = useCallback(
     (id: string) => {
@@ -152,14 +154,19 @@ export function NotificationProvider({
     [isAuthenticated, isLoading, notifications],
   );
 
+  const isInboxLoading = useMemo(
+    () => isLoading || (isAuthenticated && !hasLoaded),
+    [isLoading, isAuthenticated, hasLoaded],
+  );
+
   const unreadCount = useMemo(
     () => visibleNotifications.filter((item) => !item.read).length,
     [visibleNotifications],
   );
 
   const value = useMemo(
-    () => ({ notifications: visibleNotifications, unreadCount, markRead, markAllRead }),
-    [visibleNotifications, unreadCount, markRead, markAllRead],
+    () => ({ notifications: visibleNotifications, unreadCount, isInboxLoading, markRead, markAllRead }),
+    [visibleNotifications, unreadCount, isInboxLoading, markRead, markAllRead],
   );
 
   return <NotificationContext.Provider value={value}>{children}</NotificationContext.Provider>;

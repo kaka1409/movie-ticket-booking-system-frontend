@@ -6,6 +6,7 @@ import { useLocale } from "@/contexts/LocaleContext";
 import { useNotifications } from "@/features/notifications/context";
 import NotificationRow from "@/features/notifications/components/NotificationRow";
 import Button from "@/components/ui/Button";
+import { Skeleton } from "@/components/ui/Skeleton";
 import EmptyState from "@/components/ui/EmptyState";
 import Tabs, { tabId, tabPanelId } from "@/components/ui/Tabs";
 
@@ -26,7 +27,7 @@ const TABS_ID_BASE = "notifications";
  */
 export default function NotificationList() {
   const { translate } = useLocale();
-  const { notifications, unreadCount, markRead, markAllRead } = useNotifications();
+  const { notifications, unreadCount, isInboxLoading, markRead, markAllRead } = useNotifications();
   const [tab, setTab] = useState<InboxTab>("all");
 
   const rows = useMemo(
@@ -77,7 +78,20 @@ export default function NotificationList() {
             id={tabPanelId(TABS_ID_BASE, tab)}
             aria-labelledby={tabId(TABS_ID_BASE, tab)}
           >
-            {rows.length === 0 ? (
+            {isInboxLoading && rows.length === 0 ? (
+              <div className="space-y-3 px-5 py-4">
+                {Array.from({ length: 4 }).map((_, index) => (
+                  <div key={index} className="flex items-start gap-4">
+                    <Skeleton className="h-11 w-11 shrink-0 rounded-full" />
+                    <div className="flex-1 space-y-2">
+                      <Skeleton className="h-3.5 w-1/3 rounded-full" />
+                      <Skeleton className="h-3 w-3/4 rounded-full" />
+                      <Skeleton className="h-2.5 w-24 rounded-full" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : rows.length === 0 ? (
               <EmptyState
                 icon={tab === "unread" ? CheckCheck : Bell}
                 title={
