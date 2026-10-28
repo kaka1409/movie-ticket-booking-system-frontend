@@ -1,20 +1,20 @@
-import type { ReviewsResponse } from "@/features/reviews/types";
+import type { ReactNode } from "react";
 
 import HeroSection from "./HeroSection";
 import Synopsis from "./Synopsis";
 import TopCast from "./TopCast";
-import Showtimes from "./Showtimes";
-import Reviews from "./Reviews";
 
 /* Desktop layout: full-bleed hero, then content column + sticky showtimes rail.
-   Date/slot state lives in `ShowtimesProvider` (page level), not props — the
-   rail and the mobile tree must observe the same selection. */
+   Reviews and the showtime rail arrive as slots, so both stream while the hero,
+   synopsis and cast paint from the movie read the page already awaited. */
 export default function MovieDetailDesktop({
-  reviewsData,
-  reviewsError,
+  reviews,
+  showtimes,
+  recommended,
 }: {
-  reviewsData: ReviewsResponse | null;
-  reviewsError: string | null;
+  reviews: ReactNode;
+  showtimes: ReactNode;
+  recommended?: ReactNode;
 }) {
   return (
     <div className="bg-(--color-bg)">
@@ -26,14 +26,14 @@ export default function MovieDetailDesktop({
             <div className="min-w-0 flex-1 space-y-10">
               <Synopsis />
               <TopCast />
-              <Reviews initialData={reviewsData} initialError={reviewsError} />
+              {reviews}
             </div>
 
-            <div className="w-80 shrink-0">
-              <Showtimes />
-            </div>
+            <div className="w-80 shrink-0">{showtimes}</div>
           </div>
         </div>
+
+        {recommended}
       </div>
     </div>
   );

@@ -13,7 +13,7 @@ export default function TopCast() {
     <section className="px-4">
       <SectionHeader variant="goldBar">{translate("movies.detail.top_cast")}</SectionHeader>
 
-      <div className="flex flex-nowrap gap-4 overflow-x-auto scrollbar-hide pb-1">
+      <div className="flex flex-nowrap gap-4 overflow-x-auto overscroll-x-contain scrollbar-hide pb-1">
         {movie.cast.map((actor) => (
           <div key={actor.name} className="flex flex-col items-center gap-1.5 shrink-0">
             <div className="w-16 h-16 rounded-full bg-(--color-surface) border border-(--color-border) overflow-hidden">

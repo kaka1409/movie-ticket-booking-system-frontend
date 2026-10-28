@@ -99,7 +99,7 @@ export default function Showtimes() {
       <SectionHeader variant="goldBar">{translate("movies.detail.showtimes")}</SectionHeader>
 
       {showDateStrip && (
-        <div className="flex gap-2 mb-5 overflow-x-auto scrollbar-hide pb-1">
+        <div className="flex gap-2 mb-5 overflow-x-auto overscroll-x-contain scrollbar-hide pb-1">
           {dateOptions.map((option) => {
             const active = option.value === activeDate;
             return (

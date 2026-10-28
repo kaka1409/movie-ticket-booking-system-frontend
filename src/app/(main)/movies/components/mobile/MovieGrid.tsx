@@ -73,12 +73,11 @@ export default function MovieGrid() {
             <div
               key={movie.id}
               data-movie-card
-              className={`w-full [&_a]:!w-full [&_a]:!block ${
-                index >= animThreshold ? "animate-fade-in" : ""
-              }`}
+              className={`w-full ${index >= animThreshold ? "animate-fade-in" : ""}`}
             >
               <MovieCard
                 movie={movie}
+                isFluid
                 minLabel={translate("common.min")}
                 sizes="(max-width: 767px) calc(50vw - 22px), 130px"
               />

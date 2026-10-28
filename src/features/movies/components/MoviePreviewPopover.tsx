@@ -79,7 +79,7 @@ export default function MoviePreviewPopover({
         left: `${left}px`,
         width: `${POPOVER_WIDTH}px`,
       }}
-      className="pointer-events-none z-[9999] select-none animate-in fade-in zoom-in-95 duration-150 transition-[top,left] ease-out"
+      className="pointer-events-none z-[9999] select-none animate-fade-in transition-[top,left] ease-out"
     >
       <div className="overflow-hidden rounded-(--radius-lg) border border-(--color-gold)/40 bg-(--color-surface) shadow-[0_25px_60px_rgba(0,0,0,0.95)] backdrop-blur-md max-h-[calc(100vh-32px)] overflow-y-auto">
         <div className="relative aspect-video w-full overflow-hidden bg-(--color-surface-2)">

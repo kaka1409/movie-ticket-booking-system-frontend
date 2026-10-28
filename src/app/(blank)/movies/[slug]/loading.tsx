@@ -1,4 +1,12 @@
-﻿import { Skeleton, SkeletonCard } from "@/components/ui/Skeleton";
+﻿import { Skeleton } from "@/components/ui/Skeleton";
+import {
+  DesktopRailSkeleton,
+  DesktopRecommendedSkeleton,
+  DesktopReviewsSkeleton,
+  MobileRecommendedSkeleton,
+  MobileReviewsSkeleton,
+  MobileShowtimesSkeleton,
+} from "./components/MovieDetailSkeletons";
 
 function CastMemberSkeleton() {
   return (
@@ -6,6 +14,20 @@ function CastMemberSkeleton() {
       <Skeleton className="w-16 h-16 rounded-full" />
       <Skeleton className="h-2.5 w-14 rounded-full" />
     </div>
+  );
+}
+
+/**
+ * Route fallback during navigation. The hero, synopsis and cast are drawn here
+ * because they are part of the page shell; the showtimes and reviews blocks reuse
+ * the very skeletons the page streams into, so the two can never drift apart.
+ */
+export default function MovieDetailLoading() {
+  return (
+    <>
+      <MobileLoading />
+      <DesktopLoading />
+    </>
   );
 }
 
@@ -19,7 +41,6 @@ function DesktopLoading() {
           <div className="flex items-start gap-10">
             <div className="min-w-0 flex-1 space-y-10">
               <div className="space-y-3">
-                <Skeleton className="h-6 w-32 rounded-full" />
                 <div className="space-y-2">
                   <Skeleton className="h-3 w-full rounded-full" />
                   <Skeleton className="h-3 w-full rounded-full" />
@@ -36,28 +57,18 @@ function DesktopLoading() {
                 </div>
               </div>
 
-              <div className="space-y-5">
-                <Skeleton className="h-6 w-24 rounded-full" />
-                <SkeletonCard className="h-40 p-5">{null}</SkeletonCard>
-                <SkeletonCard className="h-52 p-5">{null}</SkeletonCard>
-              </div>
+              <DesktopReviewsSkeleton />
             </div>
 
             <div className="w-80 shrink-0">
-              <SkeletonCard className="h-[420px] p-5">{null}</SkeletonCard>
+              <DesktopRailSkeleton />
             </div>
           </div>
         </div>
+
+        <DesktopRecommendedSkeleton />
       </div>
     </div>
-  );
-}
-export default function MovieDetailLoading() {
-  return (
-    <>
-      <MobileLoading />
-      <DesktopLoading />
-    </>
   );
 }
 
@@ -93,8 +104,8 @@ function MobileLoading() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-8 py-6 pb-12 px-(--space-md)">
-          <div className="space-y-3">
+        <div className="flex flex-col gap-8 py-6 pb-12">
+          <div className="space-y-3 px-(--space-md)">
             <Skeleton className="h-4 w-24 rounded-full" />
             <div className="space-y-2">
               <Skeleton className="h-2.5 w-full rounded-full" />
@@ -103,7 +114,7 @@ function MobileLoading() {
             </div>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-3 px-(--space-md)">
             <Skeleton className="h-4 w-24 rounded-full" />
             <div className="flex gap-4 overflow-hidden">
               {Array.from({ length: 5 }).map((_, index) => (
@@ -112,52 +123,15 @@ function MobileLoading() {
             </div>
           </div>
 
-          <div className="space-y-3">
-            <Skeleton className="h-4 w-28 rounded-full" />
-            <div className="flex gap-2">
-              {Array.from({ length: 5 }).map((_, index) => (
-                <Skeleton key={index} className="h-9 w-14 shrink-0 rounded-xl" />
-              ))}
-            </div>
-            {Array.from({ length: 2 }).map((_, index) => (
-              <SkeletonCard key={index} className="p-0">
-                <div className="p-3 space-y-2">
-                  <Skeleton className="h-3 w-2/3 rounded-full" />
-                  <Skeleton className="h-2 w-1/2 rounded-full" />
-                  <div className="flex gap-2">
-                    {Array.from({ length: 3 }).map((_, chipIndex) => (
-                      <Skeleton key={chipIndex} className="h-6 w-14 rounded-full" />
-                    ))}
-                  </div>
-                </div>
-              </SkeletonCard>
-            ))}
+          <MobileShowtimesSkeleton />
+
+          <div className="px-(--space-md)">
+            <Skeleton className="h-12 w-full rounded-2xl" />
           </div>
 
-          <Skeleton className="h-12 w-full rounded-2xl" />
+          <MobileReviewsSkeleton />
 
-          <div className="space-y-3">
-            <Skeleton className="h-4 w-24 rounded-full" />
-            {Array.from({ length: 2 }).map((_, index) => (
-              <SkeletonCard key={index}>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-3">
-                    <Skeleton className="w-8 h-8 rounded-full" />
-                    <Skeleton className="h-3 w-20 rounded-full" />
-                  </div>
-                  <div className="flex gap-1">
-                    {Array.from({ length: 5 }).map((_, starIndex) => (
-                      <Skeleton key={starIndex} className="w-3.5 h-3.5 rounded-sm" />
-                    ))}
-                  </div>
-                  <div className="space-y-1.5">
-                    <Skeleton className="h-2.5 w-full rounded-full" />
-                    <Skeleton className="h-2.5 w-3/4 rounded-full" />
-                  </div>
-                </div>
-              </SkeletonCard>
-            ))}
-          </div>
+          <MobileRecommendedSkeleton />
         </div>
       </main>
     </div>

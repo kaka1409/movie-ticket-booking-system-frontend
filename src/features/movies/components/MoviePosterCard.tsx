@@ -7,14 +7,18 @@ import { useLocale } from "@/contexts/LocaleContext";
 import type { Movie } from "@/features/movies/types";
 
 /**
- * Desktop movie card for the /movies grid: a poster with the rating / age-rating
- * / duration badges, the title and genre, and the one action the tab allows —
- * Book Now while the film is showing, a muted "coming soon" label otherwise.
- *
- * Mirrors the home page's desktop card so the two catalogs read as one product;
- * the mobile grid keeps the compact `ui/MovieCard`.
+ * Desktop movie poster card shared by the /movies grid and the movie detail
+ * "You may also like" section. `isBookable` decides the footer: `undefined`
+ * renders only title + genre (recommendations), `true` renders "Book Now",
+ * `false` renders the muted "Coming soon" label.
  */
-export default function MovieCard({ movie, isBookable }: { movie: Movie; isBookable: boolean }) {
+export default function MoviePosterCard({
+  movie,
+  isBookable,
+}: {
+  movie: Movie;
+  isBookable?: boolean;
+}) {
   const { translate } = useLocale();
 
   return (
@@ -68,18 +72,18 @@ export default function MovieCard({ movie, isBookable }: { movie: Movie; isBooka
           <p className="mt-1 truncate text-xs text-(--color-text-secondary)">{movie.genre}</p>
         </div>
 
-        {isBookable ? (
+        {isBookable === true ? (
           <Link
             href={`/booking/${movie.slug}/cinema`}
             className="mt-4 cursor-pointer rounded-(--radius-sm) bg-(--color-gold) py-2 text-center text-xs font-bold tracking-wider text-black no-underline transition-all hover:bg-(--color-gold-light)"
           >
             {translate("movies.book_now")}
           </Link>
-        ) : (
+        ) : isBookable === false ? (
           <p className="mt-4 rounded-(--radius-sm) border border-(--color-border) py-2 text-center text-[11px] font-bold tracking-wider text-(--color-text-muted) uppercase">
             {translate("movies.coming_soon")}
           </p>
-        )}
+        ) : null}
       </div>
     </article>
   );

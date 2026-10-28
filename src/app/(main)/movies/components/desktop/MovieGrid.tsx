@@ -7,7 +7,7 @@ import { useAppendReveal } from "@/hooks/useAppendReveal";
 import Button from "@/components/ui/Button";
 import SectionFallback from "@/components/ui/SectionFallback";
 import { SkeletonBar } from "@/components/ui/Skeleton";
-import MovieCard from "./MovieCard";
+import MoviePosterCard from "@/features/movies/components/MoviePosterCard";
 
 /**
  * Desktop movies grid: 3 columns, 4 from `xl:`. "Bookable" is the ACTIVE TAB,
@@ -110,7 +110,7 @@ export default function MovieGrid() {
             data-movie-card
             className={index >= animThreshold ? "animate-fade-in" : ""}
           >
-            <MovieCard movie={movie} isBookable={isBookable} />
+            <MoviePosterCard movie={movie} isBookable={isBookable} />
           </div>
         ))}
       </div>

@@ -171,6 +171,17 @@ export function getMovieDetail(
   );
 }
 
+export async function getRelatedMovies(
+  slug: string,
+  locale: "en" | "vn" = "en",
+  limit: number = 6,
+): Promise<ApiResponse<Movie[]>> {
+  return apiFetch<Movie[]>(
+    withLang(`/movies/${encodeURIComponent(slug)}/related?limit=${limit}`, locale),
+    REVALIDATE_60,
+  );
+}
+
 /* ─── Catalog endpoints (filter options) ─────────────────── */
 
 /** Genre catalog; callers fall back to `FALLBACK_GENRES` on an error union. */
