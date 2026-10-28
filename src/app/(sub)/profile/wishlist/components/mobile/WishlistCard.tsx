@@ -27,7 +27,7 @@ export default function WishlistCard({
   const { translate } = useLocale();
 
   return (
-    <article className="overflow-hidden rounded-2xl bg-(--color-surface) shadow-[--shadow-card]">
+    <article className="overflow-hidden rounded-2xl bg-(--color-surface) shadow-(--shadow-card)">
       <div className="relative">
         <Link href={`/movies/${movie.slug}`}>
           <div className="relative aspect-video w-full bg-(--color-surface-2)">

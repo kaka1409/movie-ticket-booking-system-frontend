@@ -10,13 +10,7 @@ import Tabs from "@/components/ui/Tabs";
 import LoadMoreButton from "../mobile/LoadMoreButton";
 import ReviewRow from "./ReviewRow";
 import { useMyReviews } from "@/features/reviews/hooks/useMyReviews";
-import AccountShell from "@/features/profile/components/desktop/AccountShell";
 
-/**
- * Desktop reviews view:
- * Top critic overview banner with average rating score and positive feedback metrics,
- * responsive tab filtering, and list of rich review cards.
- */
 export default function ReviewContent({
   initialReviews,
   total,
@@ -63,31 +57,23 @@ export default function ReviewContent({
 
   if (reviews.length === 0) {
     return (
-      <AccountShell
-        title={translate("profile.review_rating")}
-        description={translate("profile.pages.reviews_desc")}
+      <EmptyState
+        icon={Star}
+        title={translate("profile.myreviews.empty_title")}
+        description={translate("profile.myreviews.empty_desc")}
       >
-        <EmptyState
-          icon={Star}
-          title={translate("profile.myreviews.empty_title")}
-          description={translate("profile.myreviews.empty_desc")}
+        <Link
+          href="/movies"
+          className="rounded-xl bg-(--color-gold) px-6 py-3 text-sm font-extrabold tracking-wide text-black transition hover:brightness-110 active:scale-95"
         >
-          <Link
-            href="/movies"
-            className="rounded-xl bg-(--color-gold) px-6 py-3 text-sm font-extrabold tracking-wide text-black transition hover:brightness-110 active:scale-95"
-          >
-            {translate("profile.myreviews.browse")}
-          </Link>
-        </EmptyState>
-      </AccountShell>
+          {translate("profile.myreviews.browse")}
+        </Link>
+      </EmptyState>
     );
   }
 
   return (
-    <AccountShell
-      title={translate("profile.review_rating")}
-      description={translate("profile.pages.reviews_desc")}
-    >
+    <>
       {/* Review Stats Summary Banner */}
       <div className="mb-6 grid gap-4 sm:grid-cols-3">
         <div className="flex items-center gap-3.5 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 shadow-sm">
@@ -162,6 +148,6 @@ export default function ReviewContent({
           <LoadMoreButton onClick={handleLoadMore} disabled={isLoadingMore} />
         </div>
       )}
-    </AccountShell>
+    </>
   );
 }

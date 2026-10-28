@@ -33,7 +33,7 @@ export default function AccountNav() {
       {/* Tablet strip */}
       <nav
         aria-label={translate("profile.area_label")}
-        className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide lg:hidden"
+        className="flex gap-2 overflow-x-auto overscroll-x-contain pb-1 scrollbar-hide lg:hidden"
       >
         {ACCOUNT_SECTIONS.map((section) => {
           const isActive = section.key === activeKey;

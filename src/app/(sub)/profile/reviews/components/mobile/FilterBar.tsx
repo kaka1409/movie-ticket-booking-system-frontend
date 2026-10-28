@@ -16,7 +16,7 @@ export default function FilterBar({
   // payload and the EN mock fallback both render in the UI locale.
   const { translate } = useLocale();
   return (
-    <nav className="flex items-center gap-3 overflow-x-auto py-2 text-sm">
+    <nav className="flex items-center gap-3 overflow-x-auto overscroll-x-contain py-2 text-sm">
       {filters.map((filter) => {
         const isActive = filter.key === active;
         return (

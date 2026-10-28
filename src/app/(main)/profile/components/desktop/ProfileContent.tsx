@@ -1,28 +1,29 @@
 "use client";
 
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { ShieldCheck, KeyRound, ArrowRight, UserCog, CheckCircle2 } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { formatCalendarDate, toDateInputValue } from "@/libs/date";
 import Button from "@/components/ui/Button";
 import AccountShell from "@/features/profile/components/desktop/AccountShell";
-import type { UpcomingTicket } from "@/features/tickets/types";
 import MemberCard from "./MemberCard";
-import NextScreeningWidget from "./NextScreeningWidget";
-import AccountStats from "./AccountStats";
 
 /**
  * Desktop profile overview content:
  * Displays VIP Member Card, Next Screening showcase, interactive activity statistics,
  * and a side-by-side Personal Information & Account Security matrix.
+ *
+ * The two data-dependent blocks arrive as slots, so their server sections stream
+ * while the member card and the details matrix paint from the session.
  */
 export default function ProfileContent({
   stats,
   nextTicket,
 }: {
-  stats: { reviews: number | null; wishlist: number | null; tickets: number | null };
-  nextTicket: UpcomingTicket | null;
+  stats: ReactNode;
+  nextTicket: ReactNode;
 }) {
   const { translate, locale } = useLocale();
   const { user } = useAuth();
@@ -58,10 +59,10 @@ export default function ProfileContent({
         <MemberCard user={user} />
 
         {/* Next Screening Widget */}
-        <NextScreeningWidget nextTicket={nextTicket} />
+        {nextTicket}
 
         {/* Activity Statistics Cards */}
-        <AccountStats stats={stats} />
+        {stats}
 
         {/* Personal Details & Security Matrix */}
         <div className="grid gap-6 lg:grid-cols-2">

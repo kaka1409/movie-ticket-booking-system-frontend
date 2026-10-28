@@ -1,11 +1,12 @@
 import { Skeleton } from "@/components/ui/Skeleton";
+import type { ReactNode } from "react";
 
 /**
  * Generic desktop account skeleton: header + sticky nav + raised panel. Used by
  * every account route's `loading.tsx` so the desktop (740+) never flashes empty
  * while the server segment streams in.
  */
-export default function AccountSkeleton() {
+export default function AccountSkeleton({ children }: { children?: ReactNode }) {
   return (
     <div className="min-w-0">
       <div className="min-w-0">
@@ -34,17 +35,19 @@ export default function AccountSkeleton() {
         </div>
 
         <section className="min-w-0 rounded-2xl border border-(--color-border) bg-(--color-surface) p-5 lg:p-6">
-          <div className="surface-raised space-y-4">
-            <Skeleton className="h-24 w-24 rounded-full" />
-            <Skeleton className="h-4 w-40 rounded-md" />
-            <Skeleton className="h-3 w-64 rounded-md" />
-            <div className="mt-6 grid gap-3 sm:grid-cols-3">
-              {Array.from({ length: 3 }).map((_, index) => (
-                <Skeleton key={index} className="h-24 rounded-xl" />
-              ))}
+          {children ?? (
+            <div className="surface-raised space-y-4">
+              <Skeleton className="h-24 w-24 rounded-full" />
+              <Skeleton className="h-4 w-40 rounded-md" />
+              <Skeleton className="h-3 w-64 rounded-md" />
+              <div className="mt-6 grid gap-3 sm:grid-cols-3">
+                {Array.from({ length: 3 }).map((_, index) => (
+                  <Skeleton key={index} className="h-24 rounded-xl" />
+                ))}
+              </div>
+              <Skeleton className="mt-6 h-40 rounded-xl" />
             </div>
-            <Skeleton className="mt-6 h-40 rounded-xl" />
-          </div>
+          )}
         </section>
       </div>
     </div>

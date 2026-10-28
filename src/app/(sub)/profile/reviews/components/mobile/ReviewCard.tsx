@@ -32,7 +32,7 @@ export default function ReviewCard({
   return (
     <article
       data-review-card
-      className="rounded-2xl bg-(--color-surface) p-4 shadow-[--shadow-card]"
+      className="rounded-2xl bg-(--color-surface) p-4 shadow-(--shadow-card)"
     >
       <div className="flex gap-3">
         <Link

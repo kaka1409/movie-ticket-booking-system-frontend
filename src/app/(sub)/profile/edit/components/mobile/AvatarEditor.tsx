@@ -48,7 +48,7 @@ export default function AvatarEditor() {
         type="button"
         disabled
         aria-label={translate("profile.edit.change_photo")}
-        className="relative -mt-5 ml-20 flex h-10 w-10 items-center justify-center rounded-full bg-(--color-gold) shadow-[--shadow-card] z-10 opacity-40 cursor-not-allowed"
+        className="relative -mt-5 ml-20 flex h-10 w-10 items-center justify-center rounded-full bg-(--color-gold) shadow-(--shadow-card) z-10 opacity-40 cursor-not-allowed"
       >
         <Camera className="h-5 w-5 text-black" strokeWidth={2.2} />
       </button>

@@ -83,7 +83,7 @@ export default function ProfileForm() {
             type="date"
             value={dob}
             onChange={(event) => setDob(event.target.value)}
-            className="w-full bg-transparent text-(--color-text-primary) outline-none [&::-webkit-calendar-picker-indicator]:hidden"
+            className="w-full bg-transparent text-(--color-text-primary) outline-none [&::-webkit-calendar-picker-indicator]:hidden focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-gold)"
           />
         </FormField>
       </div>

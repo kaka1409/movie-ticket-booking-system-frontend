@@ -62,7 +62,7 @@ export default function WishlistMovieList({ initialItems }: { initialItems: Wish
         placeholder={translate("profile.wishlist.search_placeholder")}
       />
 
-      <div className="my-3 flex items-center gap-3 overflow-x-auto py-2">
+      <div className="my-3 flex items-center gap-3 overflow-x-auto overscroll-x-contain py-2">
         {(["all", "now_showing", "coming_soon"] as const).map((tab) => (
           <Chip
             key={tab}

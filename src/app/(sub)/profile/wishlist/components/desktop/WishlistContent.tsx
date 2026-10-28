@@ -101,7 +101,7 @@ export default function WishlistContent({ initialItems }: { initialItems: Wishli
       {/* Integrated Filter & Sort Toolbar */}
       <div className="flex flex-col gap-4 border-b border-(--color-border)/50 pb-5 lg:flex-row lg:items-center lg:justify-between">
         {/* Status Filter Tabs with Count Badges */}
-        <div className="flex items-center gap-2 overflow-x-auto">
+        <div className="flex items-center gap-2 overflow-x-auto overscroll-x-contain">
           {TABS.map((tab) => {
             const count =
               tab === "all"
@@ -151,7 +151,7 @@ export default function WishlistContent({ initialItems }: { initialItems: Wishli
             <select
               value={sortBy}
               onChange={(event) => setSortBy(event.target.value as WishlistSortOption)}
-              className="bg-transparent text-xs font-bold text-white outline-none cursor-pointer [color-scheme:dark]"
+              className="bg-transparent text-xs font-bold text-white outline-none cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-gold)"
               aria-label={translate("profile.wishlist.sort_by")}
             >
               <option value="default" className="bg-(--color-surface-2)">

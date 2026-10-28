@@ -121,7 +121,7 @@ export default function EditProfileContent() {
                   type="date"
                   value={dob}
                   onChange={(event) => setDob(event.target.value)}
-                  className="w-full bg-transparent text-(--color-text-primary) outline-none [color-scheme:dark] cursor-pointer"
+                  className="w-full bg-transparent text-(--color-text-primary) outline-none cursor-pointer"
                 />
               </FormField>
             </div>
