@@ -74,11 +74,11 @@ export default function NotificationRow({
         )}
 
         <span className="mt-1.5 flex items-center gap-2">
-          <span className="text-[10px] font-bold tracking-widest text-(--color-gold) uppercase">
+          <span className="text-2xs font-bold tracking-widest text-(--color-gold) uppercase">
             {formatRelativeTime(notification.createdAt, locale)}
           </span>
           {notification.action && (
-            <span className="ml-auto flex items-center gap-1 text-[10px] font-bold tracking-wide text-(--color-text-secondary)">
+            <span className="ml-auto flex items-center gap-1 text-2xs font-bold tracking-wide text-(--color-text-secondary)">
               {notification.action.label}
               {isComfortable && <ChevronRight size={12} aria-hidden />}
             </span>

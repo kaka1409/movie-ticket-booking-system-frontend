@@ -23,7 +23,7 @@ export default function NotificationCard({
       className={`
         relative rounded-2xl p-4 border
         bg-(--color-surface) cursor-pointer
-        transition-all duration-200 hover:bg-(--color-surface-2) active:scale-[0.99]
+        transition duration-200 hover:bg-(--color-surface-2) active:scale-[0.99]
         ${typeConfig.border}
         ${notification.read ? "opacity-40" : ""}
       `}
@@ -58,7 +58,7 @@ export default function NotificationCard({
           </p>
 
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-bold tracking-widest text-(--color-gold)">
+            <span className="text-2xs font-bold tracking-widest text-(--color-gold)">
               {time}
             </span>
             {notification.action && (

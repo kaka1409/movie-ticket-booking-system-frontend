@@ -9,6 +9,7 @@ import Button from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";
 import EmptyState from "@/components/ui/EmptyState";
 import Tabs, { tabId, tabPanelId } from "@/components/ui/Tabs";
+import LocaleTransition from "@/components/ui/LocaleTransition";
 
 type InboxTab = "all" | "unread";
 
@@ -102,16 +103,18 @@ export default function NotificationList() {
                 description={tab === "unread" ? translate("notif.empty_unread_desc") : undefined}
               />
             ) : (
-              <div className="divide-y divide-(--color-border)">
-                {rows.map((notification) => (
-                  <NotificationRow
-                    key={notification.id}
-                    density="comfortable"
-                    notification={notification}
-                    onSelect={() => markRead(notification.id)}
-                  />
-                ))}
-              </div>
+              <LocaleTransition>
+                <div className="divide-y divide-(--color-border)">
+                  {rows.map((notification) => (
+                    <NotificationRow
+                      key={notification.id}
+                      density="comfortable"
+                      notification={notification}
+                      onSelect={() => markRead(notification.id)}
+                    />
+                  ))}
+                </div>
+              </LocaleTransition>
             )}
           </div>
         </div>
