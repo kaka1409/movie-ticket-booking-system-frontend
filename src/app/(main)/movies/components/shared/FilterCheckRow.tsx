@@ -18,7 +18,7 @@ export default function CheckRow({
     >
       <span
         className={`
-          flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-all duration-150
+          flex h-4 w-4 shrink-0 items-center justify-center rounded border transition duration-150
           ${
             checked
               ? "border-(--color-gold) bg-(--color-gold)"

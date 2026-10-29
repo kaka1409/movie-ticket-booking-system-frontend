@@ -28,7 +28,7 @@ function SectionBadge({ count }: { count: number }) {
   if (count === 0) return null;
 
   return (
-    <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-(--color-gold) px-1 text-[9px] font-black text-black">
+    <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-(--color-gold) px-1 text-3xs font-black text-black">
       {count > 1 ? count : null}
     </span>
   );
@@ -81,7 +81,7 @@ export default function FilterSidebar() {
               {translate("movies.filters")}
             </span>
             {draftFilterCount > 0 && (
-              <span className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-(--color-gold) px-1 text-[10px] font-black text-black">
+              <span className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-(--color-gold) px-1 text-2xs font-black text-black">
                 {draftFilterCount}
               </span>
             )}
@@ -91,7 +91,7 @@ export default function FilterSidebar() {
             <button
               type="button"
               onClick={clearFilters}
-              className="flex shrink-0 items-center gap-1 text-[10px] font-bold tracking-widest text-(--color-text-muted) uppercase transition-colors hover:text-(--color-gold)"
+              className="flex shrink-0 items-center gap-1 text-2xs font-bold tracking-widest text-(--color-text-muted) uppercase transition-colors hover:text-(--color-gold)"
             >
               <X size={12} aria-hidden="true" />
               {translate("movies.clear_all")}
@@ -231,7 +231,7 @@ export default function FilterSidebar() {
         <button
           type="button"
           onClick={applyFilters}
-          className="mt-5 w-full rounded-(--radius-md) bg-(--color-gold) py-3.5 text-sm font-extrabold tracking-widest text-black uppercase shadow-(--shadow-glow) transition-all duration-150 hover:bg-(--color-gold-dark) active:scale-[0.98]"
+          className="mt-5 w-full rounded-(--radius-md) bg-(--color-gold) py-3.5 text-sm font-extrabold tracking-widest text-black uppercase shadow-(--shadow-glow) transition duration-150 hover:bg-(--color-gold-dark) active:scale-[0.98]"
         >
           {translate("movies.apply_filters")}
         </button>

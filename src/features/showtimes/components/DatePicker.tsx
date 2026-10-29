@@ -27,14 +27,14 @@ export default function DatePicker({
             key={dateOption.value}
             onClick={() => onSelect(dateOption.value)}
             aria-pressed={active}
-            className={`shrink-0 flex flex-col items-center justify-center w-17 py-2.5 rounded-xl transition-all duration-150 active:scale-[0.97] border ${
+            className={`shrink-0 flex flex-col items-center justify-center w-17 py-2.5 rounded-xl transition duration-150 active:scale-[0.97] border ${
               active
                 ? "bg-(--color-gold) border-(--color-gold) shadow-(--shadow-glow)"
                 : "bg-(--color-surface) border-(--color-border)"
             }`}
           >
             <span
-              className={`text-[9px] font-bold tracking-widest uppercase ${
+              className={`text-3xs font-bold tracking-widest uppercase ${
                 active ? "text-(--color-bg)" : "text-(--color-text-muted)"
               }`}
             >
@@ -48,7 +48,7 @@ export default function DatePicker({
               {formatDayOfMonth(dateOption.day)}
             </span>
             <span
-              className={`text-[9px] font-semibold tracking-widest ${
+              className={`text-3xs font-semibold tracking-widest ${
                 active ? "text-[#0F0F0F99]" : "text-(--color-text-muted)"
               }`}
             >

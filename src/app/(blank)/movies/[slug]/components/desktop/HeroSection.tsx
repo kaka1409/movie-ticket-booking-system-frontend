@@ -11,7 +11,7 @@ import { useSmartBack } from "@/hooks/useSmartBack";
 import { useLocale } from "@/contexts/LocaleContext";
 
 const ICON_BUTTON_CLASS =
-  "flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-white/15 bg-black/50 backdrop-blur-sm transition-all duration-300 hover:bg-black/75";
+  "flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-white/15 bg-black/50 backdrop-blur-sm transition duration-300 hover:bg-black/75";
 
 export default function HeroSection() {
   const movie = useMovieDetail();
@@ -112,7 +112,7 @@ export default function HeroSection() {
               {genres.map((genre) => (
                 <span
                   key={genre}
-                  className="rounded-(--radius-sm) border border-(--color-border) bg-(--color-surface) px-2.5 py-0.5 text-[10px] font-black tracking-wide text-(--color-text-secondary) uppercase"
+                  className="rounded-(--radius-sm) border border-(--color-border) bg-(--color-surface) px-2.5 py-0.5 text-2xs font-black tracking-wide text-(--color-text-secondary) uppercase"
                 >
                   {genre}
                 </span>
@@ -130,7 +130,7 @@ export default function HeroSection() {
               {movie.ageRating && (
                 <>
                   <span className="h-4 w-px bg-(--color-border)" />
-                  <span className="rounded-(--radius-sm) border border-(--color-border) px-2 py-0.5 text-[10px] font-bold text-(--color-text-secondary)">
+                  <span className="rounded-(--radius-sm) border border-(--color-border) px-2 py-0.5 text-2xs font-bold text-(--color-text-secondary)">
                     {movie.ageRating}
                   </span>
                 </>
@@ -140,7 +140,7 @@ export default function HeroSection() {
             <div className="flex gap-3">
               <Link
                 href={`/booking/${movie.slug}/cinema`}
-                className="flex cursor-pointer items-center gap-2 rounded-(--radius-md) bg-(--color-gold) px-6 py-3 text-sm font-bold text-(--color-bg) no-underline shadow-(--shadow-glow) transition-all duration-150 hover:bg-(--color-gold-dark) active:scale-[0.98]"
+                className="flex cursor-pointer items-center gap-2 rounded-(--radius-md) bg-(--color-gold) px-6 py-3 text-sm font-bold text-(--color-bg) no-underline shadow-(--shadow-glow) transition duration-150 hover:bg-(--color-gold-dark) active:scale-[0.98]"
               >
                 <Ticket size={16} />
                 {translate("movies.detail.book_ticket")}
@@ -149,7 +149,7 @@ export default function HeroSection() {
               <button
                 type="button"
                 onClick={() => setIsTrailerOpen(true)}
-                className="flex cursor-pointer items-center gap-2 rounded-(--radius-md) border border-white/15 bg-white/10 px-6 py-3 text-sm font-bold text-(--color-text-primary) backdrop-blur-sm transition-all duration-150 hover:bg-white/15 active:scale-[0.98]"
+                className="flex cursor-pointer items-center gap-2 rounded-(--radius-md) border border-white/15 bg-white/10 px-6 py-3 text-sm font-bold text-(--color-text-primary) backdrop-blur-sm transition duration-150 hover:bg-white/15 active:scale-[0.98]"
               >
                 <Play size={16} className="fill-current" />
                 {translate("movies.detail.watch_trailer")}

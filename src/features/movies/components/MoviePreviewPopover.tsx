@@ -1,6 +1,7 @@
 "use client";
 
 import { createPortal } from "react-dom";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Star, Clock, Loader2 } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
@@ -42,8 +43,30 @@ export default function MoviePreviewPopover({
   // `react-hooks/set-state-in-effect`); the 80ms flip is invisible behind
   // the 200ms hover-enter delay.
   const mounted = useMounted();
+  const [isVisible, setIsVisible] = useState(isOpen);
+  const [isEntered, setIsEntered] = useState(false);
 
-  if (!mounted || !isOpen) return null;
+  useEffect(() => {
+    if (isOpen) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setIsVisible(true);
+      setIsEntered(false);
+      let frame1 = 0;
+      let frame2 = 0;
+      frame1 = requestAnimationFrame(() => {
+        frame2 = requestAnimationFrame(() => setIsEntered(true));
+      });
+      return () => {
+        cancelAnimationFrame(frame1);
+        cancelAnimationFrame(frame2);
+      };
+    }
+    setIsEntered(false);
+    const timer = setTimeout(() => setIsVisible(false), 200);
+    return () => clearTimeout(timer);
+  }, [isOpen]);
+
+  if (!mounted || !isVisible) return null;
 
   // List rows are shallow — the local catalog only fills the fields the API never sends.
   const fallback = ALL_MOVIES.find(
@@ -79,9 +102,9 @@ export default function MoviePreviewPopover({
         left: `${left}px`,
         width: `${POPOVER_WIDTH}px`,
       }}
-      className="pointer-events-none z-[9999] select-none animate-fade-in transition-[top,left] ease-out"
+      className={`pointer-events-none z-popover select-none transition-all duration-500 ease-out ${isOpen && isEntered ? "scale-100 opacity-100" : "scale-25 opacity-0"}`}
     >
-      <div className="overflow-hidden rounded-(--radius-lg) border border-(--color-gold)/40 bg-(--color-surface) shadow-[0_25px_60px_rgba(0,0,0,0.95)] backdrop-blur-md max-h-[calc(100vh-32px)] overflow-y-auto">
+      <div className="overflow-hidden rounded-(--radius-lg) border border-(--color-gold)/40 bg-(--color-surface) shadow-[0_25px_60px_rgba(0,0,0,0.95)] backdrop-blur-md max-h-[calc(100dvh-32px)] overflow-y-auto">
         <div className="relative aspect-video w-full overflow-hidden bg-(--color-surface-2)">
           <Image
             src={movie.src || "/images/movie-poster-placeholder.jpg"}
@@ -100,14 +123,14 @@ export default function MoviePreviewPopover({
               </span>
             )}
             {movie.ageRating && (
-              <span className="rounded-(--radius-xs) border border-white/20 bg-black/70 px-1.5 py-0.5 text-[10px] font-bold text-white backdrop-blur-xs">
+              <span className="rounded-(--radius-xs) border border-white/20 bg-black/70 px-1.5 py-0.5 text-2xs font-bold text-white backdrop-blur-xs">
                 {movie.ageRating}
               </span>
             )}
           </div>
 
           {isLoading && (
-            <div className="absolute top-2.5 right-2.5 flex items-center gap-1 rounded-full bg-black/60 px-2 py-0.5 text-[10px] font-medium text-(--color-gold) backdrop-blur-xs">
+            <div className="absolute top-2.5 right-2.5 flex items-center gap-1 rounded-full bg-black/60 px-2 py-0.5 text-2xs font-medium text-(--color-gold) backdrop-blur-xs">
               <Loader2 size={11} className="animate-spin" />
               <span>{translate("common.loading")}</span>
             </div>
@@ -137,7 +160,7 @@ export default function MoviePreviewPopover({
 
           {effectiveSynopsis && (
             <div className="space-y-1">
-              <h4 className="text-[10px] font-bold uppercase tracking-wider text-(--color-gold)">
+              <h4 className="text-2xs font-bold uppercase tracking-wider text-(--color-gold)">
                 {translate("movies.detail.synopsis")}
               </h4>
               <p className="line-clamp-3 text-xs leading-relaxed text-white/80">
@@ -149,11 +172,11 @@ export default function MoviePreviewPopover({
           {effectiveCast.length > 0 && (
             <div className="space-y-1.5 border-t border-(--color-border) pt-2">
               <div className="flex items-center justify-between gap-2">
-                <h4 className="text-[10px] font-bold uppercase tracking-wider text-(--color-gold)">
+                <h4 className="text-2xs font-bold uppercase tracking-wider text-(--color-gold)">
                   {translate("movies.detail.top_cast")}
                 </h4>
                 {effectiveDirector && (
-                  <span className="text-[10px] text-(--color-text-muted) truncate text-right">
+                  <span className="text-2xs text-(--color-text-muted) truncate text-right">
                     {translate("home.desktop.preview_director")}:{" "}
                     <span className="font-semibold text-white/90">{effectiveDirector}</span>
                   </span>
@@ -176,16 +199,16 @@ export default function MoviePreviewPopover({
                           className="object-cover"
                         />
                       ) : (
-                        <span className="flex h-full w-full items-center justify-center text-[9px] font-black text-white/40">
+                        <span className="flex h-full w-full items-center justify-center text-3xs font-black text-white/40">
                           {getInitials(actor.name)}
                         </span>
                       )}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-[10px] font-bold leading-tight text-white">
+                      <p className="truncate text-2xs font-bold leading-tight text-white">
                         {actor.name}
                       </p>
-                      <p className="truncate text-[9px] leading-tight text-(--color-text-muted)">
+                      <p className="truncate text-3xs leading-tight text-(--color-text-muted)">
                         {actor.role}
                       </p>
                     </div>
@@ -195,7 +218,7 @@ export default function MoviePreviewPopover({
             </div>
           )}
 
-          <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 border-t border-(--color-border) pt-2 text-[10px] text-(--color-text-muted)">
+          <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 border-t border-(--color-border) pt-2 text-2xs text-(--color-text-muted)">
             {movie.releaseDate && (
               <span>
                 {translate("home.desktop.preview_release_date")}:{" "}

@@ -72,7 +72,7 @@ export default function RecommendedPager({
           className="flex h-8 w-8 items-center justify-center"
         >
           <span
-            className={`block rounded-full transition-all ${
+            className={`block rounded-full transition ${
               index === page
                 ? "h-2 w-4 bg-(--color-gold)"
                 : "h-2 w-2 bg-(--color-border) hover:bg-(--color-text-muted)"

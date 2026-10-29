@@ -102,7 +102,7 @@ export default function HeroSection() {
               {movie.duration} {translate("movies.detail.min")}
             </span>
           </div>
-          <span className="inline-block mt-1.5 px-2 py-0.5 rounded text-[10px] font-bold border border-(--color-border) text-(--color-text-secondary)">
+          <span className="inline-block mt-1.5 px-2 py-0.5 rounded text-2xs font-bold border border-(--color-border) text-(--color-text-secondary)">
             {movie.ageRating}
           </span>
         </div>

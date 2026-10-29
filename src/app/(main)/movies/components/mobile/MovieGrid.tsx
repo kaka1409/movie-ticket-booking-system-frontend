@@ -127,7 +127,7 @@ export default function MovieGrid() {
               w-full rounded-(--radius-lg) border border-(--color-border)
               bg-(--color-surface) py-3.5 text-sm font-bold uppercase
               tracking-widest text-(--color-gold-light)
-              transition-all duration-150
+              transition duration-150
               hover:border-(--color-gold)/40 hover:text-(--color-gold)
               active:scale-[0.98]
               disabled:opacity-60 disabled:cursor-not-allowed

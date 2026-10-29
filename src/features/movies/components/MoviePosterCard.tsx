@@ -22,7 +22,7 @@ export default function MoviePosterCard({
   const { translate } = useLocale();
 
   return (
-    <article className="group flex flex-col overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-surface) transition-all duration-300 hover:-translate-y-1.5 hover:border-(--color-gold)/50 hover:shadow-xl">
+    <article className="group flex flex-col overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-surface) transition duration-300 hover:-translate-y-1.5 hover:border-(--color-gold)/50 hover:shadow-xl">
       <Link
         href={`/movies/${movie.slug}`}
         className="relative block aspect-[2/3] w-full overflow-hidden bg-(--color-surface-2)"
@@ -46,7 +46,7 @@ export default function MoviePosterCard({
             <span />
           )}
           {movie.ageRating && (
-            <span className="rounded-(--radius-sm) border border-white/20 bg-black/60 px-1.5 py-0.5 text-[10px] font-bold text-white backdrop-blur-xs">
+            <span className="rounded-(--radius-sm) border border-white/20 bg-black/60 px-1.5 py-0.5 text-2xs font-bold text-white backdrop-blur-xs">
               {movie.ageRating}
             </span>
           )}
@@ -75,7 +75,7 @@ export default function MoviePosterCard({
         {isBookable === true ? (
           <Link
             href={`/booking/${movie.slug}/cinema`}
-            className="mt-4 cursor-pointer rounded-(--radius-sm) bg-(--color-gold) py-2 text-center text-xs font-bold tracking-wider text-black no-underline transition-all hover:bg-(--color-gold-light)"
+            className="mt-4 cursor-pointer rounded-(--radius-sm) bg-(--color-gold) py-2 text-center text-xs font-bold tracking-wider text-black no-underline transition hover:bg-(--color-gold-light)"
           >
             {translate("movies.book_now")}
           </Link>

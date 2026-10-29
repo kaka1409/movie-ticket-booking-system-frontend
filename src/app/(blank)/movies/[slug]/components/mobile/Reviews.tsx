@@ -89,7 +89,7 @@ export default function Reviews({ initialData, initialError }: ReviewsProps) {
             {average.toFixed(1)}
           </span>
           <Stars rating={average} size={13} />
-          <span className="text-(--color-text-muted) text-[10px] mt-0.5">
+          <span className="text-(--color-text-muted) text-2xs mt-0.5">
             {formatReviewCount(ratingCount)} {translate("movies.detail.ratings")}
           </span>
         </div>
@@ -114,7 +114,7 @@ export default function Reviews({ initialData, initialError }: ReviewsProps) {
           <button
             type="button"
             onClick={() => router.push("/login")}
-            className="w-full py-3 rounded-xl font-bold text-sm tracking-widest uppercase bg-(--color-gold) text-(--color-bg) hover:bg-(--color-gold-dark) active:scale-[0.98] transition-all duration-150"
+            className="w-full py-3 rounded-xl font-bold text-sm tracking-widest uppercase bg-(--color-gold) text-(--color-bg) hover:bg-(--color-gold-dark) active:scale-[0.98] transition duration-150"
           >
             {translate("auth.protected.login_btn")}
           </button>

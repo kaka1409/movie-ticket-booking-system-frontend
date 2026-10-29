@@ -110,7 +110,7 @@ export default function Showtimes() {
                 disabled={option.disabled}
                 className={`
                 shrink-0 flex flex-col items-center justify-center
-                w-14 rounded-xl py-2 border transition-all duration-150
+                w-14 rounded-xl py-2 border transition duration-150
                 ${
                   active
                     ? "bg-(--color-gold) border-(--color-gold) shadow-[0_0_12px_rgba(255,204,77,0.3)]"
@@ -122,7 +122,7 @@ export default function Showtimes() {
                 aria-pressed={active}
               >
                 <span
-                  className={`text-[9px] font-bold tracking-widest ${
+                  className={`text-3xs font-bold tracking-widest ${
                     active
                       ? "text-(--color-bg)"
                       : option.disabled
@@ -192,7 +192,7 @@ export default function Showtimes() {
                   <p className="text-(--color-text-muted) text-xs mt-0.5">{cinema.address}</p>
                 </div>
                 <span
-                  className={`text-[10px] font-bold px-2 py-1 rounded-md ${badgeColor(cinema.badge)}`}
+                  className={`text-2xs font-bold px-2 py-1 rounded-md ${badgeColor(cinema.badge)}`}
                 >
                   {cinema.badge}
                 </span>
@@ -210,7 +210,7 @@ export default function Showtimes() {
                       }
                       disabled={!slot.isAvailable}
                       className={`
-                        px-4 py-2 rounded-lg text-xs font-semibold border transition-all duration-150
+                        px-4 py-2 rounded-lg text-xs font-semibold border transition duration-150
                         ${
                           active
                             ? "bg-(--color-gold) border-(--color-gold) text-(--color-bg) shadow-[0_0_10px_rgba(255,204,77,0.25)]"

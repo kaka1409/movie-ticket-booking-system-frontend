@@ -85,7 +85,7 @@ export default function Showtimes() {
                     onClick={() => selectDate(chip.value)}
                     disabled={chip.disabled}
                     aria-pressed={active}
-                    className={`flex min-w-13 cursor-pointer flex-col items-center rounded-(--radius-md) border px-3 py-2 text-center transition-all duration-150 ${
+                    className={`flex min-w-13 cursor-pointer flex-col items-center rounded-(--radius-md) border px-3 py-2 text-center transition duration-150 ${
                       active
                         ? "border-(--color-gold) bg-(--color-gold) shadow-(--shadow-glow)"
                         : chip.disabled
@@ -94,7 +94,7 @@ export default function Showtimes() {
                     }`}
                   >
                     <span
-                      className={`text-[9px] font-black tracking-widest ${
+                      className={`text-3xs font-black tracking-widest ${
                         active ? "text-black/70" : "text-(--color-text-muted)"
                       }`}
                     >
@@ -108,7 +108,7 @@ export default function Showtimes() {
                       {chip.day}
                     </span>
                     <span
-                      className={`text-[9px] font-semibold ${
+                      className={`text-3xs font-semibold ${
                         active ? "text-black/60" : "text-(--color-text-muted)"
                       }`}
                     >
@@ -151,14 +151,14 @@ export default function Showtimes() {
               {cinemas.map((cinema) => (
                 <div key={cinema.id}>
                   <p className="text-sm font-bold text-(--color-text-primary)">{cinema.name}</p>
-                  <p className="mt-0.5 flex items-start gap-1 text-[10px] text-(--color-text-muted)">
+                  <p className="mt-0.5 flex items-start gap-1 text-2xs text-(--color-text-muted)">
                     <MapPin size={10} className="mt-0.5 shrink-0" />
                     <span className="line-clamp-2">{cinema.address}</span>
                   </p>
 
                   {groupByFormat(cinema.showtimes).map(([format, slots]) => (
                     <div key={format} className="mb-2.5 mt-2.5">
-                      <p className="mb-1.5 text-[9px] font-black tracking-widest text-(--color-text-muted) uppercase">
+                      <p className="mb-1.5 text-3xs font-black tracking-widest text-(--color-text-muted) uppercase">
                         {format}
                       </p>
                       <div className="flex flex-wrap gap-1.5">
@@ -173,7 +173,7 @@ export default function Showtimes() {
                               onClick={() => selectTime(cinema, slot.id, slot.startTime)}
                               disabled={!slot.isAvailable}
                               aria-pressed={active}
-                              className={`rounded-(--radius-sm) border px-3 py-1.5 text-xs font-semibold transition-all duration-150 active:scale-[0.96] ${
+                              className={`rounded-(--radius-sm) border px-3 py-1.5 text-xs font-semibold transition duration-150 active:scale-[0.96] ${
                                 active
                                   ? "border-(--color-gold) bg-(--color-gold) text-(--color-bg) shadow-(--shadow-glow)"
                                   : !slot.isAvailable
@@ -198,7 +198,7 @@ export default function Showtimes() {
           {bookingHref ? (
             <Link
               href={bookingHref}
-              className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-(--radius-md) bg-(--color-gold) py-3.5 text-sm font-bold text-(--color-bg) no-underline shadow-(--shadow-glow) transition-all duration-150 hover:bg-(--color-gold-dark) active:scale-[0.98]"
+              className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-(--radius-md) bg-(--color-gold) py-3.5 text-sm font-bold text-(--color-bg) no-underline shadow-(--shadow-glow) transition duration-150 hover:bg-(--color-gold-dark) active:scale-[0.98]"
             >
               <Ticket size={15} />
               {translate("movies.detail.book_showtime").replace(

@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, ChevronRight, LogIn, Pencil, RotateCcw, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, LogIn, RotateCcw, X } from "lucide-react";
 import Stars from "@/components/ui/Stars";
 import ReviewCard from "@/features/reviews/components/desktop/ReviewCard";
 import WriteReview from "@/features/reviews/components/desktop/WriteReview";
@@ -15,16 +15,16 @@ import type { ReviewsResponse } from "@/features/reviews/types";
 function RatingBar({ stars, pct }: { stars: number; pct: number }) {
   return (
     <div className="flex items-center gap-2">
-      <span className="w-3 text-right text-[10px] font-semibold text-(--color-text-muted)">
+      <span className="w-3 text-right text-2xs font-semibold text-(--color-text-muted)">
         {stars}
       </span>
       <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-(--color-border)">
         <div
-          className="h-full rounded-full bg-(--color-gold) transition-all duration-700"
+          className="h-full rounded-full bg-(--color-gold) transition duration-700"
           style={{ width: `${pct}%` }}
         />
       </div>
-      <span className="w-7 text-[10px] text-(--color-text-muted)">{pct}%</span>
+      <span className="w-7 text-2xs text-(--color-text-muted)">{pct}%</span>
     </div>
   );
 }
@@ -70,13 +70,6 @@ export default function Reviews({
     anchorRef: listRef,
   });
 
-  const scrollToForm = () => {
-    formRef.current?.scrollIntoView({
-      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
-      block: "center",
-    });
-  };
-
   const highlightedId = useReviewHighlight({
     reviewIds: reviews.map((review) => review.id),
     page,
@@ -97,7 +90,7 @@ export default function Reviews({
             {average.toFixed(1)}
           </span>
           <Stars rating={average} size={13} />
-          <span className="mt-0.5 text-[10px] text-(--color-text-muted)">
+          <span className="mt-0.5 text-2xs text-(--color-text-muted)">
             {formatReviewCount(ratingCount)} {translate("movies.detail.ratings")}
           </span>
         </div>
@@ -107,15 +100,6 @@ export default function Reviews({
             <RatingBar key={bar.stars} stars={bar.stars} pct={bar.pct} />
           ))}
         </div>
-
-        <button
-          type="button"
-          onClick={scrollToForm}
-          className="flex shrink-0 cursor-pointer items-center gap-2 rounded-(--radius-md) border border-(--color-border) px-5 py-2.5 text-sm font-bold text-(--color-text-secondary) transition-all duration-150 hover:border-(--color-gold)/40 hover:text-(--color-gold)"
-        >
-          <Pencil size={13} />
-          {translate("movies.detail.write_review")}
-        </button>
       </div>
 
       <div ref={formRef} className="mb-6">
@@ -132,7 +116,7 @@ export default function Reviews({
             <button
               type="button"
               onClick={() => router.push("/login")}
-              className="w-full cursor-pointer rounded-(--radius-md) bg-(--color-gold) py-3 text-sm font-bold text-(--color-bg) transition-all duration-150 hover:bg-(--color-gold-dark)"
+              className="w-full cursor-pointer rounded-(--radius-md) bg-(--color-gold) py-3 text-sm font-bold text-(--color-bg) transition duration-150 hover:bg-(--color-gold-dark)"
             >
               {translate("auth.protected.login_btn")}
             </button>
@@ -204,7 +188,7 @@ export default function Reviews({
                 onClick={() => void goToPage(page - 1)}
                 disabled={page === 1 || loadingPage}
                 aria-label={translate("movies.detail.prev_page")}
-                className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-(--radius-sm) border border-(--color-border) text-(--color-text-muted) transition-all duration-150 hover:border-(--color-gold)/40 hover:text-(--color-gold) disabled:cursor-not-allowed disabled:opacity-30"
+                className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-(--radius-sm) border border-(--color-border) text-(--color-text-muted) transition duration-150 hover:border-(--color-gold)/40 hover:text-(--color-gold) disabled:cursor-not-allowed disabled:opacity-30"
               >
                 <ChevronLeft size={14} />
               </button>
@@ -216,7 +200,7 @@ export default function Reviews({
                   onClick={() => void goToPage(pageNumber)}
                   disabled={loadingPage}
                   aria-current={pageNumber === page ? "page" : undefined}
-                  className={`h-8 w-8 cursor-pointer rounded-(--radius-sm) border text-xs font-bold transition-all duration-150 disabled:cursor-not-allowed disabled:opacity-30 ${
+                  className={`h-8 w-8 cursor-pointer rounded-(--radius-sm) border text-xs font-bold transition duration-150 disabled:cursor-not-allowed disabled:opacity-30 ${
                     pageNumber === page
                       ? "border-(--color-gold) bg-(--color-gold) text-(--color-bg)"
                       : "border-(--color-border) text-(--color-text-muted) hover:border-(--color-gold)/40 hover:text-(--color-gold)"
@@ -231,7 +215,7 @@ export default function Reviews({
                 onClick={() => void goToPage(page + 1)}
                 disabled={page === totalPages || loadingPage}
                 aria-label={translate("movies.detail.next_page")}
-                className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-(--radius-sm) border border-(--color-border) text-(--color-text-muted) transition-all duration-150 hover:border-(--color-gold)/40 hover:text-(--color-gold) disabled:cursor-not-allowed disabled:opacity-30"
+                className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-(--radius-sm) border border-(--color-border) text-(--color-text-muted) transition duration-150 hover:border-(--color-gold)/40 hover:text-(--color-gold) disabled:cursor-not-allowed disabled:opacity-30"
               >
                 <ChevronRight size={14} />
               </button>

@@ -58,7 +58,7 @@ export default function FilterPanel() {
           <SlidersHorizontal size={16} className="text-(--color-gold)" />
           <span className="text-sm font-bold text-white">{translate("movies.filters")}</span>
           {activeFilterCount > 0 && (
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-(--color-gold) text-[10px] font-black text-black">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-(--color-gold) text-2xs font-black text-black">
               {activeFilterCount}
             </span>
           )}
@@ -72,7 +72,7 @@ export default function FilterPanel() {
                 event.stopPropagation();
                 clearFilters();
               }}
-              className="text-xs font-semibold uppercase tracking-widest text-(--color-text-muted) hover:text-(--color-gold)"
+              className="cursor-pointer text-xs font-semibold uppercase tracking-widest text-(--color-text-muted) hover:text-(--color-gold)"
             >
               {translate("movies.clear_all")}
             </span>
@@ -213,7 +213,7 @@ export default function FilterPanel() {
               className="
                 w-full rounded-(--radius-md) bg-(--color-gold) py-3.5
                 text-sm font-extrabold uppercase tracking-widest text-black
-                shadow-(--shadow-glow) transition-all duration-150
+                shadow-(--shadow-glow) transition duration-150
                 hover:bg-(--color-gold-dark) active:scale-[0.98]
               "
             >

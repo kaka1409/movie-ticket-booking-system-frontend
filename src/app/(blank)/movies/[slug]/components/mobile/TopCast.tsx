@@ -28,7 +28,7 @@ export default function TopCast() {
             <p className="text-(--color-text-primary) text-xs font-semibold text-center leading-tight">
               {actor.name}
             </p>
-            <p className="text-(--color-text-muted) text-[10px] text-center">{actor.role}</p>
+            <p className="text-(--color-text-muted) text-2xs text-center">{actor.role}</p>
           </div>
         ))}
       </div>
