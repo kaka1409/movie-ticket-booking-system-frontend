@@ -63,7 +63,7 @@ Never run `pnpm build` while `pnpm dev` is running: both write `.next`, and Next
 - Server components fetching user-scoped data must pass `await getRequestCookie()`; `credentials: "include"` only works in the browser.
 - React 19: a `useActionState` dispatcher must sit on a real `<form action={formAction}>` - calling it from `onClick` skips the transition, so `isPending` never flips and double submits get through.
 - Both device trees always render: mount every side effect once at PAGE level, keep step logic in `features/*/hooks`, use `lg:`/`xl:` inside desktop components.
-- Desktop container `mx-auto max-w-7xl px-6 lg:px-8` (notifications = `max-w-4xl`); `.surface-raised` goes on a wrapper; tokens `--color-bg #0f0f0f`, `--color-surface #1c1b1b`, `--color-surface-2 #242424`, `--color-border #2e2e2e`.
+- Desktop container `mx-auto max-w-7xl px-6 lg:px-8` (notifications = `max-w-4xl`); `.surface-raised` goes on a wrapper; tokens `--color-bg #0f0f0f`, `--color-surface #1c1b1b`, `--color-surface-2 #242424`, `--color-border #2e2e2e`, `--color-border-strong #6b6b6b`, `--text-2xs/3xs`, z-index ladder `--z-*`.
 - Forms: zod v4 schemas from `features/*/schema.ts` factories taking `translate`; `safeParse` -> `flatten().fieldErrors`; `touched && !isValid` gates the messages.
 - Showtime `date` + `HH:mm` fields are cinema wall clock (`Asia/Ho_Chi_Minh`), not instants; compose them with `buildShowtimeStart`/`buildShowtimeEnd`.
 - Multi-feed pages **stream** — the page awaits only what it cannot paint without, every data block is an async section in its own `<Suspense>`:
@@ -75,7 +75,7 @@ Never run `pnpm build` while `pnpm dev` is running: both write `.next`, and Next
   6. Both device trees always render, so a block streamed into both gets one boundary per tree over the same memoized loader.
   7. `loading.tsx` is the fallback for the page segment only — it wraps `page.tsx`, NOT the `layout.tsx` in the same folder. A layout that awaits (e.g. `(sub)/tickets/[id]/layout.tsx`) needs its boundary in the **parent** segment, otherwise navigation into that subtree freezes with no fallback.
   8. The root layout does no network I/O. The inbox is not SSR-seeded: `NotificationProvider` reads it once after hydration (`isInboxLoading` covers the gap), removing a duplicate `GET /notifications` per load.
-  Route-by-route table (what each page awaits, which loader, which skeleton): `docs/architecture.md` §Streaming.
+     Route-by-route table (what each page awaits, which loader, which skeleton): `docs/architecture.md` §Streaming.
 
 ## BE admin surface (implemented, not yet consumed)
 

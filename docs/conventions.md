@@ -74,3 +74,15 @@
 - `touched` state + `showErrors = touched && !isValid` pattern is consistent across all forms.
 - Schemas wrapped in `useMemo(() => createSchema(translate), [translate])` to avoid re-creation on every render.
 - Existing schemas: `features/auth/schema.ts` (`createLoginSchema`, `createRegisterSchema`), `features/booking/schema.ts` (`createContactSchema`), `features/profile/schema.ts` (`createProfileSchema`, `createPasswordSchema`).
+
+## CSS standards (P5)
+
+- **Contrast**: `--color-text-muted` must stay ≥ 4.5:1 on `--color-surface-2` (the darkest text-bearing surface). `--color-border-strong` (`#6b6b6b`) is the token for form-control boundaries; `--color-border` is only for decorative dividers. Do not darken muted text by reusing `--color-text-muted` on a lighter surface without re-checking.
+- **Reduced motion**: `global.css` ships a `prefers-reduced-motion: reduce` block (`0.01ms`, not `none`, so `forwards` still fills final state). `.animate-fade-in` starts at `opacity: 0` and the block forces `opacity: 1` — never gate content visibility on an animation completing.
+- **Focus**: every `outline-none` input needs a `focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-gold)` replacement (or `focus-within:` on the wrapper, as `FormField` does). Tabbing must always show a ring.
+- **Mobile**: inputs ≥ 16px (`text-base`) to avoid iOS auto-zoom; fixed bottom bars use `pb-[calc(...+env(safe-area-inset-bottom))]`; horizontal scrollers use `overscroll-x-contain`.
+- **Two device trees**: `id={`review-${review.id}`}` (and similar deep-link anchors) exist on **one** tree only (desktop), otherwise the hash targets a `display:none` node. Keep `scroll-mt-24` where a sticky header would cover the target.
+- **Print**: hide chrome with `print:hidden`; resolve the two-tree duplication with `print:hidden` (mobile) + `print:block` (desktop). Never print both skins.
+- **Layering**: use the `z-nav`/`z-cta`/`z-overlay`/`z-toast`/`z-popover` tokens from `@theme` instead of `z-50`/`z-[9999]`. `z-10`/`z-20` inside a component is a local stacking context and stays numeric.
+- **Micro type**: `text-2xs` (0.625rem) / `text-3xs` (0.5625rem) instead of `text-[10px]`/`text-[9px]`, so the size scales with the browser font-size setting.
+- **Color scheme**: `:root { color-scheme: dark }` is set globally; admin theme overrides per scope. Do not patch `[color-scheme:dark]` ad hoc.
