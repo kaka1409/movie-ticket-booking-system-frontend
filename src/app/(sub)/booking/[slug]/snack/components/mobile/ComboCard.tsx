@@ -23,7 +23,7 @@ export default function ComboCard({
 
   return (
     <article
-      className={`${className} rounded-2xl overflow-hidden transition-all duration-200 bg-(--color-surface) border ${
+      className={`${className} rounded-2xl overflow-hidden transition duration-200 bg-(--color-surface) border ${
         isSelected
           ? "border-(--color-gold) shadow-[0_0_0_1px_rgba(255,204,77,0.12)]"
           : "border-(--color-border)"

@@ -17,7 +17,7 @@ export default function FailActions() {
   return (
     <>
       <div
-        className={`px-4 space-y-3 transition-all duration-700 delay-500 ${
+        className={`px-4 space-y-3 transition duration-700 delay-500 ${
           mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
         }`}
       >
@@ -31,7 +31,7 @@ export default function FailActions() {
       </div>
 
       <div
-        className={`px-4 pb-4 transition-all duration-700 delay-[600ms] ${
+        className={`px-4 pb-4 transition duration-700 delay-[600ms] ${
           mounted ? "opacity-100" : "opacity-0"
         }`}
       >

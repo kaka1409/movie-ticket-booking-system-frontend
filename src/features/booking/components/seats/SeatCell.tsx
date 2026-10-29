@@ -34,7 +34,7 @@ export default function SeatCell({
         }}
         aria-pressed={selected}
         aria-label={`${translate("booking.seats.sweetbox")} ${pairLabel}`}
-        className={`w-18.5 h-8 rounded-sm text-[11px] font-bold tracking-wide transition-all duration-150 active:scale-[0.95] ${
+        className={`w-18.5 h-8 rounded-sm text-[11px] font-bold tracking-wide transition duration-150 active:scale-[0.95] ${
           occupied
             ? "bg-(--color-surface-2) border border-(--color-border) text-(--color-text-muted) line-through cursor-not-allowed"
             : selected
@@ -69,7 +69,7 @@ export default function SeatCell({
       }}
       aria-pressed={selected}
       aria-label={`${translate("booking.seats.seat_label")} ${seat.col}`}
-      className={`relative w-6.5 h-6.5 rounded-sm text-[11px] font-bold transition-all duration-150 active:scale-[0.92] ${cls} ${
+      className={`relative w-6.5 h-6.5 rounded-sm text-[11px] font-bold transition duration-150 active:scale-[0.92] ${cls} ${
         originalIndicator && !selected ? "ring-1 ring-white/30" : ""
       }`}
     >

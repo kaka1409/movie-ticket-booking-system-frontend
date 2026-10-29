@@ -28,7 +28,7 @@ export default function PaymentQrScreen({
 
   return (
     <>
-      <div className="block md:hidden">
+      <div className="block md:hidden print:hidden">
         <PaymentQrMobile
           slug={slug}
           booking={booking}
@@ -38,7 +38,7 @@ export default function PaymentQrScreen({
           paymentMethods={paymentMethods}
         />
       </div>
-      <div className="hidden md:block">
+      <div className="hidden md:block print:block">
         <PaymentQrDesktop
           slug={slug}
           booking={booking}

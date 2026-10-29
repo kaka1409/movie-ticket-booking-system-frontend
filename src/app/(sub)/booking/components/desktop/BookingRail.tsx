@@ -59,7 +59,7 @@ export default function BookingRail({
                   className="object-cover"
                 />
               ) : (
-                <span className="flex h-full items-center px-1.5 text-[9px] leading-tight font-black tracking-tight uppercase text-(--color-text-muted)">
+                <span className="flex h-full items-center px-1.5 text-3xs leading-tight font-black tracking-tight uppercase text-(--color-text-muted)">
                   {movieSnapshot.title}
                 </span>
               )}
@@ -80,7 +80,7 @@ export default function BookingRail({
                 )}
               </p>
               {movieSnapshot.ageRating && (
-                <span className="mt-2 inline-block rounded-md border border-(--color-border) bg-(--color-surface-2) px-2.5 py-0.5 text-[10px] font-bold text-(--color-text-secondary)">
+                <span className="mt-2 inline-block rounded-md border border-(--color-border) bg-(--color-surface-2) px-2.5 py-0.5 text-2xs font-bold text-(--color-text-secondary)">
                   {movieSnapshot.ageRating}
                 </span>
               )}

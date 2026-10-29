@@ -38,7 +38,7 @@ export default function PaymentMethodCard({
         if (!method.enabled) return;
         onSelect(method);
       }}
-      className={`w-full flex items-center gap-4 px-4 py-4 rounded-2xl border transition-all duration-150 text-left ${
+      className={`w-full flex items-center gap-4 px-4 py-4 rounded-2xl border transition duration-150 text-left ${
         !method.enabled
           ? "bg-(--color-surface) border-(--color-border) opacity-55 cursor-not-allowed"
           : selected
@@ -47,7 +47,7 @@ export default function PaymentMethodCard({
       }`}
     >
       <div
-        className={`flex-shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-150 ${
+        className={`flex-shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center transition duration-150 ${
           selected
             ? "border-(--color-gold) bg-(--color-gold)"
             : "border-(--color-text-muted) bg-transparent"

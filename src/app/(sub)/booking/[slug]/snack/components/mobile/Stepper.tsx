@@ -20,7 +20,7 @@ export default function Stepper({
         onClick={onDecrement}
         disabled={value === 0}
         aria-label={translate("booking.snack.decrease_qty")}
-        className="w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-150 active:scale-90 disabled:opacity-30 disabled:cursor-not-allowed bg-(--color-border) text-(--color-text-secondary) hover:bg-(--color-gold)/20 hover:text-(--color-gold)"
+        className="w-8 h-8 rounded-lg flex items-center justify-center transition duration-150 active:scale-90 disabled:opacity-30 disabled:cursor-not-allowed bg-(--color-border) text-(--color-text-secondary) hover:bg-(--color-gold)/20 hover:text-(--color-gold)"
       >
         <Minus size={14} />
       </button>
@@ -33,7 +33,7 @@ export default function Stepper({
         type="button"
         onClick={onIncrement}
         aria-label={translate("booking.snack.increase_qty")}
-        className="w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-150 active:scale-90 bg-(--color-border) text-(--color-text-secondary) hover:bg-(--color-gold)/20 hover:text-(--color-gold)"
+        className="w-8 h-8 rounded-lg flex items-center justify-center transition duration-150 active:scale-90 bg-(--color-border) text-(--color-text-secondary) hover:bg-(--color-gold)/20 hover:text-(--color-gold)"
       >
         <Plus size={14} />
       </button>

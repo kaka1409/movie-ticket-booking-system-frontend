@@ -35,7 +35,7 @@ export default function TextInput({
       <div
         className={`
           flex items-center gap-3 px-4 py-3.5 rounded-2xl
-          bg-(--color-surface) border transition-all duration-150
+          bg-(--color-surface) border transition duration-150
           ${error ? "border-red-500/70" : focused ? "border-(--color-gold)/60" : "border-(--color-border)"}
         `}
       >

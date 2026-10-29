@@ -16,7 +16,7 @@ export default function SuccessHero() {
   return (
     <section className="flex items-center gap-6">
       <div
-        className={`relative flex shrink-0 items-center justify-center transition-all duration-700 ${
+        className={`relative flex shrink-0 items-center justify-center transition duration-700 ${
           mounted ? "scale-100 opacity-100" : "scale-50 opacity-0"
         }`}
       >
@@ -30,7 +30,7 @@ export default function SuccessHero() {
       </div>
 
       <div
-        className={`transition-all duration-700 delay-200 ${
+        className={`transition duration-700 delay-200 ${
           mounted ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
         }`}
       >

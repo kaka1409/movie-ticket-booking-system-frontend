@@ -29,7 +29,7 @@ function CountdownBannerSkeleton() {
 
 function BottomBarSkeleton() {
   return (
-    <div className="sticky bottom-0 z-50 px-4 pb-6 pt-3 bg-(--color-bg) border-t border-(--color-border)">
+    <div className="sticky bottom-0 z-cta px-4 pb-6 pt-3 bg-(--color-bg) border-t border-(--color-border)">
       <div className="flex items-center justify-between mb-3 px-1">
         <Skeleton className="h-3 w-32 rounded-full" />
         <Skeleton className="h-3 w-12 rounded-full" />

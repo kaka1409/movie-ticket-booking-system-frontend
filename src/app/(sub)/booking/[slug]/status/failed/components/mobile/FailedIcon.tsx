@@ -12,7 +12,7 @@ export default function FailedIcon({ reason }: { reason: string | null }) {
   return (
     <section className="flex flex-col items-center text-center px-6 gap-4">
       <div
-        className={`flex items-center justify-center transition-all duration-500 ${
+        className={`flex items-center justify-center transition duration-500 ${
           mounted ? "opacity-100 scale-100" : "opacity-0 scale-50"
         }`}
       >
@@ -30,7 +30,7 @@ export default function FailedIcon({ reason }: { reason: string | null }) {
       </div>
 
       <div
-        className={`transition-all duration-700 delay-200 ${
+        className={`transition duration-700 delay-200 ${
           mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
         }`}
       >

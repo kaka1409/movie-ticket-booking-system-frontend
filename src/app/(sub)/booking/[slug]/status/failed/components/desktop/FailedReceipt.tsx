@@ -50,7 +50,7 @@ export default function FailedReceipt({
 
   return (
     <div
-      className={`overflow-visible rounded-2xl border border-red-500/20 bg-(--color-surface) shadow-[0_0_0_1px_rgba(239,68,68,0.06)] transition-all duration-700 delay-300 ${
+      className={`overflow-visible rounded-2xl border border-red-500/20 bg-(--color-surface) shadow-[0_0_0_1px_rgba(239,68,68,0.06)] transition duration-700 delay-300 ${
         mounted ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
       }`}
     >
@@ -66,7 +66,7 @@ export default function FailedReceipt({
             {title}
           </h2>
           {ageRating && (
-            <span className="mt-3 inline-block rounded-md border border-(--color-border) bg-(--color-surface-2) px-2.5 py-0.5 text-[10px] font-bold text-(--color-text-secondary)">
+            <span className="mt-3 inline-block rounded-md border border-(--color-border) bg-(--color-surface-2) px-2.5 py-0.5 text-2xs font-bold text-(--color-text-secondary)">
               {ageRating}
             </span>
           )}
@@ -117,7 +117,7 @@ export default function FailedReceipt({
           >
             {paymentErrorCode(reason)}
           </Badge>
-          <span className="text-[10px] text-(--color-text-muted)">
+          <span className="text-2xs text-(--color-text-muted)">
             {translate("booking.status.failed.card_not_charged")}
           </span>
         </div>

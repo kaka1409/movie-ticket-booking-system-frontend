@@ -27,13 +27,13 @@ export default function SuccessSidePanel({
 
   return (
     <aside
-      className={`transition-all duration-700 delay-500 ${
+      className={`transition duration-700 delay-500 ${
         mounted ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
       }`}
     >
-      <div className="rounded-2xl border border-(--color-border) bg-(--color-surface) p-6">
+      <div className="rounded-2xl border border-(--color-border) bg-(--color-surface) p-6 print-keep">
         <div className="flex flex-col items-center gap-4 rounded-2xl bg-white p-6">
-          <QRCodeSVG value={qrValue} size={220} level="H" />
+          <QRCodeSVG value={qrValue} size={220} level="H" className="print-qr" />
           <p className="text-[11px] font-bold tracking-[0.2em] text-gray-500 uppercase">
             {translate("booking.common.scan_enter")}
           </p>

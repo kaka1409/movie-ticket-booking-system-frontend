@@ -22,7 +22,7 @@ export default function FoodItemCard({
 
   return (
     <div
-      className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
+      className={`flex items-center gap-3 px-4 py-3 rounded-xl transition duration-200 ${
         isSelected
           ? "bg-(--color-gold)/5 border border-(--color-gold)/30"
           : "border border-transparent"

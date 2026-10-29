@@ -47,7 +47,7 @@ export default function FailedOrderCard({
 
   return (
     <div
-      className={`mx-4 rounded-3xl overflow-visible bg-(--color-surface) border border-red-500/20 shadow-[0_0_0_1px_rgba(239,68,68,0.06)] transition-all duration-700 delay-300 ${
+      className={`mx-4 rounded-3xl overflow-visible bg-(--color-surface) border border-red-500/20 shadow-[0_0_0_1px_rgba(239,68,68,0.06)] transition duration-700 delay-300 ${
         mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
       }`}
     >
@@ -113,7 +113,7 @@ export default function FailedOrderCard({
           >
             {errorCode}
           </Badge>
-          <span className="text-[10px] text-white/60">
+          <span className="text-2xs text-white/60">
             {translate("booking.status.failed.card_not_charged")}
           </span>
         </div>

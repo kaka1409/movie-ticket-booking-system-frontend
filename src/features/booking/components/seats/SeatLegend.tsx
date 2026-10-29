@@ -6,7 +6,7 @@ function LegendItem({ color, label, icon }: { color: string; label: string; icon
   return (
     <div className="flex items-center gap-2">
       <div
-        className={`w-5 h-5 rounded-sm flex items-center justify-center text-[10px] font-bold text-(--color-text-muted) ${color}`}
+        className={`w-5 h-5 rounded-sm flex items-center justify-center text-2xs font-bold text-(--color-text-muted) ${color}`}
       >
         {icon}
       </div>

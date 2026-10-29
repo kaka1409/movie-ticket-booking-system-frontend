@@ -48,7 +48,7 @@ export default function TicketCard({
 
   return (
     <div
-      className={`mx-4 rounded-3xl overflow-visible bg-(--color-surface) border border-(--color-border) shadow-(--shadow-card) transition-all duration-700 delay-300 ${
+      className={`mx-4 rounded-3xl overflow-visible bg-(--color-surface) border border-(--color-border) shadow-(--shadow-card) transition duration-700 delay-300 print-keep ${
         mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
       }`}
     >
@@ -110,7 +110,7 @@ export default function TicketCard({
 
       <div className="px-4 pb-5 pt-4 flex flex-col items-center gap-3">
         <div className="flex flex-col items-center gap-4 px-6 py-6 rounded-2xl bg-white">
-          <QRCodeSVG value={qrValue} size={250} level="H" />
+          <QRCodeSVG value={qrValue} size={250} level="H" className="print-qr" />
           <p className="text-[11px] font-bold tracking-[0.2em] uppercase text-gray-500">
             {translate("booking.common.scan_enter")}
           </p>

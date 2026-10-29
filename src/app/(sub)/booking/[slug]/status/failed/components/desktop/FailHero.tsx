@@ -16,7 +16,7 @@ export default function FailHero({ reason }: { reason: string | null }) {
   return (
     <section className="flex items-center gap-6">
       <div
-        className={`flex shrink-0 items-center justify-center transition-all duration-500 ${
+        className={`flex shrink-0 items-center justify-center transition duration-500 ${
           mounted ? "scale-100 opacity-100" : "scale-50 opacity-0"
         }`}
       >
@@ -34,7 +34,7 @@ export default function FailHero({ reason }: { reason: string | null }) {
       </div>
 
       <div
-        className={`transition-all duration-700 delay-200 ${
+        className={`transition duration-700 delay-200 ${
           mounted ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
         }`}
       >

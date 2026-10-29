@@ -43,7 +43,7 @@ function ContactFields({ className }: { className: string }) {
       <div>
         <label
           htmlFor="full-name"
-          className="block text-[10px] font-bold tracking-[0.16em] uppercase text-(--color-text-muted) mb-1.5"
+          className="block text-2xs font-bold tracking-[0.16em] uppercase text-(--color-text-muted) mb-1.5"
         >
           {translate("booking.credentials.full_name")}
         </label>
@@ -62,7 +62,7 @@ function ContactFields({ className }: { className: string }) {
       <div>
         <label
           htmlFor="email"
-          className="block text-[10px] font-bold tracking-[0.16em] uppercase text-(--color-text-muted) mb-1.5"
+          className="block text-2xs font-bold tracking-[0.16em] uppercase text-(--color-text-muted) mb-1.5"
         >
           {translate("booking.credentials.email")}
         </label>
@@ -83,7 +83,7 @@ function ContactFields({ className }: { className: string }) {
       <div>
         <label
           htmlFor="phone"
-          className="block text-[10px] font-bold tracking-[0.16em] uppercase text-(--color-text-muted) mb-1.5"
+          className="block text-2xs font-bold tracking-[0.16em] uppercase text-(--color-text-muted) mb-1.5"
         >
           {translate("booking.credentials.phone")}
         </label>

@@ -46,7 +46,7 @@ export default function ReceiptCard({
 
   return (
     <div
-      className={`overflow-visible rounded-2xl border border-(--color-border) bg-(--color-surface) shadow-(--shadow-card) transition-all duration-700 delay-300 ${
+      className={`overflow-visible rounded-2xl border border-(--color-border) bg-(--color-surface) shadow-(--shadow-card) transition duration-700 delay-300 ${
         mounted ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
       }`}
     >
@@ -62,7 +62,7 @@ export default function ReceiptCard({
             {title}
           </h2>
           {ageRating && (
-            <span className="mt-3 inline-block rounded-md border border-(--color-border) bg-(--color-surface-2) px-2.5 py-0.5 text-[10px] font-bold text-(--color-text-secondary)">
+            <span className="mt-3 inline-block rounded-md border border-(--color-border) bg-(--color-surface-2) px-2.5 py-0.5 text-2xs font-bold text-(--color-text-secondary)">
               {ageRating}
             </span>
           )}

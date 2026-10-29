@@ -21,7 +21,7 @@ export default function OrderSummary() {
   return (
     <div className="mx-4 rounded-2xl bg-(--color-surface) border border-(--color-border) overflow-visible">
       <div className="px-4 pt-3 pb-2">
-        <p className="text-[9px] font-black tracking-[0.18em] uppercase text-(--color-text-muted)">
+        <p className="text-3xs font-black tracking-[0.18em] uppercase text-(--color-text-muted)">
           {translate("booking.common.ticket_details")}
         </p>
       </div>
@@ -45,7 +45,7 @@ export default function OrderSummary() {
           </div>
         </div>
         {movie?.ageRating && (
-          <span className="flex-shrink-0 px-2.5 py-1 rounded-lg text-[10px] font-bold border border-(--color-border) text-(--color-text-secondary) bg-(--color-surface-2)">
+          <span className="flex-shrink-0 px-2.5 py-1 rounded-lg text-2xs font-bold border border-(--color-border) text-(--color-text-secondary) bg-(--color-surface-2)">
             {movie.ageRating}
           </span>
         )}

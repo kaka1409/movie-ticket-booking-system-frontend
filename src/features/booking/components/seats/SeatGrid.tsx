@@ -36,7 +36,7 @@ export default function SeatGrid({
     <>
       {showScreen && (
         <div className="flex flex-col items-center gap-1 mb-4">
-          <span className="text-[10px] font-bold tracking-[0.2em] text-(--color-gold) uppercase">
+          <span className="text-2xs font-bold tracking-[0.2em] text-(--color-gold) uppercase">
             {translate("booking.common.screen")}
           </span>
           <svg width="300" height="24" viewBox="0 0 260 24" fill="none">
@@ -44,7 +44,7 @@ export default function SeatGrid({
           </svg>
         </div>
       )}
-      <div className="px-2 overflow-x-auto scrollbar-hide">
+      <div className="px-2 overflow-x-auto overscroll-x-contain scrollbar-hide">
         <div className="inline-flex flex-col justify-center gap-2 w-full">
           {rows.map((row) => (
             <div key={row.label} className="flex items-center gap-1 justify-between">

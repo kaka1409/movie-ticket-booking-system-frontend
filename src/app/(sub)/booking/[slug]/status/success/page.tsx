@@ -50,7 +50,7 @@ export default async function SuccessPage({
       <PaidBookingReset booking={booking} />
 
       {/* Mobile */}
-      <div className="block md:hidden">
+      <div className="block md:hidden print:hidden">
         <div className="min-h-dvh max-w-md mx-auto flex flex-col bg-(--color-bg)">
           <main className="flex-1 overflow-y-auto pb-8 pt-4 space-y-6">
             <SuccessIcon
@@ -69,7 +69,7 @@ export default async function SuccessPage({
       </div>
 
       {/* Desktop */}
-      <div className="hidden md:block">
+      <div className="hidden md:block print:block">
         <DesktopSuccessContent
           movie={movie}
           booking={booking}

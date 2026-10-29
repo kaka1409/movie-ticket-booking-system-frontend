@@ -31,11 +31,11 @@ export default function MovieSummary({ movie }: { movie: Movie }) {
           {movie.genre}
         </p>
         <div className="flex items-center gap-2">
-          <span className="px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-(--color-surface-2) text-(--color-text-secondary) border border-(--color-border)">
+          <span className="px-2.5 py-0.5 rounded-md text-2xs font-bold bg-(--color-surface-2) text-(--color-text-secondary) border border-(--color-border)">
             {movie.ageRating}
           </span>
           {movie.rating > 0 && (
-            <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-(--color-surface-2) text-(--color-gold) border border-(--color-border)">
+            <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-md text-2xs font-bold bg-(--color-surface-2) text-(--color-gold) border border-(--color-border)">
               <Star size={10} className="fill-current" />
               {movie.rating}
             </span>

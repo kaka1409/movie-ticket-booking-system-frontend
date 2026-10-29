@@ -20,7 +20,7 @@ export default function FailSidePanel() {
 
   return (
     <aside
-      className={`space-y-4 transition-all duration-700 delay-500 ${
+      className={`space-y-4 transition duration-700 delay-500 ${
         mounted ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
       }`}
     >

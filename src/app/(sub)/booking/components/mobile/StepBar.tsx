@@ -9,12 +9,12 @@ export default function StepBar({ current }: { current: number }) {
   return (
     <div className="px-4 pt-4 pb-3">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-[10px] font-bold tracking-widest text-(--color-text-muted)">
+        <span className="text-2xs font-bold tracking-widest text-(--color-text-muted)">
           {translate("booking.step")
             .replace("{current}", String(current))
             .replace("{total}", String(BOOKING_STEP_KEYS.length))}
         </span>
-        <span className="text-[10px] font-bold tracking-widest text-(--color-gold)">
+        <span className="text-2xs font-bold tracking-widest text-(--color-gold)">
           {translate(BOOKING_STEP_KEYS[current - 1])}
         </span>
       </div>
