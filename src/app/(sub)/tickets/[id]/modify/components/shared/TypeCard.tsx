@@ -26,7 +26,7 @@ export default function TypeCard({
       type="button"
       onClick={() => onSelect(type)}
       aria-pressed={isSelected}
-      className={`flex w-full items-center gap-4 rounded-2xl border px-4 py-4 text-left transition-all duration-150 active:scale-[0.99] ${
+      className={`flex w-full items-center gap-4 rounded-2xl border px-4 py-4 text-left transition duration-150 active:scale-[0.99] ${
         isSelected
           ? "border-(--color-gold) bg-(--color-surface) shadow-[0_0_0_1px_rgba(255,204,77,0.12)]"
           : "border-(--color-border) bg-(--color-surface) hover:border-(--color-gold)/30"
@@ -54,7 +54,7 @@ export default function TypeCard({
       </div>
 
       <div
-        className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-all duration-150 ${
+        className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition duration-150 ${
           isSelected ? "border-(--color-gold) bg-(--color-gold)" : "border-(--color-text-muted)"
         }`}
       >

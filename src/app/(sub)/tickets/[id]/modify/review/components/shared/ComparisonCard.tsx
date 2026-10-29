@@ -39,7 +39,7 @@ export default function ComparisonCard() {
           </div>
           <div className="p-4 space-y-3">
             <div className="flex items-start gap-3">
-              <span className="px-2 py-0.5 rounded text-[10px] font-bold tracking-wide bg-(--color-surface-2) text-(--color-text-muted) flex-shrink-0">
+              <span className="px-2 py-0.5 rounded text-2xs font-bold tracking-wide bg-(--color-surface-2) text-(--color-text-muted) flex-shrink-0">
                 {translate("tickets.modify.review.current")}
               </span>
               <div className="flex-1 min-w-0">
@@ -53,7 +53,7 @@ export default function ComparisonCard() {
               <ArrowRightLeft size={14} className="text-(--color-gold)" />
             </div>
             <div className="flex items-start gap-3">
-              <span className="px-2 py-0.5 rounded text-[10px] font-bold tracking-wide bg-(--color-gold)/10 text-(--color-gold) flex-shrink-0">
+              <span className="px-2 py-0.5 rounded text-2xs font-bold tracking-wide bg-(--color-gold)/10 text-(--color-gold) flex-shrink-0">
                 {translate("tickets.modify.review.new")}
               </span>
               <div className="flex-1 min-w-0">
@@ -79,7 +79,7 @@ export default function ComparisonCard() {
           </div>
           <div className="p-4 space-y-3">
             <div className="flex items-start gap-3">
-              <span className="px-2 py-0.5 rounded text-[10px] font-bold tracking-wide bg-(--color-surface-2) text-(--color-text-muted) flex-shrink-0">
+              <span className="px-2 py-0.5 rounded text-2xs font-bold tracking-wide bg-(--color-surface-2) text-(--color-text-muted) flex-shrink-0">
                 {translate("tickets.modify.review.current")}
               </span>
               <div className="flex-1 min-w-0">
@@ -95,7 +95,7 @@ export default function ComparisonCard() {
               <ArrowRightLeft size={14} className="text-(--color-gold)" />
             </div>
             <div className="flex items-start gap-3">
-              <span className="px-2 py-0.5 rounded text-[10px] font-bold tracking-wide bg-(--color-gold)/10 text-(--color-gold) flex-shrink-0">
+              <span className="px-2 py-0.5 rounded text-2xs font-bold tracking-wide bg-(--color-gold)/10 text-(--color-gold) flex-shrink-0">
                 {translate("tickets.modify.review.new")}
               </span>
               <div className="flex-1 min-w-0">

@@ -91,7 +91,7 @@ export default function TicketQrPanel() {
           <button
             type="submit"
             disabled={isCancelPending}
-            className="flex w-full items-center justify-center gap-2 rounded-2xl border border-red-500/60 bg-transparent py-3.5 text-xs font-extrabold tracking-widest text-red-400 uppercase transition-all duration-150 hover:bg-red-500/10 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-40"
+            className="flex w-full items-center justify-center gap-2 rounded-2xl border border-red-500/60 bg-transparent py-3.5 text-xs font-extrabold tracking-widest text-red-400 uppercase transition duration-150 hover:bg-red-500/10 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-40"
           >
             {isCancelPending ? (
               <Loader2 size={14} className="animate-spin" />

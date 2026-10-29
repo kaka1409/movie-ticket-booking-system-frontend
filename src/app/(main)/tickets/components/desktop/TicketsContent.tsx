@@ -10,6 +10,7 @@ import Tabs from "@/components/ui/Tabs";
 import Pager from "@/app/(main)/tickets/components/mobile/Pager";
 import PastTicketCard from "./PastTicketCard";
 import UpcomingTicketCard from "./UpcomingTicketCard";
+import LocaleTransition from "@/components/ui/LocaleTransition";
 
 type TicketTab = "upcoming" | "past";
 
@@ -88,11 +89,13 @@ export default function TicketsContent({
               )}
             </EmptyState>
           ) : (
-            <div className="grid gap-6 lg:grid-cols-2">
-              {tab === "upcoming"
-                ? upcoming.map((ticket) => <UpcomingTicketCard key={ticket.id} ticket={ticket} />)
-                : past.map((ticket) => <PastTicketCard key={ticket.id} ticket={ticket} />)}
-            </div>
+            <LocaleTransition>
+              <div className="grid gap-6 lg:grid-cols-2">
+                {tab === "upcoming"
+                  ? upcoming.map((ticket) => <UpcomingTicketCard key={ticket.id} ticket={ticket} />)
+                  : past.map((ticket) => <PastTicketCard key={ticket.id} ticket={ticket} />)}
+              </div>
+            </LocaleTransition>
           )}
         </div>
 

@@ -27,7 +27,7 @@ export default function UpcomingTicketCard({ ticket }: { ticket: UpcomingTicket 
 
   return (
     <>
-      <article className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-(--color-gold)/20 bg-(--color-surface) transition-all duration-200 hover:border-(--color-gold)/40 hover:shadow-xl">
+      <article className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-(--color-gold)/20 bg-(--color-surface) transition duration-200 hover:border-(--color-gold)/40 hover:shadow-xl">
         {/* Main Ticket Area */}
         <div className="flex gap-5 p-5">
           {/* Movie Poster & Status Ribbon */}
@@ -40,13 +40,13 @@ export default function UpcomingTicketCard({ ticket }: { ticket: UpcomingTicket 
               className="object-cover transition-transform duration-300 group-hover:scale-105"
             />
             {ticket.isTransferring ? (
-              <span className="absolute inset-x-0 top-0 bg-black/80 px-1 py-1.5 text-center text-[10px] font-black tracking-wider text-(--color-gold) uppercase backdrop-blur-xs">
+              <span className="absolute inset-x-0 top-0 bg-black/80 px-1 py-1.5 text-center text-2xs font-black tracking-wider text-(--color-gold) uppercase backdrop-blur-xs">
                 {translate("tickets.transfer.pending_badge")}
               </span>
             ) : (
               <TicketCountdown startsAtMs={ticket.startsAtMs} endsAtMs={ticket.endsAtMs} />
             )}
-            <span className="absolute bottom-2 left-2 text-[9px] font-black tracking-tight text-white/20 uppercase">
+            <span className="absolute bottom-2 left-2 text-3xs font-black tracking-tight text-white/20 uppercase">
               {ticket.movie}
             </span>
           </div>
@@ -64,7 +64,7 @@ export default function UpcomingTicketCard({ ticket }: { ticket: UpcomingTicket 
                   </Badge>
                 )}
                 {ticket.isTransferring && (
-                  <span className="rounded-full border border-(--color-gold)/40 bg-(--color-gold)/10 px-2.5 py-0.5 text-[10px] font-bold text-(--color-gold)">
+                  <span className="rounded-full border border-(--color-gold)/40 bg-(--color-gold)/10 px-2.5 py-0.5 text-2xs font-bold text-(--color-gold)">
                     {ticket.transferRecipientName
                       ? `→ ${ticket.transferRecipientName}`
                       : translate("tickets.transfer.pending_badge")}
@@ -116,7 +116,7 @@ export default function UpcomingTicketCard({ ticket }: { ticket: UpcomingTicket 
         {/* Ticket Stub Footer & Quick Actions */}
         <div className="flex items-center justify-between gap-4 bg-(--color-surface-2)/40 px-5 py-3.5">
           <div className="min-w-0">
-            <p className="text-[10px] font-bold tracking-widest text-(--color-gold)/80 uppercase">
+            <p className="text-2xs font-bold tracking-widest text-(--color-gold)/80 uppercase">
               {translate("tickets.booking_id")}
             </p>
             <p className="truncate font-mono text-xs font-bold text-white/90">#{ticket.id}</p>

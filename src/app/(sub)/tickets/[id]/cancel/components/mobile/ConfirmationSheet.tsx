@@ -50,7 +50,7 @@ export default function ConfirmationSheet({
             onClick={onConfirm}
             className="
               w-full py-4 rounded-2xl font-extrabold text-sm tracking-widest uppercase border border-red-500
-              bg-transparent text-red-500 active:scale-[0.98] transition-all duration-150
+              bg-transparent text-red-500 active:scale-[0.98] transition duration-150
             "
           >
             {translate("tickets.cancel.confirm_cta")}
@@ -61,7 +61,7 @@ export default function ConfirmationSheet({
             onClick={onCancel}
             className="
               w-full py-3.5 rounded-2xl font-extrabold text-sm tracking-widest uppercase
-              text-black bg-(--color-gold) active:scale-[0.98] transition-all duration-150
+              text-black bg-(--color-gold) active:scale-[0.98] transition duration-150
             "
           >
             {translate("tickets.cancel.keep_ticket")}

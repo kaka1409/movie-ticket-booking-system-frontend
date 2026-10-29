@@ -22,7 +22,7 @@ export default function CurrentShowtime() {
             {ticket.datetime}
           </p>
         </div>
-        <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold tracking-wide uppercase bg-(--color-gold)/10 text-(--color-gold)">
+        <span className="px-2.5 py-1 rounded-lg text-2xs font-bold tracking-wide uppercase bg-(--color-gold)/10 text-(--color-gold)">
           {ticket.format}
         </span>
       </div>

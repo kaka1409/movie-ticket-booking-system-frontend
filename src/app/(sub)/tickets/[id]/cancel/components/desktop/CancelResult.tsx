@@ -83,7 +83,7 @@ export default function CancelResult({
             </p>
           </div>
 
-          <span className="inline-block rounded-lg border border-amber-500/20 bg-amber-500/10 px-2.5 py-1 text-[10px] font-bold tracking-wide text-amber-400 uppercase">
+          <span className="inline-block rounded-lg border border-amber-500/20 bg-amber-500/10 px-2.5 py-1 text-2xs font-bold tracking-wide text-amber-400 uppercase">
             {translate("tickets.cancel.success_processing")}
           </span>
         </div>

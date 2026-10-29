@@ -31,7 +31,7 @@ export default function TicketHeader() {
 
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="min-w-0">
-          <p className="text-[10px] font-bold tracking-[0.18em] text-(--color-gold) uppercase">
+          <p className="text-2xs font-bold tracking-[0.18em] text-(--color-gold) uppercase">
             {translate("tickets.detail_title")}
           </p>
           <h1 className="mt-1 text-3xl font-black tracking-tight text-white">{ticket.movie}</h1>

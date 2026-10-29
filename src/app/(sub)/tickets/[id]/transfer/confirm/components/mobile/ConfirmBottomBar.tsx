@@ -14,7 +14,7 @@ export default function ConfirmBottomBar({ recipient }: { recipient: Recipient }
   const { formAction, isPending, error } = useTransferSubmit();
 
   return (
-    <div className="sticky bottom-0 z-50 bg-(--color-bg) border-t border-(--color-border) px-4 pb-6 pt-3">
+    <div className="sticky bottom-0 z-cta bg-(--color-bg) border-t border-(--color-border) px-4 pb-6 pt-3">
       {error && (
         <p role="alert" className="mb-2 text-center text-xs text-red-400">
           {error}
@@ -25,7 +25,7 @@ export default function ConfirmBottomBar({ recipient }: { recipient: Recipient }
           type="button"
           onClick={() => router.back()}
           disabled={isPending}
-          className="flex-1 flex items-center justify-center py-4 rounded-2xl font-extrabold text-sm tracking-widest uppercase transition-all duration-150 active:scale-[0.98] border border-(--color-border) text-(--color-text-secondary) bg-transparent disabled:opacity-40"
+          className="flex-1 flex items-center justify-center py-4 rounded-2xl font-extrabold text-sm tracking-widest uppercase transition duration-150 active:scale-[0.98] border border-(--color-border) text-(--color-text-secondary) bg-transparent disabled:opacity-40"
         >
           {translate("tickets.transfer.cancel")}
         </button>

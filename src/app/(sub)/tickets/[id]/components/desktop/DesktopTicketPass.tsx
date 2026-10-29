@@ -63,7 +63,7 @@ export default function DesktopTicketPass() {
                 endsAtMs={(ticket as UpcomingTicket).endsAtMs}
               />
             )}
-            <span className="absolute bottom-2 left-2 text-[9px] font-black tracking-tight text-white/20 uppercase">
+            <span className="absolute bottom-2 left-2 text-3xs font-black tracking-tight text-white/20 uppercase">
               {ticket.movie}
             </span>
           </div>
@@ -94,7 +94,7 @@ export default function DesktopTicketPass() {
                 <div className="flex items-center gap-2.5 rounded-xl bg-(--color-surface-2)/60 p-3">
                   <CalendarDays size={18} className="shrink-0 text-(--color-gold)" />
                   <div>
-                    <p className="text-[10px] font-bold text-(--color-text-muted) uppercase tracking-wider">
+                    <p className="text-2xs font-bold text-(--color-text-muted) uppercase tracking-wider">
                       {translate("home.quick_booking.date")}
                     </p>
                     <p className="font-bold text-white">{ticket.datetime}</p>
@@ -104,7 +104,7 @@ export default function DesktopTicketPass() {
                 <div className="flex items-center gap-2.5 rounded-xl bg-(--color-surface-2)/60 p-3">
                   <MapPin size={18} className="shrink-0 text-(--color-gold)" />
                   <div className="min-w-0">
-                    <p className="text-[10px] font-bold text-(--color-text-muted) uppercase tracking-wider">
+                    <p className="text-2xs font-bold text-(--color-text-muted) uppercase tracking-wider">
                       {translate("tickets.cinema_venue")}
                     </p>
                     <p className="truncate font-bold text-white">
@@ -129,7 +129,7 @@ export default function DesktopTicketPass() {
                     className="flex items-center gap-1.5 rounded-lg border border-(--color-gold)/40 bg-(--color-gold)/10 px-3 py-1.5 text-xs font-bold text-white"
                   >
                     <span className="text-(--color-gold)">{seatItem.label}</span>
-                    <span className="text-[10px] text-(--color-text-muted)">({seatItem.type})</span>
+                    <span className="text-2xs text-(--color-text-muted)">({seatItem.type})</span>
                   </span>
                 ))}
               </div>

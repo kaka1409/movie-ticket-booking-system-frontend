@@ -33,7 +33,7 @@ export default function CancelResult({
       <main className="flex-1 overflow-y-auto pb-8 pt-4 px-4 space-y-6">
         <section className="flex flex-col items-center text-center gap-4">
           <div
-            className={`flex items-center justify-center transition-all duration-700 ${
+            className={`flex items-center justify-center transition duration-700 ${
               mounted ? "opacity-100 scale-100" : "opacity-0 scale-50"
             }`}
           >
@@ -54,7 +54,7 @@ export default function CancelResult({
           </div>
 
           <div
-            className={`transition-all duration-700 delay-200 ${
+            className={`transition duration-700 delay-200 ${
               mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
             }`}
           >
@@ -68,7 +68,7 @@ export default function CancelResult({
         </section>
 
         <div
-          className={`rounded-2xl bg-(--color-surface) border border-(--color-border) p-5 space-y-4 transition-all duration-700 delay-300 ${
+          className={`rounded-2xl bg-(--color-surface) border border-(--color-border) p-5 space-y-4 transition duration-700 delay-300 ${
             mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
           }`}
         >
@@ -100,14 +100,14 @@ export default function CancelResult({
           </div>
 
           <div className="flex items-center gap-2 pt-1">
-            <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold tracking-wide uppercase bg-amber-500/10 text-amber-400 border border-amber-500/20">
+            <span className="px-2.5 py-1 rounded-lg text-2xs font-bold tracking-wide uppercase bg-amber-500/10 text-amber-400 border border-amber-500/20">
               {translate("tickets.cancel.success_processing")}
             </span>
           </div>
         </div>
 
         <div
-          className={`space-y-3 transition-all duration-700 delay-500 ${
+          className={`space-y-3 transition duration-700 delay-500 ${
             mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
           }`}
         >
@@ -137,7 +137,7 @@ export default function CancelResult({
     <main className="flex-1 overflow-y-auto pb-8 pt-4 px-4 space-y-6">
       <section className="flex flex-col items-center text-center gap-4">
         <div
-          className={`flex items-center justify-center transition-all duration-500 ${
+          className={`flex items-center justify-center transition duration-500 ${
             mounted ? "opacity-100 scale-100" : "opacity-0 scale-50"
           }`}
         >
@@ -155,7 +155,7 @@ export default function CancelResult({
         </div>
 
         <div
-          className={`transition-all duration-700 delay-200 ${
+          className={`transition duration-700 delay-200 ${
             mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
           }`}
         >
@@ -169,7 +169,7 @@ export default function CancelResult({
       </section>
 
       <div
-        className={`space-y-3 transition-all duration-700 delay-500 ${
+        className={`space-y-3 transition duration-700 delay-500 ${
           mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
         }`}
       >
@@ -178,7 +178,7 @@ export default function CancelResult({
         <button
           type="button"
           onClick={() => router.push("/help")}
-          className="w-full flex items-center justify-center gap-2.5 py-4 rounded-2xl font-extrabold text-sm tracking-widest uppercase border border-(--color-border) text-(--color-text-secondary) bg-transparent active:scale-[0.98] transition-all duration-150"
+          className="w-full flex items-center justify-center gap-2.5 py-4 rounded-2xl font-extrabold text-sm tracking-widest uppercase border border-(--color-border) text-(--color-text-secondary) bg-transparent active:scale-[0.98] transition duration-150"
         >
           <HeadphonesIcon size={17} />
           {translate("tickets.cancel.failed_contact_support")}

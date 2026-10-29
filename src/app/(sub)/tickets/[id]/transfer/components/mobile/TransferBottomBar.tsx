@@ -22,7 +22,7 @@ export default function TransferBottomBar() {
   };
 
   return (
-    <div className="sticky bottom-0 z-50 bg-(--color-bg) border-t border-(--color-border) px-4 pb-6 pt-3 space-y-3">
+    <div className="sticky bottom-0 z-cta bg-(--color-bg) border-t border-(--color-border) px-4 pb-6 pt-3 space-y-3">
       <p className="flex items-start gap-2 text-xs text-(--color-text-muted)">
         <AlertTriangle size={14} className="shrink-0 mt-0.5 text-(--color-gold)" />
         {translate("tickets.transfer.warning")}
@@ -32,7 +32,7 @@ export default function TransferBottomBar() {
         type="button"
         onClick={handleContinue}
         disabled={!isValid}
-        className={`flex items-center justify-center gap-2.5 w-full py-4 rounded-2xl font-extrabold text-sm tracking-widest uppercase transition-all duration-150 active:scale-[0.98] ${
+        className={`flex items-center justify-center gap-2.5 w-full py-4 rounded-2xl font-extrabold text-sm tracking-widest uppercase transition duration-150 active:scale-[0.98] ${
           isValid
             ? "bg-(--color-gold) text-(--color-bg) shadow-(--shadow-glow)"
             : "bg-(--color-surface) text-(--color-text-muted) border border-(--color-border) cursor-not-allowed"

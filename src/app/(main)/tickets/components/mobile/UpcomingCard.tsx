@@ -25,13 +25,13 @@ export default function UpcomingCard({ ticket }: { ticket: UpcomingTicket }) {
             className="object-cover"
           />
           {ticket.isTransferring ? (
-            <span className="absolute inset-x-0 top-0 bg-black/70 px-1 py-1 text-center text-[9px] font-black uppercase leading-tight tracking-tight text-(--color-gold) backdrop-blur-[2px]">
+            <span className="absolute inset-x-0 top-0 bg-black/70 px-1 py-1 text-center text-3xs font-black uppercase leading-tight tracking-tight text-(--color-gold) backdrop-blur-[2px]">
               {translate("tickets.transfer.pending_badge")}
             </span>
           ) : (
             <TicketCountdown startsAtMs={ticket.startsAtMs} endsAtMs={ticket.endsAtMs} />
           )}
-          <span className="absolute bottom-2 left-2 text-[9px] font-black uppercase tracking-tight text-white/15">
+          <span className="absolute bottom-2 left-2 text-3xs font-black uppercase tracking-tight text-white/15">
             {ticket.movie}
           </span>
         </div>
@@ -85,7 +85,7 @@ export default function UpcomingCard({ ticket }: { ticket: UpcomingTicket }) {
           href={`/tickets/${ticket.id}`}
           className="
           flex items-center justify-center px-4 py-3 rounded-xl font-bold text-sm w-full
-          transition-all duration-150 active:scale-[0.97] border border-(--color-gold) text-(--color-gold) bg-transparent"
+          transition duration-150 active:scale-[0.97] border border-(--color-gold) text-(--color-gold) bg-transparent"
         >
           {translate("tickets.view_details")}
         </Link>

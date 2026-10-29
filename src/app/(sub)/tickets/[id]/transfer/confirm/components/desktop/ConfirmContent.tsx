@@ -29,7 +29,7 @@ export default function ConfirmContent({ recipient }: { recipient: Recipient }) 
   return (
     <div className="mx-auto w-full max-w-7xl px-6 py-8 lg:px-8">
       <header className="min-w-0">
-        <p className="text-[10px] font-bold tracking-[0.18em] text-(--color-gold) uppercase">
+        <p className="text-2xs font-bold tracking-[0.18em] text-(--color-gold) uppercase">
           {translate("tickets.transfer.confirm_title")}
         </p>
         <h1 className="mt-1.5 text-[26px] font-black tracking-tight text-white">{ticket.movie}</h1>

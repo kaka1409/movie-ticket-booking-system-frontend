@@ -35,11 +35,11 @@ export default function TicketInfo() {
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 px-4 pb-4">
             <div className="flex items-center gap-2 mb-1.5">
-              <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-black/80 text-(--color-text-secondary) border border-(--color-border)">
+              <span className="px-2.5 py-1 rounded-full text-2xs font-bold bg-black/80 text-(--color-text-secondary) border border-(--color-border)">
                 {ticket.format}
               </span>
               {ticket?.ageRating && (
-                <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-black/80 text-(--color-text-secondary) border border-(--color-border)">
+                <span className="px-2.5 py-1 rounded-full text-2xs font-bold bg-black/80 text-(--color-text-secondary) border border-(--color-border)">
                   {ticket.ageRating}
                 </span>
               )}
@@ -132,7 +132,7 @@ export default function TicketInfo() {
               <button
                 type="submit"
                 disabled={isCancelPending}
-                className="px-5 py-2.5 rounded-xl font-extrabold text-xs tracking-widest uppercase transition-all duration-150 active:scale-[0.98] border border-red-500/60 text-red-400 bg-transparent disabled:opacity-40"
+                className="px-5 py-2.5 rounded-xl font-extrabold text-xs tracking-widest uppercase transition duration-150 active:scale-[0.98] border border-red-500/60 text-red-400 bg-transparent disabled:opacity-40"
               >
                 {isCancelPending ? (
                   <Loader2 size={14} className="animate-spin" />

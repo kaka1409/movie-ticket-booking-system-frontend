@@ -39,7 +39,7 @@ export default function TicketActions() {
           <>
             <Link
               href={`/tickets/${ticket.id}/transfer/payment`}
-              className="w-full flex items-center justify-center gap-2.5 py-4 rounded-xl font-extrabold text-sm tracking-wide transition-all duration-150 active:scale-[0.98] bg-(--color-gold) text-(--color-bg) shadow-(--shadow-glow)"
+              className="w-full flex items-center justify-center gap-2.5 py-4 rounded-xl font-extrabold text-sm tracking-wide transition duration-150 active:scale-[0.98] bg-(--color-gold) text-(--color-bg) shadow-(--shadow-glow)"
             >
               <CreditCard size={18} />
               {translate("tickets.transfer.incoming_awaiting_cta")}
@@ -54,7 +54,7 @@ export default function TicketActions() {
             <button
               type="submit"
               disabled={isBusy}
-              className="w-full flex items-center justify-center gap-2.5 py-4 rounded-xl font-extrabold text-sm tracking-wide transition-all duration-150 active:scale-[0.98] bg-(--color-gold) text-(--color-bg) shadow-(--shadow-glow) disabled:opacity-50"
+              className="w-full flex items-center justify-center gap-2.5 py-4 rounded-xl font-extrabold text-sm tracking-wide transition duration-150 active:scale-[0.98] bg-(--color-gold) text-(--color-bg) shadow-(--shadow-glow) disabled:opacity-50"
             >
               {isAccepting ? <Loader2 size={18} className="animate-spin" /> : <Check size={18} />}
               {translate("tickets.transfer.accept")}
@@ -67,7 +67,7 @@ export default function TicketActions() {
           <button
             type="submit"
             disabled={isBusy}
-            className="w-full flex items-center justify-center gap-2.5 py-4 rounded-xl font-extrabold text-sm tracking-wide transition-all duration-150 active:scale-[0.98] border border-(--color-border) text-(--color-text-secondary) bg-transparent disabled:opacity-50"
+            className="w-full flex items-center justify-center gap-2.5 py-4 rounded-xl font-extrabold text-sm tracking-wide transition duration-150 active:scale-[0.98] border border-(--color-border) text-(--color-text-secondary) bg-transparent disabled:opacity-50"
           >
             {isDeclining ? <Loader2 size={18} className="animate-spin" /> : <X size={18} />}
             {translate("tickets.transfer.decline")}
@@ -92,7 +92,7 @@ export default function TicketActions() {
       {!hasOpenTransfer && hasScannableQr && (
         <button
           type="button"
-          className="w-full flex items-center justify-center gap-2.5 py-4 rounded-xl font-extrabold text-sm tracking-wide transition-all duration-150 active:scale-[0.98] bg-(--color-gold) text-(--color-bg) shadow-(--shadow-glow)"
+          className="w-full flex items-center justify-center gap-2.5 py-4 rounded-xl font-extrabold text-sm tracking-wide transition duration-150 active:scale-[0.98] bg-(--color-gold) text-(--color-bg) shadow-(--shadow-glow)"
         >
           <Download size={18} />
           {translate("tickets.detail.download_ticket")}
@@ -104,7 +104,7 @@ export default function TicketActions() {
           <button
             type="button"
             onClick={() => setIsActionsOpen(true)}
-            className="w-full flex items-center justify-center gap-2.5 py-4 rounded-xl font-extrabold text-sm tracking-wide transition-all duration-150 active:scale-[0.98] border border-(--color-border) text-(--color-text-secondary) bg-transparent"
+            className="w-full flex items-center justify-center gap-2.5 py-4 rounded-xl font-extrabold text-sm tracking-wide transition duration-150 active:scale-[0.98] border border-(--color-border) text-(--color-text-secondary) bg-transparent"
           >
             <MoreHorizontal size={18} />
             {translate("tickets.detail.more_actions")}

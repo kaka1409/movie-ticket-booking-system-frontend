@@ -67,7 +67,7 @@ export default function CancelContent() {
       </Link>
 
       <header className="min-w-0">
-        <p className="text-[10px] font-bold tracking-[0.18em] text-(--color-gold) uppercase">
+        <p className="text-2xs font-bold tracking-[0.18em] text-(--color-gold) uppercase">
           {translate("tickets.cancel.title")}
         </p>
         <h1 className="mt-1.5 text-[26px] font-black tracking-tight text-white">{ticket.movie}</h1>

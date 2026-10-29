@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { lockBodyScroll } from "@/libs/scroll-lock";
 import { X, Printer } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import QRCode from "@/app/(sub)/tickets/[id]/components/mobile/QRCode";
@@ -24,6 +25,8 @@ export default function QuickQrModal({
   useEffect(() => {
     if (!isOpen) return;
 
+    const releaseScrollLock = lockBodyScroll();
+
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         onClose();
@@ -32,6 +35,7 @@ export default function QuickQrModal({
 
     document.addEventListener("keydown", handleKeyDown);
     return () => {
+      releaseScrollLock();
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [isOpen, onClose]);
@@ -43,9 +47,9 @@ export default function QuickQrModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-overlay flex items-center justify-center p-4">
       <div
-        className="absolute inset-0 bg-black/75 backdrop-blur-xs"
+        className="absolute inset-0 cursor-pointer bg-black/75 backdrop-blur-xs"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -73,7 +77,7 @@ export default function QuickQrModal({
           <h3 className="mt-1 text-base font-extrabold text-white truncate px-6">{ticket.movie}</h3>
           <p className="mt-0.5 text-xs text-(--color-text-muted)">{ticket.datetime}</p>
           <p className="text-xs text-(--color-text-secondary)">
-            {ticket.cinema} {ticket.room ? `· ${ticket.room}` : ""}
+            {ticket.cinema} {ticket.room ? `Â· ${ticket.room}` : ""}
           </p>
         </div>
 
@@ -91,7 +95,7 @@ export default function QuickQrModal({
 
         <div className="mt-4 flex items-center justify-between border-t border-(--color-border) pt-4">
           <div>
-            <p className="text-[10px] font-bold text-(--color-text-muted) uppercase tracking-wider">
+            <p className="text-2xs font-bold text-(--color-text-muted) uppercase tracking-wider">
               {translate("tickets.booking_id")}
             </p>
             <p className="text-xs font-mono font-bold text-white">{ticket.id}</p>

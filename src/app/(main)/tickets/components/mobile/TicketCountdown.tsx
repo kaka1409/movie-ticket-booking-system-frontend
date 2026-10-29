@@ -74,7 +74,7 @@ export default function TicketCountdown({
   }
 
   return (
-    <span className="absolute inset-x-0 top-0 flex items-center justify-center gap-1 bg-black/70 px-1 py-1 text-center text-[9px] font-black uppercase leading-tight tracking-tight text-white backdrop-blur-[2px]">
+    <span className="absolute inset-x-0 top-0 flex items-center justify-center gap-1 bg-black/70 px-1 py-1 text-center text-3xs font-black uppercase leading-tight tracking-tight text-white backdrop-blur-[2px]">
       <Clock size={10} className="shrink-0" />
       <span>{label}</span>
     </span>
