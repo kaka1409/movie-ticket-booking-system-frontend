@@ -67,7 +67,7 @@ export default function ComingSoon({
               type="button"
               onClick={showPrevious}
               disabled={startIndex === 0}
-              className={`flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-(--color-border) bg-(--color-surface) text-white transition-all ${
+              className={`flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-(--color-border) bg-(--color-surface) text-white transition ${
                 startIndex === 0
                   ? "cursor-not-allowed opacity-40"
                   : "hover:border-(--color-gold) hover:text-(--color-gold)"
@@ -80,7 +80,7 @@ export default function ComingSoon({
               type="button"
               onClick={showNext}
               disabled={startIndex >= maxIndex}
-              className={`flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-(--color-border) bg-(--color-surface) text-white transition-all ${
+              className={`flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-(--color-border) bg-(--color-surface) text-white transition ${
                 startIndex >= maxIndex
                   ? "cursor-not-allowed opacity-40"
                   : "hover:border-(--color-gold) hover:text-(--color-gold)"
@@ -103,7 +103,7 @@ export default function ComingSoon({
               onMouseEnter={(event) => handleCardMouseEnter(movie, event)}
               onMouseMove={handleCardMouseMove}
               onMouseLeave={handleCardMouseLeave}
-              className="group relative overflow-hidden rounded-(--radius-lg) border border-(--color-border) bg-(--color-surface) transition-all duration-300 hover:-translate-y-1 hover:border-(--color-gold)/40"
+              className="group relative overflow-hidden rounded-(--radius-lg) border border-(--color-border) bg-(--color-surface) transition duration-300 hover:-translate-y-1 hover:border-(--color-gold)/40"
             >
               <div className="relative aspect-[16/10] w-full overflow-hidden bg-(--color-surface-2)">
                 <Image
@@ -116,15 +116,17 @@ export default function ComingSoon({
 
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
 
-                <div className="absolute top-3 left-3">
-                  <span className="rounded-(--radius-sm) bg-(--color-gold) px-2.5 py-1 text-[11px] font-extrabold tracking-wider uppercase text-black shadow">
-                    {formatDate(movie.releaseDate, locale)}
-                  </span>
-                </div>
+                {movie.releaseDate && (
+                  <div className="absolute top-3 left-3">
+                    <span className="rounded-(--radius-sm) bg-(--color-gold) px-2.5 py-1 text-[11px] font-extrabold tracking-wider uppercase text-black shadow">
+                      {formatDate(movie.releaseDate, locale)}
+                    </span>
+                  </div>
+                )}
 
                 <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between gap-3">
                   <div className="min-w-0 flex-1">
-                    <p className="mb-0.5 text-[10px] font-bold tracking-widest uppercase text-(--color-gold)">
+                    <p className="mb-0.5 text-2xs font-bold tracking-widest uppercase text-(--color-gold)">
                       {movie.genre}
                     </p>
                     <Link href={`/movies/${movie.slug}`}>
@@ -143,7 +145,7 @@ export default function ComingSoon({
                         removeFailed: translate("profile.wishlist.toast_remove_failed"),
                       } satisfies WishlistFeedback)
                     }
-                    className={`flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full border transition-all ${
+                    className={`flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full border transition ${
                       wished
                         ? "border-(--color-gold) bg-(--color-gold) text-black shadow-md"
                         : "border-white/20 bg-black/60 text-white backdrop-blur-xs hover:border-(--color-gold) hover:text-(--color-gold)"
@@ -175,7 +177,7 @@ export default function ComingSoon({
       <div className="flex justify-center">
         <Link
           href="/movies?status=coming_soon"
-          className="rounded-(--radius-pill) border border-(--color-border) bg-(--color-surface) px-8 py-2.5 text-[13px] font-semibold text-white transition-all hover:border-(--color-gold) hover:text-(--color-gold)"
+          className="rounded-(--radius-pill) border border-(--color-border) bg-(--color-surface) px-8 py-2.5 text-[13px] font-semibold text-white transition hover:border-(--color-gold) hover:text-(--color-gold)"
         >
           {translate("home.desktop.coming_soon_desc")}
         </Link>

@@ -100,7 +100,7 @@ export default function HeroSection({
             onClick={goToPrevious}
             className="
               absolute left-4 top-1/2 z-20 -translate-y-1/2 cursor-pointer rounded-full border border-white/15 
-              bg-black/50 p-2.5 text-white backdrop-blur-sm transition-all duration-300
+              bg-black/50 p-2.5 text-white backdrop-blur-sm transition duration-300
               opacity-80 hover:opacity-100 hover:bg-black/75 hover:scale-110
             "
             aria-label={translate("home.desktop.prev_slide")}
@@ -112,7 +112,7 @@ export default function HeroSection({
             onClick={goToNext}
             className="
               absolute right-4 top-1/2 z-20 -translate-y-1/2 cursor-pointer rounded-full border border-white/15 
-              bg-black/50 p-2.5 text-white backdrop-blur-sm transition-all duration-300
+              bg-black/50 p-2.5 text-white backdrop-blur-sm transition duration-300
               opacity-80 hover:opacity-100 hover:bg-black/75 hover:scale-110
             "
             aria-label={translate("home.desktop.next_slide")}
@@ -122,7 +122,7 @@ export default function HeroSection({
 
           <div className="absolute inset-0 z-10 flex flex-col justify-center pl-12 pr-6 md:pl-16 md:pr-8 max-w-[520px] lg:max-w-[620px]">
             <div className="mb-4 flex flex-wrap items-center gap-2.5">
-              <span className="rounded-(--radius-sm) bg-(--color-gold) px-2.5 py-0.5 text-[10px] font-extrabold tracking-widest uppercase text-black">
+              <span className="rounded-(--radius-sm) bg-(--color-gold) px-2.5 py-0.5 text-2xs font-extrabold tracking-widest uppercase text-black">
                 {movie.label}
               </span>
               <span className="flex items-center gap-1 text-xs font-bold text-(--color-gold)">
@@ -137,7 +137,7 @@ export default function HeroSection({
               {movie.ageRating && (
                 <>
                   <span className="text-[11px] text-(--color-text-muted)">•</span>
-                  <span className="rounded-(--radius-xs) border border-white/20 px-1.5 py-0.2 text-[10px] font-bold text-(--color-text-secondary)">
+                  <span className="rounded-(--radius-xs) border border-white/20 px-1.5 py-0.2 text-2xs font-bold text-(--color-text-secondary)">
                     {movie.ageRating}
                   </span>
                 </>
@@ -155,14 +155,14 @@ export default function HeroSection({
             <div className="flex flex-wrap items-center gap-3.5">
               <Link
                 href={`/movies/${movie.slug}`}
-                className="cursor-pointer rounded-(--radius-md) bg-(--color-gold) px-7 py-3 text-[13px] font-extrabold tracking-wide text-black no-underline transition-all hover:bg-(--color-gold-light) hover:scale-102"
+                className="cursor-pointer rounded-(--radius-md) bg-(--color-gold) px-7 py-3 text-[13px] font-extrabold tracking-wide text-black no-underline transition hover:bg-(--color-gold-light) hover:scale-102"
               >
                 {translate("home.desktop.book_now")}
               </Link>
               <button
                 type="button"
                 onClick={() => setIsTrailerOpen(true)}
-                className="flex cursor-pointer items-center gap-2 rounded-(--radius-md) border border-white/20 bg-white/10 px-6 py-3 text-[13px] font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/20 hover:scale-102"
+                className="flex cursor-pointer items-center gap-2 rounded-(--radius-md) border border-white/20 bg-white/10 px-6 py-3 text-[13px] font-semibold text-white backdrop-blur-sm transition hover:bg-white/20 hover:scale-102"
               >
                 <Play size={14} fill="currentColor" />
                 {translate("home.desktop.watch_trailer")}
@@ -177,7 +177,7 @@ export default function HeroSection({
                   key={i}
                   type="button"
                   aria-label={`${translate("home.desktop.go_to_slide")} ${i + 1}`}
-                  className="h-1.5 cursor-pointer rounded-full transition-all duration-300"
+                  className="h-1.5 cursor-pointer rounded-full transition duration-300"
                   style={{
                     width: i === safeIndex ? 24 : 8,
                     background: i === safeIndex ? "var(--color-gold)" : "rgba(255,255,255,0.3)",

@@ -28,7 +28,7 @@ const SelectCol: React.FC<SelectColProps> = ({
   disabled,
 }) => (
   <div className="flex flex-1 flex-col gap-1 min-w-0">
-    <span className="flex items-center gap-1.5 text-[10px] font-bold tracking-widest uppercase text-(--color-gold)">
+    <span className="flex items-center gap-1.5 text-2xs font-bold tracking-widest uppercase text-(--color-gold)">
       {icon} {label}
     </span>
     <div className="relative">
@@ -53,7 +53,7 @@ const SelectCol: React.FC<SelectColProps> = ({
         <ChevronDown size={14} />
       </span>
     </div>
-    {hint && <span className="text-[10px] text-(--color-text-muted) truncate">{hint}</span>}
+    {hint && <span className="text-2xs text-(--color-text-muted) truncate">{hint}</span>}
   </div>
 );
 
@@ -195,7 +195,7 @@ export default function QuickBookingBar({
           {canBook ? (
             <Link
               href={`/booking/${effectiveMovieSlug}/cinema?showtimeId=${selectedSlotId}`}
-              className="cursor-pointer whitespace-nowrap rounded-(--radius-md) bg-(--color-gold) px-6 py-2.5 text-[13px] font-extrabold tracking-wide text-black no-underline transition-all hover:bg-(--color-gold-light) hover:scale-102"
+              className="cursor-pointer whitespace-nowrap rounded-(--radius-md) bg-(--color-gold) px-6 py-2.5 text-[13px] font-extrabold tracking-wide text-black no-underline transition hover:bg-(--color-gold-light) hover:scale-102"
             >
               {translate("home.desktop.quick_book_now")}
             </Link>

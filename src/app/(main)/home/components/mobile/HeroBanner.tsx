@@ -102,7 +102,7 @@ export default function HeroBanner({
             <span className="rounded-(--radius-sm) bg-(--color-gold) px-1.5 py-0.5 text-[7px] font-bold tracking-widest text-black">
               {currentMovie.label}
             </span>
-            <span className="flex items-center gap-0.5 text-[10px] font-bold text-(--color-gold)">
+            <span className="flex items-center gap-0.5 text-2xs font-bold text-(--color-gold)">
               <Star size={9} fill="currentColor" /> {currentMovie.rating}
             </span>
           </div>
@@ -117,7 +117,7 @@ export default function HeroBanner({
           {movies.map((_, movieIndex) => (
             <div
               key={movieIndex}
-              className="h-1.5 rounded-full transition-all duration-300"
+              className="h-1.5 rounded-full transition duration-300"
               style={{
                 width: movieIndex === safeIndex ? 16 : 5,
                 background:

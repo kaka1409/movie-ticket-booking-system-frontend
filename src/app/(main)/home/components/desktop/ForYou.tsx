@@ -7,6 +7,7 @@ import { useLocale } from "@/contexts/LocaleContext";
 import { useAuth } from "@/contexts/AuthContext";
 import type { Movie } from "@/features/movies/types";
 import { useMoviePreview } from "@/features/movies/moviePreviewContext";
+import LocaleTransition from "@/components/ui/LocaleTransition";
 
 const REASONS = [
   "Top Rated by Critics",
@@ -53,42 +54,44 @@ export default function ForYou({ movies }: { movies: Movie[] }) {
           </p>
         </div>
 
-        <div className="grid grid-cols-3 gap-4 md:grid-cols-4 lg:grid-cols-5">
-          {recommendedMovies.map((movie, index) => (
-            <Link key={movie.id} href={`/movies/${movie.slug}`} className="group block">
-              <article
-                onMouseEnter={(event) => handleCardMouseEnter(movie, event)}
-                onMouseMove={handleCardMouseMove}
-                onMouseLeave={handleCardMouseLeave}
-                className="cursor-pointer"
-              >
-                <div className="relative mb-2.5 aspect-[2/3] w-full overflow-hidden rounded-(--radius-md) border border-(--color-border) bg-(--color-surface-2) transition-all duration-300 group-hover:-translate-y-1 group-hover:border-(--color-gold)/50 group-hover:shadow-lg">
-                  <Image
-                    src={movie.src || "/images/movie-poster-placeholder.jpg"}
-                    alt={movie.title}
-                    fill
-                    sizes="(max-width: 1200px) 20vw, 220px"
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 transition-opacity group-hover:opacity-80" />
+        <LocaleTransition>
+          <div className="grid grid-cols-3 gap-4 md:grid-cols-4 lg:grid-cols-5">
+            {recommendedMovies.map((movie, index) => (
+              <Link key={movie.id} href={`/movies/${movie.slug}`} className="group block">
+                <article
+                  onMouseEnter={(event) => handleCardMouseEnter(movie, event)}
+                  onMouseMove={handleCardMouseMove}
+                  onMouseLeave={handleCardMouseLeave}
+                  className="cursor-pointer"
+                >
+                  <div className="relative mb-2.5 aspect-[2/3] w-full overflow-hidden rounded-(--radius-md) border border-(--color-border) bg-(--color-surface-2) transition duration-300 group-hover:-translate-y-1 group-hover:border-(--color-gold)/50 group-hover:shadow-lg">
+                    <Image
+                      src={movie.src || "/images/movie-poster-placeholder.jpg"}
+                      alt={movie.title}
+                      fill
+                      sizes="(max-width: 1200px) 20vw, 220px"
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 transition-opacity group-hover:opacity-80" />
 
-                  {movie.rating > 0 && (
-                    <div className="absolute bottom-2 left-2 flex items-center gap-1 rounded-(--radius-sm) bg-black/70 px-1.5 py-0.5 text-[10px] font-bold text-(--color-gold) backdrop-blur-xs">
-                      <Star size={10} fill="currentColor" /> {movie.rating}
-                    </div>
-                  )}
-                </div>
+                    {movie.rating > 0 && (
+                      <div className="absolute bottom-2 left-2 flex items-center gap-1 rounded-(--radius-sm) bg-black/70 px-1.5 py-0.5 text-2xs font-bold text-(--color-gold) backdrop-blur-xs">
+                        <Star size={10} fill="currentColor" /> {movie.rating}
+                      </div>
+                    )}
+                  </div>
 
-                <h3 className="truncate text-xs font-bold text-white transition-colors group-hover:text-(--color-gold)">
-                  {movie.title}
-                </h3>
-                <p className="mt-0.5 truncate text-[10px] font-semibold uppercase tracking-wider text-(--color-text-muted)">
-                  {REASONS[index % REASONS.length]}
-                </p>
-              </article>
-            </Link>
-          ))}
-        </div>
+                  <h3 className="truncate text-xs font-bold text-white transition-colors group-hover:text-(--color-gold)">
+                    {movie.title}
+                  </h3>
+                  <p className="mt-0.5 truncate text-2xs font-semibold uppercase tracking-wider text-(--color-text-muted)">
+                    {REASONS[index % REASONS.length]}
+                  </p>
+                </article>
+              </Link>
+            ))}
+          </div>
+        </LocaleTransition>
       </div>
     </section>
   );
