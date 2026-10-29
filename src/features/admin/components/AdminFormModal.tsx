@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, type ReactNode } from "react";
+import { lockBodyScroll } from "@/libs/scroll-lock";
 import { X } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import ErrorAlert from "@/components/ui/ErrorAlert";
@@ -50,11 +51,10 @@ export default function AdminFormModal({
     if (!dialog.open) dialog.showModal();
 
     // The top layer does not block page scrolling by itself.
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    const releaseScrollLock = lockBodyScroll();
 
     return () => {
-      document.body.style.overflow = previousOverflow;
+      releaseScrollLock();
       if (dialog.open) dialog.close();
     };
   }, [isOpen]);

@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { useLocale } from "@/contexts/LocaleContext";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import ErrorAlert from "@/components/ui/ErrorAlert";
+import { resolveAdminError } from "../errorMessages";
 import type { AdminActionResult } from "../types";
 
 /**
@@ -66,7 +67,7 @@ export default function AdminDeleteDialog({
         return;
       }
 
-      setError(result.error);
+      setError(resolveAdminError(result, translate));
     });
   };
 

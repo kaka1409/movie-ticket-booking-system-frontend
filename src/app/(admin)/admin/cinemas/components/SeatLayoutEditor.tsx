@@ -420,7 +420,7 @@ export default function SeatLayoutEditor({
               <div className="space-y-1.5 overflow-x-auto overscroll-x-contain rounded-xl border border-(--color-border) bg-(--color-surface-2) p-3">
                 {previewRows.map((previewRow, rowIndex) => (
                   <div key={rowIndex} className="flex items-center gap-2">
-                    <span className="w-6 shrink-0 text-center text-[10px] font-bold text-(--color-text-muted)">
+                    <span className="w-6 shrink-0 text-center text-2xs font-bold text-(--color-text-muted)">
                       {previewRow.label || "—"}
                     </span>
                     <div className="flex flex-wrap gap-1">
@@ -428,7 +428,7 @@ export default function SeatLayoutEditor({
                         <span
                           key={seat.number}
                           title={seat.typeName}
-                          className="flex h-6 w-6 items-center justify-center rounded text-[9px] font-bold text-(--color-on-accent)"
+                          className="flex h-6 w-6 items-center justify-center rounded text-3xs font-bold text-(--color-on-accent)"
                           style={{
                             backgroundColor: seat.typeName.toLowerCase().includes("sweet")
                               ? "var(--color-gold)"
@@ -446,7 +446,7 @@ export default function SeatLayoutEditor({
                   </div>
                 ))}
 
-                <div className="mt-2 flex flex-wrap gap-3 text-[10px] text-(--color-text-muted)">
+                <div className="mt-2 flex flex-wrap gap-3 text-2xs text-(--color-text-muted)">
                   {(seatTypes ?? []).map((type) => (
                     <span key={type.id} className="flex items-center gap-1">
                       <span

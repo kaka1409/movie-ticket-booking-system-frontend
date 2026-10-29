@@ -356,6 +356,7 @@ export interface AdminReview {
   rating: number;
   comment: string;
   createdAt: string;
+  deletedAt?: string;
   movie: {
     id: string;
     slug: string;

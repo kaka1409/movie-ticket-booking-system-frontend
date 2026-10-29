@@ -19,7 +19,7 @@ export default function AdminDashboardLinks() {
     <section aria-labelledby="admin-quick-actions">
       <h2
         id="admin-quick-actions"
-        className="mb-2.5 text-[10px] font-bold tracking-[0.18em] text-(--color-text-muted) uppercase"
+        className="mb-2.5 text-2xs font-bold tracking-[0.18em] text-(--color-text-muted) uppercase"
       >
         {translate("admin.dashboard.quick_actions")}
       </h2>
@@ -30,7 +30,7 @@ export default function AdminDashboardLinks() {
             key={group.labelKey}
             className="rounded-2xl border border-(--color-border) bg-(--color-surface) p-3"
           >
-            <p className="px-1 pb-1.5 text-[10px] font-bold tracking-[0.16em] text-(--color-text-muted) uppercase">
+            <p className="px-1 pb-1.5 text-2xs font-bold tracking-[0.16em] text-(--color-text-muted) uppercase">
               {translate(group.labelKey)}
             </p>
 

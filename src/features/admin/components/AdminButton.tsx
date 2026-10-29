@@ -59,7 +59,7 @@ export default function AdminButton({
       aria-label={children ? undefined : label}
       aria-busy={isLoading || undefined}
       title={title ?? label}
-      className={`inline-flex shrink-0 cursor-pointer items-center justify-center rounded-xl font-bold tracking-wider uppercase transition-all duration-150 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50 ${VARIANT_CLASSES[variant]} ${SIZE_CLASSES[size]} ${className}`}
+      className={`inline-flex shrink-0 cursor-pointer items-center justify-center rounded-xl font-bold tracking-wider uppercase transition duration-150 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50 ${VARIANT_CLASSES[variant]} ${SIZE_CLASSES[size]} ${className}`}
     >
       {isLoading ? (
         <Loader2 size={14} className="animate-spin" aria-hidden />

@@ -27,7 +27,7 @@ export default function AdminPageHeader({
     <header className="mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
       <div className="min-w-0">
         {eyebrowKey && (
-          <p className="text-[10px] font-bold tracking-[0.18em] text-(--color-text-muted) uppercase">
+          <p className="text-2xs font-bold tracking-[0.18em] text-(--color-text-muted) uppercase">
             {translate(eyebrowKey)}
           </p>
         )}

@@ -181,7 +181,7 @@ export default function MovieCastDialog({
               editingCastId === castItem.castId ? "bg-(--color-gold)/10" : ""
             }`}
           >
-            <span className="w-6 shrink-0 text-center text-[10px] font-bold text-(--color-text-muted) tabular-nums">
+            <span className="w-6 shrink-0 text-center text-2xs font-bold text-(--color-text-muted) tabular-nums">
               {castItem.sortOrder}
             </span>
 

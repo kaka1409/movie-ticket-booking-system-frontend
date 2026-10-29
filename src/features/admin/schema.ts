@@ -42,6 +42,7 @@ export function createCatalogSchema(translate: Translate) {
 export type AdminCatalogFormValues = z.infer<ReturnType<typeof createCatalogSchema>>;
 
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+const TIME_PATTERN = /^([01]\d|2[0-3]):[0-5]\d$/;
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const CATEGORY_TOKEN_PATTERN = /^[a-z][a-z0-9_-]*$/;
 
@@ -219,4 +220,21 @@ export function createRoomSchema(translate: Translate) {
   });
 }
 
-export type AdminRoomFormValues = z.infer<ReturnType<typeof createRoomSchema>>;
+/** Showtime create/edit payload. */
+export function createShowtimeSchema(translate: Translate) {
+  return z.object({
+    movieSlug: z.string().min(1, translate("admin.showtimes.movie_required")),
+    roomId: z.string().min(1, translate("admin.showtimes.room_required")),
+    formatId: z.string().min(1, translate("admin.showtimes.format_required")),
+    date: z
+      .string()
+      .trim()
+      .refine((value) => DATE_PATTERN.test(value), translate("admin.showtimes.date_invalid")),
+    startTime: z
+      .string()
+      .trim()
+      .refine((value) => TIME_PATTERN.test(value), translate("admin.showtimes.time_invalid")),
+  });
+}
+
+export type AdminShowtimeFormValues = z.infer<ReturnType<typeof createShowtimeSchema>>;

@@ -22,7 +22,7 @@ export const ADMIN_SIDEBAR_COLLAPSED_PX = 72;
 export const ADMIN_CARD_CLASS = "rounded-2xl border border-(--color-border) bg-(--color-surface)";
 
 export const ADMIN_LABEL_CLASS =
-  "text-[10px] font-bold tracking-[0.16em] text-(--color-text-muted) uppercase";
+  "text-2xs font-bold tracking-[0.16em] text-(--color-text-muted) uppercase";
 
 /** Text inputs, selects and textareas — native controls inherit the theme. */
 export const ADMIN_INPUT_CLASS =
