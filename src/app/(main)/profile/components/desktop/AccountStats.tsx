@@ -32,13 +32,13 @@ export default function AccountStats({
         <Link
           key={key}
           href={href}
-          className="group relative overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-surface) p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-(--color-gold)/50 hover:shadow-lg"
+          className="group relative overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-surface) p-5 transition duration-200 hover:-translate-y-0.5 hover:border-(--color-gold)/50 hover:shadow-lg"
         >
           <div className="flex items-center justify-between">
             <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-(--color-surface-2) text-(--color-gold) transition-colors group-hover:bg-(--color-gold)/15">
               <Icon size={19} />
             </span>
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-(--color-surface-2)/60 text-(--color-text-muted) transition-all duration-200 group-hover:bg-(--color-gold)/20 group-hover:text-(--color-gold)">
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-(--color-surface-2)/60 text-(--color-text-muted) transition duration-200 group-hover:bg-(--color-gold)/20 group-hover:text-(--color-gold)">
               <ArrowUpRight size={15} />
             </span>
           </div>

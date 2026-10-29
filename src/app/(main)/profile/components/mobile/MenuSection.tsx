@@ -15,7 +15,7 @@ export default function MenuSection({ labelKey, items }: { labelKey: string; ite
 
   return (
     <div className="px-4">
-      <p className="text-[10px] font-bold tracking-[0.18em] uppercase mb-2 ml-1 text-(--color-text-muted)">
+      <p className="text-2xs font-bold tracking-[0.18em] uppercase mb-2 ml-1 text-(--color-text-muted)">
         {translate(labelKey)}
       </p>
 

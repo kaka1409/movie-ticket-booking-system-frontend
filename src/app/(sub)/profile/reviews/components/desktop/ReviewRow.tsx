@@ -31,7 +31,7 @@ export default function ReviewRow({
   return (
     <article
       data-review-card
-      className="group flex flex-col gap-4 rounded-2xl border border-(--color-border) bg-(--color-surface) p-5 shadow-sm transition-all duration-200 hover:border-(--color-gold)/40 hover:shadow-md sm:flex-row sm:items-start"
+      className="group flex flex-col gap-4 rounded-2xl border border-(--color-border) bg-(--color-surface) p-5 shadow-sm transition duration-200 hover:border-(--color-gold)/40 hover:shadow-md sm:flex-row sm:items-start"
     >
       {/* Movie Poster */}
       <Link

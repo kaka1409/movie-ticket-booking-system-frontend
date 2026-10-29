@@ -83,7 +83,7 @@ export default function ProfileContent({
             <dl className="grid gap-4 sm:grid-cols-2">
               {personalDetails.map((detail) => (
                 <div key={detail.label} className="min-w-0">
-                  <dt className="text-[10px] font-bold uppercase tracking-widest text-(--color-text-muted)">
+                  <dt className="text-2xs font-bold uppercase tracking-widest text-(--color-text-muted)">
                     {detail.label}
                   </dt>
                   <dd className="mt-1 text-sm font-semibold text-(--color-text-primary)">

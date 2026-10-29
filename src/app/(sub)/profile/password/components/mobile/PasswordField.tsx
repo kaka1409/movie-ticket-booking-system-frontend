@@ -34,7 +34,7 @@ export default function PasswordField({
       <div
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
-        className={`flex items-center gap-3 rounded-xl border bg-(--color-surface) px-4 py-3.5 transition-all duration-150 ${
+        className={`flex items-center gap-3 rounded-xl border bg-(--color-surface) px-4 py-3.5 transition duration-150 ${
           error
             ? "border-red-500/70"
             : focused

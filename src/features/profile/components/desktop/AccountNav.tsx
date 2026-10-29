@@ -45,7 +45,7 @@ export default function AccountNav() {
               className={`flex shrink-0 items-center gap-2 rounded-(--radius-pill) border px-4 py-2 text-xs font-bold transition-colors ${
                 isActive
                   ? "border-(--color-gold)/50 bg-(--color-gold)/10 text-(--color-gold)"
-                  : "border-(--color-border) text-(--color-text-muted) hover:border-(--color-gold)/40 hover:text-(--color-gold-light)"
+                  : "border-(--color-border) text-(--color-text-primary) hover:border-(--color-gold)/40 hover:text-(--color-gold)"
               }`}
             >
               <section.Icon size={14} aria-hidden />
@@ -83,7 +83,7 @@ export default function AccountNav() {
               >
                 <p
                   aria-hidden
-                  className="px-2.5 pb-1 text-[9px] font-bold tracking-widest text-(--color-text-muted) uppercase"
+                  className="px-2.5 pb-1 text-3xs font-bold tracking-widest text-(--color-text-muted) uppercase"
                 >
                   {translate(`profile.${group}`)}
                 </p>
@@ -97,14 +97,14 @@ export default function AccountNav() {
                       className={`group flex items-center gap-3 rounded-xl px-2.5 py-2 text-[13px] font-semibold no-underline transition-colors duration-150 ${
                         isActive
                           ? "bg-(--color-surface-2) text-(--color-gold)"
-                          : "text-(--color-text-secondary) hover:bg-(--color-surface-2) hover:text-(--color-gold-light)"
+                          : "text-(--color-text-primary) hover:bg-(--color-surface-2) hover:text-(--color-gold)"
                       }`}
                     >
                       <span
                         className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg transition-colors duration-150 ${
                           isActive
                             ? "bg-(--color-gold)/15 text-(--color-gold)"
-                            : "bg-(--color-surface-2) text-(--color-text-secondary) group-hover:bg-(--color-gold)/15 group-hover:text-(--color-gold)"
+                            : "bg-(--color-surface-2) text-(--color-text-primary) group-hover:bg-(--color-gold)/15 group-hover:text-(--color-gold)"
                         }`}
                       >
                         <section.Icon size={14} aria-hidden />

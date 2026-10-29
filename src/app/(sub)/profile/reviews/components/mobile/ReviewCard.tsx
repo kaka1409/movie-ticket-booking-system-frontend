@@ -69,7 +69,7 @@ export default function ReviewCard({
             </span>
           </div>
 
-          <span className="inline-block w-fit text-[10px] font-bold tracking-wide uppercase text-(--color-gold) bg-(--color-gold)/10 rounded-full px-2 py-0.5">
+          <span className="inline-block w-fit text-2xs font-bold tracking-wide uppercase text-(--color-gold) bg-(--color-gold)/10 rounded-full px-2 py-0.5">
             {review.movie.genre}
           </span>
 

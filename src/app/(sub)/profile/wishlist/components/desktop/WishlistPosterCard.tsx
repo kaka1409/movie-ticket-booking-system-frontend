@@ -26,7 +26,7 @@ export default function WishlistPosterCard({
   const { translate } = useLocale();
 
   return (
-    <article className="group overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-surface) shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-(--color-gold)/50 hover:shadow-lg flex flex-col justify-between">
+    <article className="group overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-surface) shadow-sm transition duration-200 hover:-translate-y-1 hover:border-(--color-gold)/50 hover:shadow-lg flex flex-col justify-between">
       <div className="relative">
         <Link href={`/movies/${movie.slug}`}>
           <div className="relative aspect-[2/3] w-full overflow-hidden bg-(--color-surface-2)">

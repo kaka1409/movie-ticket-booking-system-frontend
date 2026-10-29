@@ -115,7 +115,7 @@ export default function WishlistContent({ initialItems }: { initialItems: Wishli
                 key={tab}
                 type="button"
                 onClick={() => setActiveTab(tab)}
-                className={`flex items-center gap-1.5 rounded-xl border px-3.5 py-2 text-xs font-bold transition-all duration-150 active:scale-95 ${
+                className={`flex items-center gap-1.5 rounded-xl border px-3.5 py-2 text-xs font-bold transition duration-150 active:scale-95 ${
                   isActive
                     ? "border-(--color-gold) bg-(--color-gold)/15 text-(--color-gold)"
                     : "border-(--color-border) bg-(--color-surface-2) text-(--color-text-secondary) hover:border-(--color-gold)/40 hover:text-white"
@@ -123,7 +123,7 @@ export default function WishlistContent({ initialItems }: { initialItems: Wishli
               >
                 <span>{translate(`profile.wishlist.filter_${tab}`)}</span>
                 <span
-                  className={`rounded-md px-1.5 py-0.5 text-[10px] font-black ${
+                  className={`rounded-md px-1.5 py-0.5 text-2xs font-black ${
                     isActive
                       ? "bg-(--color-gold) text-black"
                       : "bg-(--color-surface) text-(--color-text-muted)"

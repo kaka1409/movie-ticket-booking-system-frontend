@@ -26,7 +26,7 @@ export default function AccountShell({
   return (
     <div className="min-w-0">
       <header className="min-w-0">
-        <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-(--color-gold)">
+        <p className="text-2xs font-bold uppercase tracking-[0.18em] text-(--color-gold)">
           {translate("profile.area_label")}
         </p>
         <div className="mt-1.5 flex flex-wrap items-end justify-between gap-4">
