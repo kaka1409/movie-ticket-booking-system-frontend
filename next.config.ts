@@ -37,7 +37,7 @@ const nextConfig: NextConfig = {
     })),
   },
   // Dev-only LAN origins; never ship these to production.
-  ...(isDev ? { allowedDevOrigins: ["10.25.33.35", "192.168.88.165"] } : {}),
+  ...(isDev ? { allowedDevOrigins: ["10.25.33.35", "192.168.88.165", "192.168.1.9"] } : {}),
   async rewrites() {
     return [
       {
