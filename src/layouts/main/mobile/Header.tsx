@@ -12,7 +12,7 @@ export default function Header() {
   const { unreadCount, isInboxLoading } = useNotifications();
 
   return (
-    <header className="sticky bg-(--color-bg) top-0 z-40 w-full">
+    <header className="sticky bg-(--color-bg) top-0 z-nav w-full print:hidden">
       <div className="flex items-center justify-between px-4 py-3 max-w-md mx-auto">
         <Logo size="sm" />
 

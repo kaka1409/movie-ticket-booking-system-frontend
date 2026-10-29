@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import {
-  ChevronDown,
   ChevronRight,
   Heart,
   LockKeyhole,
   LogOut,
+  ShieldCheck,
   Star,
   UserRound,
 } from "lucide-react";
@@ -20,22 +20,27 @@ import Dropdown from "@/components/ui/Dropdown";
  * Account popup entries, grouped the way the mobile profile menu groups them —
  * the section labels reuse the same `profile.account` / `profile.activity` keys.
  */
-const ACCOUNT_GROUPS = [
-  {
-    labelKey: "profile.account",
-    links: [
-      { labelKey: "nav.profile", href: "/profile", Icon: UserRound },
-      { labelKey: "profile.change_password", href: "/profile/password", Icon: LockKeyhole },
-    ],
-  },
-  {
-    labelKey: "profile.activity",
-    links: [
-      { labelKey: "profile.review_rating", href: "/profile/reviews", Icon: Star },
-      { labelKey: "profile.wishlist_label", href: "/profile/wishlist", Icon: Heart },
-    ],
-  },
-] as const;
+function buildAccountGroups(isAdmin: boolean) {
+  return [
+    {
+      labelKey: "profile.account",
+      links: [
+        { labelKey: "nav.profile", href: "/profile", Icon: UserRound },
+        ...(isAdmin
+          ? [{ labelKey: "layout.header.admin", href: "/admin", Icon: ShieldCheck }]
+          : []),
+        { labelKey: "profile.change_password", href: "/profile/password", Icon: LockKeyhole },
+      ],
+    },
+    {
+      labelKey: "profile.activity",
+      links: [
+        { labelKey: "profile.review_rating", href: "/profile/reviews", Icon: Star },
+        { labelKey: "profile.wishlist_label", href: "/profile/wishlist", Icon: Heart },
+      ],
+    },
+  ] as const;
+}
 
 /**
  * Icon tile shared by every popup row: sits on `--color-surface-2` and tints
@@ -58,6 +63,9 @@ export default function AccountMenu() {
 
   if (!user) return null;
 
+  const isAdmin = user.role === "ADMIN";
+  const accountGroups = buildAccountGroups(isAdmin);
+
   return (
     <Dropdown
       label={translate("layout.header.account")}
@@ -65,7 +73,7 @@ export default function AccountMenu() {
       panelClassName="w-72"
       trigger={({ isOpen }) => (
         <span
-          className={`flex shrink-0 items-center gap-2 rounded-(--radius-pill) border border-(--color-border) bg-(--color-surface) py-1 pr-2.5 pl-1.5 transition-colors ${
+          className={`flex shrink-0 items-center gap-2 rounded-(--radius-pill) border border-(--color-border) bg-(--color-surface) p-1.5 transition-colors ${
             isOpen ? "border-(--color-gold)/50" : "hover:border-(--color-gold)/40"
           }`}
         >
@@ -74,18 +82,6 @@ export default function AccountMenu() {
             fallbackSrc={DEFAULT_AVATAR_SRC}
             name={user.name}
             size="h-7 w-7"
-          />
-
-          <span className="hidden max-w-[10rem] truncate text-xs font-bold text-white lg:block">
-            {user.name}
-          </span>
-
-          <ChevronDown
-            size={14}
-            aria-hidden
-            className={`text-(--color-text-muted) transition-transform duration-150 ${
-              isOpen ? "rotate-180" : ""
-            }`}
           />
         </span>
       )}
@@ -106,13 +102,13 @@ export default function AccountMenu() {
           </div>
 
           <div className="p-1.5">
-            {ACCOUNT_GROUPS.map(({ labelKey, links }) => (
+            {accountGroups.map(({ labelKey, links }) => (
               <div key={labelKey} role="group" aria-label={translate(labelKey)} className="py-1">
                 {/* The group carries the accessible name; the visible caption is
                     decorative so it is never announced twice. */}
                 <p
                   aria-hidden
-                  className="px-2.5 pb-1 text-[9px] font-bold tracking-widest text-(--color-text-muted) uppercase"
+                  className="px-2.5 pb-1 text-3xs font-bold tracking-widest text-(--color-text-muted) uppercase"
                 >
                   {translate(labelKey)}
                 </p>
@@ -122,7 +118,7 @@ export default function AccountMenu() {
                     key={href}
                     href={href}
                     role="menuitem"
-                    className="group flex items-center gap-3 rounded-xl px-2.5 py-2 text-[13px] font-semibold text-(--color-text-secondary) no-underline transition-colors duration-150 hover:bg-(--color-surface-2) hover:text-(--color-gold-light)"
+                    className="group flex items-center gap-3 rounded-xl px-2.5 py-2 text-[13px] font-semibold text-(--color-text-primary) no-underline transition-colors duration-150 hover:bg-(--color-surface-2) hover:text-(--color-gold)"
                   >
                     <span className={ROW_ICON_CLASS}>
                       <Icon size={14} aria-hidden />

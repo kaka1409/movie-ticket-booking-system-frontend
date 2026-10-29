@@ -30,7 +30,7 @@ export default function Footer() {
   const [email, setEmail] = useState("");
 
   return (
-    <footer className="mt-16 border-t border-(--color-border) bg-(--color-bg) pb-6 pt-12">
+    <footer className="mt-16 border-t border-(--color-border) bg-(--color-bg) pb-6 pt-12 print:hidden">
       <div className="mx-auto max-w-7xl px-8">
         <div className="mb-10 grid grid-cols-[1.8fr_1fr_1fr_1.6fr] gap-10">
           <div>

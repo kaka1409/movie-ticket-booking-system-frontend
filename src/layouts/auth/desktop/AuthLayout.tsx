@@ -16,7 +16,7 @@ function PromoBrand() {
   return (
     <div className="flex items-center gap-2">
       <Logo size="sm" />
-      <span className="text-[9px] font-semibold tracking-widest text-(--color-text-muted) uppercase">
+      <span className="text-3xs font-semibold tracking-widest text-(--color-text-muted) uppercase">
         {translate("common.cinematic_excellence")}
       </span>
     </div>

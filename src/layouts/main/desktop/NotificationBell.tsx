@@ -55,7 +55,7 @@ export default function NotificationBell() {
             <div className="flex items-center gap-2">
               <span className="text-sm font-bold text-white">{translate("notif.title")}</span>
               {unreadCount > 0 && (
-                <span className="rounded-full bg-(--color-gold) px-1.5 py-0.5 text-[10px] font-black text-black">
+                <span className="rounded-full bg-(--color-gold) px-1.5 py-0.5 text-2xs font-black text-black">
                   {unreadCount}
                 </span>
               )}
@@ -66,7 +66,7 @@ export default function NotificationBell() {
                 <button
                   type="button"
                   onClick={markAllRead}
-                  className="cursor-pointer text-[10px] font-bold tracking-widest text-(--color-gold) uppercase transition-colors hover:text-(--color-gold-light)"
+                  className="cursor-pointer text-2xs font-bold tracking-widest text-(--color-gold) uppercase transition-colors hover:text-(--color-gold-light)"
                 >
                   {translate("notif.mark_all_read")}
                 </button>
@@ -113,7 +113,7 @@ export default function NotificationBell() {
           <Link
             href="/notifications"
             onClick={close}
-            className="flex items-center justify-center gap-1.5 border-t border-(--color-border) py-2.5 text-[10px] font-bold tracking-widest text-(--color-text-secondary) uppercase transition-colors hover:text-(--color-gold)"
+            className="flex items-center justify-center gap-1.5 border-t border-(--color-border) py-2.5 text-2xs font-bold tracking-widest text-(--color-text-secondary) uppercase transition-colors hover:text-(--color-gold)"
           >
             {translate("notif.view_all")}
             <ChevronRight size={12} aria-hidden />

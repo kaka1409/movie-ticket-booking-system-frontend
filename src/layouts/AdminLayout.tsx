@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { lockBodyScroll } from "@/libs/scroll-lock";
 import {
   ArrowLeft,
   ChevronDown,
@@ -22,7 +23,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useLogout } from "@/features/auth/hooks/useLogout";
 import { ADMIN_NAV_GROUPS, isAdminNavActive } from "@/features/admin/adminSections";
-import { setAdminSidebarAction } from "@/features/admin/actions/preferences.action";
+import { AdminSidebarProvider, useAdminSidebar } from "@/features/admin/context";
 import { ADMIN_SIDEBAR_COLLAPSED_PX, ADMIN_SIDEBAR_EXPANDED_PX } from "@/features/admin/constants";
 import { useAdminTheme } from "@/features/admin/hooks/useAdminTheme";
 import type { AdminSidebarMode, AdminTheme } from "@/features/admin/types";
@@ -37,6 +38,23 @@ const THEME_OPTIONS: Array<{ value: AdminTheme; labelKey: string; Icon: LucideIc
   { value: "system", labelKey: "admin.theme.system", Icon: Monitor },
 ];
 
+/** Console route-group shell; the sidebar state lives in `AdminSidebarProvider`. */
+export default function AdminLayout({
+  initialTheme,
+  initialSidebarMode,
+  children,
+}: {
+  initialTheme: AdminTheme;
+  initialSidebarMode: AdminSidebarMode;
+  children: ReactNode;
+}) {
+  return (
+    <AdminSidebarProvider initialMode={initialSidebarMode}>
+      <AdminShell initialTheme={initialTheme}>{children}</AdminShell>
+    </AdminSidebarProvider>
+  );
+}
+
 /**
  * Console shell for `/admin`: header strip, persistent (collapsible) sidebar,
  * content band. It is ONE responsive tree — below 740px the sidebar becomes an
@@ -47,29 +65,15 @@ const THEME_OPTIONS: Array<{ value: AdminTheme; labelKey: string; Icon: LucideIc
  * `LoginPrompt`), so this only has to catch a cookie that exists but carries no
  * admin role — and it answers with a panel, never a redirect.
  */
-export default function AdminLayout({
-  initialTheme,
-  initialSidebarMode,
-  children,
-}: {
-  initialTheme: AdminTheme;
-  initialSidebarMode: AdminSidebarMode;
-  children: ReactNode;
-}) {
+function AdminShell({ initialTheme, children }: { initialTheme: AdminTheme; children: ReactNode }) {
   const { translate } = useLocale();
   const { user, isAuthenticated, isLoading } = useAuth();
   const { theme, setTheme } = useAdminTheme(initialTheme);
+  const { isCollapsed, toggleSidebar } = useAdminSidebar();
 
-  const [isCollapsed, setIsCollapsed] = useState(initialSidebarMode === "collapsed");
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const drawerRef = useRef<HTMLDivElement>(null);
-
-  const toggleSidebar = useCallback(() => {
-    const nextIsCollapsed = !isCollapsed;
-    setIsCollapsed(nextIsCollapsed);
-    void setAdminSidebarAction(nextIsCollapsed ? "collapsed" : "expanded");
-  }, [isCollapsed]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -83,7 +87,7 @@ export default function AdminLayout({
   }, [toggleSidebar]);
 
   // Drawer: focus the close control on open, trap Tab inside, Escape closes,
-  // and the trigger gets focus back — the same contract as `ui/Dropdown`.
+  // and the trigger gets focus back â€” the same contract as `ui/Dropdown`.
   useEffect(() => {
     if (!isDrawerOpen) return;
 
@@ -91,8 +95,7 @@ export default function AdminLayout({
     const trigger = menuButtonRef.current;
     drawer?.querySelector<HTMLElement>("[data-admin-drawer-close]")?.focus();
 
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    const releaseScrollLock = lockBodyScroll();
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -118,7 +121,7 @@ export default function AdminLayout({
     document.addEventListener("keydown", handleKeyDown);
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = previousOverflow;
+      releaseScrollLock();
       if (drawer?.contains(document.activeElement)) trigger?.focus();
     };
   }, [isDrawerOpen]);
@@ -142,7 +145,7 @@ export default function AdminLayout({
     >
       {gate ?? (
         <>
-          <header className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-2 border-b border-(--color-border) bg-(--color-surface) px-3 md:px-5">
+          <header className="sticky top-0 z-nav flex h-16 shrink-0 items-center gap-2 border-b border-(--color-border) bg-(--color-surface) px-3 md:px-5">
             <button
               ref={menuButtonRef}
               type="button"
@@ -156,7 +159,7 @@ export default function AdminLayout({
 
             <Logo size="sm" href="/admin" />
 
-            <span className="hidden rounded-(--radius-sm) border border-(--color-gold)/40 px-1.5 py-0.5 text-[9px] font-black tracking-[0.18em] text-(--admin-accent-ink) uppercase sm:inline">
+            <span className="hidden rounded-(--radius-sm) border border-(--color-gold)/40 px-1.5 py-0.5 text-3xs font-black tracking-[0.18em] text-(--admin-accent-ink) uppercase sm:inline">
               {translate("admin.badge")}
             </span>
 
@@ -183,7 +186,7 @@ export default function AdminLayout({
                   href="/"
                   prefetch={false}
                   title={translate("admin.back_to_site")}
-                  className={`flex items-center rounded-xl py-2 text-[11px] font-semibold text-(--color-text-muted) no-underline transition-colors hover:bg-(--color-surface-2) hover:text-(--color-text-primary) ${
+                  className={`flex items-center rounded-xl py-2 text-[11px] font-semibold text-(--color-text-primary) no-underline transition-colors hover:bg-(--color-surface-2) hover:text-(--color-gold) ${
                     isCollapsed ? "justify-center px-0" : "gap-2.5 px-2.5"
                   }`}
                 >
@@ -202,7 +205,7 @@ export default function AdminLayout({
                   aria-label={translate(
                     isCollapsed ? "admin.sidebar.expand" : "admin.sidebar.collapse",
                   )}
-                  className={`flex w-full cursor-pointer items-center rounded-xl py-2 text-[11px] font-semibold text-(--color-text-muted) transition-colors hover:bg-(--color-surface-2) hover:text-(--color-text-primary) ${
+                  className={`flex w-full cursor-pointer items-center rounded-xl py-2 text-[11px] font-semibold text-(--color-text-primary) transition-colors hover:bg-(--color-surface-2) hover:text-(--color-gold) ${
                     isCollapsed ? "justify-center px-0" : "gap-2.5 px-2.5"
                   }`}
                 >
@@ -224,7 +227,7 @@ export default function AdminLayout({
       )}
 
       {isDrawerOpen && (
-        <div className="fixed inset-0 z-50 md:hidden">
+        <div className="fixed inset-0 z-overlay md:hidden">
           <button
             type="button"
             aria-label={translate("admin.sidebar.close")}
@@ -259,7 +262,7 @@ export default function AdminLayout({
                 href="/"
                 prefetch={false}
                 onClick={closeDrawer}
-                className="flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-[11px] font-semibold text-(--color-text-muted) no-underline transition-colors hover:bg-(--color-surface-2) hover:text-(--color-text-primary)"
+                className="flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-[11px] font-semibold text-(--color-text-primary) no-underline transition-colors hover:bg-(--color-surface-2) hover:text-(--color-gold)"
               >
                 <ArrowLeft size={14} aria-hidden className="shrink-0" />
                 <span>{translate("admin.back_to_site")}</span>
@@ -294,7 +297,7 @@ function AdminNav({
           ) : (
             <p
               aria-hidden
-              className="px-2.5 pb-1 text-[9px] font-bold tracking-[0.18em] text-(--color-text-muted) uppercase"
+              className="px-2.5 pb-1 text-3xs font-bold tracking-[0.18em] text-(--color-text-muted) uppercase"
             >
               {translate(group.labelKey)}
             </p>
@@ -318,7 +321,7 @@ function AdminNav({
                     } ${
                       isActive
                         ? "bg-(--color-gold)/12 text-(--admin-accent-ink)"
-                        : "text-(--color-text-secondary) hover:bg-(--color-surface-2) hover:text-(--color-text-primary)"
+                        : "text-(--color-text-primary) hover:bg-(--color-surface-2) hover:text-(--color-gold)"
                     }`}
                   >
                     {isActive && (
@@ -433,7 +436,7 @@ function AdminAccountMenu({
             <Link
               href="/admin/settings"
               onClick={close}
-              className="flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-[13px] font-semibold text-(--color-text-secondary) no-underline transition-colors hover:bg-(--color-surface-2) hover:text-(--color-text-primary)"
+              className="flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-[13px] font-semibold text-(--color-text-primary) no-underline transition-colors hover:bg-(--color-surface-2) hover:text-(--color-gold)"
             >
               <Settings size={15} aria-hidden />
               <span>{translate("admin.nav.settings")}</span>
@@ -443,7 +446,7 @@ function AdminAccountMenu({
               href="/"
               prefetch={false}
               onClick={close}
-              className="flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-[13px] font-semibold text-(--color-text-secondary) no-underline transition-colors hover:bg-(--color-surface-2) hover:text-(--color-text-primary)"
+              className="flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-[13px] font-semibold text-(--color-text-primary) no-underline transition-colors hover:bg-(--color-surface-2) hover:text-(--color-gold)"
             >
               <ArrowLeft size={15} aria-hidden />
               <span>{translate("admin.back_to_site")}</span>

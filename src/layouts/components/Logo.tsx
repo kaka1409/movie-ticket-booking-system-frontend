@@ -33,7 +33,7 @@ export default function Logo({ size = "sm", tagline = false, href = "/" }: LogoP
       {tagline && (
         /* Hidden in the desktop/tablet band (740–1023px), where the header is
            already tight; the tagline comes back from `lg:` up. */
-        <span className="ml-1 hidden text-[9px] font-semibold tracking-widest uppercase text-(--color-text-muted) lg:inline">
+        <span className="ml-1 hidden text-3xs font-semibold tracking-widest uppercase text-(--color-text-muted) lg:inline">
           {translate("common.cinematic_excellence")}
         </span>
       )}

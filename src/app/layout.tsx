@@ -2,10 +2,12 @@ import type { Metadata, Viewport } from "next";
 import { cookies, headers } from "next/headers";
 import { Inter } from "next/font/google";
 import "@/styles/global.css";
+import "@/styles/print.css";
 import { LocaleProvider, type Locale } from "@/contexts/LocaleContext";
 import { DeviceProvider } from "@/contexts/DeviceContext";
 import { ToastProvider } from "@/contexts/ToastContext";
 import ToastViewport from "@/components/ui/ToastViewport";
+import RouteProgressBar from "@/components/ui/RouteProgressBar";
 import type { Device } from "@/types";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { WishlistProvider } from "@/features/wishlist/context";
@@ -116,6 +118,7 @@ export default async function RootLayout({
       data-scroll-behavior="smooth"
     >
       <body className="min-h-dvh flex flex-col">
+        <RouteProgressBar />
         <ToastProvider>
           <ToastViewport />
           <DeviceProvider initialDevice={initialDevice}>
