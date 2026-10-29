@@ -26,7 +26,7 @@ export default function ToastViewport() {
   return (
     <div
       aria-live="polite"
-      className="pointer-events-none fixed inset-x-4 bottom-[calc(6rem+env(safe-area-inset-bottom))] z-[60] flex flex-col items-center gap-2 md:inset-x-auto md:right-6 md:top-6 md:bottom-auto md:w-[360px] md:items-stretch"
+      className="pointer-events-none fixed inset-x-4 print:hidden bottom-[calc(6rem+env(safe-area-inset-bottom))] z-toast flex flex-col items-center gap-2 md:inset-x-auto md:right-6 md:top-6 md:bottom-auto md:w-[360px] md:items-stretch"
     >
       {toasts.map((toast) => {
         const Icon = VARIANT_ICON[toast.variant];

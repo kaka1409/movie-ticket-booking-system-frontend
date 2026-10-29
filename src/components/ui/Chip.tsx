@@ -16,7 +16,7 @@ export default function Chip({
   onClick: () => void;
   variant?: "filled" | "outline";
 }) {
-  const base = "whitespace-nowrap border transition-all duration-150 rounded-(--radius-sm) px-4";
+  const base = "whitespace-nowrap border transition duration-150 rounded-(--radius-sm) px-4";
   const filled = `py-2 text-xs font-semibold ${
     active
       ? "border-(--color-gold) bg-(--color-gold) text-(--color-on-accent) shadow-(--shadow-glow)"

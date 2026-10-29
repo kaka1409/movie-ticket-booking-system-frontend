@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useId, useRef, type ReactNode } from "react";
+import { lockBodyScroll } from "@/libs/scroll-lock";
 
 /**
- * Desktop confirmation modal. `ActionSheet` is a bottom sheet — correct on a
- * phone, wrong on a 1280px canvas — so the desktop skins need a centred dialog
+ * Desktop confirmation modal. `ActionSheet` is a bottom sheet â€” correct on a
+ * phone, wrong on a 1280px canvas â€” so the desktop skins need a centred dialog
  * with the same guarantees: `Escape` and a backdrop click dismiss it, `Tab` is
  * trapped inside while it is open, and focus returns to whatever opened it.
  *
@@ -54,6 +55,7 @@ export default function ConfirmDialog({
 
     restoredFocusRef.current = document.activeElement as HTMLElement | null;
     confirmRef.current?.focus();
+    const releaseScrollLock = lockBodyScroll();
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -81,6 +83,7 @@ export default function ConfirmDialog({
     document.addEventListener("keydown", handleKeyDown);
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
+      releaseScrollLock();
       restoredFocusRef.current?.focus();
     };
   }, [isOpen]);
@@ -88,8 +91,12 @@ export default function ConfirmDialog({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/60" onClick={onClose} aria-hidden="true" />
+    <div className="fixed inset-0 z-overlay flex items-center justify-center p-4">
+      <div
+        className="absolute inset-0 cursor-pointer bg-black/60"
+        onClick={onClose}
+        aria-hidden="true"
+      />
 
       <div
         ref={panelRef}
@@ -117,7 +124,7 @@ export default function ConfirmDialog({
             type="button"
             onClick={onConfirm}
             disabled={isPending}
-            className={`flex w-full items-center justify-center gap-2 py-3.5 rounded-2xl font-extrabold text-sm tracking-widest uppercase border bg-transparent transition-all duration-150 active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none ${
+            className={`flex w-full items-center justify-center gap-2 py-3.5 rounded-2xl font-extrabold text-sm tracking-widest uppercase border bg-transparent transition duration-150 active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none ${
               danger ? "border-red-500 text-red-500" : "border-(--color-gold) text-(--color-gold)"
             }`}
           >
@@ -128,7 +135,7 @@ export default function ConfirmDialog({
             type="button"
             onClick={onClose}
             disabled={isPending}
-            className="w-full py-3.5 rounded-2xl font-extrabold text-sm tracking-widest uppercase text-(--color-on-accent) bg-(--color-gold) transition-all duration-150 active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none"
+            className="w-full py-3.5 rounded-2xl font-extrabold text-sm tracking-widest uppercase text-(--color-on-accent) bg-(--color-gold) transition duration-150 active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none"
           >
             {cancelLabel}
           </button>

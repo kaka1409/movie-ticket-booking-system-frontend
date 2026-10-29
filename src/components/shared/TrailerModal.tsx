@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { X } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
+import { lockBodyScroll } from "@/libs/scroll-lock";
 
 interface TrailerModalProps {
   isOpen: boolean;
@@ -19,21 +20,21 @@ export default function TrailerModal({ isOpen, onClose, title }: TrailerModalPro
     };
 
     if (isOpen) {
-      document.body.style.overflow = "hidden";
+      const release = lockBodyScroll();
       window.addEventListener("keydown", handleKeyDown);
+      return () => {
+        release();
+        window.removeEventListener("keydown", handleKeyDown);
+      };
     }
-
-    return () => {
-      document.body.style.overflow = "";
-      window.removeEventListener("keydown", handleKeyDown);
-    };
+    return undefined;
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm animate-fade-in"
+      className="fixed inset-0 z-overlay flex cursor-pointer items-center justify-center bg-black/80 p-4 backdrop-blur-sm animate-fade-in"
       onClick={onClose}
     >
       <div

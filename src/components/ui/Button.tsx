@@ -56,7 +56,7 @@ export default function Button({
 
   const classes = `
         flex items-center justify-center gap-2.5 font-extrabold
-        transition-all duration-150 active:scale-[0.98]
+        transition duration-150 active:scale-[0.98]
         disabled:opacity-40 disabled:pointer-events-none
         ${fullWidth ? "w-full" : ""}
         ${uppercase ? "uppercase" : ""}

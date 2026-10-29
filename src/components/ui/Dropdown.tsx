@@ -24,7 +24,7 @@ interface DropdownProps {
  * Header popover: trigger + `absolute right-0` panel. Closes on a second click,
  * an outside `pointerdown` (so the trigger's click never races the close),
  * `Escape` or an inner `close()` — both restore focus to the trigger — and on a
- * route change (`DropdownBody` is keyed on the pathname). `z-50` inside the
+ * route change (`DropdownBody` is keyed on the pathname). `z-nav` inside the
  * sticky header paints over the page without leaving its stacking context.
  */
 export default function Dropdown(props: DropdownProps) {
@@ -120,7 +120,7 @@ function DropdownBody({
           id={panelId}
           role={role}
           aria-label={label}
-          className={`animate-fade-in absolute top-[calc(100%+10px)] right-0 z-50 overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-surface) shadow-(--shadow-card) ${panelClassName}`}
+          className={`animate-fade-in absolute top-[calc(100%+10px)] right-0 z-nav overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-surface) shadow-(--shadow-card) ${panelClassName}`}
         >
           {typeof children === "function" ? children(state) : children}
         </div>

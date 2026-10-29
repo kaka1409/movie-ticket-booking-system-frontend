@@ -1,7 +1,9 @@
 "use client";
 
 import { X } from "lucide-react";
+import { useEffect } from "react";
 import type { ReactNode, ElementType } from "react";
+import { lockBodyScroll } from "@/libs/scroll-lock";
 import { useLocale } from "@/contexts/LocaleContext";
 
 interface ActionSheetProps {
@@ -21,14 +23,27 @@ interface ActionRowProps {
 export default function ActionSheet({ isOpen, onClose, children }: ActionSheetProps) {
   const { translate } = useLocale();
 
+  useEffect(() => {
+    if (!isOpen) return;
+    const releaseScrollLock = lockBodyScroll();
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      releaseScrollLock();
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen, onClose]);
+
   return (
     <div
-      className={`fixed inset-0 z-50 ${isOpen ? "" : "pointer-events-none"}`}
+      className={`fixed inset-0 z-overlay ${isOpen ? "" : "pointer-events-none"}`}
       aria-hidden={!isOpen}
     >
       <div
         onClick={onClose}
-        className={`absolute inset-0 bg-black/60 transition-opacity duration-300 ${
+        className={`absolute inset-0 cursor-pointer bg-black/60 transition-opacity duration-300 ${
           isOpen ? "opacity-100" : "opacity-0"
         }`}
       />
@@ -67,7 +82,7 @@ export function ActionRow({
     <button
       type="button"
       onClick={onClick}
-      className={`w-full flex items-start gap-4 py-4 px-3 rounded-xl text-left transition-all duration-150 active:scale-[0.98] hover:bg-(--color-surface-2) ${
+      className={`w-full flex items-start gap-4 py-4 px-3 rounded-xl text-left transition duration-150 active:scale-[0.98] hover:bg-(--color-surface-2) ${
         danger ? "text-red-400" : "text-(--color-text-primary)"
       }`}
     >

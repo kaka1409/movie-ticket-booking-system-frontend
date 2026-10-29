@@ -52,7 +52,7 @@ export default function StepRail({
                 {isDone ? <Check size={14} /> : stepNumber}
               </span>
               <span
-                className={`hidden text-[10px] font-bold tracking-widest uppercase lg:inline ${
+                className={`hidden text-2xs font-bold tracking-widest uppercase lg:inline ${
                   isDone || isCurrent ? "text-(--color-gold)" : "text-(--color-text-muted)"
                 }`}
               >

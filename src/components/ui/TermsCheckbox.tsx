@@ -23,7 +23,7 @@ export default function TermsCheckbox({
         aria-pressed={checked}
       >
         <span
-          className={`mt-0.5 flex-shrink-0 w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all duration-150 ${
+          className={`mt-0.5 flex-shrink-0 w-5 h-5 rounded-md border-2 flex items-center justify-center transition duration-150 ${
             checked
               ? "bg-(--color-gold) border-(--color-gold)"
               : error

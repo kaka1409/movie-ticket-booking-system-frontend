@@ -68,7 +68,7 @@ export default function BookingBottomBar({
     );
 
     const activeClasses =
-      "flex items-center justify-center gap-2.5 w-full py-4 rounded-2xl font-extrabold text-sm tracking-widest uppercase transition-all duration-150 active:scale-[0.98] bg-(--color-gold) text-(--color-bg) shadow-(--shadow-glow)";
+      "flex items-center justify-center gap-2.5 w-full py-4 rounded-2xl font-extrabold text-sm tracking-widest uppercase transition duration-150 active:scale-[0.98] bg-(--color-gold) text-(--color-bg) shadow-(--shadow-glow)";
 
     const disabledClasses =
       "flex items-center justify-center gap-2.5 w-full py-4 rounded-2xl font-extrabold text-sm tracking-widest uppercase bg-(--color-surface) text-(--color-text-muted) border border-(--color-border) cursor-not-allowed";
@@ -109,14 +109,14 @@ export default function BookingBottomBar({
   };
 
   return (
-    <div className="sticky bottom-0 z-50 px-4 pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-3 bg-(--color-bg) border-t border-(--color-border)">
+    <div className="sticky bottom-0 z-cta px-4 pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-3 bg-(--color-bg) border-t border-(--color-border)">
       {errorText && (
         <p className="mb-3 px-1 text-xs font-medium text-red-400 leading-relaxed">{errorText}</p>
       )}
 
       {hintText && (
         <div className="flex items-end justify-between mb-3 min-h-[40px]">
-          <p className="text-[9px] font-bold tracking-widest uppercase text-(--color-text-muted) mb-0.5">
+          <p className="text-3xs font-bold tracking-widest uppercase text-(--color-text-muted) mb-0.5">
             {hintText}
           </p>
         </div>
@@ -139,7 +139,7 @@ export default function BookingBottomBar({
               {selectionInfo.secondaryLabel && (
                 <div className="flex items-center gap-3">
                   <div className="text-right">
-                    <p className="text-[9px] font-bold tracking-widest uppercase text-(--color-text-muted)">
+                    <p className="text-3xs font-bold tracking-widest uppercase text-(--color-text-muted)">
                       {selectionInfo.secondaryLabelKey || "Showtime"}
                     </p>
                     <p className="font-extrabold text-base text-(--color-gold)">
@@ -170,7 +170,7 @@ export default function BookingBottomBar({
       {totalInfo && (
         <div className="flex items-end justify-between mb-3 min-h-[40px]">
           {totalInfo.label && (
-            <p className="text-[9px] font-bold tracking-widest uppercase text-(--color-text-muted)">
+            <p className="text-3xs font-bold tracking-widest uppercase text-(--color-text-muted)">
               {totalInfo.label}
             </p>
           )}

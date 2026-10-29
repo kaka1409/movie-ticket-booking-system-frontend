@@ -18,7 +18,7 @@ export default function UndoSnackbar({
 }) {
   return (
     <div
-      className={`fixed z-50 flex items-center justify-between gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) px-4 py-3 shadow-(--shadow-card) ${className}`}
+      className={`fixed z-toast flex items-center print:hidden justify-between gap-3 rounded-2xl border border-(--color-border) bg-(--color-surface) px-4 py-3 shadow-(--shadow-card) ${className}`}
     >
       <p className="min-w-0 flex-1 truncate text-sm text-(--color-text-primary)">{message}</p>
       <button

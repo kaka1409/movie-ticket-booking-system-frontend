@@ -116,7 +116,7 @@ export default function RouteError({ error, reset }: { error: Error & { digest?:
     <StatusPageShell
       aside={
         <div
-          className={`transition-all duration-700 delay-200 ${
+          className={`transition duration-700 delay-200 ${
             glitchDone ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
           }`}
         >
@@ -145,7 +145,7 @@ export default function RouteError({ error, reset }: { error: Error & { digest?:
       </div>
 
       <p
-        className={`mt-4 max-w-xs text-center text-sm text-(--color-text-muted) transition-all duration-700 md:max-w-lg md:text-left md:text-base md:leading-relaxed ${
+        className={`mt-4 max-w-xs text-center text-sm text-(--color-text-muted) transition duration-700 md:max-w-lg md:text-left md:text-base md:leading-relaxed ${
           glitchDone ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
         }`}
       >
@@ -153,7 +153,7 @@ export default function RouteError({ error, reset }: { error: Error & { digest?:
       </p>
 
       <div
-        className={`mt-8 w-full max-w-xs space-y-3 transition-all duration-700 delay-200 md:hidden ${
+        className={`mt-8 w-full max-w-xs space-y-3 transition duration-700 delay-200 md:hidden ${
           glitchDone ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
         }`}
       >

@@ -8,6 +8,6 @@ export default function MicroLabel({
   children: ReactNode;
 }) {
   return (
-    <p className={`text-[9px] font-black tracking-[0.16em] uppercase ${className}`}>{children}</p>
+    <p className={`text-3xs font-black tracking-[0.16em] uppercase ${className}`}>{children}</p>
   );
 }

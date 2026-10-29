@@ -1,0 +1,42 @@
+/**
+ * Print stylesheet — vé (booking status success) và mã QR thanh toán.
+ *
+ * Token flip sang light: tái dùng hệ token thay vì đánh nhau với màu tối.
+ * Chrome (header/footer/nav/toast/snackbar/CTA) ẩn bằng utility `print:hidden`
+ * tại call site. Hai device tree luôn render nên route phải đánh dấu
+ * `print:hidden` (mobile) + `print:block` (desktop) để in đúng 1 bản.
+ */
+@media print {
+  :root {
+    color-scheme: light;
+    --color-bg: #ffffff;
+    --color-surface: #ffffff;
+    --color-surface-2: #ffffff;
+    --color-border: #cfcfcf;
+    --color-border-strong: #8a8a8a;
+    --color-text-primary: #111111;
+    --color-text-secondary: #333333;
+    --color-text-muted: #555555;
+    --color-gold: #7a5600;
+    --color-on-accent: #ffffff;
+    --shadow-card: none;
+    --shadow-glow: none;
+  }
+
+  body {
+    background: #ffffff;
+  }
+
+  @page {
+    margin: 12mm;
+  }
+
+  .print-keep {
+    break-inside: avoid;
+  }
+
+  .print-qr {
+    width: 46mm;
+    height: 46mm;
+  }
+}

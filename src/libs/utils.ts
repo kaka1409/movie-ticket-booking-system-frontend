@@ -78,7 +78,9 @@ export function authReturnTarget(rawReturnUrl: string | null | undefined): strin
 
 /** Short absolute date (`Oct 4, 2026` in EN, `4 thg 10, 2026` in VN). */
 export function formatDate(dateStr: string, locale: "en" | "vn"): string {
-  const parsedDate = new Date(dateStr);
+  const timestamp = Date.parse(dateStr);
+  if (Number.isNaN(timestamp)) return "";
+  const parsedDate = new Date(timestamp);
   return parsedDate.toLocaleDateString(toLocaleTag(locale), {
     month: "short",
     day: "numeric",

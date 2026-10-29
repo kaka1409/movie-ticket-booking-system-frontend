@@ -1,10 +1,27 @@
 @import "tailwindcss";
 
-/* Mobile→desktop breakpoint (740px, not the Tailwind default 768px) so
+/* Mobileâ†’desktop breakpoint (740px, not the Tailwind default 768px) so
    iPad mini portrait (744px) renders the desktop variant. Keep in sync
    with the `matchMedia` threshold in `src/hooks/useDevice.ts`. */
 @theme {
   --breakpoint-md: 740px;
+
+  /* Layering ladder — single source of truth for stacking. `z-10`/`z-20`
+     inside components stay as local stacking contexts and are NOT migrated. */
+  --z-index-raised: 10;
+  --z-index-nav: 40;
+  --z-index-cta: 45;
+  --z-index-overlay: 50;
+  --z-index-toast: 60;
+  --z-index-popover: 70;
+  --z-index-progress: 90;
+
+  /* Micro typography — use instead of `text-3xs`/`text-2xs` so the size
+     scales with the user's browser font-size setting instead of staying fixed. */
+  --text-2xs: 0.625rem;
+  --text-2xs--line-height: calc(1.4 / 0.625);
+  --text-3xs: 0.5625rem;
+  --text-3xs--line-height: calc(1.35 / 0.5625);
 }
 
 :root {
@@ -15,7 +32,7 @@
   --color-gold-dark: #e6b800;
 
   /* Ink that sits ON a gold fill. `--color-bg` cannot do that job because the
-     admin light theme re-points it to a near-white canvas — gold buttons would
+     admin light theme re-points it to a near-white canvas â€” gold buttons would
      lose their label. Identical to `--color-bg` in the dark theme. */
   --color-on-accent: #0f0f0f;
 
@@ -24,11 +41,11 @@
   --color-surface: #1c1b1b;
   --color-surface-2: #242424;
   --color-border: #2e2e2e;
-  --color-border-strong: #6b6b6b; /* 3.2:1 on surface — WCAG 1.4.11 for form control boundaries */
+  --color-border-strong: #6b6b6b; /* 3.2:1 on surface â€” WCAG 1.4.11 for form control boundaries */
   /* Holds `--color-surface`'s neutral value for `.surface-raised`, which
      re-points `--color-surface` and would otherwise lose the panel colour. */
   --color-surface-base: var(--color-surface);
-  /* Colour that shows *through* a ticket's tear-line notch — whatever sits behind
+  /* Colour that shows *through* a ticket's tear-line notch â€” whatever sits behind
      the card. On the page background, which is where every ticket card renders. */
   --color-notch: var(--color-bg);
 
@@ -37,7 +54,7 @@
   --color-text-secondary: #ffe4af;
   --color-text-muted: #9a9a9a;
 
-  /* Toast — success/info share the green family, error the red one */
+  /* Toast â€” success/info share the green family, error the red one */
   --color-info-bg: #e8f5e9;
   --color-info: #2e7d32;
   --color-info-text: #1b3a1f;
@@ -45,7 +62,7 @@
   --color-error: #d32f2f;
   --color-error-text: #5f1a1a;
 
-  /* Typography — `--font-inter` comes from `next/font` (Inter, self-hosted);
+  /* Typography â€” `--font-inter` comes from `next/font` (Inter, self-hosted);
      the generic stack keeps a sane fallback if the variable is missing. */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 
@@ -67,7 +84,7 @@
   --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
   --shadow-glow: 0 0 20px rgba(255, 204, 77, 0.25);
 
-  /* Admin console — `styles/admin-theme.css` re-points these for the light
+  /* Admin console â€” `styles/admin-theme.css` re-points these for the light
      theme. Kept out of the storefront's vocabulary so a single token rename
      never silently changes the public site. */
   --admin-accent-ink: var(--color-gold);
@@ -88,7 +105,7 @@ body {
   min-height: 100dvh;
 }
 
-/* ─── Custom Utilities ───────────────────────────────────────── */
+/* â”€â”€â”€ Custom Utilities â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .bg-hero-gradient {
   background: linear-gradient(
     to top,
@@ -98,16 +115,16 @@ body {
   );
 }
 
-/* Desktop raised surface — the booking step panel (`BookingStepLayout`) and the
+/* Desktop raised surface â€” the booking step panel (`BookingStepLayout`) and the
    movies panel (`(main)/movies/page.tsx`): the panel itself paints
    `--color-surface`, so every card nested inside it steps up one level to
-   `--color-surface-2`. Those cards are all shared with the mobile skin — which
+   `--color-surface-2`. Those cards are all shared with the mobile skin â€” which
    still renders on the darker `--color-bg`, where `--color-surface` is the
-   right lift — so the shift is scoped here instead of inside the components. */
+   right lift â€” so the shift is scoped here instead of inside the components. */
 .surface-raised {
   --color-surface: var(--color-surface-2);
   /* A nested ticket card sits on this panel, so its tear-line notch must punch
-     with the panel colour — which this scope has just re-pointed. */
+     with the panel colour â€” which this scope has just re-pointed. */
   --color-notch: var(--color-surface-base);
 }
 
@@ -119,7 +136,7 @@ body {
   }
 }
 
-/* ─── Double-thumb range slider ──────────────────────────────────
+/* â”€â”€â”€ Double-thumb range slider â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
    Backs `components/ui/RangeSlider.tsx`. Two native range inputs share one
    track; the inputs are `pointer-events-none` so only the visible knobs stay
    draggable (a knob can never steal the other's hit area). */
@@ -148,7 +165,7 @@ body {
     cursor: pointer;
   }
 
-  /* keyboard affordance — the native outline is removed with `appearance` */
+  /* keyboard affordance â€” the native outline is removed with `appearance` */
   &:focus-visible {
     &::-webkit-slider-thumb {
       outline: 2px solid var(--color-gold-light);
@@ -162,7 +179,7 @@ body {
   }
 }
 
-/* ─── Animations ─────────────────────────────────────────────── */
+/* â”€â”€â”€ Animations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @keyframes fadeSlideIn {
   from {
     opacity: 0;
@@ -184,7 +201,7 @@ body {
   overflow: hidden;
 }
 
-/* ─── Film Strip Scroll — 404 page ──────────────────────────── */
+/* â”€â”€â”€ Film Strip Scroll â€” 404 page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @keyframes filmStripScroll {
   0% {
     transform: translateY(-100%);
@@ -203,7 +220,7 @@ body {
   }
 }
 
-/* ─── Glitch Decode — error page ────────────────────────────── */
+/* â”€â”€â”€ Glitch Decode â€” error page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @keyframes glitchDecode {
   0%,
   100% {
@@ -255,8 +272,8 @@ body {
   }
 }
 
-/* ─── Reduced motion (WCAG 2.3.3) ───────────────────────────────
-   0.01ms (not `none`) so `forwards` still fills final state — `.animate-fade-in`
+/* â”€â”€â”€ Reduced motion (WCAG 2.3.3) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   0.01ms (not `none`) so `forwards` still fills final state â€” `.animate-fade-in`
    starts at `opacity: 0`, disabling animation must not leave it invisible. */
 @media (prefers-reduced-motion: reduce) {
   html {
@@ -275,7 +292,22 @@ body {
   }
 }
 
-/* ─── Scroll anchoring (sticky header) ───────────────────────── */
+/* â”€â”€â”€ Scroll anchoring (sticky header) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 html {
   scroll-padding-top: 4.5rem;
+}
+
+/* ─── Route progress bar (top, for navigation) ───────────────── */
+.route-progress-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  animation: route-progress-shimmer 1.2s linear infinite;
+}
+
+@keyframes route-progress-shimmer {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
 }

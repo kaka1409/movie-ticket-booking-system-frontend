@@ -8,8 +8,9 @@
  * `.surface-raised`) re-themes without touching a class name.
  *
  * Both blocks below carry the SAME declarations on purpose — an explicit
- * `light` pick and a `system` pick that resolves to light must look identical,
- * and CSS has no mixin to share them. Keep the two in sync.
+ * `light` pick and a `system` pick that resolves to light must look identical.
+ * CSS has no mixin and `@container style()` (the only conditional-on-custom-
+ * property mechanism) is not supported in Firefox, so do NOT merge them.
  */
 
 [data-admin-theme="light"] {
@@ -101,7 +102,7 @@
   background: var(--admin-sticky-header);
   border-bottom: 1px solid var(--color-border);
   color: var(--color-text-muted);
-  font-size: 10px;
+  font-size: var(--text-2xs);
   font-weight: 700;
   letter-spacing: 0.14em;
   text-align: left;
@@ -129,6 +130,8 @@
   text-align: right;
 }
 
+/* Sync with `--breakpoint-md` (740px) in global.css — CSS variables are
+   not allowed in media conditions, so this stays a literal. */
 @media (max-width: 739.98px) {
   .admin-table,
   .admin-table tbody,
@@ -174,7 +177,7 @@
     content: attr(data-label);
     flex-shrink: 0;
     color: var(--color-text-muted);
-    font-size: 10px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: 0.14em;
     text-align: left;
