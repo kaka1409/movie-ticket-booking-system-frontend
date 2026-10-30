@@ -13,6 +13,25 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
   ]),
+  // Layering guardrails (see docs/architecture.md §Layering).
+  {
+    files: ["src/components/ui/**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-imports": ["error", { patterns: ["@/features/*", "@/app/*", "@/layouts/*"] }],
+    },
+  },
+  {
+    files: ["src/components/shared/**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-imports": ["error", { patterns: ["@/app/*"] }],
+    },
+  },
+  {
+    files: ["src/features/**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-imports": ["error", { patterns: ["@/app/*"] }],
+    },
+  },
 ]);
 
 export default eslintConfig;

@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
+    "verify": "pnpm lint && pnpm typecheck && pnpm check:layers",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
