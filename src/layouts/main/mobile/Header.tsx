@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import { Bell } from "lucide-react";
-import Logo from "@/layouts/components/Logo";
+import Logo from "@/components/ui/Logo";
 import LanguageToggle from "@/layouts/components/LanguageToggle";
 import { useLocale } from "@/contexts/LocaleContext";
-import { useNotifications } from "@/features/notifications/context";
+import { useNotifications } from "@/features/notifications/contexts/NotificationsContext";
 
 export default function Header() {
   const { translate } = useLocale();

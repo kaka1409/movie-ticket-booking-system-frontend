@@ -73,7 +73,7 @@ export default function AccountMenu() {
       panelClassName="w-72"
       trigger={({ isOpen }) => (
         <span
-          className={`flex shrink-0 items-center gap-2 rounded-(--radius-pill) border border-(--color-border) bg-(--color-surface) p-1.5 transition-colors ${
+          className={`flex shrink-0 items-center gap-2 rounded-(--radius-pill) border border-(--color-border) bg-(--color-surface) transition-colors ${
             isOpen ? "border-(--color-gold)/50" : "hover:border-(--color-gold)/40"
           }`}
         >

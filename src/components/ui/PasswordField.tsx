@@ -11,14 +11,26 @@ export default function PasswordField({
   placeholder,
   error,
   autoComplete,
+  visible,
+  onToggleVisible,
+  label,
+  icon = LockKeyhole,
 }: {
   value: string;
   onChange: (value: string) => void;
   placeholder: string;
   error?: string;
   autoComplete?: string;
+  /** Controlled visibility (optional). When omitted the field owns its state. */
+  visible?: boolean;
+  onToggleVisible?: () => void;
+  label?: string;
+  icon?: React.ElementType;
 }) {
-  const [show, setShow] = useState(false);
+  const [internalShow, setInternalShow] = useState(false);
+  const controlled = visible !== undefined && onToggleVisible !== undefined;
+  const show = controlled ? visible! : internalShow;
+  const toggle = controlled ? onToggleVisible! : () => setInternalShow((previous) => !previous);
   const { translate } = useLocale();
 
   return (
@@ -27,13 +39,14 @@ export default function PasswordField({
       value={value}
       onChange={onChange}
       placeholder={placeholder}
-      icon={LockKeyhole}
+      icon={icon}
+      label={label}
       autoComplete={autoComplete}
       error={error}
       rightSlot={
         <button
           type="button"
-          onClick={() => setShow((previous) => !previous)}
+          onClick={toggle}
           className="shrink-0 text-(--color-text-muted) transition-colors"
           aria-label={show ? translate("common.hide_password") : translate("common.show_password")}
         >

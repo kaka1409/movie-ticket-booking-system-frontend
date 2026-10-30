@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* Mobileâ†’desktop breakpoint (740px, not the Tailwind default 768px) so
+/* Mobile desktop breakpoint (740px, not the Tailwind default 768px) so
    iPad mini portrait (744px) renders the desktop variant. Keep in sync
    with the `matchMedia` threshold in `src/hooks/useDevice.ts`. */
 @theme {
@@ -41,7 +41,7 @@
   --color-surface: #1c1b1b;
   --color-surface-2: #242424;
   --color-border: #2e2e2e;
-  --color-border-strong: #6b6b6b; /* 3.2:1 on surface â€” WCAG 1.4.11 for form control boundaries */
+  --color-border-strong: #6b6b6b; /* 3.2:1 on surface” WCAG 1.4.11 for form control boundaries */
   /* Holds `--color-surface`'s neutral value for `.surface-raised`, which
      re-points `--color-surface` and would otherwise lose the panel colour. */
   --color-surface-base: var(--color-surface);
@@ -62,7 +62,7 @@
   --color-error: #d32f2f;
   --color-error-text: #5f1a1a;
 
-  /* Typography â€” `--font-inter` comes from `next/font` (Inter, self-hosted);
+  /* Typography `--font-inter` comes from `next/font` (Inter, self-hosted);
      the generic stack keeps a sane fallback if the variable is missing. */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 
@@ -105,7 +105,23 @@ body {
   min-height: 100dvh;
 }
 
-/* â”€â”€â”€ Custom Utilities â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* Default affordance: every real control (button, link, role=button) shows a
+   pointer cursor, and a disabled one shows `not-allowed`. Utility classes
+   (`cursor-wait`, `cursor-default`, …) still win because a class selector
+   outranks these element/attribute selectors, so opt-outs keep working. */
+@layer base {
+  button,
+  [role="button"],
+  a[href] {
+    cursor: pointer;
+  }
+  button:disabled,
+  [role="button"][aria-disabled="true"],
+  a[aria-disabled="true"] {
+    cursor: not-allowed;
+  }
+}
+
 .bg-hero-gradient {
   background: linear-gradient(
     to top,
@@ -115,7 +131,7 @@ body {
   );
 }
 
-/* Desktop raised surface â€” the booking step panel (`BookingStepLayout`) and the
+/* Desktop raised surface ” the booking step panel (`BookingStepLayout`) and the
    movies panel (`(main)/movies/page.tsx`): the panel itself paints
    `--color-surface`, so every card nested inside it steps up one level to
    `--color-surface-2`. Those cards are all shared with the mobile skin â€” which
@@ -136,7 +152,7 @@ body {
   }
 }
 
-/* â”€â”€â”€ Double-thumb range slider â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+/* Double-thumb range slider 
    Backs `components/ui/RangeSlider.tsx`. Two native range inputs share one
    track; the inputs are `pointer-events-none` so only the visible knobs stay
    draggable (a knob can never steal the other's hit area). */
@@ -179,7 +195,6 @@ body {
   }
 }
 
-/* â”€â”€â”€ Animations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @keyframes fadeSlideIn {
   from {
     opacity: 0;
@@ -201,7 +216,6 @@ body {
   overflow: hidden;
 }
 
-/* â”€â”€â”€ Film Strip Scroll â€” 404 page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @keyframes filmStripScroll {
   0% {
     transform: translateY(-100%);
@@ -220,7 +234,6 @@ body {
   }
 }
 
-/* â”€â”€â”€ Glitch Decode â€” error page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @keyframes glitchDecode {
   0%,
   100% {
@@ -272,7 +285,7 @@ body {
   }
 }
 
-/* â”€â”€â”€ Reduced motion (WCAG 2.3.3) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+/* Reduced motion (WCAG 2.3.3)
    0.01ms (not `none`) so `forwards` still fills final state â€” `.animate-fade-in`
    starts at `opacity: 0`, disabling animation must not leave it invisible. */
 @media (prefers-reduced-motion: reduce) {
@@ -292,7 +305,7 @@ body {
   }
 }
 
-/* â”€â”€â”€ Scroll anchoring (sticky header) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* Scroll anchoring (sticky header) */
 html {
   scroll-padding-top: 4.5rem;
 }

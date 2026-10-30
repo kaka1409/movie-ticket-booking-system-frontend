@@ -6,7 +6,7 @@ import { Search, LogIn } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { buildLoginUrl } from "@/libs/utils";
-import Logo from "@/layouts/components/Logo";
+import Logo from "@/components/ui/Logo";
 import LanguageToggle from "@/layouts/components/LanguageToggle";
 import NotificationBell from "./NotificationBell";
 import AccountMenu from "./AccountMenu";

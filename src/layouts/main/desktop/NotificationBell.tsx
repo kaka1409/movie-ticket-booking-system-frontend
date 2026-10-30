@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { Bell, ChevronRight, X } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
-import { useNotifications } from "@/features/notifications/context";
-import NotificationRow from "@/features/notifications/components/NotificationRow";
+import { useNotifications } from "@/features/notifications/contexts/NotificationsContext";
+import NotificationRow from "@/components/shared/notifications/NotificationRow";
 import Dropdown from "@/components/ui/Dropdown";
 
 /** Unread pill — widened past a single digit so two digits still fit. */

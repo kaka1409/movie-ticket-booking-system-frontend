@@ -1,4 +1,4 @@
-import { HomePageSkeleton } from "./home/components/HomeSkeletons";
+import { HomePageSkeleton } from "./home/components/shared/HomeSkeletons";
 
 /**
  * Group-level fallback: only `/` renders here (`page.tsx` re-exports the home

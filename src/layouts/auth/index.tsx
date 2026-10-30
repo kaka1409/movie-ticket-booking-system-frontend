@@ -6,7 +6,6 @@ import DesktopAuthLayout from "./desktop/AuthLayout";
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   const device = useDevice();
-
   return device === "mobile" ? (
     <MobileAuthLayout>{children}</MobileAuthLayout>
   ) : (

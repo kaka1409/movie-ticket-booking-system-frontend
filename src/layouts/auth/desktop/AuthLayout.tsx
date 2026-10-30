@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useLocale } from "@/contexts/LocaleContext";
 import DesktopShell from "@/layouts/components/DesktopShell";
-import Logo from "@/layouts/components/Logo";
+import Logo from "@/components/ui/Logo";
 import { AUTH_PROMO_BULLETS, AUTH_PROMO_IMAGE, AUTH_PROMO_IMAGE_SIZES } from "../constants";
 
 /**

@@ -30,7 +30,7 @@ import type { AdminSidebarMode, AdminTheme } from "@/features/admin/types";
 import Avatar, { DEFAULT_AVATAR_SRC } from "@/components/ui/Avatar";
 import Dropdown from "@/components/ui/Dropdown";
 import LoginPrompt from "@/components/shared/LoginPrompt";
-import Logo from "@/layouts/components/Logo";
+import Logo from "@/components/ui/Logo";
 
 const THEME_OPTIONS: Array<{ value: AdminTheme; labelKey: string; Icon: LucideIcon }> = [
   { value: "dark", labelKey: "admin.theme.dark", Icon: Moon },

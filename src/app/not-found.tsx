@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { ChevronRight, Clapperboard, Home, Ticket } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
-import Logo from "@/layouts/components/Logo";
+import Logo from "@/components/ui/Logo";
 import Button from "@/components/ui/Button";
 import StatusPageShell, { StatusPanel } from "@/components/shared/StatusPageShell";
 

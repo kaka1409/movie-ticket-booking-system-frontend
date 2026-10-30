@@ -10,8 +10,8 @@ import ToastViewport from "@/components/ui/ToastViewport";
 import RouteProgressBar from "@/components/ui/RouteProgressBar";
 import type { Device } from "@/types";
 import { AuthProvider } from "@/contexts/AuthContext";
-import { WishlistProvider } from "@/features/wishlist/context";
-import { NotificationProvider } from "@/features/notifications/context";
+import { WishlistProvider } from "@/features/wishlist/contexts/WishlistContext";
+import { NotificationProvider } from "@/features/notifications/contexts/NotificationsContext";
 import { SITE_NAME, SITE_URL, DEFAULT_DESCRIPTION, DEFAULT_OG_IMAGE } from "@/libs/site";
 
 /**
