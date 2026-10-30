@@ -12,10 +12,10 @@ import {
   type ReactNode,
 } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { useMovieSelection } from "@/features/movies/context";
-import { getShowtimes } from "./api";
-import { isValidDateParam } from "./utils";
-import type { GroupedShowtimeCinema, ShowtimeDateOption } from "./types";
+import { useMovieSelection } from "@/features/movies/contexts/MovieSelectionContext";
+import { getShowtimes } from "../api";
+import { isValidDateParam } from "../utils";
+import type { GroupedShowtimeCinema, ShowtimeDateOption } from "../types";
 
 interface ShowtimesContextType {
   /** The day the cinema list currently shows (server default until a switch). */

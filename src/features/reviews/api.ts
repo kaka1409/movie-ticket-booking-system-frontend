@@ -1,10 +1,12 @@
-import { apiFetch, apiMutation, withLang, type ApiResponse } from "@/libs/api";
-import { FILTERS } from "./mock";
+import { cache } from "react";
+import { apiFetch, apiMutation, settleApiResponse, withLang, type ApiResponse } from "@/libs/api";
+import { REVIEW_FILTER_FALLBACK as FILTERS, REVIEWS_PAGE_SIZE } from "./constants";
 import type {
   FilterKey,
   MyReviewsResponse,
   ReviewFilter,
   ReviewSort,
+  MyReview,
   ReviewsResponse,
 } from "./types";
 
@@ -83,3 +85,29 @@ export async function deleteMyReview(
     };
   }
 }
+
+/** First movie-review page shared by the mobile, desktop, and JSON-LD readers. */
+export const getMovieReviews = cache(
+  (movieSlug: string, locale: "en" | "vn"): Promise<ApiResponse<ReviewsResponse>> =>
+    settleApiResponse(
+      getReviews({ movieSlug, skip: 0, limit: REVIEWS_PAGE_SIZE, sort: "recent" }, locale),
+    ),
+);
+
+export interface MyReviewsOverview {
+  reviews: MyReview[];
+  total: number;
+  filters: Awaited<ReturnType<typeof getReviewFilters>>;
+}
+
+/** Cached profile review feed shared by the mobile and desktop trees. */
+export const getMyReviewsOverview = cache(
+  async (cookie: string | undefined, locale: "en" | "vn"): Promise<MyReviewsOverview> => {
+    const [reviewsResult, filters] = await Promise.all([
+      getMyReviews({ skip: 0, limit: 10, sort: "recent" }, cookie, locale),
+      getReviewFilters(locale),
+    ]);
+    const initial = "error" in reviewsResult ? { reviews: [], total: 0 } : reviewsResult.data;
+    return { reviews: initial.reviews, total: initial.total, filters };
+  },
+);

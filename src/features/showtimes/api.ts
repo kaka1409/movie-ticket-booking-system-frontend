@@ -1,5 +1,12 @@
-import { apiFetch, withLang, type ApiResponse } from "@/libs/api";
-import type { ShowtimesResponse, ShowtimeDateOption, ShowtimeDetail } from "./types";
+import { cache } from "react";
+import { apiFetch, settleApiResponse, withLang, type ApiResponse } from "@/libs/api";
+import type {
+  GroupedShowtimeCinema,
+  ShowtimesResponse,
+  ShowtimeDateOption,
+  ShowtimeDetail,
+} from "./types";
+import { pickDefaultCinemaId } from "./utils";
 
 /**
  * Slot lists stay uncached on purpose: `isAvailable` is live booking
@@ -63,3 +70,86 @@ export function getShowtimeDates(
 export function getShowtimeById(id: string): Promise<ApiResponse<ShowtimeDetail>> {
   return apiFetch<ShowtimeDetail>(`/showtimes/${encodeURIComponent(id)}`);
 }
+
+/** Data needed by a movie schedule block for one resolved date. */
+export interface MovieSchedule {
+  dates: ShowtimeDateOption[];
+  /** True when the dates API answered, even with zero days. */
+  datesAvailable: boolean;
+  date: string;
+  cinemas: GroupedShowtimeCinema[];
+  error: string | null;
+}
+
+function toAvailableDates(records: ShowtimeDateOption[]): string[] {
+  return records.filter((record) => record.hasShowtimes).map((record) => record.date);
+}
+
+function resolveDate(availableDates: string[], today: string): string {
+  if (availableDates.length === 0) return today;
+  return availableDates.includes(today) ? today : availableDates[0];
+}
+
+/** Cached dates + slots query shared by the booking and movie-detail pages. */
+export const getMovieSchedule = cache(
+  async (
+    movieSlug: string,
+    locale: "en" | "vn",
+    today: string,
+    requestedDate = "",
+  ): Promise<MovieSchedule> => {
+    const primaryDate = requestedDate || today;
+    const [datesResult, primaryResult] = await Promise.all([
+      settleApiResponse(getShowtimeDates(movieSlug, locale)),
+      settleApiResponse(getShowtimes(movieSlug, primaryDate)),
+    ]);
+
+    const dates = "error" in datesResult ? [] : datesResult.data;
+    const date = requestedDate || resolveDate(toAvailableDates(dates), today);
+    const slotsResult =
+      date === primaryDate
+        ? primaryResult
+        : await settleApiResponse(getShowtimes(movieSlug, date));
+
+    return {
+      dates,
+      datesAvailable: !("error" in datesResult),
+      date,
+      cinemas: "error" in slotsResult ? [] : slotsResult.data.cinemas,
+      error: "error" in slotsResult ? slotsResult.error.message : null,
+    };
+  },
+);
+
+/** First-render seed for the home quick-booking widgets. */
+export interface QuickBookingSeed {
+  locale: "en" | "vn";
+  movieSlug: string;
+  dates: ShowtimeDateOption[] | null;
+  activeDate: string;
+  cinemas: GroupedShowtimeCinema[] | null;
+  selectedCinemaId: string;
+}
+
+export const getQuickBookingSeed = cache(
+  async (movieSlug: string, locale: "en" | "vn"): Promise<QuickBookingSeed> => {
+    const datesResult = await settleApiResponse(getShowtimeDates(movieSlug, locale));
+    const dates = "error" in datesResult ? null : datesResult.data;
+    const activeDate = dates?.find((option) => option.hasShowtimes)?.date ?? "";
+
+    if (!activeDate) {
+      return { locale, movieSlug, dates, activeDate, cinemas: null, selectedCinemaId: "" };
+    }
+
+    const slotsResult = await settleApiResponse(getShowtimes(movieSlug, activeDate));
+    const cinemas = "error" in slotsResult ? null : slotsResult.data.cinemas;
+    return {
+      locale,
+      movieSlug,
+      dates,
+      activeDate,
+      cinemas,
+      selectedCinemaId: cinemas ? pickDefaultCinemaId(cinemas) : "",
+    };
+  },
+);

@@ -5,7 +5,8 @@ import { useLocale } from "@/contexts/LocaleContext";
 import { todayInCinemaZone } from "@/libs/date";
 import type { Movie } from "@/features/movies/types";
 import { getShowtimeDates, getShowtimes } from "../api";
-import { toShowtimeDateChips, type ShowtimeDateChip } from "../utils";
+import { pickDefaultCinemaId, toShowtimeDateChips, type ShowtimeDateChip } from "../utils";
+import type { QuickBookingSeed } from "../api";
 import type { GroupedShowtimeCinema, ShowtimeDateOption, ShowtimeSlot } from "../types";
 
 export interface QuickBookingController {
@@ -38,24 +39,23 @@ export interface QuickBookingController {
  * no need for a reset effect. Mount this ONCE per page — both device trees
  * render, so a per-skin instance doubles every request.
  */
-export function useQuickBooking({ movies }: { movies: Movie[] }): QuickBookingController {
+export function useQuickBooking({
+  movies,
+  seed,
+}: {
+  movies: Movie[];
+  seed?: QuickBookingSeed | null;
+}): QuickBookingController {
   const { locale } = useLocale();
   // Chips carry the cinema's calendar day, not the viewer's device day.
   const today = useMemo(() => todayInCinemaZone(), []);
 
+  // Prefetch is locale-bound: ignore a seed that answers a different locale.
+  const effectiveSeed = seed?.locale === locale ? seed : null;
+
   const [selectedMovieSlug, setSelectedMovieSlug] = useState("");
-  const [datesState, setDatesState] = useState<{
-    key: string;
-    data: ShowtimeDateOption[];
-  } | null>(null);
   const [datesFailedKey, setDatesFailedKey] = useState<string | null>(null);
-  const [dateSelection, setDateSelection] = useState<{ key: string; value: string } | null>(null);
-  const [slotsState, setSlotsState] = useState<{
-    key: string;
-    data: GroupedShowtimeCinema[];
-  } | null>(null);
   const [slotsFailedKey, setSlotsFailedKey] = useState<string | null>(null);
-  const [selectedCinemaId, setSelectedCinemaId] = useState("");
   const [selectedSlotId, setSelectedSlotId] = useState("");
   const [retryNonce, setRetryNonce] = useState(0);
 
@@ -64,6 +64,22 @@ export function useQuickBooking({ movies }: { movies: Movie[] }): QuickBookingCo
     selectedMovieSlug && movies.some((movie) => movie.slug === selectedMovieSlug)
       ? selectedMovieSlug
       : (movies[0]?.slug ?? "");
+
+  const initialDatesKey = `${effectiveMovieSlug}|${locale}|0`;
+  const initialSlotsKey = `${effectiveMovieSlug}|${effectiveSeed?.activeDate ?? ""}|0`;
+
+  const [datesState, setDatesState] = useState<{ key: string; data: ShowtimeDateOption[] } | null>(
+    effectiveSeed?.dates ? { key: initialDatesKey, data: effectiveSeed.dates } : null,
+  );
+  const [dateSelection, setDateSelection] = useState<{ key: string; value: string } | null>(
+    effectiveSeed?.dates ? { key: initialDatesKey, value: effectiveSeed.activeDate } : null,
+  );
+  const [slotsState, setSlotsState] = useState<{ key: string; data: GroupedShowtimeCinema[] } | null>(
+    effectiveSeed?.cinemas ? { key: initialSlotsKey, data: effectiveSeed.cinemas } : null,
+  );
+  const [selectedCinemaId, setSelectedCinemaId] = useState<string>(
+    effectiveSeed?.selectedCinemaId ?? "",
+  );
 
   const datesKey = `${effectiveMovieSlug}|${locale}|${retryNonce}`;
   const shownDates = datesState && datesState.key === datesKey ? datesState.data : null;
@@ -77,6 +93,7 @@ export function useQuickBooking({ movies }: { movies: Movie[] }): QuickBookingCo
   // Dates follow the movie (and the UI language for weekday labels).
   useEffect(() => {
     if (!effectiveMovieSlug) return;
+    if (shownDates || datesFailed) return;
     let cancelled = false;
 
     void (async () => {
@@ -104,11 +121,12 @@ export function useQuickBooking({ movies }: { movies: Movie[] }): QuickBookingCo
     return () => {
       cancelled = true;
     };
-  }, [datesKey, effectiveMovieSlug, locale]);
+  }, [datesKey, effectiveMovieSlug, locale, shownDates, datesFailed]);
 
   // Cinemas follow the date; the list is whatever plays that day.
   useEffect(() => {
     if (!effectiveMovieSlug || !activeDate) return;
+    if (shownCinemas || slotsFailed) return;
     let cancelled = false;
 
     void (async () => {
@@ -122,9 +140,7 @@ export function useQuickBooking({ movies }: { movies: Movie[] }): QuickBookingCo
       setSlotsState({ key: slotsKey, data: list });
       setSelectedCinemaId((previous) => {
         if (previous && list.some((cinema) => cinema.id === previous)) return previous;
-        const withAvailability =
-          list.find((cinema) => cinema.showtimes.some((slot) => slot.isAvailable)) ?? list[0];
-        return withAvailability ? withAvailability.id : "";
+        return pickDefaultCinemaId(list);
       });
       setSelectedSlotId((previous) =>
         previous &&
@@ -138,7 +154,7 @@ export function useQuickBooking({ movies }: { movies: Movie[] }): QuickBookingCo
     return () => {
       cancelled = true;
     };
-  }, [slotsKey, effectiveMovieSlug, activeDate]);
+  }, [slotsKey, effectiveMovieSlug, activeDate, shownCinemas, slotsFailed]);
 
   const dateChips = useMemo(
     () => (shownDates ? toShowtimeDateChips(shownDates, locale) : []),

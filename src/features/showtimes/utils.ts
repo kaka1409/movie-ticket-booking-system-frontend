@@ -1,4 +1,4 @@
-import type { ShowtimeDateOption } from "./types";
+import type { GroupedShowtimeCinema, ShowtimeDateOption } from "./types";
 import { formatDateOnly, formatDayOfMonth } from "@/libs/date";
 import { toLocaleTag } from "@/libs/utils";
 import { DATE_STRIP_DAYS } from "./constants";
@@ -60,6 +60,21 @@ export function toShowtimeDateChips(
       disabled: !record.hasShowtimes,
     };
   });
+}
+
+/** First cinema that has at least one bookable slot, else the first cinema. */
+export function pickDefaultCinemaId(cinemas: GroupedShowtimeCinema[]): string {
+  const withAvailability = cinemas.find((cinema) =>
+    cinema.showtimes.some((slot) => slot.isAvailable),
+  );
+  return (withAvailability ?? cinemas[0])?.id ?? "";
+}
+
+/** Resolve the first day shown when the URL does not specify a date. */
+export function resolveDefaultShowtimeDate(records: ShowtimeDateOption[], today: string): string {
+  const availableDates = records.filter((record) => record.hasShowtimes).map((record) => record.date);
+  if (availableDates.length === 0) return today;
+  return availableDates.includes(today) ? today : availableDates[0];
 }
 
 /** Local fallback chips used only when the showtime-dates API is unavailable. */

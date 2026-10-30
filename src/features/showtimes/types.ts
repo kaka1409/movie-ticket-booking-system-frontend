@@ -1,3 +1,28 @@
+export interface Showtime {
+  id?: string;
+  time: string;
+  room: string;
+  available: boolean;
+  date?: string;
+}
+
+export interface Cinema {
+  id: string;
+  name: string;
+  address: string;
+  distance?: string;
+  badge: string;
+  badgeColor: string;
+  showtimes: Showtime[];
+}
+
+export interface DateOption {
+  value: string;
+  day: number;
+  month: string;
+  weekday: string;
+}
+
 export interface ShowtimeSlot {
   id: string;
   startTime: string;
