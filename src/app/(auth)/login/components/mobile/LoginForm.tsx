@@ -38,7 +38,7 @@ export default function LoginForm({ returnUrl }: { returnUrl?: string }) {
   return (
     <div className="w-full max-w-md mx-auto animate-fade-in">
       <div className="flex justify-center mb-4">
-        <Logo size="lg" />
+        <Logo variant="mark" size="lg" />
       </div>
 
       <h1 className="text-center text-2xl font-extrabold text-(--color-text-primary) mb-1">
