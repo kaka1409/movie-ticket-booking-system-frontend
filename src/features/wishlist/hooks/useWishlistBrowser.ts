@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useWishlist, type WishlistFeedback } from "@/features/wishlist/context";
+import { useWishlist, type WishlistFeedback } from "@/features/wishlist/contexts/WishlistContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import type { WishlistItem, WishlistMovie, WishlistTab } from "@/features/wishlist/types";

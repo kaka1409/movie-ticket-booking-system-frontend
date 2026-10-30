@@ -1,4 +1,4 @@
-import type { MovieStatus } from "@/types";
+import type { MovieStatus } from "@/features/movies/types";
 
 /**
  * Movie card payload from `GET /wishlist` — the exact BE shape (`status` is
