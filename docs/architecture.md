@@ -24,25 +24,38 @@
 - Error pages: `src/app/error.tsx` (root, uses shared `components/shared/RouteError.tsx`), `src/app/global-error.tsx`, per-group `error.tsx` in `(main)`, `(blank)`, `(sub)`, `(auth)`; 404 at `src/app/not-found.tsx`. Desktop: `RouteError` + `not-found` share `components/shared/StatusPageShell.tsx` (mobile centred column → `md:` two-column split: message left, `.surface-raised` panel right); `global-error.tsx` gets the same card polish in inline styles.
 - **All API calls on server**: Every `page.tsx` is a server component that fetches data via `await` — except `tickets/[id]/cancel/page.tsx`, a client state machine by design. Client components (`"use client"`) receive data via props only — no `useEffect` + API call pattern — except request-keyed refetches (movies list, home QuickBooking dates/slots) that re-run when their key (filters/locale, movie/date) changes. Protected pages are wrapped with `<ProtectedRoute>` client component for auth gating. **Exception**: the seat-hold lifecycle (`GET`/`PUT`/`DELETE /seat-holds`) runs client-side in `features/booking/hooks/useSeatHolds.ts` - the access token lives in RAM, so the Bearer header is attached in the browser and the token never reaches the Next.js server. When a page needs several independent feeds it **streams** rather than blocking on all of them (see _Streaming_ below).
 
-### Streaming (route → what the page awaits → boundary → loader → skeleton)
+### Layering
+
+`app/` = routing + route-specific presentation. `features/<domain>/` = API calls, data, business logic and state; it owns no visual components. Cross-feature presentation belongs in `components/shared/`; primitives belong in `components/ui`. App route components may depend on features, never the reverse.
+
+- R1: `app/**` owns routing + route-specific presentation; data/logic comes from feature APIs and helpers.
+- R2: `components/ui` imports no `@/features` / `@/app` / `@/layouts`; `components/shared` imports no `@/app`.
+- R3: route-specific UI stays in that route's `app/**/components/`; cross-feature UI lives in `components/shared/`; features contain no visual components.
+- R4: one context per file at `features/<domain>/contexts/<Name>Context.tsx`; `src/contexts/` only Auth/Locale/Toast/Device.
+- R5: endpoint calls live in `features/<domain>/api.ts`; independent feeds compose in page-local async sections under Suspense; helper = `utils/<concern>.ts`; static = `constants.ts`; effect-only = route `components/adopters/<Name>Adopter.tsx`; multi-file state = `state/` (`types.ts` + `initial.ts` + `reducer.ts` + `index.ts`).
+- R6: `{desktop,mobile,shared}` only when >1 tree; a file used by both must live in `shared/`, and a skin never imports the other skin.
+- R7: ≤ ~200 lines/file.
+
+## Streaming (route → what the page awaits → boundary → loader → skeleton)
 
 The page awaits only what it cannot paint without; every data block is an async section inside its own `<Suspense>`. A block rendered into both device trees gets **one boundary per tree** over the same `cache()`-memoized loader, so two skins still cost one backend call. The route `loading.tsx` always renders the same skeleton composition the page streams into.
 
 | Route | Page awaits | Streamed blocks (boundaries) | Loader (`cache()`) | Skeleton |
 |---|---|---|---|---|
-| `/` · `/home` | locale cookie | hero · now showing · coming soon (desktop + mobile fragments around the quick-booking node) | `features/movies/home.ts` | `home/components/HomeSkeletons.tsx` |
-| `/movies` | searchParams + locale | one boundary: provider + both trees (the list provider needs rows at mount) | `features/movies/listing.ts` | `movies/components/MoviesSkeletons.tsx` |
-| `/movies/[slug]` | params + locale + `getMovieDetail` (404 + metadata) | reviews · showtimes · related, per tree; JSON-LD in `fallback={null}` | `features/reviews/detail.ts`, `features/showtimes/detail.ts`, `features/movies/detail.ts` | `movies/[slug]/components/MovieDetailSkeletons.tsx` |
+| `/` · `/home` | locale cookie | hero · now showing · coming soon (desktop + mobile fragments around the quick-booking node); quick booking also prefetches the first movie's dates + slots (query helpers in the feature `api.ts` files; dates cached 60s, slots live) so the card paints real data on first stream | `features/movies/api.ts`, `features/showtimes/api.ts` | `home/components/HomeSkeletons.tsx` |
+| `/movies` | searchParams + locale | movie list initializes provider; genres, formats and age ratings stream independently and update filter options | individual `getMovies`, `getGenres`, `getFormats`, `getAgeRatings` calls in `features/movies/api.ts` | `movies/components/MoviesSkeletons.tsx` |
+| `/movies/[slug]` | params + locale + `getMovieDetail` (404 + metadata) | reviews · showtimes · related, per tree; JSON-LD in `fallback={null}` | `features/reviews/api.ts`, `features/showtimes/api.ts`, `features/movies/api.ts` | `movies/[slug]/components/MovieDetailSkeletons.tsx` |
 | `/tickets` | session + locale + cookie + searchParams | one list boundary (tab-scoped fetch feeds both skins) | — (single consumer) | `tickets/components/{mobile,desktop}/TicketsSkeleton.tsx` |
-| `/profile` | session + locale + cookie | stats · next ticket (desktop) | `features/profile/summary.ts` | `profile/components/desktop/ProfileSkeletons.tsx` |
-| `/profile/reviews` | locale + cookie | `AccountShell` + nav paint first; list streams into the raised panel | `features/reviews/profile.ts` | `profile/components/desktop/AccountSkeleton.tsx` + `reviews/components/ReviewsSkeletons.tsx` |
-| `/booking/[slug]/cinema` | params + searchParams + locale + movie (404, summary, rail) | day strip + slots per tree; `CinemaAdopt` in `fallback={null}` | `features/showtimes/detail.ts` (`getMovieSchedule`) | `cinema/components/CinemaSkeletons.tsx` |
-| `/booking/[slug]/seats` | params + searchParams (redirect without `showtimeId`) | seat map per tree; `SeatMapAdoptSection` in `fallback={null}` | `features/booking/seats.ts` | `seats/components/SeatSkeletons.tsx` |
-| `/booking/[slug]/snack` | locale | catalog per tree | `features/booking/snack.ts` | `snack/components/SnackSkeletons.tsx` |
-| `/booking/[slug]/payment` | params + locale | gateway picker per tree; `PaymentDefaultAdoptSection` in `fallback={null}` | `features/booking/payment.ts` | `payment/components/PaymentSkeletons.tsx` |
+| `/profile` | session + locale + cookie | tickets/reviews/wishlist counters and next ticket each stream in their own boundary (desktop) | individual APIs; upcoming tickets are request-memoized for the counter + next-ticket widget | `profile/components/desktop/ProfileSkeletons.tsx` |
+| `/profile/wishlist` | cookie + locale | wishlist feed streams as one responsive section | `features/wishlist/api.ts` | `profile/wishlist/components/shared/WishlistSkeletons.tsx` |
+| `/profile/reviews` | locale + cookie | `AccountShell` + nav paint first; list streams into the raised panel | `features/reviews/api.ts` | `profile/components/desktop/AccountSkeleton.tsx` + `reviews/components/ReviewsSkeletons.tsx` |
+| `/booking/[slug]/cinema` | params + searchParams + locale + movie (404, summary, rail) | date strip + slots per tree; `CinemaAdopter` in `fallback={null}` | individual `getShowtimeDates` + `getShowtimes` calls in `features/showtimes/api.ts` | `cinema/components/CinemaSkeletons.tsx` |
+| `/booking/[slug]/seats` | params + searchParams (redirect without `showtimeId`) | seat map per tree; `SeatMapAdoptSection` in `fallback={null}` | `getSeatMap` + `getShowtimeById` in feature APIs | `seats/components/SeatSkeletons.tsx` |
+| `/booking/[slug]/snack` | locale | combo feed and food/category feed per tree | individual `getCombos`, `getFoodItems`, `getFoodCategories` calls in `features/booking/api.ts` | `snack/components/SnackSkeletons.tsx` |
+| `/booking/[slug]/payment` | params + locale | gateway picker per tree; `PaymentDefaultAdoptSection` in `fallback={null}` | `getPaymentMethods` in `features/booking/api.ts` | `payment/components/PaymentSkeletons.tsx` |
 | `/admin/*` (6 routes) | searchParams (`movies`) | one manager boundary per page; the header paints first | — (single consumer) | `features/admin/components/AdminSkeletons.tsx` |
 
-Deliberately **not** streamed: `payment/qr` (a redirect gate — `bookingId`, `paid`, and the method all decide whether the page exists), `status/*`, `credentials` (draft-driven), `tickets/[id]*` (one client-side feed), `notifications` (provider + socket, no SSR feed), `(auth)/*`.
+The QR route awaits only the booking read needed for its auth/paid/404 decisions; the method catalog and QR screen stream afterward. Success/failure status routes await booking only when a `bookingId` is present; their receipt (movie fallback + payment-method catalog) streams below the status heading. `credentials` stays draft-driven; `tickets/[id]*` uses one client-side feed; `notifications` uses provider + socket without an SSR feed; `(auth)/*` is not streamed.
 
 Two tradeoffs worth knowing:
 
