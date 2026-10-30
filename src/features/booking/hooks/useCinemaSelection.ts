@@ -1,9 +1,9 @@
 "use client";
 
 import { useMemo } from "react";
-import { useBooking } from "@/features/booking/context";
+import { useBooking } from "@/features/booking/contexts/BookingContext";
 import { resolveSlotSelection } from "@/features/booking/utils/cinema";
-import type { Cinema } from "@/features/booking/types";
+import type { Cinema } from "@/features/showtimes/types";
 
 interface CinemaSelectionResult {
   /** Cinema/location search box value (draft slice). */

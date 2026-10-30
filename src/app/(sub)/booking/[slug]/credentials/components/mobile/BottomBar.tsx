@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { useParams } from "next/navigation";
-import { useBooking } from "@/features/booking/context";
+import { useBooking } from "@/features/booking/contexts/BookingContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import { createContactSchema } from "@/features/booking/schema";
 import BookingBottomBar from "@/components/shared/BookingBottomBar";

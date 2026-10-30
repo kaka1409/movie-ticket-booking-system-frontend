@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import BookingRail from "./BookingRail";
 import BookingStepRail from "./StepRail";
 import SplitStepLayout from "@/components/shared/SplitStepLayout";
-import type { Movie } from "@/types";
+import type { Movie } from "@/features/movies/types";
 
 /**
  * Desktop shell for the five booking steps: the booking stepper on top, the step

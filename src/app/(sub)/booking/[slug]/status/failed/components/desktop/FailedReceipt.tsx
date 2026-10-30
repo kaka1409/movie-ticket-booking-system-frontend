@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { CalendarDays, MonitorPlay } from "lucide-react";
-import { useBooking } from "@/features/booking/context";
+import { useBooking } from "@/features/booking/contexts/BookingContext";
 import { useMounted } from "@/hooks/useMounted";
 import { useLocale } from "@/contexts/LocaleContext";
 import { bookingCardData, resolveTicketIdentity } from "@/features/booking/utils/bookingCard";

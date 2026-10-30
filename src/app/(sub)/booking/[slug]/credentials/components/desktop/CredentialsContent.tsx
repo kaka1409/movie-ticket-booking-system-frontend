@@ -2,14 +2,14 @@
 
 import { useMemo } from "react";
 import { ArrowRight } from "lucide-react";
-import { useBooking } from "@/features/booking/context";
+import { useBooking } from "@/features/booking/contexts/BookingContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import { createContactSchema } from "@/features/booking/schema";
 import Button from "@/components/ui/Button";
 import BookingStepLayout from "@/app/(sub)/booking/components/desktop/BookingStepLayout";
 import CountdownRow from "@/app/(sub)/booking/components/desktop/CountdownRow";
 import RailSummary from "@/app/(sub)/booking/components/desktop/RailSummary";
-import ContactForm from "../mobile/ContactForm";
+import ContactForm from "../shared/ContactForm";
 
 /**
  * Desktop contact step: the shared contact form in the content column, the

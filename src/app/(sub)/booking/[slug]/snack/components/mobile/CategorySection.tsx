@@ -1,6 +1,6 @@
 "use client";
 
-import { useBooking } from "@/features/booking/context";
+import { useBooking } from "@/features/booking/contexts/BookingContext";
 import { withItemQty } from "@/features/booking/utils/snack";
 import SectionHeader from "@/components/ui/SectionHeader";
 import FoodItemCard from "./FoodItemCard";

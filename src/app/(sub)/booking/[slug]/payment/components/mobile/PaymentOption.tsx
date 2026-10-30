@@ -1,7 +1,7 @@
 "use client";
 
-import { useBooking } from "@/features/booking/context";
-import PaymentMethodCard from "@/features/booking/components/payment/PaymentMethodCard";
+import { useBooking } from "@/features/booking/contexts/BookingContext";
+import PaymentMethodCard from "@/components/shared/payment/PaymentMethodCard";
 import type { PaymentMethodOption } from "@/features/booking/types";
 
 /**

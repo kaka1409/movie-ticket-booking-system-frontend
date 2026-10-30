@@ -1,5 +1,5 @@
 import { Skeleton, SkeletonCard } from "@/components/ui/Skeleton";
-import { DesktopSuccessSkeleton } from "../components/StatusSkeletons";
+import { DesktopSuccessSkeleton } from "../components/shared/StatusSkeletons";
 
 export default function SuccessLoading() {
   return (

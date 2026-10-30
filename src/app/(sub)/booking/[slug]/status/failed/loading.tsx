@@ -1,5 +1,5 @@
 import { Skeleton } from "@/components/ui/Skeleton";
-import { DesktopFailSkeleton } from "../components/StatusSkeletons";
+import { DesktopFailSkeleton } from "../components/shared/StatusSkeletons";
 
 export default function FailedLoading() {
   return (

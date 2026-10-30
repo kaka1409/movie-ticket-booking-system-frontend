@@ -1,31 +1,26 @@
-﻿import { Suspense } from "react";
+import { Suspense } from "react";
 import { getRequestLocale } from "@/libs/session";
+import { getCombos, getFoodCategories, getFoodItems } from "@/features/booking/api";
 
-// Shared
 import StepBar from "@/app/(sub)/booking/components/mobile/StepBar";
 import CountdownBanner from "@/app/(sub)/booking/components/mobile/CountdownBanner";
-
-// Local mobile
-import SnackHeader from "./components/mobile/SnackHeader";
+import SnackHeader from "./components/shared/SnackHeader";
 import BottomBar from "./components/mobile/BottomBar";
-
-// Desktop
 import DesktopSnackContent from "./components/desktop/SnackContent";
-
 import {
-  DesktopSnackCatalogSkeleton,
-  MobileSnackCatalogSkeleton,
-} from "./components/SnackSkeletons";
-import { SnackCatalogSection } from "./sections";
+  DesktopSnackCombosSkeleton,
+  DesktopSnackFoodSkeleton,
+  MobileSnackCombosSkeleton,
+  MobileSnackFoodSkeleton,
+} from "./components/shared/SnackSkeletons";
+import { SnackCombosSection, SnackFoodSection } from "./sections";
 
-/**
- * Snack step, streamed: the page awaits the locale only — the headers, the
- * countdown and both bottom surfaces paint immediately, and the catalog lands in
- * each tree's own boundary. Both boundaries read one memoized `getSnackCatalog`,
- * so the two skins cost a single round trip.
- */
+/** Streams the independent catalog feeds after the booking chrome has rendered. */
 export default async function CombosPage() {
   const locale = await getRequestLocale();
+  const combosPromise = getCombos(locale);
+  const foodItemsPromise = getFoodItems(locale);
+  const foodCategoriesPromise = getFoodCategories(locale);
 
   return (
     <>
@@ -34,8 +29,14 @@ export default async function CombosPage() {
         <main className="space-y-5 pt-1 pb-10">
           <CountdownBanner />
           <SnackHeader />
-          <Suspense fallback={<MobileSnackCatalogSkeleton />}>
-            <SnackCatalogSection locale={locale} variant="mobile" />
+          <Suspense fallback={<MobileSnackCombosSkeleton />}>
+            <SnackCombosSection combosPromise={combosPromise} variant="mobile" />
+          </Suspense>
+          <Suspense fallback={<MobileSnackFoodSkeleton />}>
+            <SnackFoodSection
+              foodItemsPromise={foodItemsPromise}
+              foodCategoriesPromise={foodCategoriesPromise}
+            />
           </Suspense>
         </main>
         <BottomBar />
@@ -44,9 +45,17 @@ export default async function CombosPage() {
       <div className="hidden md:block">
         <DesktopSnackContent
           slots={
-            <Suspense fallback={<DesktopSnackCatalogSkeleton />}>
-              <SnackCatalogSection locale={locale} variant="desktop" />
-            </Suspense>
+            <>
+              <Suspense fallback={<DesktopSnackCombosSkeleton />}>
+                <SnackCombosSection combosPromise={combosPromise} variant="desktop" />
+              </Suspense>
+              <Suspense fallback={<DesktopSnackFoodSkeleton />}>
+                <SnackFoodSection
+                  foodItemsPromise={foodItemsPromise}
+                  foodCategoriesPromise={foodCategoriesPromise}
+                />
+              </Suspense>
+            </>
           }
         />
       </div>

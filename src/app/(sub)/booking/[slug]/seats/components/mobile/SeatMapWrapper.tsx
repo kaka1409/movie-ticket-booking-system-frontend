@@ -1,9 +1,9 @@
 "use client";
 
 import { useMemo } from "react";
-import { useBooking } from "@/features/booking/context";
+import { useBooking } from "@/features/booking/contexts/BookingContext";
 import { restoreSelectedSeats } from "@/features/booking/utils/seat";
-import SeatGrid from "@/features/booking/components/seats/SeatGrid";
+import SeatGrid from "@/components/shared/seats/SeatGrid";
 import type { SeatRow } from "@/features/booking/types";
 
 /**

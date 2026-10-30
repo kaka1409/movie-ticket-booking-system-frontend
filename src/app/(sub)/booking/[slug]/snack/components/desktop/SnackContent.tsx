@@ -3,14 +3,14 @@
 import type { ReactNode } from "react";
 import { ArrowRight } from "lucide-react";
 import { useParams } from "next/navigation";
-import { useBooking } from "@/features/booking/context";
+import { useBooking } from "@/features/booking/contexts/BookingContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import { formatVND } from "@/libs/utils";
 import Button from "@/components/ui/Button";
 import MicroLabel from "@/components/ui/MicroLabel";
 import BookingStepLayout from "@/app/(sub)/booking/components/desktop/BookingStepLayout";
 import CountdownRow from "@/app/(sub)/booking/components/desktop/CountdownRow";
-import SnackHeader from "../mobile/SnackHeader";
+import SnackHeader from "../shared/SnackHeader";
 
 /**
  * Desktop snack step: the catalog arrives as `slots`, so the shell — stepper,

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { QRCodeSVG } from "qrcode.react";
-import { useBooking } from "@/features/booking/context";
+import { useBooking } from "@/features/booking/contexts/BookingContext";
 import { useMounted } from "@/hooks/useMounted";
 import { bookingCardData, resolveTicketIdentity } from "@/features/booking/utils/bookingCard";
 import { useLocale } from "@/contexts/LocaleContext";

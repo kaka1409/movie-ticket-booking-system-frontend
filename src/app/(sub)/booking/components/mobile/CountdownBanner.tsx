@@ -2,7 +2,7 @@
 
 import { Timer } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
-import { formatCountdown, useCountdownRemaining } from "@/features/booking/countdown";
+import { formatCountdown, useCountdownRemaining } from "@/features/booking/contexts/CountdownContext";
 
 /**
  * Session countdown chip. The clock itself lives in `CountdownProvider`, mounted

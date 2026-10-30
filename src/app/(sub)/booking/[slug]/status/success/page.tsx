@@ -1,17 +1,18 @@
+import { Suspense } from "react";
 import { getMovieDetail } from "@/features/movies/api";
 import { getBookingById, getPaymentMethods } from "@/features/booking/api";
 import { getRequestCookie, getRequestLocale, isUnauthorizedResult } from "@/libs/session";
-import PaidBookingReset from "@/features/booking/components/PaidBookingReset";
+import PaidBookingReset from "@/app/(sub)/booking/components/shared/PaidBookingReset";
 import LoginPrompt from "@/components/shared/LoginPrompt";
-import type { PaymentMethodOption } from "@/features/booking/types";
 
 // Mobile components
 import SuccessIcon from "@/components/shared/SuccessIcon";
-import TicketCard from "./components/mobile/TicketCard";
 import SuccessActions from "./components/mobile/SuccessActions";
 
 // Desktop components
 import DesktopSuccessContent from "./components/desktop/SuccessContent";
+import { SuccessReceiptSection } from "./sections";
+import { StatusReceiptSkeleton } from "../components/shared/StatusSkeletons";
 
 export default async function SuccessPage({
   params,
@@ -23,24 +24,15 @@ export default async function SuccessPage({
   const [{ slug }, query] = await Promise.all([params, searchParams]);
   const locale = await getRequestLocale();
 
-  const [movieResult, bookingResult, catalogResult] = await Promise.all([
-    // Real flow always carries `?bookingId=` (submit redirects with it) — the
-    // booking payload already carries the movie, so no detail fetch there.
-    query.bookingId ? Promise.resolve(null) : getMovieDetail(slug, locale),
-    query.bookingId
-      ? getBookingById(query.bookingId, await getRequestCookie())
-      : Promise.resolve(null),
-    // Only the receipt needs the catalog (opaque ids → display labels); an
-    // outage degrades to the ids themselves instead of blanking the page.
-    getPaymentMethods(locale),
-  ]);
+  const moviePromise = query.bookingId ? null : getMovieDetail(slug, locale);
+  const catalogPromise = getPaymentMethods(locale);
+  const bookingResult = query.bookingId
+    ? await getBookingById(query.bookingId, await getRequestCookie())
+    : null;
 
   if (bookingResult && isUnauthorizedResult(bookingResult)) return <LoginPrompt />;
 
-  const movie = movieResult === null || "error" in movieResult ? undefined : movieResult.data;
   const booking = bookingResult && !("error" in bookingResult) ? bookingResult.data : null;
-  const paymentMethods: PaymentMethodOption[] =
-    "error" in catalogResult ? [] : catalogResult.data.methods;
   // Payment gateways may return their own reference; the fetched booking wins
   // over the raw URL param only when the param is absent.
   const transactionId = query.transactionId ?? booking?.transactionRef ?? booking?.id ?? "N/A";
@@ -57,12 +49,14 @@ export default async function SuccessPage({
               titleKey="booking.status.success.title"
               messageKey="booking.status.success.message"
             />
-            <TicketCard
-              movie={movie}
-              booking={booking}
-              transactionId={transactionId}
-              paymentMethods={paymentMethods}
-            />
+            <Suspense fallback={<StatusReceiptSkeleton />}>
+              <SuccessReceiptSection
+                moviePromise={moviePromise}
+                catalogPromise={catalogPromise}
+                booking={booking}
+                transactionId={transactionId}
+              />
+            </Suspense>
             <SuccessActions />
           </main>
         </div>
@@ -71,10 +65,18 @@ export default async function SuccessPage({
       {/* Desktop */}
       <div className="hidden md:block print:block">
         <DesktopSuccessContent
-          movie={movie}
           booking={booking}
           transactionId={transactionId}
-          paymentMethods={paymentMethods}
+          receipt={
+            <Suspense fallback={<StatusReceiptSkeleton />}>
+              <SuccessReceiptSection
+                moviePromise={moviePromise}
+                catalogPromise={catalogPromise}
+                booking={booking}
+                transactionId={transactionId}
+              />
+            </Suspense>
+          }
         />
       </div>
     </>

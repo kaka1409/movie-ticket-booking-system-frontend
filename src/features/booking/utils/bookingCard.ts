@@ -1,5 +1,5 @@
-import type { Movie } from "@/types";
-import { getPaymentLabel } from "../paymentBrand";
+import type { Movie } from "@/features/movies/types";
+import { getPaymentLabel } from "./paymentBrand";
 import type { BookingDetail, PaymentMethodOption, SelectedCombo, SelectedSeat } from "../types";
 
 interface BookingCardData {

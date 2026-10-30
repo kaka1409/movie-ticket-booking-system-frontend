@@ -2,13 +2,13 @@
 
 import type { ReactNode } from "react";
 import { ArrowRight } from "lucide-react";
-import { useBooking } from "@/features/booking/context";
+import { useBooking } from "@/features/booking/contexts/BookingContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import Button from "@/components/ui/Button";
 import MicroLabel from "@/components/ui/MicroLabel";
 import BookingStepLayout from "@/app/(sub)/booking/components/desktop/BookingStepLayout";
 import { buildSeatsHref } from "@/features/booking/utils/cinema";
-import type { Movie } from "@/types";
+import type { Movie } from "@/features/movies/types";
 
 /**
  * Desktop cinema step: the schedule block (day, search, cinema cards) arrives as

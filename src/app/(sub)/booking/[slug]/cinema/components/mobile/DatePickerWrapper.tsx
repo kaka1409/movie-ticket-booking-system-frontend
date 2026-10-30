@@ -2,8 +2,8 @@
 
 import { useCallback } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { useBooking } from "@/features/booking/context";
-import DatePicker from "@/features/showtimes/components/DatePicker";
+import { useBooking } from "@/features/booking/contexts/BookingContext";
+import DatePicker from "@/components/shared/showtimes/DatePicker";
 import type { DateOption } from "@/features/booking/types";
 
 export default function DatePickerWrapper({ dates }: { dates: DateOption[] }) {

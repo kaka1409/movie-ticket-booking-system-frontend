@@ -1,6 +1,6 @@
 "use client";
 
-import { useBooking } from "@/features/booking/context";
+import { useBooking } from "@/features/booking/contexts/BookingContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import BookingBottomBar from "@/components/shared/BookingBottomBar";
 import { buildSeatsHref } from "@/features/booking/utils/cinema";

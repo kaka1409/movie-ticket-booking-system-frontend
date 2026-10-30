@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useBooking } from "@/features/booking/context";
+import { useBooking } from "@/features/booking/contexts/BookingContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import { BOOKING_STEP_KEYS } from "@/features/booking/types";
 import { buildSeatsHref } from "@/features/booking/utils/cinema";

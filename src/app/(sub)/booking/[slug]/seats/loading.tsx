@@ -1,4 +1,4 @@
-import SeatsPageSkeleton from "./components/SeatSkeletons";
+import SeatsPageSkeleton from "./components/shared/SeatSkeletons";
 
 /**
  * Route fallback during navigation — the same composition the page streams into,

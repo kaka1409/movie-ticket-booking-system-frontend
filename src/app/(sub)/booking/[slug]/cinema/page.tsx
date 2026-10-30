@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { getMovieDetail } from "@/features/movies/api";
 import { getRequestLocale } from "@/libs/session";
 import { todayInCinemaZone } from "@/libs/date";
+import { getShowtimeDates, getShowtimes } from "@/features/showtimes/api";
+import { resolveDefaultShowtimeDate } from "@/features/showtimes/utils";
 
 // Shared
 import StepBar from "@/app/(sub)/booking/components/mobile/StepBar";
@@ -16,18 +18,20 @@ import BottomBar from "./components/mobile/BottomBar";
 import DesktopCinemaContent from "./components/desktop/CinemaContent";
 
 import {
+  DesktopCinemaDatesSkeleton,
   DesktopCinemaSlotsSkeleton,
-  MobileCinemaScheduleSkeleton,
-} from "./components/CinemaSkeletons";
-import { CinemaAdoptSection, CinemaScheduleSection } from "./sections";
-import { DATE_PATTERN } from "./adapters";
+  MobileCinemaDatesSkeleton,
+  MobileCinemaSlotsSkeleton,
+} from "./components/shared/CinemaSkeletons";
+import { CinemaAdoptSection, CinemaDatesSection, CinemaSlotsSection } from "./sections";
+import { DATE_PATTERN } from "@/features/booking/utils/cinema";
 
 /**
  * Cinema step, streamed: the page awaits the movie (it decides the 404 and feeds
  * the mobile summary and the desktop rail) and nothing else. The day strip and
  * the slot groups land in each tree's own boundary, and the deep-link adoption
- * rides a `fallback={null}` boundary — all three read one memoized schedule, so
- * the step still costs a single round trip.
+ * rides a `fallback={null}` boundary. The date response is shared by its display
+ * and the dependent slot request; each endpoint is called once per page render.
  */
 export default async function CinemaShowtimePage({
   params,
@@ -54,17 +58,27 @@ export default async function CinemaShowtimePage({
   const movie = movieResult.data;
   const today = todayInCinemaZone();
   const requestedDate = query.date && DATE_PATTERN.test(query.date) ? query.date : "";
-  const scheduleProps = { slug, locale, today, requestedDate };
+  const datesPromise = getShowtimeDates(slug, locale);
+  const schedulePromise = datesPromise.then(async (datesResult) => {
+    const date = requestedDate ||
+      ("error" in datesResult
+        ? today
+        : resolveDefaultShowtimeDate(datesResult.data, today));
+    const showtimesResult = await getShowtimes(slug, date);
+    return { datesResult, date, showtimesResult };
+  });
 
   return (
     <>
       <Suspense fallback={null}>
         <CinemaAdoptSection
           movie={movie}
+          schedulePromise={schedulePromise}
+          today={today}
+          locale={locale}
           initialCinemaId={query.cinema ?? null}
           initialTime={query.time ?? ""}
           initialShowtimeId={query.showtimeId ?? null}
-          {...scheduleProps}
         />
       </Suspense>
 
@@ -73,8 +87,11 @@ export default async function CinemaShowtimePage({
         <StepBar current={1} />
         <div className="flex flex-col gap-4 px-4 py-6 pb-12">
           <MovieSummary movie={movie} />
-          <Suspense fallback={<MobileCinemaScheduleSkeleton />}>
-            <CinemaScheduleSection {...scheduleProps} />
+          <Suspense fallback={<MobileCinemaDatesSkeleton />}>
+            <CinemaDatesSection datesPromise={datesPromise} today={today} locale={locale} />
+          </Suspense>
+          <Suspense fallback={<MobileCinemaSlotsSkeleton />}>
+            <CinemaSlotsSection schedulePromise={schedulePromise} />
           </Suspense>
         </div>
         <BottomBar movieSlug={slug} />
@@ -86,9 +103,14 @@ export default async function CinemaShowtimePage({
           movieSlug={slug}
           movie={movie}
           slots={
-            <Suspense fallback={<DesktopCinemaSlotsSkeleton />}>
-              <CinemaScheduleSection {...scheduleProps} />
-            </Suspense>
+            <>
+              <Suspense fallback={<DesktopCinemaDatesSkeleton />}>
+                <CinemaDatesSection datesPromise={datesPromise} today={today} locale={locale} />
+              </Suspense>
+              <Suspense fallback={<DesktopCinemaSlotsSkeleton />}>
+                <CinemaSlotsSection schedulePromise={schedulePromise} />
+              </Suspense>
+            </>
           }
         />
       </div>

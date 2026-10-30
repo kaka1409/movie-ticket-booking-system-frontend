@@ -1,75 +1,86 @@
-import CinemaAdopt from "@/features/booking/components/CinemaAdopt";
+import CinemaAdopt from "@/app/(sub)/booking/components/adopters/CinemaAdopter";
 import SectionFallback from "@/components/ui/SectionFallback";
-import { getMovieSchedule } from "@/features/showtimes/detail";
+import type { getShowtimeDates, getShowtimes } from "@/features/showtimes/api";
+import type { ShowtimeDateOption, ShowtimesResponse } from "@/features/showtimes/types";
 import type { Movie } from "@/features/movies/types";
-import { toCinemas, toDateOptions } from "./adapters";
+import { toCinemas, toDateOptions } from "@/features/booking/utils/cinema";
 import CinemaList from "./components/mobile/CinemaList";
 import DatePickerWrapper from "./components/mobile/DatePickerWrapper";
 import SearchBar from "./components/mobile/SearchBar";
 
-type CinemaScheduleProps = {
-  slug: string;
-  locale: "en" | "vn";
-  today: string;
-  requestedDate: string;
+type DatesPromise = ReturnType<typeof getShowtimeDates>;
+type ShowtimesPromise = ReturnType<typeof getShowtimes>;
+type ResolvedSchedule = {
+  datesResult: Awaited<DatesPromise>;
+  date: string;
+  showtimesResult: Awaited<ShowtimesPromise>;
 };
 
-/** One resolved day + its slot groups, adapted to the booking step's shapes. */
-async function loadCinemaSchedule({ slug, locale, today, requestedDate }: CinemaScheduleProps) {
-  const schedule = await getMovieSchedule(slug, locale, today, requestedDate);
+type CinemaDatesProps = {
+  datesPromise: DatesPromise;
+  today: string;
+  locale: "en" | "vn";
+};
 
-  return {
-    dates: toDateOptions(schedule.dates, today, locale),
-    cinemas: toCinemas(schedule.cinemas),
-    date: schedule.date,
-    error: schedule.error,
-  };
+/** Streams the date strip from its endpoint independently of the cinema slots. */
+export async function CinemaDatesSection({ datesPromise, today, locale }: CinemaDatesProps) {
+  const result = await datesPromise;
+  if ("error" in result) {
+    if (result.error.status === 401) return null;
+    return <SectionFallback error={result.error} />;
+  }
+
+  return <DatePickerWrapper dates={toDateOptions(result.data, today, locale)} />;
 }
 
-/**
- * Day strip, search and cinema cards. Both device trees render this section in
- * their own boundary (different DOM positions, each can land on its own), and
- * the schedule read behind it is memoized, so the pair costs one round trip.
- */
-export async function CinemaScheduleSection(props: CinemaScheduleProps) {
-  const { dates, cinemas, error } = await loadCinemaSchedule(props);
-
-  if (error)
-    return <SectionFallback error={{ status: 0, code: "UNKNOWN_ERROR", message: error }} />;
+/** Streams the selected day's cinema and showtime groups. */
+export async function CinemaSlotsSection({
+  schedulePromise,
+}: {
+  schedulePromise: Promise<ResolvedSchedule>;
+}) {
+  const { showtimesResult } = await schedulePromise;
+  if ("error" in showtimesResult) {
+    if (showtimesResult.error.status === 401) return null;
+    return <SectionFallback error={showtimesResult.error} />;
+  }
 
   return (
     <>
-      <DatePickerWrapper dates={dates} />
       <SearchBar />
-      <CinemaList cinemas={cinemas} />
+      <CinemaList cinemas={toCinemas(showtimesResult.data.cinemas)} />
     </>
   );
 }
 
-/**
- * Effect-only adoption of the deep link into the booking draft, mounted once at
- * page level. It renders nothing, so it streams in a `fallback={null}` boundary
- * instead of holding the step body back.
- */
+/** Adopts the deep link once; the same endpoint promises feed the visible sections. */
 export async function CinemaAdoptSection({
   movie,
+  schedulePromise,
   initialCinemaId,
   initialTime,
   initialShowtimeId,
-  ...scheduleProps
-}: CinemaScheduleProps & {
+  today,
+  locale,
+}: {
   movie: Movie;
+  schedulePromise: Promise<ResolvedSchedule>;
   initialCinemaId: string | null;
   initialTime: string;
   initialShowtimeId: string | null;
+  today: string;
+  locale: "en" | "vn";
 }) {
-  const { dates, cinemas, date } = await loadCinemaSchedule(scheduleProps);
+  const { datesResult, date, showtimesResult } = await schedulePromise;
+  const dates: ShowtimeDateOption[] = "error" in datesResult ? [] : datesResult.data;
+  const cinemas: ShowtimesResponse["cinemas"] =
+    "error" in showtimesResult ? [] : showtimesResult.data.cinemas;
 
   return (
     <CinemaAdopt
       movie={movie}
-      cinemas={cinemas}
-      dates={dates}
+      cinemas={toCinemas(cinemas)}
+      dates={toDateOptions(dates, today, locale)}
       initialCinemaId={initialCinemaId}
       initialTime={initialTime}
       initialDate={date}

@@ -1,4 +1,4 @@
-import SnackPageSkeleton from "./components/SnackSkeletons";
+import SnackPageSkeleton from "./components/shared/SnackSkeletons";
 
 /**
  * Route fallback during navigation — the same composition the page streams into,

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useBooking } from "@/features/booking/context";
+import { useBooking } from "@/features/booking/contexts/BookingContext";
 import { useMounted } from "@/hooks/useMounted";
 import { useLocale } from "@/contexts/LocaleContext";
 import DetailRow from "@/components/shared/DetailRow";

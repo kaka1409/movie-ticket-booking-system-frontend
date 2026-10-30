@@ -1,10 +1,10 @@
-import RequireDraft from "@/features/booking/components/RequireDraft";
+import RequireDraft from "@/app/(sub)/booking/components/shared/RequireDraft";
 
 // Mobile components
 import StepBar from "@/app/(sub)/booking/components/mobile/StepBar";
 import CountdownBanner from "@/app/(sub)/booking/components/mobile/CountdownBanner";
-import ContactForm from "./components/mobile/ContactForm";
-import OrderSummary from "@/features/booking/components/OrderSummary";
+import ContactForm from "./components/shared/ContactForm";
+import OrderSummary from "@/app/(sub)/booking/components/shared/OrderSummary";
 import BottomBar from "./components/mobile/BottomBar";
 
 // Desktop components

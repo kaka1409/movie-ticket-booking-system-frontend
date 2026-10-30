@@ -1,14 +1,15 @@
 import { Suspense } from "react";
-import RequireDraft from "@/features/booking/components/RequireDraft";
+import RequireDraft from "@/app/(sub)/booking/components/shared/RequireDraft";
 import { getRequestLocale } from "@/libs/session";
+import { getPaymentMethods } from "@/features/booking/api";
 
 // Mobile components
 import StepBar from "@/app/(sub)/booking/components/mobile/StepBar";
 import CountdownBanner from "@/app/(sub)/booking/components/mobile/CountdownBanner";
-import OrderSummary from "@/features/booking/components/OrderSummary";
-import SecureBadge from "./components/mobile/SecureBadge";
-import TermsNote from "./components/mobile/TermsNote";
-import PaymentHeader from "./components/mobile/PaymentHeader";
+import OrderSummary from "@/app/(sub)/booking/components/shared/OrderSummary";
+import SecureBadge from "./components/shared/SecureBadge";
+import TermsNote from "./components/shared/TermsNote";
+import PaymentHeader from "./components/shared/PaymentHeader";
 import BottomBar from "./components/mobile/BottomBar";
 
 // Desktop components
@@ -17,7 +18,7 @@ import DesktopPaymentContent from "./components/desktop/PaymentContent";
 import {
   DesktopPaymentOptionsSkeleton,
   MobilePaymentOptionsSkeleton,
-} from "./components/PaymentSkeletons";
+} from "./components/shared/PaymentSkeletons";
 import { PaymentDefaultAdoptSection, PaymentMethodsSection } from "./sections";
 
 /**
@@ -29,11 +30,12 @@ import { PaymentDefaultAdoptSection, PaymentMethodsSection } from "./sections";
 export default async function PaymentPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const locale = await getRequestLocale();
+  const paymentMethodsPromise = getPaymentMethods(locale);
 
   return (
     <RequireDraft slug={slug}>
       <Suspense fallback={null}>
-        <PaymentDefaultAdoptSection locale={locale} />
+        <PaymentDefaultAdoptSection paymentMethodsPromise={paymentMethodsPromise} />
       </Suspense>
 
       <div className="block md:hidden">
@@ -46,7 +48,7 @@ export default async function PaymentPage({ params }: { params: Promise<{ slug: 
               <PaymentHeader />
               <div className="space-y-2.5">
                 <Suspense fallback={<MobilePaymentOptionsSkeleton />}>
-                  <PaymentMethodsSection locale={locale} />
+                  <PaymentMethodsSection paymentMethodsPromise={paymentMethodsPromise} />
                 </Suspense>
               </div>
             </section>
@@ -61,7 +63,7 @@ export default async function PaymentPage({ params }: { params: Promise<{ slug: 
         <DesktopPaymentContent
           slots={
             <Suspense fallback={<DesktopPaymentOptionsSkeleton />}>
-              <PaymentMethodsSection locale={locale} />
+              <PaymentMethodsSection paymentMethodsPromise={paymentMethodsPromise} />
             </Suspense>
           }
         />

@@ -8,9 +8,9 @@ import Button from "@/components/ui/Button";
 import BookingStepLayout from "@/app/(sub)/booking/components/desktop/BookingStepLayout";
 import CountdownRow from "@/app/(sub)/booking/components/desktop/CountdownRow";
 import RailSummary from "@/app/(sub)/booking/components/desktop/RailSummary";
-import PaymentHeader from "../mobile/PaymentHeader";
-import SecureBadge from "../mobile/SecureBadge";
-import TermsNote from "../mobile/TermsNote";
+import PaymentHeader from "../shared/PaymentHeader";
+import SecureBadge from "../shared/SecureBadge";
+import TermsNote from "../shared/TermsNote";
 
 /**
  * Desktop payment step: the gateway picker arrives as `slots`, so the shell —

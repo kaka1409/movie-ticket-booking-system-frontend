@@ -1,4 +1,4 @@
-import PaymentPageSkeleton from "./components/PaymentSkeletons";
+import PaymentPageSkeleton from "./components/shared/PaymentSkeletons";
 
 /**
  * Route fallback during navigation — the same composition the page streams into,

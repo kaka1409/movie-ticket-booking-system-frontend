@@ -1,18 +1,19 @@
+import { Suspense } from "react";
+import type { ReactNode } from "react";
 import { getMovieDetail } from "@/features/movies/api";
 import { getBookingById, getPaymentMethods } from "@/features/booking/api";
 import { getRequestCookie, getRequestLocale, isUnauthorizedResult } from "@/libs/session";
-import PaidBookingReset from "@/features/booking/components/PaidBookingReset";
+import PaidBookingReset from "@/app/(sub)/booking/components/shared/PaidBookingReset";
 import LoginPrompt from "@/components/shared/LoginPrompt";
-import type { Movie } from "@/features/movies/types";
-import type { BookingDetail, PaymentMethodOption } from "@/features/booking/types";
 
 // Mobile components
 import FailedIcon from "./components/mobile/FailedIcon";
-import FailedOrderCard from "./components/mobile/FailedOrderCard";
 import FailActions from "./components/mobile/FailActions";
 
 // Desktop components
 import DesktopFailContent from "./components/desktop/FailContent";
+import { FailedReceiptSection } from "./sections";
+import { StatusReceiptSkeleton } from "../components/shared/StatusSkeletons";
 
 export default async function FailPage({
   params,
@@ -24,24 +25,15 @@ export default async function FailPage({
   const [{ slug }, query] = await Promise.all([params, searchParams]);
   const locale = await getRequestLocale();
 
-  const [movieResult, bookingResult, catalogResult] = await Promise.all([
-    // Real flow always carries `?bookingId=` (submit redirects with it) — the
-    // booking payload already carries the movie, so no detail fetch there.
-    query.bookingId ? Promise.resolve(null) : getMovieDetail(slug, locale),
-    query.bookingId
-      ? getBookingById(query.bookingId, await getRequestCookie())
-      : Promise.resolve(null),
-    // Only the receipt needs the catalog (opaque ids → display labels); an
-    // outage degrades to the ids themselves instead of blanking the page.
-    getPaymentMethods(locale),
-  ]);
+  const moviePromise = query.bookingId ? null : getMovieDetail(slug, locale);
+  const catalogPromise = getPaymentMethods(locale);
+  const bookingResult = query.bookingId
+    ? await getBookingById(query.bookingId, await getRequestCookie())
+    : null;
 
   if (bookingResult && isUnauthorizedResult(bookingResult)) return <LoginPrompt />;
 
-  const movie = movieResult === null || "error" in movieResult ? undefined : movieResult.data;
   const booking = bookingResult && !("error" in bookingResult) ? bookingResult.data : null;
-  const paymentMethods: PaymentMethodOption[] =
-    "error" in catalogResult ? [] : catalogResult.data.methods;
   // URL param first (explicit gateway failure), then the persisted payment
   // reason on the fetched booking.
   const reason = query.reason ?? booking?.payment?.reason ?? null;
@@ -53,20 +45,34 @@ export default async function FailPage({
       {/* Mobile */}
       <div className="block md:hidden">
         <FailPageMobile
-          movie={movie}
-          booking={booking}
           reason={reason}
-          paymentMethods={paymentMethods}
+          receipt={
+            <Suspense fallback={<StatusReceiptSkeleton />}>
+              <FailedReceiptSection
+                moviePromise={moviePromise}
+                catalogPromise={catalogPromise}
+                booking={booking}
+                reason={reason}
+              />
+            </Suspense>
+          }
         />
       </div>
 
       {/* Desktop */}
       <div className="hidden md:block">
         <DesktopFailContent
-          movie={movie}
-          booking={booking}
           reason={reason}
-          paymentMethods={paymentMethods}
+          receipt={
+            <Suspense fallback={<StatusReceiptSkeleton />}>
+              <FailedReceiptSection
+                moviePromise={moviePromise}
+                catalogPromise={catalogPromise}
+                booking={booking}
+                reason={reason}
+              />
+            </Suspense>
+          }
         />
       </div>
     </>
@@ -74,15 +80,11 @@ export default async function FailPage({
 }
 
 function FailPageMobile({
-  movie,
-  booking,
   reason,
-  paymentMethods,
+  receipt,
 }: {
-  movie: Movie | undefined;
-  booking: BookingDetail | null;
   reason: string | null;
-  paymentMethods: PaymentMethodOption[];
+  receipt: ReactNode;
 }) {
   return (
     <>
@@ -90,12 +92,7 @@ function FailPageMobile({
         <main className="flex-1 overflow-y-auto pb-8 pt-10 space-y-6">
           <FailedIcon reason={reason} />
 
-          <FailedOrderCard
-            movie={movie}
-            booking={booking}
-            reason={reason}
-            paymentMethods={paymentMethods}
-          />
+          {receipt}
 
           <FailActions />
         </main>
@@ -103,3 +100,4 @@ function FailPageMobile({
     </>
   );
 }
+import { Suspense } from "react";

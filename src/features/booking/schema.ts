@@ -1,5 +1,8 @@
 import { z } from "zod";
-import { isValidPhone } from "@/libs/zod";
+
+function isValidBookingPhone(phone: string): boolean {
+  return /^\d{7,15}$/.test(phone);
+}
 
 export function createContactSchema(translate: (key: string) => string) {
   return z.object({
@@ -13,6 +16,6 @@ export function createContactSchema(translate: (key: string) => string) {
       .string()
       .trim()
       .min(1, translate("booking.credentials.error_phone_required"))
-      .refine((val) => isValidPhone(val), translate("booking.credentials.error_phone_invalid")),
+      .refine(isValidBookingPhone, translate("booking.credentials.error_phone_invalid")),
   });
 }

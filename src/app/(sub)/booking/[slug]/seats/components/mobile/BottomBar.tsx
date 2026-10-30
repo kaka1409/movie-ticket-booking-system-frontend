@@ -1,7 +1,7 @@
 "use client";
 
 import { useLocale } from "@/contexts/LocaleContext";
-import { useBooking } from "@/features/booking/context";
+import { useBooking } from "@/features/booking/contexts/BookingContext";
 import { useSeatHoldSubmit } from "@/features/booking/hooks/useSeatHoldSubmit";
 import BookingBottomBar from "@/components/shared/BookingBottomBar";
 

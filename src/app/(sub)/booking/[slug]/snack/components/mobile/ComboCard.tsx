@@ -3,7 +3,7 @@
 import Image from "next/image";
 import type { ComboItem } from "@/features/booking/types";
 import Stepper from "./Stepper";
-import { useBooking } from "@/features/booking/context";
+import { useBooking } from "@/features/booking/contexts/BookingContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import { withItemQty } from "@/features/booking/utils/snack";
 import { formatVND } from "@/libs/utils";

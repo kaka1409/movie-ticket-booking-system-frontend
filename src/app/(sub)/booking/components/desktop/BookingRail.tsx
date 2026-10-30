@@ -3,10 +3,10 @@
 import Image from "next/image";
 import { Clock } from "lucide-react";
 import type { ReactNode } from "react";
-import { useBooking } from "@/features/booking/context";
+import { useBooking } from "@/features/booking/contexts/BookingContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import MicroLabel from "@/components/ui/MicroLabel";
-import type { Movie } from "@/types";
+import type { Movie } from "@/features/movies/types";
 
 /**
  * The desktop booking summary rail — the single summary surface on every

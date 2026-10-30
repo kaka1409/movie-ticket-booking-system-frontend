@@ -2,10 +2,10 @@
 
 import { useLocale } from "@/contexts/LocaleContext";
 import MicroLabel from "@/components/ui/MicroLabel";
-import ReceiptCard from "@/features/booking/components/ReceiptCard";
-import PaymentIntentActions from "@/features/booking/components/payment/PaymentIntentActions";
-import PaymentQrCard from "@/features/booking/components/payment/PaymentQrCard";
-import PaymentStatusPanel from "@/features/booking/components/payment/PaymentStatusPanel";
+import ReceiptCard from "@/app/(sub)/booking/components/shared/ReceiptCard";
+import PaymentIntentActions from "@/components/shared/payment/PaymentIntentActions";
+import PaymentQrCard from "@/components/shared/payment/PaymentQrCard";
+import PaymentStatusPanel from "@/components/shared/payment/PaymentStatusPanel";
 import type { UsePaymentIntentResult } from "@/features/booking/hooks/usePaymentIntent";
 import type { BookingDetail, PaymentMethodOption } from "@/features/booking/types";
 

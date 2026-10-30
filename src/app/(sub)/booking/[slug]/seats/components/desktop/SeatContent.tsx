@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 import { ArrowRight } from "lucide-react";
-import { useBooking } from "@/features/booking/context";
+import { useBooking } from "@/features/booking/contexts/BookingContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useSeatHoldSubmit } from "@/features/booking/hooks/useSeatHoldSubmit";
 import { formatVND } from "@/libs/utils";

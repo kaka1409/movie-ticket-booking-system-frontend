@@ -1,6 +1,6 @@
 "use client";
 
-import { useBooking } from "@/features/booking/context";
+import { useBooking } from "@/features/booking/contexts/BookingContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import MicroLabel from "@/components/ui/MicroLabel";
 import PriceBreakdown from "@/components/shared/PriceBreakdown";
