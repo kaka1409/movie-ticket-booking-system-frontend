@@ -1,3 +1,4 @@
+import { cache } from "react";
 import type {
   Movie,
   FeaturedMovie,
@@ -7,9 +8,9 @@ import type {
   Tab,
   Filters,
 } from "./types";
-import { apiFetch, withLang, type ApiResponse } from "@/libs/api";
+import { apiFetch, settleApiResponse, withLang, type ApiResponse } from "@/libs/api";
 import { formatDateOnly } from "@/libs/date";
-import { MOVIES_PAGE_SIZE } from "./constants";
+import { MOVIES_PAGE_SIZE, RECOMMENDED_LIMIT } from "./constants";
 
 type FeaturedMovieResponse = Movie & {
   featuredLabel?: string;
@@ -202,3 +203,21 @@ export async function getAgeRatings(
 ): Promise<ApiResponse<CatalogOption[]>> {
   return apiFetch<CatalogOption[]>(withLang("/age-ratings", locale), REVALIDATE_60);
 }
+
+/** Shared cached feeds used by independent home-page sections. */
+export const getHomeFeaturedMovies = cache((locale: "en" | "vn") =>
+  settleApiResponse(getFeaturedMovies(locale)),
+);
+
+export const getHomeNowShowingMovies = cache((locale: "en" | "vn") =>
+  settleApiResponse(getMovies({ status: "now_showing", page: 1, limit: MOVIES_PAGE_SIZE }, locale)),
+);
+
+export const getHomeComingSoonMovies = cache((locale: "en" | "vn") =>
+  settleApiResponse(getMovies({ status: "coming_soon", page: 1, limit: MOVIES_PAGE_SIZE }, locale)),
+);
+
+/** Cached related-movies feed shared by the mobile and desktop detail sections. */
+export const getMovieRecommendations = cache((movieSlug: string, locale: "en" | "vn") =>
+  settleApiResponse(getRelatedMovies(movieSlug, locale, RECOMMENDED_LIMIT)),
+);

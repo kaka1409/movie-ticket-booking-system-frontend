@@ -1,7 +1,7 @@
 "use client";
 
 import { useLocale } from "@/contexts/LocaleContext";
-import { useMovieList } from "@/features/movies/context";
+import { useMovieList } from "@/features/movies/contexts/MovieListContext";
 import Tabs from "@/components/ui/Tabs";
 
 /**

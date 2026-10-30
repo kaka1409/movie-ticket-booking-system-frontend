@@ -1,7 +1,7 @@
-import { ShowtimesProvider } from "@/features/showtimes/context";
-import { getMovieSchedule } from "@/features/showtimes/detail";
-import { getMovieReviews } from "@/features/reviews/detail";
-import { getMovieRecommendations } from "@/features/movies/detail";
+import { ShowtimesProvider } from "@/features/showtimes/contexts/ShowtimesContext";
+import { getMovieSchedule } from "@/features/showtimes/api";
+import { getMovieReviews } from "@/features/reviews/api";
+import { getMovieRecommendations } from "@/features/movies/api";
 import { SITE_URL } from "@/libs/site";
 import type { Movie } from "@/features/movies/types";
 import MobileShowtimes from "./components/mobile/Showtimes";

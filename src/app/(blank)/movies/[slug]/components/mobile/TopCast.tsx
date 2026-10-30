@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import SectionHeader from "@/components/ui/SectionHeader";
-import { useMovieDetail } from "@/features/movies/context";
+import { useMovieDetail } from "@/features/movies/contexts/MovieDetailContext";
 import { useLocale } from "@/contexts/LocaleContext";
 
 export default function TopCast() {

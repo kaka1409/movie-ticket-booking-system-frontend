@@ -6,7 +6,7 @@ import {
   MobileRecommendedSkeleton,
   MobileReviewsSkeleton,
   MobileShowtimesSkeleton,
-} from "./components/MovieDetailSkeletons";
+} from "./components/shared/MovieDetailSkeletons";
 
 function CastMemberSkeleton() {
   return (

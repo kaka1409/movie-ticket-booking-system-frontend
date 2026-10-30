@@ -1,7 +1,11 @@
-import { MovieListProvider } from "@/features/movies/context";
-import { getMoviesListing } from "@/features/movies/listing";
-import type { Filters, Tab } from "@/features/movies/types";
+import { Suspense } from "react";
+import { MovieListProvider } from "@/features/movies/contexts/MovieListContext";
+import type { getAgeRatings, getFormats, getGenres, getMovies } from "@/features/movies/api";
+import { resolveFilterCatalog } from "@/features/movies/utils/filterOptions";
+import type { FilterOptions, Filters, Tab } from "@/features/movies/types";
 import { SITE_URL } from "@/libs/site";
+import FilterOptionsAdopter from "./components/shared/FilterOptionsAdopter";
+import MovieFeedAdopter from "./components/shared/MovieFeedAdopter";
 
 // Mobile
 import Tabs from "./components/shared/Tabs";
@@ -20,47 +24,66 @@ type MoviesSectionProps = {
   query: string;
   filters: Filters;
   locale: "en" | "vn";
+  moviesPromise: ReturnType<typeof getMovies>;
+  genresPromise: ReturnType<typeof getGenres>;
+  formatsPromise: ReturnType<typeof getFormats>;
+  ageRatingsPromise: ReturnType<typeof getAgeRatings>;
+  initialFilterOptions: FilterOptions;
 };
 
 /**
- * The catalog itself, streamed. Rows and filter options all arrive in one round
- * trip, and the provider has to own both at mount (tab, search and filters are
- * client state that refetches page 1), so this block is the smallest unit that
- * can paint — the page around it is the skeleton.
+ * The movie feed initializes the provider; independent filter catalogs stream
+ * into it afterward and update their own option lists.
  */
-export async function MoviesCatalogSection({ tab, query, filters, locale }: MoviesSectionProps) {
-  const { movies, meta, filterOptions } = await getMoviesListing(tab, query, filters, locale);
-
-  const itemListSchema = {
-    "@context": "https://schema.org",
-    "@type": "ItemList",
-    itemListElement: movies.map((movie, index) => ({
-      "@type": "ListItem",
-      position: index + 1,
-      url: `${SITE_URL}/movies/${movie.slug}`,
-      name: movie.title,
-      image: movie.src,
-      datePublished: movie.releaseDate,
-    })),
-  };
-
+export function MoviesPageSections({
+  tab,
+  query,
+  filters,
+  locale,
+  moviesPromise,
+  genresPromise,
+  formatsPromise,
+  ageRatingsPromise,
+  initialFilterOptions,
+}: MoviesSectionProps) {
   return (
-    <>
-      {/* JSON-LD structured data for search engines (ItemList of movies). */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(itemListSchema).replace(/</g, "\\u003c"),
-        }}
-      />
-      <MovieListProvider
-        initialMovies={movies}
-        initialMeta={meta}
-        initialTab={tab}
-        initialQuery={query}
-        initialFilters={filters}
-        initialFilterOptions={filterOptions}
-      >
+    <MovieListProvider
+      initialMovies={[]}
+      initialTab={tab}
+      initialQuery={query}
+      initialFilters={filters}
+      initialFilterOptions={initialFilterOptions}
+      deferInitialFetch
+    >
+      <Suspense fallback={null}>
+        <MoviesInitialFeedSection
+          moviesPromise={moviesPromise}
+          tab={tab}
+          query={query}
+          filters={filters}
+        />
+      </Suspense>
+      <Suspense fallback={null}>
+        <MoviesFilterOptionsSection
+          catalog="genres"
+          promise={genresPromise}
+          locale={locale}
+        />
+      </Suspense>
+      <Suspense fallback={null}>
+        <MoviesFilterOptionsSection
+          catalog="formats"
+          promise={formatsPromise}
+          locale={locale}
+        />
+      </Suspense>
+      <Suspense fallback={null}>
+        <MoviesFilterOptionsSection
+          catalog="ageRatings"
+          promise={ageRatingsPromise}
+          locale={locale}
+        />
+      </Suspense>
         {/* Mobile */}
         <div className="block md:hidden">
           <div className="space-y-4 py-(--space-md)">
@@ -98,7 +121,68 @@ export async function MoviesCatalogSection({ tab, query, filters, locale }: Movi
             </div>
           </div>
         </div>
-      </MovieListProvider>
+    </MovieListProvider>
+  );
+}
+
+async function MoviesInitialFeedSection({
+  moviesPromise,
+  tab,
+  query,
+  filters,
+}: Pick<MoviesSectionProps, "moviesPromise" | "tab" | "query" | "filters">) {
+  const result = await moviesPromise;
+  const movies = "error" in result ? [] : result.data;
+  const meta = "error" in result ? undefined : result.meta;
+  const error = "error" in result ? result.error : null;
+  const itemListSchema = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: movies.map((movie, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      url: `${SITE_URL}/movies/${movie.slug}`,
+      name: movie.title,
+      image: movie.src,
+      datePublished: movie.releaseDate,
+    })),
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(itemListSchema).replace(/</g, "\\u003c"),
+        }}
+      />
+      <MovieFeedAdopter
+        tab={tab}
+        query={query}
+        filters={filters}
+        movies={movies}
+        meta={meta}
+        error={error}
+      />
     </>
   );
+}
+
+type CatalogPromise =
+  | ReturnType<typeof getGenres>
+  | ReturnType<typeof getFormats>
+  | ReturnType<typeof getAgeRatings>;
+
+async function MoviesFilterOptionsSection({
+  catalog,
+  promise,
+  locale,
+}: {
+  catalog: keyof FilterOptions;
+  promise: CatalogPromise;
+  locale: "en" | "vn";
+}) {
+  const result = await promise;
+  const options = resolveFilterCatalog(catalog, "error" in result ? null : result.data, locale);
+  return <FilterOptionsAdopter catalog={catalog} options={options} />;
 }

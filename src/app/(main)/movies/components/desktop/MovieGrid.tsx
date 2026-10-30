@@ -2,12 +2,12 @@
 
 import { Search } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
-import { useMovieList } from "@/features/movies/context";
+import { useMovieList } from "@/features/movies/contexts/MovieListContext";
 import { useAppendReveal } from "@/hooks/useAppendReveal";
 import Button from "@/components/ui/Button";
 import SectionFallback from "@/components/ui/SectionFallback";
 import { SkeletonBar } from "@/components/ui/Skeleton";
-import MoviePosterCard from "@/features/movies/components/MoviePosterCard";
+import MoviePosterCard from "@/components/shared/movies/MoviePosterCard";
 
 /**
  * Desktop movies grid: 3 columns, 4 from `xl:`. "Bookable" is the ACTIVE TAB,

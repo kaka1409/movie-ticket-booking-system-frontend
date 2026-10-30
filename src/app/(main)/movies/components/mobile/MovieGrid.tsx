@@ -2,9 +2,9 @@
 
 import { Search } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
-import { useMovieList } from "@/features/movies/context";
+import { useMovieList } from "@/features/movies/contexts/MovieListContext";
 import { useAppendReveal } from "@/hooks/useAppendReveal";
-import MovieCard from "@/components/ui/MovieCard";
+import MovieCard from "@/components/shared/movies/MovieCard";
 import SectionFallback from "@/components/ui/SectionFallback";
 import { Skeleton } from "@/components/ui/Skeleton";
 

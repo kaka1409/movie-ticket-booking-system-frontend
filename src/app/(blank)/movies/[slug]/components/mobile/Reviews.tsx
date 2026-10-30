@@ -6,12 +6,12 @@ import { useRouter } from "next/navigation";
 import SectionHeader from "@/components/ui/SectionHeader";
 import Stars from "@/components/ui/Stars";
 import { useLocale } from "@/contexts/LocaleContext";
-import { useMovieDetail } from "@/features/movies/context";
+import { useMovieDetail } from "@/features/movies/contexts/MovieDetailContext";
 import { useMovieReviews, formatReviewCount } from "@/features/reviews/hooks/useMovieReviews";
 import { useReviewHighlight } from "@/features/reviews/hooks/useReviewHighlight";
 import type { ReviewsResponse } from "@/features/reviews/types";
-import WriteReview from "@/features/reviews/components/mobile/WriteReview";
-import ReviewCard from "@/features/reviews/components/mobile/ReviewCard";
+import WriteReview from "@/components/shared/reviews/mobile/WriteReview";
+import ReviewCard from "@/components/shared/reviews/mobile/ReviewCard";
 
 function RatingBar({ stars, pct }: { stars: number; pct: number }) {
   return (

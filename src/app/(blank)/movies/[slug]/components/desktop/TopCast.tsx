@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useMovieDetail } from "@/features/movies/context";
+import { useMovieDetail } from "@/features/movies/contexts/MovieDetailContext";
 import { useLocale } from "@/contexts/LocaleContext";
 
 function getInitials(name: string): string {

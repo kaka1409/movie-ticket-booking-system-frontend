@@ -5,16 +5,15 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
   type MouseEvent,
   type ReactNode,
 } from "react";
 import { useLocale } from "@/contexts/LocaleContext";
-import { getMovieDetail } from "./api";
-import { ALL_MOVIES } from "./mock";
-import type { Movie } from "./types";
-import MoviePreviewPopover from "./components/MoviePreviewPopover";
+import { getMovieDetail } from "../api";
+import type { Movie } from "../types";
 
 interface MoviePreviewContextValue {
   handleCardMouseEnter: (movie: Movie, event: MouseEvent) => void;
@@ -22,18 +21,18 @@ interface MoviePreviewContextValue {
   handleCardMouseLeave: () => void;
 }
 
+interface MoviePreviewState {
+  previewMovie: Movie | null;
+  cursorPos: { x: number; y: number } | null;
+  isOpen: boolean;
+  isLoadingDetail: boolean;
+}
+
 const MoviePreviewContext = createContext<MoviePreviewContextValue | null>(null);
+const MoviePreviewStateContext = createContext<MoviePreviewState | null>(null);
 
 /** Hover dwell before the card opens its popover — a cursor crossing the row stays quiet. */
 const ENTER_DELAY_MS = 200;
-
-/** List rows are shallow — the local catalog only fills the fields the API never sends. */
-function withCatalogFallback(movie: Movie): Movie {
-  const fallback = ALL_MOVIES.find(
-    (candidate) => candidate.slug === movie.slug || candidate.id === movie.id,
-  );
-  return { ...(fallback ?? {}), ...movie };
-}
 
 export function MoviePreviewProvider({ children }: { children: ReactNode }) {
   const { locale } = useLocale();
@@ -45,6 +44,7 @@ export function MoviePreviewProvider({ children }: { children: ReactNode }) {
 
   const detailCacheRef = useRef<Map<string, Movie>>(new Map());
   const enterTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const currentSlugRef = useRef<string | null>(null);
 
   const fetchDetail = useCallback(
@@ -64,9 +64,9 @@ export function MoviePreviewProvider({ children }: { children: ReactNode }) {
       let detail: Movie;
       try {
         const response = await getMovieDetail(movie.slug, locale);
-        detail = "data" in response && response.data ? response.data : withCatalogFallback(movie);
+        detail = "data" in response && response.data ? response.data : movie;
       } catch {
-        detail = withCatalogFallback(movie);
+        detail = movie;
       }
 
       detailCacheRef.current.set(cacheKey, detail);
@@ -85,10 +85,15 @@ export function MoviePreviewProvider({ children }: { children: ReactNode }) {
       enterTimeoutRef.current = null;
     }
     setIsOpen(false);
-    setActiveMovie(null);
-    setDetailMovie(null);
-    setCursorPos(null);
     currentSlugRef.current = null;
+    if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+    closeTimeoutRef.current = setTimeout(() => {
+      setActiveMovie(null);
+      setDetailMovie(null);
+      setCursorPos(null);
+      setIsLoadingDetail(false);
+      closeTimeoutRef.current = null;
+    }, 220);
   }, []);
 
   const handleCardMouseEnter = useCallback(
@@ -99,9 +104,14 @@ export function MoviePreviewProvider({ children }: { children: ReactNode }) {
       if (enterTimeoutRef.current) {
         clearTimeout(enterTimeoutRef.current);
       }
+      if (closeTimeoutRef.current) {
+        clearTimeout(closeTimeoutRef.current);
+        closeTimeoutRef.current = null;
+      }
 
       setCursorPos({ x: event.clientX, y: event.clientY });
       setActiveMovie(movie);
+      currentSlugRef.current = movie.slug;
 
       const cached = detailCacheRef.current.get(`${locale}:${movie.slug}`);
       if (cached) {
@@ -135,25 +145,34 @@ export function MoviePreviewProvider({ children }: { children: ReactNode }) {
       if (enterTimeoutRef.current) {
         clearTimeout(enterTimeoutRef.current);
       }
+      if (closeTimeoutRef.current) {
+        clearTimeout(closeTimeoutRef.current);
+      }
     };
   }, []);
 
-  const displayMovie = detailMovie ?? activeMovie;
+  const previewMovie = detailMovie ?? activeMovie;
+  const handlers = useMemo(
+    () => ({
+      handleCardMouseEnter,
+      handleCardMouseMove,
+      handleCardMouseLeave: closePreview,
+    }),
+    [handleCardMouseEnter, handleCardMouseMove, closePreview],
+  );
 
   return (
-    <MoviePreviewContext.Provider
-      value={{ handleCardMouseEnter, handleCardMouseMove, handleCardMouseLeave: closePreview }}
-    >
-      {children}
-
-      {displayMovie && cursorPos && (
-        <MoviePreviewPopover
-          movie={displayMovie}
-          cursorPos={cursorPos}
-          isOpen={isOpen}
-          isLoading={isLoadingDetail}
-        />
-      )}
+    <MoviePreviewContext.Provider value={handlers}>
+      <MoviePreviewStateContext.Provider
+        value={{
+          previewMovie,
+          cursorPos,
+          isOpen,
+          isLoadingDetail,
+        }}
+      >
+        {children}
+      </MoviePreviewStateContext.Provider>
     </MoviePreviewContext.Provider>
   );
 }
@@ -162,6 +181,14 @@ export function useMoviePreview() {
   const context = useContext(MoviePreviewContext);
   if (!context) {
     throw new Error("useMoviePreview must be used within MoviePreviewProvider");
+  }
+  return context;
+}
+
+export function useMoviePreviewState() {
+  const context = useContext(MoviePreviewStateContext);
+  if (!context) {
+    throw new Error("useMoviePreviewState must be used within MoviePreviewProvider");
   }
   return context;
 }

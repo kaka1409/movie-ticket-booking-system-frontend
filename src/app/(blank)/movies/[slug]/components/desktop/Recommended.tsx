@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useLocale } from "@/contexts/LocaleContext";
-import MoviePosterCard from "@/features/movies/components/MoviePosterCard";
+import MoviePosterCard from "@/components/shared/movies/MoviePosterCard";
 import LocaleTransition from "@/components/ui/LocaleTransition";
 import { RECOMMENDED_DESKTOP_COUNT } from "@/features/movies/constants";
 import type { Movie } from "@/features/movies/types";

@@ -1,7 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useMovieDetail, useMovieSelection } from "@/features/movies/context";
+import { useMovieDetail } from "@/features/movies/contexts/MovieDetailContext";
+import { useMovieSelection } from "@/features/movies/contexts/MovieSelectionContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import Button from "@/components/ui/Button";
 

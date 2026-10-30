@@ -1,7 +1,8 @@
 import { Suspense } from "react";
 import { getMovieDetail, getMovies } from "@/features/movies/api";
 import SectionFallback from "@/components/ui/SectionFallback";
-import { MovieDetailProvider, MovieSelectionProvider } from "@/features/movies/context";
+import { MovieDetailProvider } from "@/features/movies/contexts/MovieDetailContext";
+import { MovieSelectionProvider } from "@/features/movies/contexts/MovieSelectionContext";
 import { getRequestLocale } from "@/libs/session";
 import { todayInCinemaZone } from "@/libs/date";
 import { SITE_NAME, SITE_URL } from "@/libs/site";
@@ -25,7 +26,7 @@ import {
   MobileRecommendedSkeleton,
   MobileReviewsSkeleton,
   MobileShowtimesSkeleton,
-} from "./components/MovieDetailSkeletons";
+} from "./components/shared/MovieDetailSkeletons";
 import {
   DesktopReviewsSection,
   DesktopShowtimesSection,

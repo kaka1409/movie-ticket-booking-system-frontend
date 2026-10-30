@@ -2,7 +2,7 @@
 
 import { SlidersHorizontal, X } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
-import { useMovieList } from "@/features/movies/context";
+import { useMovieList } from "@/features/movies/contexts/MovieListContext";
 import {
   RELEASE_OPTIONS,
   RELEASE_LABEL_KEYS,

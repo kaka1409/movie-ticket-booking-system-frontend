@@ -1,7 +1,7 @@
 "use client";
 
 import { useLocale } from "@/contexts/LocaleContext";
-import { useMovieList } from "@/features/movies/context";
+import { useMovieList } from "@/features/movies/contexts/MovieListContext";
 import SearchBar from "@/components/ui/SearchBar";
 
 /**

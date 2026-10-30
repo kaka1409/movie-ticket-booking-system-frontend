@@ -3,8 +3,8 @@
  * the page renders; writes are driven by the provider via `router.replace`
  * (see AGENTS.md "Movies Page Deep Linking" for the param table).
  */
-import type { Tab, Filters } from "./types";
-import { RATING_MIN, RATING_MAX } from "./constants";
+import type { Tab, Filters } from "../types";
+import { RATING_MIN, RATING_MAX } from "../constants";
 
 const RELEASE_TOKENS = ["today", "week", "month"] as const;
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import MovieCard from "@/components/ui/MovieCard";
+import MovieCard from "@/components/shared/movies/MovieCard";
 import SectionHeader from "@/components/ui/SectionHeader";
 import { useLocale } from "@/contexts/LocaleContext";
 import { RECOMMENDED_MOBILE_PAGE_SIZE } from "@/features/movies/constants";

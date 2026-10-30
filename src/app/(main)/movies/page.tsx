@@ -1,13 +1,13 @@
-import { Suspense } from "react";
 import type { Metadata } from "next";
 import {
   readFiltersFromParams,
   readQueryFromParams,
   readTabFromParams,
-} from "@/features/movies/url";
+} from "@/features/movies/utils/url";
 import { getRequestLocale } from "@/libs/session";
-import MoviesPageSkeleton from "./components/MoviesSkeletons";
-import { MoviesCatalogSection } from "./sections";
+import { buildMovieQuery, getAgeRatings, getFormats, getGenres, getMovies } from "@/features/movies/api";
+import { getFallbackFilterOptions } from "@/features/movies/utils/filterOptions";
+import { MoviesPageSections } from "./sections";
 
 export const metadata: Metadata = {
   title: "Now Showing & Coming Soon Movies",
@@ -17,10 +17,8 @@ export const metadata: Metadata = {
 };
 
 /**
- * The page awaits only the query string and the locale cookie, so the shell (and
- * this route's skeleton) reaches the browser at once; the catalog — four
- * independent feeds — fills in behind one boundary because the list provider has
- * to own rows and filter options at mount.
+ * The movie rows initialize the list provider; each independent filter catalog
+ * streams into the mounted provider behind its own boundary.
  */
 export default async function MoviesPage({
   searchParams,
@@ -35,15 +33,25 @@ export default async function MoviesPage({
   // See home/page.tsx: the locale cookie forces per-request rendering; the
   // fetch cache (keyed per ?lang= URL) still shields the backend.
   const locale = await getRequestLocale();
+  const tab = readTabFromParams(normalizedSearchParams);
+  const query = readQueryFromParams(normalizedSearchParams);
+  const filters = readFiltersFromParams(normalizedSearchParams);
+  const moviesPromise = getMovies(buildMovieQuery(tab, query, filters, 1), locale);
+  const genresPromise = getGenres(locale);
+  const formatsPromise = getFormats(locale);
+  const ageRatingsPromise = getAgeRatings(locale);
 
   return (
-    <Suspense fallback={<MoviesPageSkeleton />}>
-      <MoviesCatalogSection
-        tab={readTabFromParams(normalizedSearchParams)}
-        query={readQueryFromParams(normalizedSearchParams)}
-        filters={readFiltersFromParams(normalizedSearchParams)}
-        locale={locale}
-      />
-    </Suspense>
+    <MoviesPageSections
+      tab={tab}
+      query={query}
+      filters={filters}
+      locale={locale}
+      moviesPromise={moviesPromise}
+      genresPromise={genresPromise}
+      formatsPromise={formatsPromise}
+      ageRatingsPromise={ageRatingsPromise}
+      initialFilterOptions={getFallbackFilterOptions(locale)}
+    />
   );
 }

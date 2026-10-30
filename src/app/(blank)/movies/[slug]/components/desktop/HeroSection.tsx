@@ -5,8 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, Clock, Heart, Play, Star, Ticket } from "lucide-react";
 import TrailerModal from "@/components/shared/TrailerModal";
-import { useMovieDetail } from "@/features/movies/context";
-import { useWishlist, type WishlistFeedback } from "@/features/wishlist/context";
+import { useMovieDetail } from "@/features/movies/contexts/MovieDetailContext";
+import { useWishlist, type WishlistFeedback } from "@/features/wishlist/contexts/WishlistContext";
 import { useSmartBack } from "@/hooks/useSmartBack";
 import { useLocale } from "@/contexts/LocaleContext";
 

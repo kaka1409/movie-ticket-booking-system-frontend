@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useMovieDetail } from "@/features/movies/context";
+import { useMovieDetail } from "@/features/movies/contexts/MovieDetailContext";
 import { useLocale } from "@/contexts/LocaleContext";
 
 const SHORT_LIMIT = 220;

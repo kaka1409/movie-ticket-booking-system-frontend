@@ -1,4 +1,4 @@
-import MoviesPageSkeleton from "./components/MoviesSkeletons";
+import MoviesPageSkeleton from "./components/shared/MoviesSkeletons";
 
 /**
  * Route fallback during navigation. Same composition the page streams into, so

@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import { ArrowLeft, Heart, Play, Star, Clock } from "lucide-react";
-import { useMovieDetail } from "@/features/movies/context";
-import { useWishlist, type WishlistFeedback } from "@/features/wishlist/context";
+import { useMovieDetail } from "@/features/movies/contexts/MovieDetailContext";
+import { useWishlist, type WishlistFeedback } from "@/features/wishlist/contexts/WishlistContext";
 import { useSmartBack } from "@/hooks/useSmartBack";
 import { useLocale } from "@/contexts/LocaleContext";
 
