@@ -2,7 +2,7 @@
 
 import { Search, X } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
-import { ADMIN_INPUT_CLASS } from "../constants";
+import { ADMIN_INPUT_CLASS } from "@/features/admin/constants";
 
 /** Search box for the console toolbars (in-memory filters on every list page). */
 export default function AdminSearchInput({

@@ -5,7 +5,7 @@ import { useLocale } from "@/contexts/LocaleContext";
 import { useToast } from "@/contexts/ToastContext";
 import { useAdminTheme } from "@/features/admin/hooks/useAdminTheme";
 import { useAdminSidebar } from "@/features/admin/context";
-import AdminButton from "@/features/admin/components/AdminButton";
+import AdminButton from "@/app/(admin)/admin/components/shared/AdminButton";
 import { ADMIN_CARD_CLASS } from "@/features/admin/constants";
 import { setAdminThemeAction } from "@/features/admin/actions/preferences.action";
 import type { AdminSidebarMode, AdminTheme } from "@/features/admin/types";

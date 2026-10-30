@@ -5,9 +5,9 @@ import { Pencil, Trash2, UserRound, X } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useToast } from "@/contexts/ToastContext";
-import AdminButton from "@/features/admin/components/AdminButton";
-import AdminFormField from "@/features/admin/components/AdminFormField";
-import AdminFormModal from "@/features/admin/components/AdminFormModal";
+import AdminButton from "@/app/(admin)/admin/components/shared/AdminButton";
+import AdminFormField from "@/app/(admin)/admin/components/shared/AdminFormField";
+import AdminFormModal from "@/app/(admin)/admin/components/shared/AdminFormModal";
 import { ADMIN_FIELD_GRID_CLASS, ADMIN_INPUT_CLASS } from "@/features/admin/constants";
 import {
   addMovieCastAction,

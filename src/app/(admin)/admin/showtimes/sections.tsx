@@ -1,4 +1,4 @@
-import AdminDataError from "@/features/admin/components/AdminDataError";
+import AdminDataError from "@/app/(admin)/admin/components/shared/AdminDataError";
 import {
   getAdminMovies,
   getAdminShowtimeBoard,

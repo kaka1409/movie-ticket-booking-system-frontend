@@ -1,4 +1,4 @@
-import AdminDataError from "@/features/admin/components/AdminDataError";
+import AdminDataError from "@/app/(admin)/admin/components/shared/AdminDataError";
 import { getAdminDeletedReviews } from "@/features/admin/api";
 import { isUnauthorizedResult, getRequestLocale } from "@/libs/session";
 import ReviewsManager from "./components/ReviewsManager";

@@ -1,4 +1,4 @@
-import AdminPageHeader from "@/features/admin/components/AdminPageHeader";
+import AdminPageHeader from "@/app/(admin)/admin/components/shared/AdminPageHeader";
 import AdminDashboardLinks from "./components/AdminDashboardLinks";
 
 /**

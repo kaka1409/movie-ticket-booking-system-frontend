@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 import { useLocale } from "@/contexts/LocaleContext";
-import { ADMIN_LABEL_CLASS } from "../constants";
+import { ADMIN_LABEL_CLASS } from "@/features/admin/constants";
 
 /**
  * Labelled console form row. The control is nested inside the `<label>`, so no

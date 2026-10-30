@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import AdminPageHeader from "@/features/admin/components/AdminPageHeader";
+import AdminPageHeader from "@/app/(admin)/admin/components/shared/AdminPageHeader";
 import CheckinScanner from "./components/CheckinScanner";
 
 export const metadata: Metadata = { title: "Check-in" };

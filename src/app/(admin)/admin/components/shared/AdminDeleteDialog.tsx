@@ -4,8 +4,8 @@ import { useState, useTransition } from "react";
 import { useLocale } from "@/contexts/LocaleContext";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import ErrorAlert from "@/components/ui/ErrorAlert";
-import { resolveAdminError } from "../errorMessages";
-import type { AdminActionResult } from "../types";
+import { resolveAdminError } from "@/features/admin/errorMessages";
+import type { AdminActionResult } from "@/features/admin/types";
 
 /**
  * Delete flow shared by every console list. The backend refuses to delete a row

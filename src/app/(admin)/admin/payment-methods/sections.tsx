@@ -1,4 +1,4 @@
-import AdminDataError from "@/features/admin/components/AdminDataError";
+import AdminDataError from "@/app/(admin)/admin/components/shared/AdminDataError";
 import { getAdminPaymentMethods } from "@/features/admin/api";
 import { isUnauthorizedResult } from "@/libs/session";
 import PaymentMethodsManager from "./components/PaymentMethodsManager";

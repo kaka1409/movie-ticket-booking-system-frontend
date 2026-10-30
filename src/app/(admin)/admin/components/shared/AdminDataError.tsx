@@ -4,8 +4,8 @@ import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { AlertTriangle, RotateCcw } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
-import { ADMIN_CARD_CLASS } from "../constants";
-import AdminButton from "./AdminButton";
+import { ADMIN_CARD_CLASS } from "@/features/admin/constants";
+import AdminButton from "@/app/(admin)/admin/components/shared/AdminButton";
 
 /**
  * In-place failure panel for a read that came back `{ error }`. Console reads

@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import type { LucideIcon } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import EmptyState from "@/components/ui/EmptyState";
-import { ADMIN_CARD_CLASS } from "../constants";
+import { ADMIN_CARD_CLASS } from "@/features/admin/constants";
 
 export interface AdminTableColumn<TRow> {
   /** Stable identity for the header cell and the row cells. */

@@ -5,7 +5,7 @@ import { lockBodyScroll } from "@/libs/scroll-lock";
 import { X } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import ErrorAlert from "@/components/ui/ErrorAlert";
-import AdminButton from "./AdminButton";
+import AdminButton from "@/app/(admin)/admin/components/shared/AdminButton";
 
 /**
  * Create/edit dialog built on the native `<dialog>`: the browser owns the focus

@@ -1,4 +1,4 @@
-import AdminDataError from "@/features/admin/components/AdminDataError";
+import AdminDataError from "@/app/(admin)/admin/components/shared/AdminDataError";
 import { getAdminCatalog } from "@/features/admin/api";
 import { isUnauthorizedResult } from "@/libs/session";
 import type { AdminCatalogEntry, AdminCatalogKind } from "@/features/admin/types";

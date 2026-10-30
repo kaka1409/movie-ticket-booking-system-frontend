@@ -7,10 +7,10 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useToast } from "@/contexts/ToastContext";
 import Badge from "@/components/ui/Badge";
-import AdminButton from "@/features/admin/components/AdminButton";
-import AdminPagination from "@/features/admin/components/AdminPagination";
-import AdminSearchInput from "@/features/admin/components/AdminSearchInput";
-import AdminTable, { type AdminTableColumn } from "@/features/admin/components/AdminTable";
+import AdminButton from "@/app/(admin)/admin/components/shared/AdminButton";
+import AdminPagination from "@/app/(admin)/admin/components/shared/AdminPagination";
+import AdminSearchInput from "@/app/(admin)/admin/components/shared/AdminSearchInput";
+import AdminTable, { type AdminTableColumn } from "@/app/(admin)/admin/components/shared/AdminTable";
 import { ADMIN_INPUT_CLASS } from "@/features/admin/constants";
 import { resolveAdminError } from "@/features/admin/errorMessages";
 import {

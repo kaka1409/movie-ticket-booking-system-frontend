@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import AdminPageHeader from "@/features/admin/components/AdminPageHeader";
+import AdminPageHeader from "@/app/(admin)/admin/components/shared/AdminPageHeader";
 import { getAdminTheme } from "@/features/admin/preferences";
 import SettingsPanel from "./components/SettingsPanel";
 
