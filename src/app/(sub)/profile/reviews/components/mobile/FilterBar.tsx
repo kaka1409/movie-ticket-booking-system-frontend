@@ -1,7 +1,7 @@
 "use client";
 
 import { useLocale } from "@/contexts/LocaleContext";
-import type { FilterKey } from "@/features/reviews/mock";
+import type { FilterKey } from "@/features/reviews/types";
 
 export default function FilterBar({
   filters,

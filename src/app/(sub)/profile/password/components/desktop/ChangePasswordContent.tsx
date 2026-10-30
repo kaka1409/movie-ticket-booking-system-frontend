@@ -1,10 +1,10 @@
 "use client";
 
 import { Lock, KeyRound, LockKeyhole, ShieldCheck, CheckCircle2 } from "lucide-react";
-import PasswordField from "../mobile/PasswordField";
-import PasswordRequirements from "../mobile/PasswordRequirements";
+import PasswordField from "@/components/ui/PasswordField";
+import PasswordRequirements from "../shared/PasswordRequirements";
 import Button from "@/components/ui/Button";
-import AccountShell from "@/features/profile/components/desktop/AccountShell";
+import AccountShell from "@/components/shared/profile/desktop/AccountShell";
 import { useLocale } from "@/contexts/LocaleContext";
 import { usePasswordForm } from "@/features/profile/hooks/usePasswordForm";
 

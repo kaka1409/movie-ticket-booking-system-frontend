@@ -1,4 +1,4 @@
-import { getMyReviewsOverview } from "@/features/reviews/profile";
+import { getMyReviewsOverview } from "@/features/reviews/api";
 import ReviewList from "./components/mobile/ReviewList";
 import ReviewContent from "./components/desktop/ReviewContent";
 

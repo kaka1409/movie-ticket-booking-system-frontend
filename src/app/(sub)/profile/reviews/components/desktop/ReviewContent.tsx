@@ -7,7 +7,7 @@ import { useLocale } from "@/contexts/LocaleContext";
 import { useAppendReveal } from "@/hooks/useAppendReveal";
 import EmptyState from "@/components/ui/EmptyState";
 import Tabs from "@/components/ui/Tabs";
-import LoadMoreButton from "../mobile/LoadMoreButton";
+import LoadMoreButton from "../shared/LoadMoreButton";
 import ReviewRow from "./ReviewRow";
 import { useMyReviews } from "@/features/reviews/hooks/useMyReviews";
 

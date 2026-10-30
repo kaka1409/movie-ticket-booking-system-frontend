@@ -7,7 +7,7 @@ import ErrorAlert from "@/components/ui/ErrorAlert";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useProfileForm } from "@/features/profile/hooks/useProfileForm";
 import AvatarRing from "@/components/ui/AvatarRing";
-import AccountShell from "@/features/profile/components/desktop/AccountShell";
+import AccountShell from "@/components/shared/profile/desktop/AccountShell";
 
 /**
  * Desktop edit-profile view:

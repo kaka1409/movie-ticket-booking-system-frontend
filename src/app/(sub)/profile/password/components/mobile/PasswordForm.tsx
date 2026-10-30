@@ -1,8 +1,8 @@
 "use client";
 
 import { Lock, KeyRound, LockKeyhole } from "lucide-react";
-import PasswordField from "./PasswordField";
-import PasswordRequirements from "./PasswordRequirements";
+import PasswordField from "@/components/ui/PasswordField";
+import PasswordRequirements from "../shared/PasswordRequirements";
 import FormActions from "@/components/ui/FormActions";
 import { useLocale } from "@/contexts/LocaleContext";
 import { usePasswordForm } from "@/features/profile/hooks/usePasswordForm";

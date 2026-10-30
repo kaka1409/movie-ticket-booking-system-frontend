@@ -5,7 +5,7 @@ import Link from "next/link";
 import { CalendarDays, MapPin, Film, ArrowRight, Ticket, Popcorn } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import Badge from "@/components/ui/Badge";
-import TicketCountdown from "@/app/(main)/tickets/components/mobile/TicketCountdown";
+import TicketCountdown from "@/components/shared/tickets/TicketCountdown";
 import type { UpcomingTicket } from "@/features/tickets/types";
 
 /**

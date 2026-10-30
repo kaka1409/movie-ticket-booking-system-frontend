@@ -7,8 +7,17 @@ import Avatar from "./components/mobile/Avatar";
 import UserInfo from "./components/mobile/UserInfo";
 import ProfileMenu from "./components/mobile/ProfileMenu";
 import DesktopProfileContent from "./components/desktop/ProfileContent";
-import { AccountStatsSkeleton, NextScreeningSkeleton } from "./components/desktop/ProfileSkeletons";
-import { NextScreeningSection, ProfileStatsSection } from "./sections";
+import AccountStats from "./components/desktop/AccountStats";
+import {
+  AccountStatValueSkeleton,
+  NextScreeningSkeleton,
+} from "./components/desktop/ProfileSkeletons";
+import {
+  NextScreeningSection,
+  ReviewCountSection,
+  TicketCountSection,
+  WishlistCountSection,
+} from "./sections";
 
 export const metadata: Metadata = {
   title: "My Profile",
@@ -17,9 +26,8 @@ export const metadata: Metadata = {
 
 /**
  * The mobile overview reads nothing but the session, so it paints as soon as the
- * cookies are in; the two desktop data blocks (counters, next screening) stream
- * into their own boxes. A dead session is caught by `ProtectedRoute`, so the
- * sections simply render nothing on a 401.
+ * cookies are in; the three counters and next-screening widget stream into
+ * their own boxes. A dead session is caught by `ProtectedRoute`.
  */
 export default async function ProfilePage() {
   if (!(await hasSession())) return <LoginPrompt />;
@@ -45,9 +53,25 @@ export default async function ProfilePage() {
           <div className="mx-auto w-full max-w-7xl px-6 py-8 lg:px-8">
             <DesktopProfileContent
               stats={
-                <Suspense fallback={<AccountStatsSkeleton />}>
-                  <ProfileStatsSection {...sectionProps} />
-                </Suspense>
+                <AccountStats
+                  stats={{
+                    tickets: (
+                      <Suspense fallback={<AccountStatValueSkeleton />}>
+                        <TicketCountSection {...sectionProps} />
+                      </Suspense>
+                    ),
+                    reviews: (
+                      <Suspense fallback={<AccountStatValueSkeleton />}>
+                        <ReviewCountSection {...sectionProps} />
+                      </Suspense>
+                    ),
+                    wishlist: (
+                      <Suspense fallback={<AccountStatValueSkeleton />}>
+                        <WishlistCountSection {...sectionProps} />
+                      </Suspense>
+                    ),
+                  }}
+                />
               }
               nextTicket={
                 <Suspense fallback={<NextScreeningSkeleton />}>

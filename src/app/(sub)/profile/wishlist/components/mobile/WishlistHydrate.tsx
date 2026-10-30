@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useWishlist } from "@/features/wishlist/context";
+import { useWishlist } from "@/features/wishlist/contexts/WishlistContext";
 
 /**
  * Effect-only mount helper (booking `CinemaAdopt` pattern): adopts the

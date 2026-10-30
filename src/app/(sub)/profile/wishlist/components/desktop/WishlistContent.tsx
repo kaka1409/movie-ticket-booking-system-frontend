@@ -1,19 +1,19 @@
 "use client";
 
 import { SearchX, Heart, Ticket, Calendar, ArrowUpDown } from "lucide-react";
-import { useWishlist } from "@/features/wishlist/context";
+import { useWishlist } from "@/features/wishlist/contexts/WishlistContext";
 import type { WishlistItem } from "@/features/wishlist/types";
 import { useLocale } from "@/contexts/LocaleContext";
 import SearchBar from "@/components/ui/SearchBar";
 import EmptyState from "@/components/ui/EmptyState";
 import UndoSnackbar from "@/components/ui/UndoSnackbar";
 import WishlistPosterCard from "./WishlistPosterCard";
-import WishlistEmptyState from "@/features/wishlist/components/WishlistEmptyState";
+import WishlistEmptyState from "@/app/(sub)/profile/wishlist/components/shared/WishlistEmptyState";
 import {
   useWishlistBrowser,
   type WishlistSortOption,
 } from "@/features/wishlist/hooks/useWishlistBrowser";
-import AccountShell from "@/features/profile/components/desktop/AccountShell";
+import AccountShell from "@/components/shared/profile/desktop/AccountShell";
 
 const TABS = ["all", "now_showing", "coming_soon"] as const;
 

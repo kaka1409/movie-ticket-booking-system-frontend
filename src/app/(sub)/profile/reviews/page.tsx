@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { getRequestCookie, getRequestLocale } from "@/libs/session";
 import ReviewsShell from "./components/desktop/ReviewsShell";
 import { MobileReviewsSection, DesktopReviewsSection } from "./sections";
-import { MobileReviewListSkeleton, DesktopReviewsSkeleton } from "./components/ReviewsSkeletons";
+import { MobileReviewListSkeleton, DesktopReviewsSkeleton } from "./components/shared/ReviewsSkeletons";
 
 export default async function ReviewPage() {
   const locale = await getRequestLocale();

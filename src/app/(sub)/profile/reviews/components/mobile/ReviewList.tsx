@@ -8,7 +8,7 @@ import { useAppendReveal } from "@/hooks/useAppendReveal";
 import EmptyState from "@/components/ui/EmptyState";
 import FilterBar from "./FilterBar";
 import ReviewCard from "./ReviewCard";
-import LoadMoreButton from "./LoadMoreButton";
+import LoadMoreButton from "../shared/LoadMoreButton";
 import { useMyReviews } from "@/features/reviews/hooks/useMyReviews";
 
 export default function ReviewList({

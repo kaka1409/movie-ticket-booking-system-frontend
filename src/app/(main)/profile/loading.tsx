@@ -1,5 +1,5 @@
 import { Skeleton, SkeletonCard } from "@/components/ui/Skeleton";
-import AccountSkeleton from "@/features/profile/components/desktop/AccountSkeleton";
+import AccountSkeleton from "@/components/shared/profile/desktop/AccountSkeleton";
 
 export default function ProfileLoading() {
   return (

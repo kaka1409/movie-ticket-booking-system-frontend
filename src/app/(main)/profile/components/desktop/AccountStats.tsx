@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ArrowUpRight, Heart, Star, Ticket } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
+import type { ReactNode } from "react";
 
 const TILES: Array<{
   key: "tickets" | "reviews" | "wishlist";
@@ -22,7 +23,7 @@ const TILES: Array<{
 export default function AccountStats({
   stats,
 }: {
-  stats: { reviews: number | null; wishlist: number | null; tickets: number | null };
+  stats: { reviews: ReactNode; wishlist: ReactNode; tickets: ReactNode };
 }) {
   const { translate } = useLocale();
 
@@ -44,7 +45,7 @@ export default function AccountStats({
           </div>
 
           <p className="mt-4 text-3xl font-black tracking-tight text-white">
-            {stats[key] === null ? "—" : stats[key]}
+            {stats[key]}
           </p>
           <p className="mt-1 text-xs font-bold uppercase tracking-wider text-(--color-text-muted)">
             {translate(labelKey)}

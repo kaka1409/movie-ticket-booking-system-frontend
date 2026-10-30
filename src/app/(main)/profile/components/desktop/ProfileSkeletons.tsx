@@ -27,6 +27,11 @@ export function AccountStatsSkeleton() {
   );
 }
 
+/** A single activity count, streamed independently inside its tile. */
+export function AccountStatValueSkeleton() {
+  return <Skeleton className="inline-block h-8 w-16 rounded-md align-middle" />;
+}
+
 /** The next-screening widget in its booked state (the taller of the two). */
 export function NextScreeningSkeleton() {
   return (

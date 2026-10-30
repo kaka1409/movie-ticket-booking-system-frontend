@@ -7,7 +7,7 @@ import { useLocale } from "@/contexts/LocaleContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { formatCalendarDate, toDateInputValue } from "@/libs/date";
 import Button from "@/components/ui/Button";
-import AccountShell from "@/features/profile/components/desktop/AccountShell";
+import AccountShell from "@/components/shared/profile/desktop/AccountShell";
 import MemberCard from "./MemberCard";
 
 /**

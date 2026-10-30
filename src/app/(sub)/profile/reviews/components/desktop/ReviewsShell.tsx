@@ -1,7 +1,7 @@
 "use client";
 
 import { useLocale } from "@/contexts/LocaleContext";
-import AccountShell from "@/features/profile/components/desktop/AccountShell";
+import AccountShell from "@/components/shared/profile/desktop/AccountShell";
 import type { ReactNode } from "react";
 
 export default function ReviewsShell({ content }: { content: ReactNode }) {

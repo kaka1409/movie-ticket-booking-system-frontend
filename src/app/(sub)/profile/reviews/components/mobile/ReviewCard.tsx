@@ -8,7 +8,7 @@ import type { MyReview } from "@/features/reviews/types";
 import { useLocale } from "@/contexts/LocaleContext";
 import { formatDate } from "@/libs/utils";
 import ExpandableText from "@/components/ui/ExpandableText";
-import StarRating from "./StarRating";
+import StarRating from "../shared/StarRating";
 
 /**
  * Own-review card: movie poster + title link, my star rating (1–5 direct, no

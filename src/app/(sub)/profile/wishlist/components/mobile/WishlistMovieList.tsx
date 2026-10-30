@@ -1,14 +1,14 @@
 "use client";
 
 import { SearchX } from "lucide-react";
-import { useWishlist } from "@/features/wishlist/context";
+import { useWishlist } from "@/features/wishlist/contexts/WishlistContext";
 import type { WishlistItem } from "@/features/wishlist/types";
 import { useLocale } from "@/contexts/LocaleContext";
 import SearchBar from "@/components/ui/SearchBar";
 import Chip from "@/components/ui/Chip";
 import EmptyState from "@/components/ui/EmptyState";
 import WishlistCard from "./WishlistCard";
-import EmptyWishlistState from "@/features/wishlist/components/WishlistEmptyState";
+import EmptyWishlistState from "@/app/(sub)/profile/wishlist/components/shared/WishlistEmptyState";
 import UndoSnackbar from "@/components/ui/UndoSnackbar";
 import { useWishlistBrowser } from "@/features/wishlist/hooks/useWishlistBrowser";
 
