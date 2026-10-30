@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useLocale } from "@/contexts/LocaleContext";
-import MovieCard from "@/components/ui/MovieCard";
+import MovieCard from "@/components/shared/movies/MovieCard";
 import SectionHeader from "@/components/ui/SectionHeader";
 import SectionFallback from "@/components/ui/SectionFallback";
 import type { Movie } from "@/features/movies/types";

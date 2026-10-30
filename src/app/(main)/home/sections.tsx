@@ -3,7 +3,8 @@ import {
   getHomeComingSoonMovies,
   getHomeFeaturedMovies,
   getHomeNowShowingMovies,
-} from "@/features/movies/home";
+} from "@/features/movies/api";
+import { getQuickBookingSeed } from "@/features/showtimes/api";
 
 import ComingSoon from "./components/desktop/ComingSoon";
 import ForYou from "./components/desktop/ForYou";
@@ -13,13 +14,13 @@ import NowShowing from "./components/desktop/NowShowing";
 import HeroBanner from "./components/mobile/HeroBanner";
 import MovieRow from "./components/mobile/MovieRow";
 
-import QuickBookingShell from "./components/QuickBookingShell";
+import QuickBookingShell from "./components/shared/QuickBookingShell";
 
 /**
  * One async wrapper per data-dependent block of the home page: each is placed
  * inside its own `<Suspense>` by `page.tsx`, so the shell paints immediately and
  * every block paints the moment its feed lands. The feeds themselves are
- * `cache()`-memoized (`features/movies/home.ts`), so four blocks reading the
+ * `cache()`-memoized (`features/movies/api.ts`), so four blocks reading the
  * now-showing list still cost one backend call.
  */
 
@@ -49,7 +50,8 @@ export async function FeaturedBannerSection({ locale }: HomeSectionProps) {
 /** Quick ticket finder — one controller, both skins (see `QuickBookingShell`). */
 export async function QuickBookingSection({ locale }: HomeSectionProps) {
   const { data, error } = toSectionData(await getHomeNowShowingMovies(locale));
-  return <QuickBookingShell movies={data} error={error} />;
+  const seed = data[0] ? await getQuickBookingSeed(data[0].slug, locale) : null;
+  return <QuickBookingShell movies={data} error={error} seed={seed} />;
 }
 
 /** Desktop now-showing grid. */

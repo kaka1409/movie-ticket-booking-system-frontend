@@ -7,7 +7,7 @@ import { useLocale } from "@/contexts/LocaleContext";
 import type { Movie } from "@/features/movies/types";
 import type { ErrorResponse } from "@/libs/api";
 import SectionFallback from "@/components/ui/SectionFallback";
-import { useMoviePreview } from "@/features/movies/moviePreviewContext";
+import { useMoviePreview } from "@/features/movies/contexts/MoviePreviewContext";
 import LocaleTransition from "@/components/ui/LocaleTransition";
 
 export default function NowShowing({

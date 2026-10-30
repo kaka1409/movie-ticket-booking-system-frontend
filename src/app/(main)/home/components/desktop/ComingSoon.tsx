@@ -5,12 +5,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { Bell, ChevronLeft, ChevronRight } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
-import { useWishlist, type WishlistFeedback } from "@/features/wishlist/context";
+import { useWishlist, type WishlistFeedback } from "@/features/wishlist/contexts/WishlistContext";
 import { formatDate } from "@/libs/utils";
 import type { Movie } from "@/features/movies/types";
 import type { ErrorResponse } from "@/libs/api";
 import SectionFallback from "@/components/ui/SectionFallback";
-import { useMoviePreview } from "@/features/movies/moviePreviewContext";
+import { useMoviePreview } from "@/features/movies/contexts/MoviePreviewContext";
 
 const ITEMS_PER_PAGE = 3;
 

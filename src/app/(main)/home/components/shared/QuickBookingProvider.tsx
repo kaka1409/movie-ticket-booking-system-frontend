@@ -2,6 +2,7 @@
 
 import { createContext, useContext, type ReactNode } from "react";
 import type { Movie } from "@/features/movies/types";
+import type { QuickBookingSeed } from "@/features/showtimes/api";
 import {
   useQuickBooking,
   type QuickBookingController,
@@ -16,12 +17,14 @@ const QuickBookingContext = createContext<QuickBookingController | null>(null);
  */
 export function QuickBookingProvider({
   movies,
+  seed,
   children,
 }: {
   movies: Movie[];
+  seed?: QuickBookingSeed | null;
   children: ReactNode;
 }) {
-  const controller = useQuickBooking({ movies });
+  const controller = useQuickBooking({ movies, seed });
   return <QuickBookingContext.Provider value={controller}>{children}</QuickBookingContext.Provider>;
 }
 

@@ -7,7 +7,7 @@ import { useLocale } from "@/contexts/LocaleContext";
 import type { Movie } from "@/features/movies/types";
 import type { ErrorResponse } from "@/libs/api";
 import SectionFallback from "@/components/ui/SectionFallback";
-import { useQuickBookingContext } from "../QuickBookingProvider";
+import { useQuickBookingContext } from "../shared/QuickBookingProvider";
 
 /** Small inline failure with retry — used per dependent block, not full-section. */
 function InlineError({ onRetry }: { onRetry: () => void }) {

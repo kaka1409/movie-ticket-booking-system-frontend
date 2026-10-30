@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
-import { MoviePreviewProvider } from "@/features/movies/moviePreviewContext";
+import { MoviePreviewProvider } from "@/features/movies/contexts/MoviePreviewContext";
+import MoviePreviewLayer from "./components/desktop/MoviePreviewLayer";
 import { getRequestLocale } from "@/libs/session";
 import { SITE_NAME } from "@/libs/site";
 import {
@@ -10,7 +11,7 @@ import {
   MovieGridSkeleton,
   MovieRowSkeleton,
   QuickBookingSkeleton,
-} from "./components/HomeSkeletons";
+} from "./components/shared/HomeSkeletons";
 import SearchBar from "./components/mobile/SearchBar";
 import {
   ComingSoonRowSection,
@@ -37,7 +38,7 @@ export const metadata: Metadata = {
  * Streaming home page: the page awaits nothing but the locale cookie, so the
  * shell reaches the browser at once and each Suspense boundary fills in on its
  * own feed. Sections that share a feed (now showing: four of them) still cost a
- * single backend call thanks to the memoized loaders in `features/movies/home.ts`.
+ * single backend call thanks to the memoized loaders in `features/movies/api.ts`.
  */
 export default async function HomePage() {
   const locale = await getRequestLocale();
@@ -75,6 +76,7 @@ export default async function HomePage() {
 
       <div className="hidden md:block">
         <MoviePreviewProvider>
+          <MoviePreviewLayer />
           <Suspense fallback={<MovieGridSkeleton />}>
             <NowShowingSection locale={locale} />
           </Suspense>

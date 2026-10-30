@@ -6,7 +6,7 @@ import { Star, Sparkles } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useAuth } from "@/contexts/AuthContext";
 import type { Movie } from "@/features/movies/types";
-import { useMoviePreview } from "@/features/movies/moviePreviewContext";
+import { useMoviePreview } from "@/features/movies/contexts/MoviePreviewContext";
 import LocaleTransition from "@/components/ui/LocaleTransition";
 
 const REASONS = [

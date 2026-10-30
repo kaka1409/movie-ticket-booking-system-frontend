@@ -2,9 +2,10 @@
 
 import type { Movie } from "@/features/movies/types";
 import type { ErrorResponse } from "@/libs/api";
+import type { QuickBookingSeed } from "@/features/showtimes/api";
 import { QuickBookingProvider } from "./QuickBookingProvider";
-import QuickBookingBar from "./desktop/QuickBookingBar";
-import QuickBooking from "./mobile/QuickBooking";
+import QuickBookingBar from "../desktop/QuickBookingBar";
+import QuickBooking from "../mobile/QuickBooking";
 
 /**
  * Both device trees render at once, so the quick-booking controller must be
@@ -16,12 +17,14 @@ import QuickBooking from "./mobile/QuickBooking";
 export default function QuickBookingShell({
   movies,
   error,
+  seed,
 }: {
   movies: Movie[];
   error?: ErrorResponse["error"] | null;
+  seed?: QuickBookingSeed | null;
 }) {
   return (
-    <QuickBookingProvider movies={movies}>
+    <QuickBookingProvider movies={movies} seed={seed}>
       <div className="hidden md:block">
         <QuickBookingBar movies={movies} error={error} />
       </div>
