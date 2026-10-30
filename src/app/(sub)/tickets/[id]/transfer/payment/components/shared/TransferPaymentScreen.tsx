@@ -1,15 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { getPaymentLabel } from "@/features/booking/paymentBrand";
+import { getPaymentLabel } from "@/features/booking/utils/paymentBrand";
 import type { PaymentMethodOption } from "@/features/booking/types";
 import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext";
 import {
   useTransferPayment,
   type UseTransferPaymentResult,
 } from "@/features/tickets/hooks/useTransferPayment";
-import TransferPaymentDesktop from "./desktop/TransferPaymentContent";
-import TransferPaymentMobile from "./mobile/TransferPaymentContent";
+import TransferPaymentDesktop from "../desktop/TransferPaymentContent";
+import TransferPaymentMobile from "../mobile/TransferPaymentContent";
 
 /** Props both device skins drive — one shape, so a state can never fork by width. */
 export interface TransferPaymentViewProps {

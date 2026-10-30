@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { getTicketById } from "@/features/tickets/api";
 import { TicketDetailProvider } from "@/features/tickets/contexts/TicketDetailContext";
-import TicketRealtimeRefresh from "@/features/tickets/components/TicketRealtimeRefresh";
+import TicketRealtimeRefresh from "@/app/(sub)/tickets/components/shared/TicketRealtimeRefresh";
 import LoginPrompt from "@/components/shared/LoginPrompt";
 import { getRequestCookie, getRequestLocale, isUnauthorizedResult } from "@/libs/session";
 

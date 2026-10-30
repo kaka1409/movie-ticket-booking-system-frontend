@@ -1,5 +1,6 @@
+import { cache } from "react";
 import type { ApiResponse } from "@/libs/api";
-import { apiFetch, withLang } from "@/libs/api";
+import { apiFetch, settleApiResponse, withLang, type ErrorResponse } from "@/libs/api";
 import { getPaymentMethods } from "@/features/booking/api";
 import type { UpcomingTicket, PastTicket, Recipient, EligibleShowtime } from "./types";
 import type {
@@ -8,7 +9,7 @@ import type {
   TicketDetailWire,
   TicketPageMeta,
   TicketSummaryWire,
-} from "./adapters";
+} from "./types";
 import {
   toDetailTicket,
   toEligibleShowtime,
@@ -139,3 +140,59 @@ export async function getEligibleShowtimes(
   if ("error" in result) return result;
   return { data: result.data.map(toEligibleShowtime) };
 }
+
+export type TicketTab = "upcoming" | "past";
+
+export const DEFAULT_TICKET_META: TicketPageMeta = {
+  total: 0,
+  totalPages: 1,
+  page: 1,
+  limit: 12,
+  hasNextPage: false,
+};
+
+export interface TicketListData {
+  upcoming: UpcomingTicket[];
+  past: PastTicket[];
+  meta: TicketPageMeta;
+  error: ErrorResponse["error"] | null;
+  isUnauthorized: boolean;
+}
+
+/** Cached visible-tab list shared by both ticket-list device trees. */
+export const getTicketsForTab = cache(
+  async (
+    tab: TicketTab,
+    page: number,
+    cookie: string | undefined,
+    locale: "en" | "vn",
+  ): Promise<TicketListData> => {
+    const result =
+      tab === "past"
+        ? await settleApiResponse(getPastTickets(page, cookie, locale))
+        : await settleApiResponse(getUpcomingTickets(page, cookie, locale));
+
+    if ("error" in result) {
+      return {
+        upcoming: [],
+        past: [],
+        meta: DEFAULT_TICKET_META,
+        error: result.error,
+        isUnauthorized: result.error.status === 401,
+      };
+    }
+
+    return {
+      upcoming: tab === "past" ? [] : result.data as UpcomingTicket[],
+      past: tab === "past" ? result.data as PastTicket[] : [],
+      meta: result.meta ?? DEFAULT_TICKET_META,
+      error: null,
+      isUnauthorized: false,
+    };
+  },
+);
+
+/** Profile overview and next-screening sections share the first upcoming page. */
+export const getProfileUpcomingTickets = cache((cookie: string | undefined, locale: "en" | "vn") =>
+  settleApiResponse(getUpcomingTickets(1, cookie, locale)),
+);

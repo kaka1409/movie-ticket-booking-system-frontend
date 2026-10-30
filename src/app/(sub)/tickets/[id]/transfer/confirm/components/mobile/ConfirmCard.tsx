@@ -5,7 +5,7 @@ import { User } from "lucide-react";
 import type { Recipient } from "@/features/tickets/types";
 import { useLocale } from "@/contexts/LocaleContext";
 import MicroLabel from "@/components/ui/MicroLabel";
-import TicketOverviewCard from "@/features/tickets/components/TicketOverviewCard";
+import TicketOverviewCard from "@/app/(sub)/tickets/components/shared/TicketOverviewCard";
 
 /**
  * Confirm step: the ticket exactly as it will move (seats + snacks at the amount

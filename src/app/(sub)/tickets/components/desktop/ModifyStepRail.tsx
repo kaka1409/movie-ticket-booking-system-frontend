@@ -2,8 +2,8 @@
 
 import { useParams } from "next/navigation";
 import { useLocale } from "@/contexts/LocaleContext";
-import { useModification } from "../../contexts/ModificationContext";
-import type { ModificationType } from "../../types";
+import { useModification } from "@/features/tickets/contexts/ModificationContext";
+import type { ModificationType } from "@/features/tickets/types/index";
 import StepRail from "@/components/shared/StepRail";
 
 /** The four screens the modify wizard can show; the terminal success page is not a step. */

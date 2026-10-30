@@ -2,7 +2,7 @@
 
 import { useLocale } from "@/contexts/LocaleContext";
 import { useModification } from "@/features/tickets/contexts/ModificationContext";
-import CinemaCard from "@/features/showtimes/components/CinemaCard";
+import CinemaCard from "@/components/shared/showtimes/CinemaCard";
 import MicroLabel from "@/components/ui/MicroLabel";
 import type { Cinema } from "@/features/booking/types";
 import type { EligibleShowtime } from "@/features/tickets/types";

@@ -1,4 +1,4 @@
-import TicketDetailSkeleton from "@/features/tickets/components/TicketDetailSkeleton";
+import TicketDetailSkeleton from "@/app/(sub)/tickets/components/shared/TicketDetailSkeleton";
 
 export default function TicketsLoading() {
   return <TicketDetailSkeleton />;

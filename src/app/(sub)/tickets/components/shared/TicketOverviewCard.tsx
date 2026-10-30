@@ -7,7 +7,7 @@ import { useLocale } from "@/contexts/LocaleContext";
 import PriceBreakdown from "@/components/shared/PriceBreakdown";
 import TearLine from "@/components/ui/TearLine";
 import MicroLabel from "@/components/ui/MicroLabel";
-import { useTicketDetail } from "../contexts/TicketDetailContext";
+import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext";
 
 /**
  * Identity card for one ticket: poster, movie, showtime, room, an optional extra

@@ -6,7 +6,7 @@ import { CalendarDays, MapPin } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import TearLine from "@/components/ui/TearLine";
 import type { UpcomingTicket } from "@/features/tickets/types";
-import TicketCountdown from "./TicketCountdown";
+import TicketCountdown from "@/components/shared/tickets/TicketCountdown";
 
 export default function UpcomingCard({ ticket }: { ticket: UpcomingTicket }) {
   const { translate } = useLocale();

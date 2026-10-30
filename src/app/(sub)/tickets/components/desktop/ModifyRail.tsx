@@ -5,7 +5,7 @@ import { CalendarDays, MonitorPlay } from "lucide-react";
 import type { ReactNode } from "react";
 import { useLocale } from "@/contexts/LocaleContext";
 import MicroLabel from "@/components/ui/MicroLabel";
-import { useTicketDetail } from "../../contexts/TicketDetailContext";
+import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext";
 
 /**
  * The desktop modify summary rail — one card per step, holding the ticket being

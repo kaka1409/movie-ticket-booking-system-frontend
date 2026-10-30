@@ -6,9 +6,9 @@ import { formatVND } from "@/libs/utils";
 import MicroLabel from "@/components/ui/MicroLabel";
 import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext";
 import { useCancelTransfer } from "@/features/tickets/hooks/useCancelTransfer";
-import { isPastStatus, PAST_STATUS_META } from "@/features/tickets/status";
+import { isPastStatus, PAST_STATUS_META } from "@/features/tickets/constants";
 import { formatDeadlineTime } from "@/features/tickets/utils";
-import QRCode from "../mobile/QRCode";
+import QRCode from "@/components/shared/tickets/QRCode";
 
 const PANEL_CLASS =
   "space-y-4 rounded-2xl border border-(--color-border) bg-(--color-surface) p-5 shadow-lg";

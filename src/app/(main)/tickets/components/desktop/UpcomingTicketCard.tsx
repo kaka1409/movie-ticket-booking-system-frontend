@@ -7,7 +7,7 @@ import { CalendarDays, MapPin, QrCode, Popcorn, ArrowRight } from "lucide-react"
 import { useLocale } from "@/contexts/LocaleContext";
 import TearLine from "@/components/ui/TearLine";
 import Badge from "@/components/ui/Badge";
-import TicketCountdown from "@/app/(main)/tickets/components/mobile/TicketCountdown";
+import TicketCountdown from "@/components/shared/tickets/TicketCountdown";
 import type { UpcomingTicket } from "@/features/tickets/types";
 import QuickQrModal from "./QuickQrModal";
 

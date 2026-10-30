@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { getRecipient } from "../api";
-import { useTransfer } from "../contexts/TransferContext";
+import { getRecipient } from "@/features/tickets/api";
+import { useTransfer } from "@/features/tickets/contexts/TransferContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { isValidEmail } from "@/libs/zod";

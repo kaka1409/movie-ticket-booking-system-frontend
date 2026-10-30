@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 // Mobile components
 import Tabs from "@/app/(main)/tickets/components/mobile/Tabs";
 import { MobileTicketListSkeleton } from "@/app/(main)/tickets/components/mobile/TicketsSkeleton";
-import TicketRealtimeRefresh from "@/features/tickets/components/TicketRealtimeRefresh";
+import TicketRealtimeRefresh from "@/app/(sub)/tickets/components/shared/TicketRealtimeRefresh";
 
 // Desktop components
 import DesktopTicketsSkeleton from "@/app/(main)/tickets/components/desktop/TicketsSkeleton";

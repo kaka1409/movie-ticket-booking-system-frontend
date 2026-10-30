@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLocale } from "@/contexts/LocaleContext";
 import Button from "@/components/ui/Button";
-import TicketOverviewCard from "@/features/tickets/components/TicketOverviewCard";
+import TicketOverviewCard from "@/app/(sub)/tickets/components/shared/TicketOverviewCard";
 import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext";
 import { useTransfer } from "@/features/tickets/contexts/TransferContext";
 import RecipientField from "../shared/RecipientField";

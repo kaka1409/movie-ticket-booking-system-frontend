@@ -1,6 +1,6 @@
 import { TransferProvider } from "@/features/tickets/contexts/TransferContext";
-import TicketOverviewCard from "@/features/tickets/components/TicketOverviewCard";
-import RecipientLookupAdopter from "@/features/tickets/components/RecipientLookupAdopter";
+import TicketOverviewCard from "@/app/(sub)/tickets/components/shared/TicketOverviewCard";
+import RecipientLookupAdopter from "@/app/(sub)/tickets/components/adopters/RecipientLookupAdopter";
 
 // Shared
 import RecipientField from "./components/shared/RecipientField";

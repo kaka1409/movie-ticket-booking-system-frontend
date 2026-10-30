@@ -2,9 +2,9 @@
 
 import type { ReactNode } from "react";
 import { useLocale } from "@/contexts/LocaleContext";
-import { useModification } from "../contexts/ModificationContext";
-import { useTicketDetail } from "../contexts/TicketDetailContext";
-import { resolveModifyShowtimeId } from "../utils";
+import { useModification } from "@/features/tickets/contexts/ModificationContext";
+import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext";
+import { resolveModifyShowtimeId } from "@/features/tickets/utils";
 import Button from "@/components/ui/Button";
 
 /**

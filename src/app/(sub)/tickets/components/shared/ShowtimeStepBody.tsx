@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 import { CalendarX2 } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
-import { useModification } from "../contexts/ModificationContext";
+import { useModification } from "@/features/tickets/contexts/ModificationContext";
 import { Skeleton } from "@/components/ui/Skeleton";
 import Button from "@/components/ui/Button";
 

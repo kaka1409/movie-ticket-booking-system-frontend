@@ -2,7 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { getPaymentMethods } from "@/features/booking/api";
 import { getTicketById } from "@/features/tickets/api";
 import { getRequestCookie, getRequestLocale } from "@/libs/session";
-import TransferPaymentScreen from "./components/TransferPaymentScreen";
+import TransferPaymentScreen from "./components/shared/TransferPaymentScreen";
 
 /**
  * The recipient's checkout for an accepted transfer. Only an `awaiting_payment`

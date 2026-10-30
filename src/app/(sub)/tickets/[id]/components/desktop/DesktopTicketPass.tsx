@@ -6,10 +6,10 @@ import { useLocale } from "@/contexts/LocaleContext";
 import Badge from "@/components/ui/Badge";
 import TearLine from "@/components/ui/TearLine";
 import PriceBreakdown from "@/components/shared/PriceBreakdown";
-import TicketCountdown from "@/app/(main)/tickets/components/mobile/TicketCountdown";
+import TicketCountdown from "@/components/shared/tickets/TicketCountdown";
 import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext";
 import type { UpcomingTicket } from "@/features/tickets/types";
-import { isPastStatus, PAST_STATUS_META } from "@/features/tickets/status";
+import { isPastStatus, PAST_STATUS_META } from "@/features/tickets/constants";
 
 /**
  * High-end cinematic boarding pass for the desktop ticket detail view:

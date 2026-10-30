@@ -5,7 +5,7 @@ import { useLocale } from "@/contexts/LocaleContext";
 import { formatVND } from "@/libs/utils";
 import MicroLabel from "@/components/ui/MicroLabel";
 import TearLine from "@/components/ui/TearLine";
-import TicketOverviewCard from "@/features/tickets/components/TicketOverviewCard";
+import TicketOverviewCard from "@/app/(sub)/tickets/components/shared/TicketOverviewCard";
 import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext";
 
 /**

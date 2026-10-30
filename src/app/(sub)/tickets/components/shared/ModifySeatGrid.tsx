@@ -2,11 +2,11 @@
 
 import { useCallback } from "react";
 import { useLocale } from "@/contexts/LocaleContext";
-import { useModification } from "../contexts/ModificationContext";
-import { useTicketDetail } from "../contexts/TicketDetailContext";
+import { useModification } from "@/features/tickets/contexts/ModificationContext";
+import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext";
 import type { Seat } from "@/features/booking/types";
 import { getSeatLabel } from "@/features/booking/utils/seat";
-import SeatGrid from "@/features/booking/components/seats/SeatGrid";
+import SeatGrid from "@/components/shared/seats/SeatGrid";
 
 /**
  * Paints the modify seat map from the adopted draft. The fetch lifecycle belongs

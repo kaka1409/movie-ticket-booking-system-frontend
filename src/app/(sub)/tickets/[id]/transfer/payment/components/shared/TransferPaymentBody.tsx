@@ -13,11 +13,11 @@ import Button from "@/components/ui/Button";
 import ErrorAlert from "@/components/ui/ErrorAlert";
 import MicroLabel from "@/components/ui/MicroLabel";
 import { useLocale } from "@/contexts/LocaleContext";
-import PaymentIntentActions from "@/features/booking/components/payment/PaymentIntentActions";
-import PaymentMethodCard from "@/features/booking/components/payment/PaymentMethodCard";
-import PaymentQrCard from "@/features/booking/components/payment/PaymentQrCard";
+import PaymentIntentActions from "@/components/shared/payment/PaymentIntentActions";
+import PaymentMethodCard from "@/components/shared/payment/PaymentMethodCard";
+import PaymentQrCard from "@/components/shared/payment/PaymentQrCard";
 import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext";
-import type { TransferPaymentViewProps } from "../TransferPaymentScreen";
+import type { TransferPaymentViewProps } from "./TransferPaymentScreen";
 
 /** One terminal stage: icon, what happened, and where the recipient can go. */
 function StagePanel({

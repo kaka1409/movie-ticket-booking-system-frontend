@@ -7,9 +7,9 @@ import { useSeatsStep } from "@/features/tickets/hooks/useModifySteps";
 import { formatVND } from "@/libs/utils";
 import Button from "@/components/ui/Button";
 import MicroLabel from "@/components/ui/MicroLabel";
-import ModifyStepLayout from "@/features/tickets/components/desktop/ModifyStepLayout";
-import SeatMapStepBody from "@/features/tickets/components/SeatMapStepBody";
-import ModifySeatGrid from "@/features/tickets/components/ModifySeatGrid";
+import ModifyStepLayout from "@/app/(sub)/tickets/components/desktop/ModifyStepLayout";
+import SeatMapStepBody from "@/app/(sub)/tickets/components/shared/SeatMapStepBody";
+import ModifySeatGrid from "@/app/(sub)/tickets/components/shared/ModifySeatGrid";
 import SeatInfo from "../shared/SeatInfo";
 
 /**

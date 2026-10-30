@@ -5,7 +5,7 @@ import Link from "next/link";
 import { CalendarDays, Ticket, ArrowRight, UserCheck } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import Badge from "@/components/ui/Badge";
-import { PAST_STATUS_META } from "@/features/tickets/status";
+import { PAST_STATUS_META } from "@/features/tickets/constants";
 import type { PastTicket } from "@/features/tickets/types";
 
 /**

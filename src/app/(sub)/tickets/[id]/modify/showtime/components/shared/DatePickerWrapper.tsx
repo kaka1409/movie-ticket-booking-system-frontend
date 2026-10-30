@@ -1,7 +1,7 @@
 "use client";
 
 import { useModification } from "@/features/tickets/contexts/ModificationContext";
-import DatePicker from "@/features/showtimes/components/DatePicker";
+import DatePicker from "@/components/shared/showtimes/DatePicker";
 
 /** Draft-bound date strip: no eligible day means nothing to pick. */
 export default function DatePickerWrapper() {

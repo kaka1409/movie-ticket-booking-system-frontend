@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useModification } from "../contexts/ModificationContext";
-import { useTicketDetail } from "../contexts/TicketDetailContext";
-import { resolveModifyShowtimeId } from "../utils";
+import { useModification } from "@/features/tickets/contexts/ModificationContext";
+import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext";
+import { resolveModifyShowtimeId } from "@/features/tickets/utils";
 import { getSeatMap } from "@/features/booking/api";
 import { adaptSeatMap } from "@/features/booking/utils/seatMap";
 

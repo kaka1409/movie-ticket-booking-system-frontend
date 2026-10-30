@@ -3,7 +3,7 @@
 import { useLocale } from "@/contexts/LocaleContext";
 import { useModification } from "@/features/tickets/contexts/ModificationContext";
 import TypeCard from "../shared/TypeCard";
-import { MODIFY_TYPE_OPTIONS } from "../shared/type-options";
+import { MODIFY_TYPE_OPTIONS } from "@/features/tickets/constants";
 
 export default function TypeCards() {
   const { translate } = useLocale();

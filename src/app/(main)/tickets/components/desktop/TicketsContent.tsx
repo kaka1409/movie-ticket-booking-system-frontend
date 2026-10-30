@@ -3,11 +3,11 @@
 import Link from "next/link";
 import { Ticket, Film, Calendar } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
-import type { TicketPageMeta } from "@/features/tickets/adapters";
+import type { TicketPageMeta } from "@/features/tickets/types";
 import type { PastTicket, UpcomingTicket } from "@/features/tickets/types";
 import EmptyState from "@/components/ui/EmptyState";
 import Tabs from "@/components/ui/Tabs";
-import Pager from "@/app/(main)/tickets/components/mobile/Pager";
+import Pager from "@/app/(main)/tickets/components/shared/Pager";
 import PastTicketCard from "./PastTicketCard";
 import UpcomingTicketCard from "./UpcomingTicketCard";
 import LocaleTransition from "@/components/ui/LocaleTransition";

@@ -7,10 +7,10 @@ import { formatVND } from "@/libs/utils";
 import DetailRow from "@/components/shared/DetailRow";
 import PriceBreakdown from "@/components/shared/PriceBreakdown";
 import MicroLabel from "@/components/ui/MicroLabel";
-import QRCode from "./QRCode";
+import QRCode from "@/components/shared/tickets/QRCode";
 import TearLine from "@/components/ui/TearLine";
 import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext";
-import { isPastStatus, PAST_STATUS_META } from "@/features/tickets/status";
+import { isPastStatus, PAST_STATUS_META } from "@/features/tickets/constants";
 import { useCancelTransfer } from "@/features/tickets/hooks/useCancelTransfer";
 import { formatDeadlineTime } from "@/features/tickets/utils";
 

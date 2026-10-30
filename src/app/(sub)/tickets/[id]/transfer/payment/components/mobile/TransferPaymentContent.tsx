@@ -2,9 +2,9 @@
 
 import { useLocale } from "@/contexts/LocaleContext";
 import MicroLabel from "@/components/ui/MicroLabel";
-import TicketOverviewCard from "@/features/tickets/components/TicketOverviewCard";
+import TicketOverviewCard from "@/app/(sub)/tickets/components/shared/TicketOverviewCard";
 import TransferPaymentBody from "../shared/TransferPaymentBody";
-import type { TransferPaymentViewProps } from "../TransferPaymentScreen";
+import type { TransferPaymentViewProps } from "../shared/TransferPaymentScreen";
 
 export default function TransferPaymentMobile(props: TransferPaymentViewProps) {
   const { translate } = useLocale();

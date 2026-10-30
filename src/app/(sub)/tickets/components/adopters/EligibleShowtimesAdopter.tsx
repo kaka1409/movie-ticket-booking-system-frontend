@@ -2,9 +2,9 @@
 
 import { useEffect } from "react";
 import { useLocale } from "@/contexts/LocaleContext";
-import { useModification } from "../contexts/ModificationContext";
-import { getEligibleShowtimes } from "../api";
-import { toEligibleDateOptions } from "../adapters";
+import { useModification } from "@/features/tickets/contexts/ModificationContext";
+import { getEligibleShowtimes } from "@/features/tickets/api";
+import { toEligibleDateOptions } from "@/features/tickets/adapters/index";
 
 /**
  * Effect-only mount helper for the modify showtime step (renders nothing): the

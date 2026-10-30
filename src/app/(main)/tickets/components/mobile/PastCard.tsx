@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useLocale } from "@/contexts/LocaleContext";
 import type { PastTicket } from "@/features/tickets/types";
-import { PAST_STATUS_META } from "@/features/tickets/status";
+import { PAST_STATUS_META } from "@/features/tickets/constants";
 import Badge from "@/components/ui/Badge";
 
 export default function PastCard({ ticket }: { ticket: PastTicket }) {

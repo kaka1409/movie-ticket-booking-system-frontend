@@ -3,7 +3,7 @@
 import { useLocale } from "@/contexts/LocaleContext";
 import { useModifySubmit } from "@/features/tickets/hooks/useModifySubmit";
 import Button from "@/components/ui/Button";
-import ModifyStepLayout from "@/features/tickets/components/desktop/ModifyStepLayout";
+import ModifyStepLayout from "@/app/(sub)/tickets/components/desktop/ModifyStepLayout";
 import ComparisonCard from "../shared/ComparisonCard";
 import PriceSummary from "../shared/PriceSummary";
 

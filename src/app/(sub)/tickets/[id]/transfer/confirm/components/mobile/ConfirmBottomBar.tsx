@@ -5,7 +5,7 @@ import { useLocale } from "@/contexts/LocaleContext";
 import type { Recipient } from "@/features/tickets/types";
 import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext";
 import { useTransferSubmit } from "@/features/tickets/hooks/useTransferSubmit";
-import TransferConfirmForm from "@/features/tickets/components/TransferConfirmForm";
+import TransferConfirmForm from "@/app/(sub)/tickets/components/shared/TransferConfirmForm";
 
 export default function ConfirmBottomBar({ recipient }: { recipient: Recipient }) {
   const router = useRouter();

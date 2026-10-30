@@ -5,7 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import Badge from "@/components/ui/Badge";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext";
-import { isPastStatus, PAST_STATUS_META } from "@/features/tickets/status";
+import { isPastStatus, PAST_STATUS_META } from "@/features/tickets/constants";
 
 /**
  * Desktop ticket detail header:

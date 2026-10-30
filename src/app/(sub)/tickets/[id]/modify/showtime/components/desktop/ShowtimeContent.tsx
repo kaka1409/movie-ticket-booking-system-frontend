@@ -6,8 +6,8 @@ import { useModification } from "@/features/tickets/contexts/ModificationContext
 import { useShowtimeStep } from "@/features/tickets/hooks/useModifySteps";
 import Button from "@/components/ui/Button";
 import MicroLabel from "@/components/ui/MicroLabel";
-import ModifyStepLayout from "@/features/tickets/components/desktop/ModifyStepLayout";
-import ShowtimeStepBody from "@/features/tickets/components/ShowtimeStepBody";
+import ModifyStepLayout from "@/app/(sub)/tickets/components/desktop/ModifyStepLayout";
+import ShowtimeStepBody from "@/app/(sub)/tickets/components/shared/ShowtimeStepBody";
 import CinemaSearchBar from "../shared/CinemaSearchBar";
 import CurrentShowtime from "../shared/CurrentShowtime";
 import DatePickerWrapper from "../shared/DatePickerWrapper";

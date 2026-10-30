@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { lockBodyScroll } from "@/libs/scroll-lock";
 import { X, Printer } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
-import QRCode from "@/app/(sub)/tickets/[id]/components/mobile/QRCode";
+import QRCode from "@/components/shared/tickets/QRCode";
 import type { UpcomingTicket } from "@/features/tickets/types";
 
 /**

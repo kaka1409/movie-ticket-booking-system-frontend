@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import type { TicketPageMeta } from "@/features/tickets/adapters";
+import type { TicketPageMeta } from "@/features/tickets/types";
 
 /**
  * Server-rendered pager for the tickets listing. Page state lives in the URL

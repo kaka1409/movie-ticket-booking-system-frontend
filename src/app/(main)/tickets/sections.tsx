@@ -1,9 +1,8 @@
-import type { TicketTab } from "@/features/tickets/lists";
-import { getTicketsForTab } from "@/features/tickets/lists";
+import { getTicketsForTab, type TicketTab } from "@/features/tickets/api";
 
 import UpcomingTicketList from "./components/mobile/UpcomingTicketList";
 import PastTicketList from "./components/mobile/PastTicketList";
-import Pager from "./components/mobile/Pager";
+import Pager from "./components/shared/Pager";
 import TicketsContent from "./components/desktop/TicketsContent";
 
 type TicketSectionProps = {

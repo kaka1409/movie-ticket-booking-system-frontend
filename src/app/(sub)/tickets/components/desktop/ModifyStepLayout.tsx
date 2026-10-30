@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
-import ModifyRail from "./ModifyRail";
-import ModifyStepRail, { type ModifyStepKey } from "./ModifyStepRail";
+import ModifyRail from "@/app/(sub)/tickets/components/desktop/ModifyRail";
+import ModifyStepRail, { type ModifyStepKey } from "@/app/(sub)/tickets/components/desktop/ModifyStepRail";
 import SplitStepLayout from "@/components/shared/SplitStepLayout";
 
 /**

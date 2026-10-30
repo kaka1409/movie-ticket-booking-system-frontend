@@ -2,7 +2,7 @@
 
 import { useLocale } from "@/contexts/LocaleContext";
 import type { ModificationType } from "@/features/tickets/types";
-import type { ModifyTypeOption } from "./type-options";
+import type { ModifyTypeOption } from "@/features/tickets/types";
 
 /**
  * One selectable change type. The radio dot is decorative markup rather than a

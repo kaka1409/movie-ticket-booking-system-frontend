@@ -1,4 +1,5 @@
-import type { TicketStatus } from "./constants";
+import type { LucideIcon } from "lucide-react";
+import type { TicketStatus } from "../constants";
 
 export interface SeatTicket {
   /** Backend seat UUID — present on detail payloads, absent on list summaries. */
@@ -122,6 +123,13 @@ export interface PastTicket {
 /* ─── Booking Modification Types ────────────────────────── */
 
 export type ModificationType = "showtime" | "seats" | "both";
+
+export interface ModifyTypeOption {
+  type: ModificationType;
+  icon: LucideIcon;
+  labelKey: string;
+  descKey: string;
+}
 
 export interface ModificationSeat {
   /** Backend seat UUID(s) for the modify PATCH — one per chair (sweetbox pair = 2). */

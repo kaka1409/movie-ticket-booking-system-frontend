@@ -1,9 +1,9 @@
 import SeatInfo from "./components/shared/SeatInfo";
 import SeatBottomBar from "./components/mobile/BottomBar";
 
-import ModifySeatMapAdopter from "@/features/tickets/components/ModifySeatMapAdopter";
-import SeatMapStepBody from "@/features/tickets/components/SeatMapStepBody";
-import ModifySeatGrid from "@/features/tickets/components/ModifySeatGrid";
+import ModifySeatMapAdopter from "@/app/(sub)/tickets/components/adopters/ModifySeatMapAdopter";
+import SeatMapStepBody from "@/app/(sub)/tickets/components/shared/SeatMapStepBody";
+import ModifySeatGrid from "@/app/(sub)/tickets/components/shared/ModifySeatGrid";
 
 import DesktopSeatContent from "./components/desktop/SeatContent";
 

@@ -1,6 +1,6 @@
 import { Skeleton, SkeletonCard } from "@/components/ui/Skeleton";
 import TearLine from "@/components/ui/TearLine";
-import DesktopTicketDetailSkeleton from "./desktop/TicketDetailSkeleton";
+import DesktopTicketDetailSkeleton from "@/app/(sub)/tickets/components/desktop/TicketDetailSkeleton";
 
 /**
  * Route fallback for the ticket cluster (`/tickets/[id]*`). Both device trees

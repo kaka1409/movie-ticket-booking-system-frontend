@@ -4,8 +4,8 @@ import DatePickerWrapper from "./components/shared/DatePickerWrapper";
 import ShowtimeList from "./components/shared/ShowtimeList";
 import ShowtimeBottomBar from "./components/mobile/BottomBar";
 
-import EligibleShowtimesAdopter from "@/features/tickets/components/EligibleShowtimesAdopter";
-import ShowtimeStepBody from "@/features/tickets/components/ShowtimeStepBody";
+import EligibleShowtimesAdopter from "@/app/(sub)/tickets/components/adopters/EligibleShowtimesAdopter";
+import ShowtimeStepBody from "@/app/(sub)/tickets/components/shared/ShowtimeStepBody";
 
 import DesktopShowtimeContent from "./components/desktop/ShowtimeContent";
 
