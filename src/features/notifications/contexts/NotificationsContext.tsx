@@ -13,11 +13,11 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useToast } from "@/contexts/ToastContext";
-import { getNotifications, markAllNotificationsRead, markNotificationRead } from "./api";
-import { toNotification } from "./adapters";
-import { NOTIFICATION_EVENT, TICKET_UPDATED_EVENT } from "./constants";
-import { createNotificationSocket } from "./socket";
-import type { Notification, NotificationWire, NotificationMeta } from "./types";
+import { getNotifications, markAllNotificationsRead, markNotificationRead } from "../api";
+import { toNotification } from "../utils/adapters";
+import { NOTIFICATION_EVENT, TICKET_UPDATED_EVENT } from "../constants";
+import { createNotificationSocket } from "../utils/socket";
+import type { Notification, NotificationWire, NotificationMeta } from "../types";
 
 interface NotificationContextValue {
   notifications: Notification[];

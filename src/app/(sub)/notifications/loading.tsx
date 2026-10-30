@@ -1,4 +1,4 @@
-import { MobileInboxSkeleton, DesktopInboxSkeleton } from "@/features/notifications/components/NotificationSkeletons";
+import { MobileInboxSkeleton, DesktopInboxSkeleton } from "@/app/(sub)/notifications/components/shared/NotificationSkeletons";
 
 export default function NotificationLoading() {
   return (

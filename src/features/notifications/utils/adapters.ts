@@ -1,4 +1,4 @@
-import type { Notification, NotificationWire, NotificationMeta, NotificationType } from "./types";
+import type { Notification, NotificationWire, NotificationMeta, NotificationType } from "../types";
 
 const NOTIFICATION_TYPES: readonly NotificationType[] = ["success", "error", "warning", "info"];
 

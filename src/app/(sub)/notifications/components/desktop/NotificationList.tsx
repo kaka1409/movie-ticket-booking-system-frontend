@@ -3,8 +3,8 @@
 import { useMemo, useState } from "react";
 import { Bell, CheckCheck } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
-import { useNotifications } from "@/features/notifications/context";
-import NotificationRow from "@/features/notifications/components/NotificationRow";
+import { useNotifications } from "@/features/notifications/contexts/NotificationsContext";
+import NotificationRow from "@/components/shared/notifications/NotificationRow";
 import Button from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";
 import EmptyState from "@/components/ui/EmptyState";

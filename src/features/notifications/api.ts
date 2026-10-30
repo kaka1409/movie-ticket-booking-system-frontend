@@ -1,5 +1,5 @@
 import { apiFetch, apiMutation, withLang, type ApiResponse } from "@/libs/api";
-import { toNotification } from "./adapters";
+import { toNotification } from "./utils/adapters";
 import type { Locale } from "@/contexts/LocaleContext";
 import type { Notification, NotificationWire } from "./types";
 
