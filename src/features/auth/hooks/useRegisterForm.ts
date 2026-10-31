@@ -7,6 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { buildLoginUrl } from "@/libs/utils";
 import { loginAction, registerAction } from "../action";
 import { createRegisterSchema } from "../schema";
+import { fieldErrorsFromDetails } from "@/libs/api";
 
 export interface RegisterFormController {
   name: string;
@@ -55,6 +56,7 @@ export function useRegisterForm({
   const [touched, setTouched] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [serverError, setServerError] = useState("");
+  const [serverFieldErrors, setServerFieldErrors] = useState<Record<string, string>>({});
 
   const schema = useMemo(() => createRegisterSchema(translate), [translate]);
   const validation = schema.safeParse({ name, email, password, confirmPassword });
@@ -66,6 +68,7 @@ export function useRegisterForm({
       event.preventDefault();
       setTouched(true);
       setServerError("");
+      setServerFieldErrors({});
       if (!isValid) return;
 
       setIsSubmitting(true);
@@ -76,8 +79,14 @@ export function useRegisterForm({
         );
 
         if (!registerResult.success) {
+          if (registerResult.code === "VALIDATION_ERROR" && registerResult.details?.length) {
+            const serverErrors = fieldErrorsFromDetails(registerResult.details);
+            if (serverErrors.fullname) serverErrors.name = serverErrors.fullname;
+            setServerFieldErrors(serverErrors);
+            return;
+          }
           setServerError(
-            registerResult.status === 409
+            registerResult.code === "EMAIL_EXISTS"
               ? translate("auth.register.error_email_exists")
               : translate("auth.register.error_server"),
           );
@@ -111,10 +120,10 @@ export function useRegisterForm({
     setConfirmPassword,
     termsAccepted,
     toggleTermsAccepted: () => setTermsAccepted((accepted) => !accepted),
-    nameError: touched ? fieldErrors.name?.[0] : undefined,
-    emailError: touched ? fieldErrors.email?.[0] : undefined,
-    passwordError: touched ? fieldErrors.password?.[0] : undefined,
-    confirmError: touched ? fieldErrors.confirmPassword?.[0] : undefined,
+    nameError: touched ? serverFieldErrors.name ?? fieldErrors.name?.[0] : undefined,
+    emailError: touched ? serverFieldErrors.email ?? fieldErrors.email?.[0] : undefined,
+    passwordError: touched ? serverFieldErrors.password ?? fieldErrors.password?.[0] : undefined,
+    confirmError: touched ? serverFieldErrors.confirmPassword ?? fieldErrors.confirmPassword?.[0] : undefined,
     serverError,
     isSubmitting,
     handleSubmit,

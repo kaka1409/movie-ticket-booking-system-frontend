@@ -1,3 +1,5 @@
+import type { ActionFailure } from "@/libs/api";
+
 /** `admin-theme` cookie value: an explicit pick, or `system` to follow the OS. */
 export type AdminTheme = "dark" | "light" | "system";
 
@@ -11,7 +13,7 @@ export type AdminSidebarMode = "expanded" | "collapsed";
  */
 export type AdminActionResult<TData = null> =
   | { success: true; data: TData }
-  | { success: false; error: string; status?: number; code?: string };
+  | ActionFailure;
 
 /** Pager envelope shared by every backend-paginated admin read. */
 export interface AdminPaginationMeta {

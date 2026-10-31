@@ -6,6 +6,7 @@ import { useLocale } from "@/contexts/LocaleContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { loginAction } from "../action";
 import { createLoginSchema } from "../schema";
+import { fieldErrorsFromDetails } from "@/libs/api";
 
 export interface LoginFormController {
   email: string;
@@ -38,6 +39,7 @@ export function useLoginForm({ returnUrl }: { returnUrl?: string } = {}): LoginF
   const [touched, setTouched] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [serverError, setServerError] = useState("");
+  const [serverFieldErrors, setServerFieldErrors] = useState<Record<string, string>>({});
 
   const schema = useMemo(() => createLoginSchema(translate), [translate]);
   const validation = schema.safeParse({ email, password });
@@ -49,6 +51,7 @@ export function useLoginForm({ returnUrl }: { returnUrl?: string } = {}): LoginF
       event.preventDefault();
       setTouched(true);
       setServerError("");
+      setServerFieldErrors({});
       if (!isValid) return;
 
       setIsSubmitting(true);
@@ -57,8 +60,13 @@ export function useLoginForm({ returnUrl }: { returnUrl?: string } = {}): LoginF
         if (loginResult.success) {
           setAuth(loginResult.data.user, loginResult.data.accessToken);
           router.push(returnUrl ?? "/");
-        } else if (loginResult.status === 401) {
+        } else if (loginResult.code === "INVALID_CREDENTIALS") {
           setServerError(translate("auth.login.error_invalid_credentials"));
+        } else if (loginResult.code === "ACCOUNT_BANNED") {
+          setServerError(translate("auth.login.error_account_banned"));
+        } else if (loginResult.code === "VALIDATION_ERROR") {
+          setServerFieldErrors(fieldErrorsFromDetails(loginResult.details));
+          if (!loginResult.details?.length) setServerError(loginResult.error);
         } else {
           setServerError(translate("auth.login.error_server"));
         }
@@ -76,8 +84,8 @@ export function useLoginForm({ returnUrl }: { returnUrl?: string } = {}): LoginF
     setEmail,
     password,
     setPassword,
-    emailError: touched ? fieldErrors.email?.[0] : undefined,
-    passwordError: touched ? fieldErrors.password?.[0] : undefined,
+    emailError: touched ? serverFieldErrors.email ?? fieldErrors.email?.[0] : undefined,
+    passwordError: touched ? serverFieldErrors.password ?? fieldErrors.password?.[0] : undefined,
     serverError,
     isSubmitting,
     handleSubmit,

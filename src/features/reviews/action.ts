@@ -1,25 +1,13 @@
 "use server";
 
 import { updateTag } from "next/cache";
-import { apiMutation } from "@/libs/api";
+import { apiMutation, toActionFailure, actionFailureFromApiError, type ActionFailure } from "@/libs/api";
 import { getRequestLocale } from "@/libs/session";
 import { getReviews } from "./api";
 import type { ReviewsResponse } from "./types";
 
 export type ActionResult<T> =
-  { success: true; data: T } | { success: false; error: string; status?: number };
-
-function failure(error: unknown): {
-  success: false;
-  error: string;
-  status?: number;
-} {
-  return {
-    success: false,
-    error: (error as Error).message,
-    status: (error as { status?: number }).status,
-  };
-}
+  { success: true; data: T } | ActionFailure;
 
 async function getReviewsPage(input: {
   movieSlug: string;
@@ -30,15 +18,11 @@ async function getReviewsPage(input: {
     // Server action: locale comes from the request cookie (no React state here).
     const result = await getReviews(input, await getRequestLocale());
     if ("error" in result) {
-      return {
-        success: false,
-        error: result.error.message,
-        status: result.error.status,
-      };
+      return actionFailureFromApiError(result.error);
     }
     return { success: true, data: result.data };
   } catch (error: unknown) {
-    return failure(error);
+    return toActionFailure(error);
   }
 }
 
@@ -55,7 +39,7 @@ async function mutateAndRefetch(
     updateTag("reviews");
     return await getReviewsPage({ movieSlug, skip: refetchSkip, limit: refetchLimit });
   } catch (error: unknown) {
-    return failure(error);
+    return toActionFailure(error);
   }
 }
 

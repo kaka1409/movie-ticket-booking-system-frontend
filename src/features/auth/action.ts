@@ -1,7 +1,7 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { apiMutation } from "@/libs/api";
+import { apiMutation, toActionFailure, type ActionFailure } from "@/libs/api";
 import type {
   LoginRequest,
   LoginResponse,
@@ -51,7 +51,7 @@ function cookieHeader(value: string): string {
 
 /** POST /auth/register — returns `{ data: { message } }` or a failure union with the HTTP status. */
 export type RegisterActionResult =
-  { success: true; data: RegisterResponse } | { success: false; error: string; status?: number };
+  { success: true; data: RegisterResponse } | ActionFailure;
 
 export async function registerAction(
   prevState: RegisterActionResult,
@@ -64,8 +64,7 @@ export async function registerAction(
     });
     return { success: true, data: result.data };
   } catch (error: unknown) {
-    const status = (error as { status?: number }).status;
-    return { success: false, error: (error as Error).message, status };
+    return toActionFailure(error);
   }
 }
 
@@ -77,7 +76,7 @@ export async function registerAction(
  * access token + user go to the client for AuthContext (RAM only).
  */
 export type LoginActionResult =
-  { success: true; data: LoginResponse } | { success: false; error: string; status?: number };
+  { success: true; data: LoginResponse } | ActionFailure;
 
 export async function loginAction(
   prevState: LoginActionResult,
@@ -99,8 +98,7 @@ export async function loginAction(
 
     return { success: true, data: result.data };
   } catch (error: unknown) {
-    const status = (error as { status?: number }).status;
-    return { success: false, error: (error as Error).message, status };
+    return toActionFailure(error);
   }
 }
 
@@ -114,7 +112,7 @@ export async function loginAction(
  * failure just means the user must log in again.
  */
 export type RefreshActionResult =
-  { success: true; data: RefreshResponse } | { success: false; error: string };
+  { success: true; data: RefreshResponse } | ActionFailure;
 
 export async function refreshAction(): Promise<RefreshActionResult> {
   try {
@@ -135,14 +133,14 @@ export async function refreshAction(): Promise<RefreshActionResult> {
 
     return { success: true, data: result.data };
   } catch (error: unknown) {
-    return { success: false, error: (error as Error).message };
+    return toActionFailure(error);
   }
 }
 
 /* ─── Logout ────────────────────────────────────────────── */
 
 /** POST /auth/logout — revokes the refresh token server-side, then clears the cookie. */
-export type LogoutActionResult = { success: true } | { success: false; error: string };
+export type LogoutActionResult = { success: true } | ActionFailure;
 
 export async function logoutAction(): Promise<LogoutActionResult> {
   try {
@@ -158,6 +156,6 @@ export async function logoutAction(): Promise<LogoutActionResult> {
     await deleteRefreshToken();
     return { success: true };
   } catch (error: unknown) {
-    return { success: false, error: (error as Error).message };
+    return toActionFailure(error);
   }
 }

@@ -1,4 +1,4 @@
-import { apiMutation } from "@/libs/api";
+import { apiMutation, toActionFailure } from "@/libs/api";
 import type { AdminActionResult } from "./types";
 
 type AdminEnvelope<TData> = { data?: TData } | TData | null;
@@ -35,12 +35,6 @@ export async function mutateAdmin<TData = null>(
 
     return { success: true, data: data as TData };
   } catch (error) {
-    const failure = error as { message?: string; status?: number; code?: string };
-    return {
-      success: false,
-      error: failure.message ?? "Request failed",
-      status: failure.status,
-      code: failure.code,
-    };
+    return toActionFailure(error);
   }
 }

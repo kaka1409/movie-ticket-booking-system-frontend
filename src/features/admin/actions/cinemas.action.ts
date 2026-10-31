@@ -1,6 +1,6 @@
 "use server";
 
-import { apiFetch } from "@/libs/api";
+import { actionFailureFromApiError, apiFetch, toActionFailure } from "@/libs/api";
 import { getRequestCookie } from "@/libs/session";
 import { mutateAdmin } from "../mutation";
 import type {
@@ -89,12 +89,12 @@ export async function getAdminSeatTypesAction(
     );
 
     if ("error" in result) {
-      return { success: false, error: result.error.message, status: result.error.status };
+      return actionFailureFromApiError(result.error);
     }
 
     return { success: true, data: result.data };
   } catch (error) {
-    return { success: false, error: (error as Error).message };
+    return toActionFailure(error);
   }
 }
 
@@ -111,11 +111,11 @@ export async function getAdminRoomSeatLayoutAction(
     );
 
     if ("error" in result) {
-      return { success: false, error: result.error.message, status: result.error.status };
+      return actionFailureFromApiError(result.error);
     }
 
     return { success: true, data: result.data };
   } catch (error) {
-    return { success: false, error: (error as Error).message };
+    return toActionFailure(error);
   }
 }
