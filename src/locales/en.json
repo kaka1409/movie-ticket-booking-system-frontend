@@ -237,6 +237,9 @@
       "cancel_transfer": "Cancel Transfer",
       "sent_badge": "Transferred",
       "received_badge": "Received",
+      "transferred_to": "Transferred to {name}",
+      "transferred_on": "Settled on {date}",
+      "transferred_note": "This ticket belongs to someone else now — its code can no longer be scanned by you.",
       "incoming_badge": "Transfer Offer",
       "incoming_from": "{name} wants to send you this ticket.",
       "incoming_hint": "Accepting opens a payment — the ticket and its QR become yours once it clears.",
@@ -677,6 +680,7 @@
       "error_email_invalid": "Enter a valid email address.",
       "error_password_required": "Password is required.",
       "error_invalid_credentials": "Invalid email or password.",
+      "error_account_banned": "This account is suspended. Please contact support.",
       "error_server": "Something went wrong. Please try again."
     },
     "register": {
@@ -711,6 +715,12 @@
     "promo": {
       "title": "Every seat, every story — booked in seconds.",
       "subtitle": "Vietnam's premium cinemas, one tap away.",
+      "slide1_title": "Prime Seats, Pure Cinema.",
+      "slide1_subtitle": "Book in seconds, pick the seat you want. So the movie starts right.",
+      "slide2_title": "Where Stories Come Alive.",
+      "slide2_subtitle": "From the trailer to the screening. Every cinematic moment, right at your fingertips.",
+      "slide3_title": "Where Emotions Overflow Every Frames",
+      "slide3_subtitle": "Surround sound, a giant screen, and plush seats. So the feeling takes over.",
       "bullet_ticket": "Instant QR ticket",
       "bullet_refund": "Refunds in minutes",
       "bullet_rewards": "Member-only rewards"

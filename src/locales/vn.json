@@ -237,6 +237,9 @@
       "cancel_transfer": "Hủy Chuyển Vé",
       "sent_badge": "Đã Chuyển Nhượng",
       "received_badge": "Nhận Chuyển Nhượng",
+      "transferred_to": "Đã chuyển cho {name}",
+      "transferred_on": "Hoàn tất ngày {date}",
+      "transferred_note": "Vé này giờ thuộc về người khác — bạn không thể quét mã của vé nữa.",
       "incoming_badge": "Lời Mời Nhận Vé",
       "incoming_from": "{name} muốn chuyển vé này cho bạn.",
       "incoming_hint": "Chấp nhận sẽ mở bước thanh toán — vé và mã QR thuộc về bạn khi thanh toán xong.",
@@ -677,6 +680,7 @@
       "error_email_invalid": "Vui lòng nhập email hợp lệ.",
       "error_password_required": "Mật khẩu là bắt buộc.",
       "error_invalid_credentials": "Email hoặc mật khẩu không đúng.",
+      "error_account_banned": "Tài khoản này đã bị khóa. Vui lòng liên hệ bộ phận hỗ trợ.",
       "error_server": "Đã xảy ra lỗi. Vui lòng thử lại."
     },
     "register": {
@@ -711,6 +715,12 @@
     "promo": {
       "title": "Mỗi hàng ghế, mỗi câu chuyện — đặt trong vài giây.",
       "subtitle": "Rạp chiếu cao cấp Việt Nam, chỉ cách một cú chạm.",
+      "slide1_title": "Chọn chỗ đắc địa, trọn vẹn thăng hoa.",
+      "slide1_subtitle": "Đặt vé trong vài giây, chọn ghế như ý. Buổi xem phim bắt đầu đúng cách.",
+      "slide2_title": "Nơi cảm xúc điện ảnh bắt đầu.",
+      "slide2_subtitle": "Từ trailer đến suất chiếu. Mọi khoảnh khắc điện ảnh đều trong tầm tay bạn.",
+      "slide3_title": "Dâng trào cảm xúc từng khung hình.",
+      "slide3_subtitle": "Âm thanh vòm, màn hình lớn và ghế êm ái. Để cảm xúc vỡ òa.",
       "bullet_ticket": "Vé QR tức thì",
       "bullet_refund": "Hoàn tiền trong vài phút",
       "bullet_rewards": "Ưu đãi riêng cho thành viên"
