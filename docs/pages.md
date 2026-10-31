@@ -85,7 +85,7 @@ Past tickets show the same detail layout but without action buttons.
 
 **Past-status badges**: the backend persists the terminal status (`used` | `expired` | `cancelled` | `refunded`) — `toPastStatus` (adapters) passes it straight through and `PastCard` reads `PAST_STATUS_META[status]` (`features/tickets/constants.ts`) for the badge label (`translate(meta.labelKey)` → `tickets.used`/`tickets.expired`/`tickets.refunded`/`tickets.cancelled`). Use the `isPastStatus()` guard before indexing the map (the detail status union also carries upcoming values). Never derive "expired" from the showtime client-side: the backend expiry sweep (minute cron) is the authority, and a ticket that was checked in, refunded or cancelled must keep showing _that_ status. **No muted styling** — every past card renders at full opacity.
 
-**Transfer provenance**: `GET /tickets/past` also returns the tickets the viewer transferred away, so `toPastTicket` maps the summary's settled-transfer field to `PastTicket.transferProvenance` (deliberately not `transfer` — that name is the _open_ transfer detail on `UpcomingTicket`, and the detail context narrows on it) and `toPastStatus` returns the viewer-derived `"transferred"` status (a `TicketStatus` member that exists only on the FE) for `direction: "sent"`. `PastCard` shows the provenance badge (`tickets.transfer.sent_badge` / `received_badge`) **instead of** the terminal badge whenever `transferProvenance` is present, and for a sent ticket it names the recipient where the "View Details" link would be — ownership moved on accept, so the detail endpoint answers 404 for the sender and the link must not be rendered.
+**Transfer provenance**: `GET /tickets/past` also returns the tickets the viewer transferred away, so `toPastTicket` maps the summary's settled-transfer field to `PastTicket.transferProvenance` (deliberately not `transfer` — that name is the _open_ transfer detail on `UpcomingTicket`, and the detail context narrows on it) and `toPastStatus` returns the viewer-derived `"transferred"` status (a `TicketStatus` member that exists only on the FE) for `direction: "sent"`. `PastCard` shows the provenance badge (`tickets.transfer.sent_badge` / `received_badge`) **instead of** the terminal badge whenever `transferProvenance` is present, and a sent card names the recipient inside the info block (under the showtime) — the "View Details" link stays, because the detail endpoint serves a third viewer role. `toDetailTicket` turns `viewerRole: "sender"` into a `PastTicket` (`status: "transferred"`) whose `transferProvenance` also carries `amount` and `settledAt`; `TransferProvenance` (`(sub)/tickets/[id]/components/shared/`) renders that as the closed history page — badge, recipient, frozen amount, settle date and the "no longer yours" note — in place of the credential panel on both skins, and the action panels render nothing when no verb is left.
 
 **Transfer expiry** (no FE code): the backend closes a `pending` transfer once its accept window ends (2 hours before the showtime starts) — the row becomes `expired`, the sender's QR is re-armed and both parties get a notice (`transfer_expired` for the sender, `transfer_offer_expired` for the recipient). `expired` never reaches the wire (listings expose `pending`/`accepted` only), so the only visible effect is the `pending_badge` ribbon and the recipient's offer panel disappearing — driven by the notification push above. Never compute this cutoff client-side.
 
@@ -284,7 +284,6 @@ Mobile composition:
 
 State lives in the booking reducer (`useBooking()`).
 
-
 ## Seat Selection Page
 
 `(sub)/booking/[slug]/seats/page.tsx` — streamed: the page awaits `params`/`searchParams` only (a deep link without `?showtimeId=` redirects to `/booking/[slug]/cinema`) and paints the chrome — `StepBar` (step 2), `CountdownBanner`, the bottom bar. The grid streams from `sections.tsx` (`MobileSeatMapSection` / `DesktopSeatMapSection`, one boundary per tree) and `SeatMapAdoptSection` rides a `fallback={null}` boundary at page level. `getSeatMap` and `getShowtimeById` are called independently from their feature APIs and the same promises feed both skins and the adopter; the seat-map response is adapted once.
@@ -431,14 +430,14 @@ URL → state is applied **once, server-side at render** (via `features/movies/u
 
 Every console route follows one shape: the page awaits nothing but `searchParams` (only `/admin/movies` has any) and renders `<AdminPageHeader>` — a client component taking i18n **keys**, so it paints without a server translator — then streams its manager in one `<Suspense fallback={<AdminTableSkeleton />}>`:
 
-| Route | Streamed manager section | Feeds |
-|---|---|---|
-| `/admin/catalogs` | `CatalogsManagerSection` | genres + formats + age ratings |
-| `/admin/movies` | `MoviesManagerSection` (takes `search`/`status`/`page`) | movie list (+`meta`) + genres + age ratings |
-| `/admin/cinemas` | `CinemasManagerSection` | cinema tree (rooms, seat layout) |
-| `/admin/combos` | `CombosManagerSection` | combos |
-| `/admin/food` | `FoodManagerSection` | food items |
-| `/admin/payment-methods` | `PaymentMethodsManagerSection` | gateway catalog |
+| Route                    | Streamed manager section                                | Feeds                                       |
+| ------------------------ | ------------------------------------------------------- | ------------------------------------------- |
+| `/admin/catalogs`        | `CatalogsManagerSection`                                | genres + formats + age ratings              |
+| `/admin/movies`          | `MoviesManagerSection` (takes `search`/`status`/`page`) | movie list (+`meta`) + genres + age ratings |
+| `/admin/cinemas`         | `CinemasManagerSection`                                 | cinema tree (rooms, seat layout)            |
+| `/admin/combos`          | `CombosManagerSection`                                  | combos                                      |
+| `/admin/food`            | `FoodManagerSection`                                    | food items                                  |
+| `/admin/payment-methods` | `PaymentMethodsManagerSection`                          | gateway catalog                             |
 
 - Each manager section lives beside its page (`sections.tsx`) and is the only place that reads admin data. One consumer per feed, so no `cache()` loader is involved.
 - **401 renders `null`** — the console layout owns the prompt (the section would otherwise double it). A real failure renders `AdminDataError` in the table's place, keeping the header and the URL filters alive.
