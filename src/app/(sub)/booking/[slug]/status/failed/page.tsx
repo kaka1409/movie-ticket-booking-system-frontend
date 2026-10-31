@@ -79,13 +79,7 @@ export default async function FailPage({
   );
 }
 
-function FailPageMobile({
-  reason,
-  receipt,
-}: {
-  reason: string | null;
-  receipt: ReactNode;
-}) {
+function FailPageMobile({ reason, receipt }: { reason: string | null; receipt: ReactNode }) {
   return (
     <>
       <div className="min-h-dvh max-w-md mx-auto flex flex-col bg-(--color-bg)">
@@ -100,4 +94,3 @@ function FailPageMobile({
     </>
   );
 }
-import { Suspense } from "react";

@@ -110,8 +110,6 @@ export function buildSeatsHref(
   return `/booking/${movieSlug}/seats${search ? `?${search}` : ""}`;
 }
 
-
-
 /**
  * Backend date records → the booking step's chips. `dayOfWeek` arrives in the
  * request locale; today's chip shows the translated "today" word instead.

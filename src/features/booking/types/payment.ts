@@ -18,4 +18,3 @@ export type BookingMovie = Pick<
   Movie,
   "slug" | "title" | "src" | "genre" | "duration" | "ageRating"
 >;
-

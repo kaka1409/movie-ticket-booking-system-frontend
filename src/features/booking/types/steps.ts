@@ -7,4 +7,3 @@ export const BOOKING_STEP_KEYS = [
   "booking.steps.contact_info",
   "booking.steps.payment",
 ] as const;
-

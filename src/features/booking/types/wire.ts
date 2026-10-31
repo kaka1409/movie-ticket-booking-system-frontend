@@ -158,4 +158,3 @@ export interface BookingDetail {
   foods: { id: string; name: string; quantity: number; price: number }[];
   contact: { name: string; email: string; phone: string } | null;
 }
-

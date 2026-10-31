@@ -15,10 +15,7 @@ type SnackFoodSectionProps = {
 };
 
 /** Streams combos independently from the pick-and-mix catalog. */
-export async function SnackCombosSection({
-  combosPromise,
-  variant,
-}: SnackCombosSectionProps) {
+export async function SnackCombosSection({ combosPromise, variant }: SnackCombosSectionProps) {
   const result = await combosPromise;
 
   if ("error" in result) {

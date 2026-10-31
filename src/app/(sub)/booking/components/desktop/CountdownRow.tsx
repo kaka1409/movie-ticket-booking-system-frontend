@@ -1,7 +1,10 @@
 "use client";
 
 import { useLocale } from "@/contexts/LocaleContext";
-import { formatCountdown, useCountdownRemaining } from "@/features/booking/contexts/CountdownContext";
+import {
+  formatCountdown,
+  useCountdownRemaining,
+} from "@/features/booking/contexts/CountdownContext";
 import MicroLabel from "@/components/ui/MicroLabel";
 
 /**

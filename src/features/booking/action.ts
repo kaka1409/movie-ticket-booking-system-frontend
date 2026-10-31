@@ -1,6 +1,6 @@
 "use server";
 
-import { apiMutation, type ApiResponse } from "@/libs/api";
+import { apiMutation, actionFailureFromApiError, toActionFailure, type ActionFailure, type ApiResponse } from "@/libs/api";
 import type {
   BookingDetail,
   PaymentIntent,
@@ -10,31 +10,11 @@ import type {
 } from "./types";
 
 export type BookingActionResult<T> =
-  { success: true; data: T } | { success: false; error: string; status?: number; code?: string };
-
-function failure(error: unknown): {
-  success: false;
-  error: string;
-  status?: number;
-  code?: string;
-} {
-  const cause = error as Error & { status?: number; code?: string };
-  return {
-    success: false,
-    error: cause.message,
-    status: cause.status,
-    code: cause.code,
-  };
-}
+  { success: true; data: T } | ActionFailure;
 
 function union<T>(result: ApiResponse<T>): BookingActionResult<T> {
   if ("error" in result) {
-    return {
-      success: false,
-      error: result.error.message,
-      status: result.error.status,
-      code: result.error.code,
-    };
+    return actionFailureFromApiError(result.error);
   }
   return { success: true, data: result.data };
 }
@@ -61,7 +41,7 @@ export async function createBookingAction(
     );
     return union(result);
   } catch (error) {
-    return failure(error);
+    return toActionFailure(error);
   }
 }
 
@@ -79,7 +59,7 @@ async function mutatePayment<T>(
     );
     return union(result);
   } catch (error) {
-    return failure(error);
+    return toActionFailure(error);
   }
 }
 

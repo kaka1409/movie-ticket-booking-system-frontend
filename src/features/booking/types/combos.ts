@@ -18,4 +18,3 @@ export interface FoodItem {
   price: number;
   image: string;
 }
-

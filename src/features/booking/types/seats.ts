@@ -24,4 +24,3 @@ export interface SeatPrice {
   vip: number;
   sweetbox: number;
 }
-

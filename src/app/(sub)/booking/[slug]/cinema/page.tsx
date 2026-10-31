@@ -60,10 +60,9 @@ export default async function CinemaShowtimePage({
   const requestedDate = query.date && DATE_PATTERN.test(query.date) ? query.date : "";
   const datesPromise = getShowtimeDates(slug, locale);
   const schedulePromise = datesPromise.then(async (datesResult) => {
-    const date = requestedDate ||
-      ("error" in datesResult
-        ? today
-        : resolveDefaultShowtimeDate(datesResult.data, today));
+    const date =
+      requestedDate ||
+      ("error" in datesResult ? today : resolveDefaultShowtimeDate(datesResult.data, today));
     const showtimesResult = await getShowtimes(slug, date);
     return { datesResult, date, showtimesResult };
   });

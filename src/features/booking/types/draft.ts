@@ -32,4 +32,3 @@ export interface SelectedFood {
   qty: number;
   price: number;
 }
-
