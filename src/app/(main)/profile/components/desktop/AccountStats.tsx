@@ -44,9 +44,7 @@ export default function AccountStats({
             </span>
           </div>
 
-          <p className="mt-4 text-3xl font-black tracking-tight text-white">
-            {stats[key]}
-          </p>
+          <p className="mt-4 text-3xl font-black tracking-tight text-white">{stats[key]}</p>
           <p className="mt-1 text-xs font-bold uppercase tracking-wider text-(--color-text-muted)">
             {translate(labelKey)}
           </p>

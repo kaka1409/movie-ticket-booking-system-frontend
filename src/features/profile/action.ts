@@ -2,10 +2,10 @@
 
 import type { UpdateProfileRequest } from "./types";
 import type { User } from "@/features/auth/types";
-import { apiMutation } from "@/libs/api";
+import { apiMutation, toActionFailure, type ActionFailure } from "@/libs/api";
 
 export type ProfileActionResult =
-  { success: true; data: User } | { success: false; error: string; status?: number };
+  { success: true; data: User } | ActionFailure;
 
 export async function updateProfileAction(
   prevState: ProfileActionResult,
@@ -20,7 +20,6 @@ export async function updateProfileAction(
     );
     return { success: true, data: response.data };
   } catch (error: unknown) {
-    const status = (error as { status?: number }).status;
-    return { success: false, error: (error as Error).message, status };
+    return toActionFailure(error);
   }
 }

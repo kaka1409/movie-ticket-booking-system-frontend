@@ -1,5 +1,8 @@
 import AccountSkeleton from "@/components/shared/profile/desktop/AccountSkeleton";
-import { MobileReviewListSkeleton, DesktopReviewsSkeleton } from "./components/shared/ReviewsSkeletons";
+import {
+  MobileReviewListSkeleton,
+  DesktopReviewsSkeleton,
+} from "./components/shared/ReviewsSkeletons";
 
 export default function ReviewsLoading() {
   return (
