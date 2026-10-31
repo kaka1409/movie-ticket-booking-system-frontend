@@ -58,9 +58,7 @@ export default function NotificationCard({
           </p>
 
           <div className="flex items-center gap-2">
-            <span className="text-2xs font-bold tracking-widest text-(--color-gold)">
-              {time}
-            </span>
+            <span className="text-2xs font-bold tracking-widest text-(--color-gold)">{time}</span>
             {notification.action && (
               <Link
                 href={notification.action.href}

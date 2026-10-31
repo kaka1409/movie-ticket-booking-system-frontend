@@ -8,7 +8,9 @@ import { useLocale } from "@/contexts/LocaleContext";
 import { useToast } from "@/contexts/ToastContext";
 import AdminButton from "@/app/(admin)/admin/components/shared/AdminButton";
 import AdminPagination from "@/app/(admin)/admin/components/shared/AdminPagination";
-import AdminTable, { type AdminTableColumn } from "@/app/(admin)/admin/components/shared/AdminTable";
+import AdminTable, {
+  type AdminTableColumn,
+} from "@/app/(admin)/admin/components/shared/AdminTable";
 import { resolveAdminError } from "@/features/admin/errorMessages";
 import { restoreAdminReviewAction } from "@/features/admin/actions/reviews.action";
 import { formatCalendarDate } from "@/libs/date";

@@ -6,7 +6,9 @@ import type { ReactNode } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useToast } from "@/contexts/ToastContext";
-import AdminFormField, { AdminCheckbox } from "@/app/(admin)/admin/components/shared/AdminFormField";
+import AdminFormField, {
+  AdminCheckbox,
+} from "@/app/(admin)/admin/components/shared/AdminFormField";
 import AdminFormModal from "@/app/(admin)/admin/components/shared/AdminFormModal";
 import { ADMIN_INPUT_CLASS, ADMIN_LABEL_CLASS } from "@/features/admin/constants";
 import { createMovieSchema, toAdminFieldErrors } from "@/features/admin/schema";

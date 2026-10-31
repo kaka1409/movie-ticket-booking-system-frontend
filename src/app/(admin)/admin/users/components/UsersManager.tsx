@@ -10,7 +10,9 @@ import Badge from "@/components/ui/Badge";
 import AdminButton from "@/app/(admin)/admin/components/shared/AdminButton";
 import AdminPagination from "@/app/(admin)/admin/components/shared/AdminPagination";
 import AdminSearchInput from "@/app/(admin)/admin/components/shared/AdminSearchInput";
-import AdminTable, { type AdminTableColumn } from "@/app/(admin)/admin/components/shared/AdminTable";
+import AdminTable, {
+  type AdminTableColumn,
+} from "@/app/(admin)/admin/components/shared/AdminTable";
 import { ADMIN_INPUT_CLASS } from "@/features/admin/constants";
 import { resolveAdminError } from "@/features/admin/errorMessages";
 import {

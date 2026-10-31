@@ -107,9 +107,7 @@ export const getMovieSchedule = cache(
     const dates = "error" in datesResult ? [] : datesResult.data;
     const date = requestedDate || resolveDate(toAvailableDates(dates), today);
     const slotsResult =
-      date === primaryDate
-        ? primaryResult
-        : await settleApiResponse(getShowtimes(movieSlug, date));
+      date === primaryDate ? primaryResult : await settleApiResponse(getShowtimes(movieSlug, date));
 
     return {
       dates,

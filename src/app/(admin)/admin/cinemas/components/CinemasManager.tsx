@@ -11,7 +11,9 @@ import AdminButton from "@/app/(admin)/admin/components/shared/AdminButton";
 import AdminDeleteDialog from "@/app/(admin)/admin/components/shared/AdminDeleteDialog";
 import AdminFormField from "@/app/(admin)/admin/components/shared/AdminFormField";
 import AdminFormModal from "@/app/(admin)/admin/components/shared/AdminFormModal";
-import AdminTable, { type AdminTableColumn } from "@/app/(admin)/admin/components/shared/AdminTable";
+import AdminTable, {
+  type AdminTableColumn,
+} from "@/app/(admin)/admin/components/shared/AdminTable";
 import { ADMIN_INPUT_CLASS } from "@/features/admin/constants";
 import { createCinemaSchema, createRoomSchema, toAdminFieldErrors } from "@/features/admin/schema";
 import {

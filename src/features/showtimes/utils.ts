@@ -72,7 +72,9 @@ export function pickDefaultCinemaId(cinemas: GroupedShowtimeCinema[]): string {
 
 /** Resolve the first day shown when the URL does not specify a date. */
 export function resolveDefaultShowtimeDate(records: ShowtimeDateOption[], today: string): string {
-  const availableDates = records.filter((record) => record.hasShowtimes).map((record) => record.date);
+  const availableDates = records
+    .filter((record) => record.hasShowtimes)
+    .map((record) => record.date);
   if (availableDates.length === 0) return today;
   return availableDates.includes(today) ? today : availableDates[0];
 }

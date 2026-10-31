@@ -165,7 +165,13 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
   );
 
   const value = useMemo(
-    () => ({ notifications: visibleNotifications, unreadCount, isInboxLoading, markRead, markAllRead }),
+    () => ({
+      notifications: visibleNotifications,
+      unreadCount,
+      isInboxLoading,
+      markRead,
+      markAllRead,
+    }),
     [visibleNotifications, unreadCount, isInboxLoading, markRead, markAllRead],
   );
 

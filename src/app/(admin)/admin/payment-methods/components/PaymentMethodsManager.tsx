@@ -8,9 +8,13 @@ import { useLocale } from "@/contexts/LocaleContext";
 import { useToast } from "@/contexts/ToastContext";
 import Badge from "@/components/ui/Badge";
 import AdminButton from "@/app/(admin)/admin/components/shared/AdminButton";
-import AdminFormField, { AdminCheckbox } from "@/app/(admin)/admin/components/shared/AdminFormField";
+import AdminFormField, {
+  AdminCheckbox,
+} from "@/app/(admin)/admin/components/shared/AdminFormField";
 import AdminFormModal from "@/app/(admin)/admin/components/shared/AdminFormModal";
-import AdminTable, { type AdminTableColumn } from "@/app/(admin)/admin/components/shared/AdminTable";
+import AdminTable, {
+  type AdminTableColumn,
+} from "@/app/(admin)/admin/components/shared/AdminTable";
 import { ADMIN_INPUT_CLASS } from "@/features/admin/constants";
 import { createPaymentMethodSchema, toAdminFieldErrors } from "@/features/admin/schema";
 import { updatePaymentMethodAction } from "@/features/admin/actions/payments.action";

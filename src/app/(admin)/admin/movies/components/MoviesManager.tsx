@@ -11,7 +11,9 @@ import AdminButton from "@/app/(admin)/admin/components/shared/AdminButton";
 import AdminDeleteDialog from "@/app/(admin)/admin/components/shared/AdminDeleteDialog";
 import AdminPagination from "@/app/(admin)/admin/components/shared/AdminPagination";
 import AdminSearchInput from "@/app/(admin)/admin/components/shared/AdminSearchInput";
-import AdminTable, { type AdminTableColumn } from "@/app/(admin)/admin/components/shared/AdminTable";
+import AdminTable, {
+  type AdminTableColumn,
+} from "@/app/(admin)/admin/components/shared/AdminTable";
 import { ADMIN_INPUT_CLASS } from "@/features/admin/constants";
 import { deleteMovieAction } from "@/features/admin/actions/movies.action";
 import type {

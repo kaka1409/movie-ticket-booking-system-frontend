@@ -74,9 +74,10 @@ export function useQuickBooking({
   const [dateSelection, setDateSelection] = useState<{ key: string; value: string } | null>(
     effectiveSeed?.dates ? { key: initialDatesKey, value: effectiveSeed.activeDate } : null,
   );
-  const [slotsState, setSlotsState] = useState<{ key: string; data: GroupedShowtimeCinema[] } | null>(
-    effectiveSeed?.cinemas ? { key: initialSlotsKey, data: effectiveSeed.cinemas } : null,
-  );
+  const [slotsState, setSlotsState] = useState<{
+    key: string;
+    data: GroupedShowtimeCinema[];
+  } | null>(effectiveSeed?.cinemas ? { key: initialSlotsKey, data: effectiveSeed.cinemas } : null);
   const [selectedCinemaId, setSelectedCinemaId] = useState<string>(
     effectiveSeed?.selectedCinemaId ?? "",
   );
