@@ -102,8 +102,7 @@ export default function MoviePreviewPopover({
         transform: `scale(${isExpanded ? 1 : 0.25})`,
         transformOrigin: `${cursorPos.x - left}px ${cursorPos.y - top}px`,
         opacity: isExpanded ? 1 : 0,
-        transition:
-          "translate 70ms ease-out, transform 180ms ease-out, opacity 180ms ease-out",
+        transition: "translate 70ms ease-out, transform 180ms ease-out, opacity 180ms ease-out",
       }}
       className="pointer-events-none z-popover select-none"
     >

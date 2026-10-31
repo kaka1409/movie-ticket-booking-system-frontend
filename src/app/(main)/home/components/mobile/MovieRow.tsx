@@ -39,7 +39,10 @@ export default function MovieRow({ titleKey, movies, status, error }: MovieRowPr
         {title}
       </SectionHeader>
 
-      <div className="flex gap-3 overflow-x-auto overscroll-x-contain scrollbar-hide pb-(--space-sm)" role="list">
+      <div
+        className="flex gap-3 overflow-x-auto overscroll-x-contain scrollbar-hide pb-(--space-sm)"
+        role="list"
+      >
         {movies.map((movie) => (
           <div key={movie.id} role="listitem">
             <MovieCard movie={movie} minLabel={translate("common.min")} />

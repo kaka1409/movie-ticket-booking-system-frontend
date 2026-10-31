@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Star, Sparkles } from "lucide-react";
+import { Star } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useAuth } from "@/contexts/AuthContext";
 import type { Movie } from "@/features/movies/types";
@@ -31,16 +31,11 @@ export default function ForYou({ movies }: { movies: Movie[] }) {
   return (
     <section
       className="mt-10 py-14"
-      style={{
-        background:
-          "linear-gradient(180deg, transparent 0%, rgba(255,204,77,0.04) 50%, transparent 100%)",
-      }}
       aria-label={translate("home.desktop.for_you_section")}
     >
       <div className="mx-auto max-w-7xl px-8">
         <div className="mb-9 text-center">
           <div className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-(--color-gold)/30 bg-(--color-gold)/10 px-3 py-1 text-[11px] font-bold tracking-wider text-(--color-gold) uppercase">
-            <Sparkles size={12} />
             Personalized Picks
           </div>
           <h2 className="text-[28px] font-black tracking-tight text-white">
