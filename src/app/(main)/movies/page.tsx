@@ -5,7 +5,13 @@ import {
   readTabFromParams,
 } from "@/features/movies/utils/url";
 import { getRequestLocale } from "@/libs/session";
-import { buildMovieQuery, getAgeRatings, getFormats, getGenres, getMovies } from "@/features/movies/api";
+import {
+  buildMovieQuery,
+  getAgeRatings,
+  getFormats,
+  getGenres,
+  getMovies,
+} from "@/features/movies/api";
 import { getFallbackFilterOptions } from "@/features/movies/utils/filterOptions";
 import { MoviesPageSections } from "./sections";
 

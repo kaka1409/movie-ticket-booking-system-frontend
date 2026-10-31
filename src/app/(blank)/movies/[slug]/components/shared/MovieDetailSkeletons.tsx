@@ -139,10 +139,7 @@ export function MobileRecommendedSkeleton() {
       </div>
       <div className="mt-4 flex items-center justify-center gap-1">
         {Array.from({ length: 3 }).map((_, index) => (
-          <span
-            key={index}
-            className="block h-2 w-2 rounded-full bg-(--color-border)"
-          />
+          <span key={index} className="block h-2 w-2 rounded-full bg-(--color-border)" />
         ))}
       </div>
     </section>

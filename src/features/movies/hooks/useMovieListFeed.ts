@@ -25,6 +25,14 @@ export interface MovieListFeed {
   fetchError: ErrorResponse["error"] | null;
   retryFetch: () => void;
   loadMore: () => Promise<void>;
+  adoptInitialFeed: (
+    tab: Tab,
+    query: string,
+    filters: Filters,
+    movies: Movie[],
+    meta: MoviesMeta | undefined,
+    error: ErrorResponse["error"] | null,
+  ) => void;
 }
 
 function keyOf(query: string, filters: Filters, locale: "en" | "vn"): string {
@@ -164,7 +172,16 @@ export function useMovieListFeed({
     };
     // `lists` is intentionally included: after a successful fetch its
     // queryKey matches currentKey and the effect early-returns (no loop).
-  }, [activeTab, appliedQuery, appliedFilters, currentKey, deferInitialFetch, fetchNonce, lists, locale]);
+  }, [
+    activeTab,
+    appliedQuery,
+    appliedFilters,
+    currentKey,
+    deferInitialFetch,
+    fetchNonce,
+    lists,
+    locale,
+  ]);
 
   const activeList = lists[activeTab];
   /**

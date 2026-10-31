@@ -19,9 +19,7 @@ function fallbackCatalog(kind: FilterCatalog, locale: "en" | "vn"): CatalogOptio
   return fallback.map((name) => ({
     id: name,
     name:
-      kind === "genres"
-        ? (genreLabels[name.toLowerCase().replace(/[^a-z]/g, "")] ?? name)
-        : name,
+      kind === "genres" ? (genreLabels[name.toLowerCase().replace(/[^a-z]/g, "")] ?? name) : name,
   }));
 }
 

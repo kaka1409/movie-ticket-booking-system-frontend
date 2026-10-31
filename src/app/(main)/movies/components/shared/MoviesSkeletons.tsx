@@ -61,8 +61,8 @@ export function DesktopMoviesSkeleton() {
             <div className="space-y-4">
               {Array.from({ length: 5 }).map((_, index) => (
                 <div key={index} className="space-y-2">
-                  <SkeletonBar className="h-2.5 w-20 rounded-full" />
-                  <SkeletonBar className="h-8 w-full rounded-(--radius-sm)" />
+                  <Skeleton className="h-2.5 w-20 rounded-full" />
+                  <Skeleton className="h-8 w-full rounded-(--radius-sm)" />
                 </div>
               ))}
             </div>

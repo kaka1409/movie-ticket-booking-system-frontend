@@ -1,6 +1,14 @@
 "use client";
 
-import { createContext, useContext, useState, useCallback, useEffect, useRef, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useEffect,
+  useRef,
+  type ReactNode,
+} from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useLocale } from "@/contexts/LocaleContext";
 import { DEFAULT_FILTERS } from "../constants";
@@ -23,7 +31,10 @@ interface MovieListContextType {
   /** Committed filters driving the current result list. */
   appliedFilters: Filters;
   filterOptions: FilterOptions;
-  adoptFilterOptions: (catalog: keyof FilterOptions, options: FilterOptions[keyof FilterOptions]) => void;
+  adoptFilterOptions: (
+    catalog: keyof FilterOptions,
+    options: FilterOptions[keyof FilterOptions],
+  ) => void;
   movies: Movie[];
   /** Total matching results on the server (from meta.total). */
   total: number;

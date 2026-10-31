@@ -64,18 +64,10 @@ export function MoviesPageSections({
         />
       </Suspense>
       <Suspense fallback={null}>
-        <MoviesFilterOptionsSection
-          catalog="genres"
-          promise={genresPromise}
-          locale={locale}
-        />
+        <MoviesFilterOptionsSection catalog="genres" promise={genresPromise} locale={locale} />
       </Suspense>
       <Suspense fallback={null}>
-        <MoviesFilterOptionsSection
-          catalog="formats"
-          promise={formatsPromise}
-          locale={locale}
-        />
+        <MoviesFilterOptionsSection catalog="formats" promise={formatsPromise} locale={locale} />
       </Suspense>
       <Suspense fallback={null}>
         <MoviesFilterOptionsSection
@@ -84,43 +76,43 @@ export function MoviesPageSections({
           locale={locale}
         />
       </Suspense>
-        {/* Mobile */}
-        <div className="block md:hidden">
-          <div className="space-y-4 py-(--space-md)">
-            <Tabs />
-            <div className="px-(--space-md)">
-              <SearchBar />
-            </div>
-            <FilterPanel />
-            <MobileMovieGrid />
+      {/* Mobile */}
+      <div className="block md:hidden">
+        <div className="space-y-4 py-(--space-md)">
+          <Tabs />
+          <div className="px-(--space-md)">
+            <SearchBar />
           </div>
+          <FilterPanel />
+          <MobileMovieGrid />
         </div>
+      </div>
 
-        {/* Desktop */}
-        <div className="hidden md:block">
-          <div className="mx-auto w-full max-w-7xl px-6 py-8 lg:px-8">
-            <MoviesHeader />
+      {/* Desktop */}
+      <div className="hidden md:block">
+        <div className="mx-auto w-full max-w-7xl px-6 py-8 lg:px-8">
+          <MoviesHeader />
 
-            {/* One column at 740–1023px (the filter card stacks above the grid);
+          {/* One column at 740–1023px (the filter card stacks above the grid);
                 sidebar + content from `lg:`. */}
-            <div className="mt-8 grid items-start gap-8 lg:grid-cols-[300px_minmax(0,1fr)]">
-              <FilterSidebar />
+          <div className="mt-8 grid items-start gap-8 lg:grid-cols-[300px_minmax(0,1fr)]">
+            <FilterSidebar />
 
-              {/* The movie container: toolbar (tabs + search) over the grid, in
+            {/* The movie container: toolbar (tabs + search) over the grid, in
                   one panel so the controls sit with the list they act on.
                   `surface-raised` lifts the nested cards — and the search field —
                   to `--color-surface-2` so they read on the panel. */}
-              <div className="min-w-0 rounded-2xl border border-(--color-border) bg-(--color-surface) p-5 lg:p-6">
-                <div className="surface-raised">
-                  <MovieToolbar />
-                  <div className="mt-6">
-                    <DesktopMovieGrid />
-                  </div>
+            <div className="min-w-0 rounded-2xl border border-(--color-border) bg-(--color-surface) p-5 lg:p-6">
+              <div className="surface-raised">
+                <MovieToolbar />
+                <div className="mt-6">
+                  <DesktopMovieGrid />
                 </div>
               </div>
             </div>
           </div>
         </div>
+      </div>
     </MovieListProvider>
   );
 }
@@ -169,9 +161,7 @@ async function MoviesInitialFeedSection({
 }
 
 type CatalogPromise =
-  | ReturnType<typeof getGenres>
-  | ReturnType<typeof getFormats>
-  | ReturnType<typeof getAgeRatings>;
+  ReturnType<typeof getGenres> | ReturnType<typeof getFormats> | ReturnType<typeof getAgeRatings>;
 
 async function MoviesFilterOptionsSection({
   catalog,
