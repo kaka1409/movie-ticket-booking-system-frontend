@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import {
+  ChevronDown,
   ChevronRight,
   Heart,
   LockKeyhole,
@@ -15,6 +16,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useLogout } from "@/features/auth/hooks/useLogout";
 import Avatar, { DEFAULT_AVATAR_SRC } from "@/components/ui/Avatar";
 import Dropdown from "@/components/ui/Dropdown";
+import { HEADER_PRESS_CLASS, HEADER_TILE_CLASS } from "@/layouts/components/constants";
 
 /**
  * Account popup entries, grouped the way the mobile profile menu groups them —
@@ -73,8 +75,10 @@ export default function AccountMenu() {
       panelClassName="w-72"
       trigger={({ isOpen }) => (
         <span
-          className={`flex shrink-0 items-center gap-2 rounded-(--radius-pill) border border-(--color-border) bg-(--color-surface) transition-colors ${
-            isOpen ? "border-(--color-gold)/50" : "hover:border-(--color-gold)/40"
+          className={`${HEADER_TILE_CLASS} ${HEADER_PRESS_CLASS} gap-1.5 pl-1 pr-2 ${
+            isOpen
+              ? "border-(--color-gold)/50 bg-(--color-gold)/10 text-(--color-gold)"
+              : "bg-(--color-surface) text-(--color-text-muted) hover:border-(--color-gold)/40 hover:text-(--color-gold)"
           }`}
         >
           <Avatar
@@ -82,6 +86,13 @@ export default function AccountMenu() {
             fallbackSrc={DEFAULT_AVATAR_SRC}
             name={user.name}
             size="h-7 w-7"
+          />
+          {/* Decorative: `aria-expanded` already reports the state — the
+              rotation is what visually ties the panel to this chip. */}
+          <ChevronDown
+            size={14}
+            aria-hidden
+            className={`shrink-0 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
           />
         </span>
       )}

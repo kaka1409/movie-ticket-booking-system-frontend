@@ -6,6 +6,7 @@ import { useLocale } from "@/contexts/LocaleContext";
 import { useNotifications } from "@/features/notifications/contexts/NotificationsContext";
 import NotificationRow from "@/components/shared/notifications/NotificationRow";
 import Dropdown from "@/components/ui/Dropdown";
+import { HEADER_PRESS_CLASS, HEADER_TILE_CLASS } from "@/layouts/components/constants";
 
 /** Unread pill — widened past a single digit so two digits still fit. */
 function UnreadBadge({ count }: { count: number }) {
@@ -38,10 +39,10 @@ export default function NotificationBell() {
       panelClassName="w-[min(360px,calc(100vw-2rem))]"
       trigger={({ isOpen }) => (
         <span
-          className={`relative flex h-8 w-8 items-center justify-center rounded-full transition-colors ${
+          className={`relative w-9 ${HEADER_TILE_CLASS} ${HEADER_PRESS_CLASS} ${
             isOpen
-              ? "bg-(--color-surface-2) text-(--color-gold)"
-              : "text-(--color-text-muted) hover:text-(--color-gold)"
+              ? "border-(--color-gold)/50 bg-(--color-gold)/10 text-(--color-gold)"
+              : "bg-(--color-surface) text-(--color-text-muted) hover:border-(--color-gold)/40 hover:text-(--color-gold)"
           }`}
         >
           <Bell size={18} />

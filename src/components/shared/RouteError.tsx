@@ -95,22 +95,27 @@ function GlitchText({
   );
 }
 
-export default function RouteError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+export default function RouteError({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string };
+  reset: () => void;
+}) {
   const { translate } = useLocale();
   const [glitchDone, setGlitchDone] = useState(false);
 
-  const footer =
-    error?.digest ? (
-      <>
-        <p>{translate("error.hint")}</p>
-        <p className="mt-2">
-          {translate("error.ref")}:{" "}
-          <span className="font-mono break-all text-(--color-text-primary)/70">{error.digest}</span>
-        </p>
-      </>
-    ) : (
+  const footer = error?.digest ? (
+    <>
       <p>{translate("error.hint")}</p>
-    );
+      <p className="mt-2">
+        {translate("error.ref")}:{" "}
+        <span className="font-mono break-all text-(--color-text-primary)/70">{error.digest}</span>
+      </p>
+    </>
+  ) : (
+    <p>{translate("error.hint")}</p>
+  );
 
   return (
     <StatusPageShell

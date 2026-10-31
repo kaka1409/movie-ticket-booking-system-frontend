@@ -43,15 +43,58 @@ export type ErrorResponse = {
     status: number;
     code: string;
     message: string;
-    details?: { code: string; message: string; detail?: string }[];
+    details?: { code: string; message: string; field?: string; detail?: string }[];
   };
 };
+
+export function fieldErrorsFromDetails(
+  details: ErrorResponse["error"]["details"],
+): Record<string, string> {
+  return (details ?? []).reduce<Record<string, string>>((errors, detail) => {
+    if (detail.field && !errors[detail.field]) errors[detail.field] = detail.message;
+    return errors;
+  }, {});
+}
 
 /**
  * Discriminated result of every query: `{ data, meta? }` on success or
  * `{ error }` on failure. Narrow with `"error" in result`.
  */
 export type ApiResponse<T, M = Record<string, unknown>> = SuccessResponse<T, M> | ErrorResponse;
+
+export type ActionFailure = {
+  success: false;
+  error: string;
+  status?: number;
+  code?: string;
+  details?: ErrorResponse['error']['details'];
+};
+
+/** Preserve the normalized API error fields when converting a thrown mutation into an action result. */
+export function toActionFailure(reason: unknown): ActionFailure {
+  const error = reason as (Error & {
+    status?: number;
+    code?: string;
+    body?: { error?: { details?: ErrorResponse['error']['details'] } };
+  }) | null;
+  return {
+    success: false,
+    error: error instanceof Error ? error.message : String(reason),
+    status: error?.status,
+    code: error?.code,
+    details: error?.body?.error?.details,
+  };
+}
+
+export function actionFailureFromApiError(error: ErrorResponse['error']): ActionFailure {
+  return {
+    success: false,
+    error: error.message,
+    status: error.status,
+    code: error.code,
+    details: error.details,
+  };
+}
 
 function parseApiError(status: number, body: unknown): ErrorResponse["error"] {
   const error = (

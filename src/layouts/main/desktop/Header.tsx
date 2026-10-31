@@ -8,6 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { buildLoginUrl } from "@/libs/utils";
 import Logo from "@/components/ui/Logo";
 import LanguageToggle from "@/layouts/components/LanguageToggle";
+import { HEADER_PRESS_CLASS } from "@/layouts/components/constants";
 import NotificationBell from "./NotificationBell";
 import AccountMenu from "./AccountMenu";
 
@@ -38,7 +39,11 @@ export default function Header() {
   const pathname = usePathname();
 
   return (
-    <nav className="sticky top-0 z-nav border-b print:hidden border-(--color-border) bg-black/92 backdrop-blur-md">
+    <nav
+      className={`sticky top-0 z-nav border-b border-(--color-border) print:hidden backdrop-blur-md ${
+        isAuthRoute(pathname) ? "bg-black/40" : "bg-black/92"
+      }`}
+    >
       <div className="mx-auto flex h-15 max-w-7xl items-center gap-4 px-4 lg:gap-8 lg:px-8">
         <Logo size="lg" tagline />
 
@@ -47,10 +52,10 @@ export default function Header() {
             <Link
               key={href}
               href={href}
-              className={`rounded-(--radius-sm) px-2 py-1.5 text-[13px] no-underline lg:px-3.5 ${
+              className={`rounded-(--radius-sm) px-2 py-1.5 text-[13px] no-underline hover:bg-(--color-surface-2) lg:px-3.5 ${HEADER_PRESS_CLASS} ${
                 isActiveLink(href, pathname)
                   ? "border-b-2 border-(--color-gold) font-bold text-(--color-gold)"
-                  : "border-b-2 border-transparent font-medium text-(--color-text-secondary)"
+                  : "border-b-2 border-transparent font-medium text-(--color-text-secondary) hover:text-(--color-gold)"
               }`}
             >
               {translate(labelKey)}
@@ -78,7 +83,7 @@ export default function Header() {
           </form>
 
           <div className="flex items-center gap-3 text-(--color-text-muted)">
-            <LanguageToggle variant="flag" />
+            <LanguageToggle variant="flag" size="lg" />
             <NotificationBell />
           </div>
 
@@ -92,7 +97,7 @@ export default function Header() {
           ) : isAuthRoute(pathname) ? null : (
             <Link
               href={buildLoginUrl(pathname)}
-              className="flex shrink-0 items-center gap-2 rounded-(--radius-pill) bg-(--color-gold) px-4 py-2 text-xs font-extrabold tracking-wide text-black uppercase no-underline"
+              className={`flex shrink-0 items-center gap-2 rounded-(--radius-pill) bg-(--color-gold) px-4 py-2 text-xs font-extrabold tracking-wide text-black uppercase no-underline hover:bg-(--color-gold-dark) ${HEADER_PRESS_CLASS}`}
             >
               <LogIn size={15} strokeWidth={2.2} />
               {translate("layout.header.login")}

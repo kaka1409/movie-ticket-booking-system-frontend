@@ -17,9 +17,7 @@ export default function StatusPageShell({
   return (
     <div className="min-h-dvh bg-(--color-bg)">
       <div className="mx-auto flex min-h-dvh w-full max-w-7xl flex-col items-center justify-center gap-12 px-6 py-16 md:grid md:grid-cols-[minmax(0,1fr)_360px] md:items-center md:gap-16 md:px-8 md:py-24">
-        <div className="flex w-full flex-col items-center md:items-start">
-          {children}
-        </div>
+        <div className="flex w-full flex-col items-center md:items-start">{children}</div>
         {aside ? <div className="hidden w-full md:block">{aside}</div> : null}
       </div>
     </div>

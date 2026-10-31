@@ -45,10 +45,7 @@ export default function NotFound() {
     >
       <Logo size="lg" />
 
-      <div
-        className="mt-12 flex items-baseline gap-1 md:mt-10 md:gap-2"
-        aria-hidden
-      >
+      <div className="mt-12 flex items-baseline gap-1 md:mt-10 md:gap-2" aria-hidden>
         {DIGITS.map((digit, index) => (
           <span
             key={index}

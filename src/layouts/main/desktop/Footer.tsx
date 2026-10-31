@@ -4,6 +4,13 @@ import { useState } from "react";
 import Image from "next/image";
 import { X, Play, Camera, BookOpen } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
+import { usePathname } from "next/navigation";
+
+const AUTH_ROUTES = ["/login", "/register", "/forgot-password"] as const;
+
+function isAuthRoute(pathname: string): boolean {
+  return AUTH_ROUTES.some((route) => pathname === route || pathname.startsWith(`${route}/`));
+}
 
 const CINEMA_LINKS = [
   { labelKey: "layout.footer.find_cinema", href: "#" },
@@ -27,10 +34,16 @@ const BOTTOM_LINKS = [
 
 export default function Footer() {
   const { translate } = useLocale();
+  const pathname = usePathname();
+  const authRoute = isAuthRoute(pathname);
   const [email, setEmail] = useState("");
 
   return (
-    <footer className="mt-16 border-t border-(--color-border) bg-(--color-bg) pb-6 pt-12 print:hidden">
+    <footer
+      className={`mt-16 border-t border-(--color-border) pb-6 pt-12 print:hidden backdrop-blur-md ${
+        authRoute ? "bg-black/40" : "bg-(--color-bg)"
+      }`}
+    >
       <div className="mx-auto max-w-7xl px-8">
         <div className="mb-10 grid grid-cols-[1.8fr_1fr_1fr_1.6fr] gap-10">
           <div>
