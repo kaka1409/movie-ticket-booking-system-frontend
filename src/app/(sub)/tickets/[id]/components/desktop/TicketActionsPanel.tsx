@@ -83,6 +83,12 @@ export default function TicketActionsPanel() {
   const canCancel = ["success", "confirmed", "pending"].includes(ticket.status);
   const hasScannableQr = "qrCode" in ticket && Boolean(ticket.qrCode);
 
+  // No verb left (transferred away, used, expired, refunded) → no panel at all,
+  // rather than an empty card in the rail.
+  if (!hasOpenTransfer && !canCancel && !hasScannableQr) {
+    return null;
+  }
+
   const handleDownload = () => {
     window.print();
   };

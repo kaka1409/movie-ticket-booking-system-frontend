@@ -13,6 +13,7 @@ import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext
 import { isPastStatus, PAST_STATUS_META } from "@/features/tickets/constants";
 import { useCancelTransfer } from "@/features/tickets/hooks/useCancelTransfer";
 import { formatDeadlineTime } from "@/features/tickets/utils";
+import TransferProvenance from "../shared/TransferProvenance";
 
 export default function TicketInfo() {
   const { ticket, transfer, incomingTransfer } = useTicketDetail();
@@ -185,6 +186,11 @@ export default function TicketInfo() {
                     )}
               </p>
             </div>
+          </div>
+        ) : "transferProvenance" in ticket && ticket.transferProvenance?.direction === "sent" ? (
+          /* Sender: the ticket is someone else's now — history, not a pass. */
+          <div className="px-4 pb-5 pt-4">
+            <TransferProvenance provenance={ticket.transferProvenance} align="center" />
           </div>
         ) : (
           /* QR Code — only when the backend issued a payload (usable, owner

@@ -16,9 +16,11 @@ const MIN_INTERVAL_MS = 15_000;
  *
  * Mounted with `ticketId` on the detail page, without it on the listing.
  *
- * The detail page re-reads the ticket *before* refreshing: once ownership has
- * moved the backend answers 404, and refreshing blindly would render the
- * layout's `notFound()` page. The visitor is sent to their ticket list instead.
+ * The detail page re-reads the ticket *before* refreshing: a viewer who lost
+ * access (an offer that was cancelled/declined) gets a 404, and refreshing
+ * blindly would render the layout's `notFound()` page. That visitor is sent to
+ * their ticket list instead. A sender whose deal just settled is still allowed
+ * in — they refresh into the "transferred" history view.
  */
 export default function TicketRealtimeRefresh({ ticketId }: { ticketId?: string }) {
   const router = useRouter();

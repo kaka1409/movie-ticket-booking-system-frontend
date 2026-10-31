@@ -83,7 +83,7 @@ export interface UpcomingTicket {
   /** Recipient view — the offer this viewer must accept or decline. */
   incomingTransfer?: IncomingTransfer;
   /** Which side of the ticket the payload was shaped for (defaults to owner). */
-  viewerRole?: "owner" | "recipient";
+  viewerRole?: "owner" | "recipient" | "sender";
   /**
    * Signed scan payload (`ticketId.qrToken.signature`) — rendered as the QR.
    * Absent while the viewer is a pending recipient: the ticket is not theirs yet.
@@ -110,7 +110,16 @@ export interface PastTicket {
    * Absent when the ticket was never transferred. Named apart from
    * `UpcomingTicket.transfer` (the *open* transfer detail) on purpose.
    */
-  transferProvenance?: { direction: "sent" | "received"; counterpartyName: string };
+  transferProvenance?: {
+    direction: "sent" | "received";
+    counterpartyName: string;
+    /** Detail only: the frozen price the recipient paid. */
+    amount?: number;
+    /** Detail only: when the transfer settled (ISO). */
+    settledAt?: string;
+  };
+  /** Which side of the ticket the detail payload was shaped for. */
+  viewerRole?: "owner" | "recipient" | "sender";
   room?: string;
   ageRating?: string;
   totalSeatPrice?: number;

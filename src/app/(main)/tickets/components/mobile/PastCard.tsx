@@ -45,6 +45,12 @@ export default function PastCard({ ticket }: { ticket: PastTicket }) {
         <div className="">
           <p className="text-sm mb-0.5 font-light text-(--color-gold-light)">{ticket.format}</p>
           <p className="text-xs text-(--color-text-secondary)">{ticket.datetime}</p>
+          {isSent && (
+            <p className="text-xs text-(--color-text-secondary)">
+              {translate("tickets.transfer.recipient_label")}:{" "}
+              {transferProvenance?.counterpartyName}
+            </p>
+          )}
         </div>
 
         <div className="flex items-center justify-between">
@@ -52,21 +58,12 @@ export default function PastCard({ ticket }: { ticket: PastTicket }) {
             {ticket.ticketCount}{" "}
             {ticket.ticketCount > 1 ? translate("common.tickets") : translate("common.ticket")}
           </p>
-          {isSent ? (
-            // Ownership moved on accept, so GET /tickets/:id answers 404 for the
-            // sender — name the recipient instead of rendering a dead link.
-            <span className="text-sm font-light text-(--color-text-secondary)">
-              {translate("tickets.transfer.recipient_label")}:{" "}
-              {transferProvenance?.counterpartyName}
-            </span>
-          ) : (
-            <Link
-              href={`/tickets/${ticket.id}`}
-              className="text-sm font-bold underline underline-offset-2 transition-colors text-(--color-gold)"
-            >
-              {translate("tickets.view_details")}
-            </Link>
-          )}
+          <Link
+            href={`/tickets/${ticket.id}`}
+            className="text-sm font-bold underline underline-offset-2 transition-colors text-(--color-gold)"
+          >
+            {translate("tickets.view_details")}
+          </Link>
         </div>
       </div>
     </article>

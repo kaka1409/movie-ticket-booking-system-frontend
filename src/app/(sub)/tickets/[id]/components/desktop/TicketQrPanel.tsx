@@ -9,6 +9,7 @@ import { useCancelTransfer } from "@/features/tickets/hooks/useCancelTransfer";
 import { isPastStatus, PAST_STATUS_META } from "@/features/tickets/constants";
 import { formatDeadlineTime } from "@/features/tickets/utils";
 import QRCode from "@/components/shared/tickets/QRCode";
+import TransferProvenance from "../shared/TransferProvenance";
 
 const PANEL_CLASS =
   "space-y-4 rounded-2xl border border-(--color-border) bg-(--color-surface) p-5 shadow-lg";
@@ -149,6 +150,14 @@ export default function TicketQrPanel() {
   const handlePrint = () => {
     window.print();
   };
+
+  if ("transferProvenance" in ticket && ticket.transferProvenance?.direction === "sent") {
+    return (
+      <section className={PANEL_CLASS}>
+        <TransferProvenance provenance={ticket.transferProvenance} />
+      </section>
+    );
+  }
 
   return (
     <section className={PANEL_CLASS}>

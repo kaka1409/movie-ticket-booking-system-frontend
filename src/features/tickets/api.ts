@@ -183,8 +183,8 @@ export const getTicketsForTab = cache(
     }
 
     return {
-      upcoming: tab === "past" ? [] : result.data as UpcomingTicket[],
-      past: tab === "past" ? result.data as PastTicket[] : [],
+      upcoming: tab === "past" ? [] : (result.data as UpcomingTicket[]),
+      past: tab === "past" ? (result.data as PastTicket[]) : [],
       meta: result.meta ?? DEFAULT_TICKET_META,
       error: null,
       isUnauthorized: false,

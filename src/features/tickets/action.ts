@@ -1,6 +1,6 @@
 "use server";
 
-import { apiMutation } from "@/libs/api";
+import { apiMutation, toActionFailure, type ActionFailure } from "@/libs/api";
 import { getRequestCookie } from "@/libs/session";
 
 /**
@@ -30,7 +30,7 @@ export interface TransferDetail {
 
 export type TransferActionResult =
   | { success: true; data: TransferDetail }
-  | { success: false; error: string; status?: number; code?: string };
+  | ActionFailure;
 
 /**
  * Open a whole-ticket offer. The backend freezes `amount` from the booking's
@@ -53,19 +53,13 @@ export async function createTransferAction(
     );
     return { success: true, data: response.data };
   } catch (error: unknown) {
-    const failure = error as Error & { status?: number; code?: string };
-    return {
-      success: false,
-      error: failure.message,
-      status: failure.status,
-      code: failure.code,
-    };
+    return toActionFailure(error);
   }
 }
 
 export type CancelTransferActionResult =
   | { success: true; data: { id: string; status: string } }
-  | { success: false; error: string; status?: number; code?: string };
+  | ActionFailure;
 
 export async function cancelTransferAction(
   prevState: CancelTransferActionResult,
@@ -80,13 +74,7 @@ export async function cancelTransferAction(
     );
     return { success: true, data: response.data };
   } catch (error: unknown) {
-    const failure = error as Error & { status?: number; code?: string };
-    return {
-      success: false,
-      error: failure.message,
-      status: failure.status,
-      code: failure.code,
-    };
+    return toActionFailure(error);
   }
 }
 
@@ -104,7 +92,7 @@ export interface TransferDecision {
  */
 export type TransferDecisionActionResult =
   | { success: true; data: TransferDecision }
-  | { success: false; error: string; status?: number; code?: string };
+  | ActionFailure;
 
 async function submitTransferDecision(
   transferId: string,
@@ -120,13 +108,7 @@ async function submitTransferDecision(
     );
     return { success: true, data: response.data };
   } catch (error: unknown) {
-    const failure = error as Error & { status?: number; code?: string };
-    return {
-      success: false,
-      error: failure.message,
-      status: failure.status,
-      code: failure.code,
-    };
+    return toActionFailure(error);
   }
 }
 
@@ -172,7 +154,7 @@ export interface ModifyResult {
  */
 export type ModifyActionResult =
   | { success: true; data: ModifyResult }
-  | { success: false; error: string; status?: number; code?: string };
+  | ActionFailure;
 
 export async function modifyTicketAction(
   prevState: ModifyActionResult,
@@ -199,13 +181,7 @@ export async function modifyTicketAction(
     );
     return { success: true, data: response.data };
   } catch (error: unknown) {
-    const failure = error as Error & { status?: number; code?: string };
-    return {
-      success: false,
-      error: failure.message,
-      status: failure.status,
-      code: failure.code,
-    };
+    return toActionFailure(error);
   }
 }
 
@@ -222,7 +198,7 @@ export type CancelActionResult =
         refundAmount: number;
       };
     }
-  | { success: false; error: string; status?: number; code?: string };
+  | ActionFailure;
 
 export async function cancelTicketAction(
   prevState: CancelActionResult,
@@ -238,12 +214,6 @@ export async function cancelTicketAction(
     }>(`/tickets/${data.ticketId}/cancel`, { method: "POST" }, data.token);
     return { success: true, data: response.data };
   } catch (error: unknown) {
-    const failure = error as Error & { status?: number; code?: string };
-    return {
-      success: false,
-      error: failure.message,
-      status: failure.status,
-      code: failure.code,
-    };
+    return toActionFailure(error);
   }
 }

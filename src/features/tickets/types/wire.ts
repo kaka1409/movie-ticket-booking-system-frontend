@@ -33,7 +33,7 @@ export interface TicketDetailWire extends BookingDetail {
   qrToken: string | null;
   qrCode?: string;
   /** Which side of the ticket the backend shaped this payload for. */
-  viewerRole: "owner" | "recipient";
+  viewerRole: "owner" | "recipient" | "sender";
   pendingTransfer: {
     id: string;
     status: string;
@@ -60,6 +60,18 @@ export interface TicketDetailWire extends BookingDetail {
     amount: number;
     paymentExpiresAt: string | null;
     createdAt: string;
+  } | null;
+  /** Sender view — the settled deal that moved this ticket out of my account. */
+  transferredAway: {
+    id: string;
+    recipient: {
+      id: string;
+      name: string;
+      email: string;
+      avatarUrl: string | null;
+    };
+    amount: number;
+    transferredAt: string;
   } | null;
 }
 

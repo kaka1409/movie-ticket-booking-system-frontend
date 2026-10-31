@@ -87,6 +87,12 @@ export default function TicketActions() {
   // ticket whose QR is revoked) — downloading it would hand out a dead code.
   const hasScannableQr = "qrCode" in ticket && Boolean(ticket.qrCode);
 
+  // No verb left (transferred away, used, expired, refunded) → render nothing
+  // instead of an empty action block under the card.
+  if (!hasOpenTransfer && !canCancel && !hasScannableQr) {
+    return null;
+  }
+
   return (
     <div className="px-4 pb-8 space-y-3">
       {!hasOpenTransfer && hasScannableQr && (

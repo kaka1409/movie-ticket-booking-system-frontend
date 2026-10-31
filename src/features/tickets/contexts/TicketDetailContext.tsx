@@ -5,8 +5,11 @@ import type { IncomingTransfer, PastTicket, TicketTransfer, UpcomingTicket } fro
 
 interface TicketDetailContextType {
   ticket: UpcomingTicket | PastTicket;
-  /** `recipient` → the viewer is deciding on a transfer, not the owner. */
-  viewerRole: "owner" | "recipient";
+  /**
+   * `recipient` → the viewer is deciding on a transfer, not the owner.
+   * `sender` → the viewer gave the ticket away; nothing is actionable.
+   */
+  viewerRole: "owner" | "recipient" | "sender";
   /** Owner view — who this ticket is being sent to. */
   transfer?: TicketTransfer;
   /** Recipient view — the offer this viewer has to accept or decline. */
@@ -16,7 +19,7 @@ interface TicketDetailContextType {
 const TicketDetailContext = createContext<TicketDetailContextType | null>(null);
 
 /**
- * Ticket detail for both viewer roles. List-derived rows carry no `viewerRole`,
+ * Ticket detail for every viewer role. List-derived rows carry no `viewerRole`,
  * so it defaults to `"owner"` and the transfer views are simply absent.
  */
 export function TicketDetailProvider({

@@ -150,6 +150,24 @@ export function toDetailTicket(
     foodDrink,
   };
 
+  // A ticket I gave away stays `active` for whoever holds it now, so the
+  // viewer role — not the entitlement status — decides the shape: my page is a
+  // closed history page, never an actionable ticket.
+  if (detail.viewerRole === "sender" && detail.transferredAway) {
+    return {
+      ...base,
+      status: "transferred",
+      viewerRole: "sender",
+      ticketCount: seatItems.length,
+      transferProvenance: {
+        direction: "sent",
+        counterpartyName: detail.transferredAway.recipient.name,
+        amount: detail.transferredAway.amount,
+        settledAt: detail.transferredAway.transferredAt,
+      },
+    };
+  }
+
   if (detail.ticketStatus === "active") {
     const ticket: UpcomingTicket = {
       ...base,

@@ -45,7 +45,7 @@ export default function PastTicketCard({ ticket }: { ticket: PastTicket }) {
             <div className="flex items-start justify-between gap-3 mb-1.5">
               <h3 className="text-base font-bold text-white line-clamp-1">{ticket.movie}</h3>
               <Badge
-                variant={isSent ? "neutral" : "neutral"}
+                variant="neutral"
                 size="xs"
                 className="shrink-0 uppercase font-bold text-(--color-text-secondary)"
               >
@@ -61,6 +61,15 @@ export default function PastTicketCard({ ticket }: { ticket: PastTicket }) {
                 <CalendarDays size={13} className="shrink-0 text-(--color-text-muted)" />
                 <span>{ticket.datetime}</span>
               </p>
+              {isSent && (
+                <p className="flex items-center gap-1.5">
+                  <UserCheck size={13} className="shrink-0 text-(--color-gold)" />
+                  <span className="truncate">
+                    {translate("tickets.transfer.recipient_label")}:{" "}
+                    {transferProvenance?.counterpartyName}
+                  </span>
+                </p>
+              )}
             </div>
           </div>
 
@@ -73,23 +82,13 @@ export default function PastTicketCard({ ticket }: { ticket: PastTicket }) {
               </span>
             </span>
 
-            {isSent ? (
-              <span className="flex items-center gap-1 truncate text-(--color-text-muted)">
-                <UserCheck size={13} className="text-(--color-gold)" />
-                <span className="truncate">
-                  {translate("tickets.transfer.recipient_label")}:{" "}
-                  {transferProvenance?.counterpartyName}
-                </span>
-              </span>
-            ) : (
-              <Link
-                href={`/tickets/${ticket.id}`}
-                className="flex items-center gap-1 font-bold text-(--color-gold) hover:underline underline-offset-2"
-              >
-                <span>{translate("tickets.view_details")}</span>
-                <ArrowRight size={13} />
-              </Link>
-            )}
+            <Link
+              href={`/tickets/${ticket.id}`}
+              className="flex items-center gap-1 font-bold text-(--color-gold) hover:underline underline-offset-2"
+            >
+              <span>{translate("tickets.view_details")}</span>
+              <ArrowRight size={13} />
+            </Link>
           </div>
         </div>
       </div>
