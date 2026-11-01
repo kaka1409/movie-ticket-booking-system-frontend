@@ -98,7 +98,11 @@ The script also fails an alias import that resolves to nothing (L5), which is wh
 
 The backend now exposes a CRUD-first admin surface (BE `AGENTS.md` "Admin management", BE `docs/api-contract.md` §12): `/movies/list` + movie/cast/showtime/cinema/room/seat-layout, `{genres,formats,age-ratings}/admin`, `{food-items,combos}/admin`, `/user/list` + `/user/:id/{role,status}`, `/payment-methods/all` + `PATCH /payment-methods/:id`, `/reviews/deleted` + `/reviews/:reviewId/restore`. Key FE-relevant facts: public snack/filter reads hide `isActive:false` rows server-side; `DELETE` on referenced rows answers `409 IN_USE` (deactivate is the supported path); banned accounts get `403 ACCOUNT_BANNED` on login/refresh; a soft-deleted review stays invisible to public reads until restored. No FE feature consumes these yet — an admin dashboard is a separate build.
 
-## Read on demand
+## Rating (0–10)
+
+- `movie.rating` is the effective score (0–10): the live-review average while any review exists, else the admin-curated `editorialRating`. Every screen, filter, sort and ranking uses this single field — the hero (`{rating}/10`), the cards, `ratingMin/Max` and the reviews block all agree.
+- Reviews are scored **1–10** (same scale, no conversion); the composer, the cards and the histogram all use 10 stars. The reviews block shows `{average}/10` + `Stars`.
+- Admin movie form edits `editorialRating` (0–10, one decimal); the table column shows the effective `rating`. Editing it only moves `rating` while the movie has no reviews.
 
 - Route groups, layouts, shared components, hooks: `docs/architecture.md`
 - Per-page implementation detail: `docs/pages.md`
