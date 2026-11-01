@@ -2,7 +2,11 @@
 
 import { Pencil, Star } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
-import { REVIEW_MAX_LENGTH } from "@/features/reviews/constants";
+import {
+  REVIEW_MAX_LENGTH,
+  REVIEW_RATING_MAX,
+  REVIEW_RATING_STEPS,
+} from "@/features/reviews/constants";
 import { useReviewComposer } from "@/features/reviews/hooks/useReviewComposer";
 
 export default function WriteReview({
@@ -23,7 +27,7 @@ export default function WriteReview({
       </h3>
 
       <div className="mb-3 flex items-center gap-1">
-        {[1, 2, 3, 4, 5].map((star) => (
+        {REVIEW_RATING_STEPS.map((star) => (
           <button
             key={star}
             type="button"
@@ -46,7 +50,7 @@ export default function WriteReview({
 
         {composer.rating > 0 && (
           <span className="self-center text-sm font-bold text-(--color-gold)">
-            {composer.rating}.0 / 5.0
+            {composer.rating} / {REVIEW_RATING_MAX}
           </span>
         )}
       </div>

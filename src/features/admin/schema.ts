@@ -70,6 +70,19 @@ function optionalInteger(min: number, max: number, message: string) {
     );
 }
 
+/** Optional 0–10 score with at most one decimal (blank = not set). */
+function optionalRating(message: string) {
+  return z
+    .string()
+    .trim()
+    .refine(
+      (value) =>
+        value === "" ||
+        (/^\d{1,2}(\.\d)?$/.test(value) && Number(value) >= 0 && Number(value) <= 10),
+      message,
+    );
+}
+
 const optionalDate = (message: string) =>
   z
     .string()
@@ -102,6 +115,7 @@ export function createMovieSchema(translate: Translate, isEditing: boolean) {
     director: z.string().trim().max(255, translate("admin.movies.too_long")),
     language: z.string().trim().max(50, translate("admin.movies.too_long")),
     duration: optionalInteger(1, 600, translate("admin.movies.duration_invalid")),
+    editorialRating: optionalRating(translate("admin.movies.rating_invalid")),
     releaseDate: optionalDate(translate("admin.movies.date_invalid")),
     featuredFrom: optionalDate(translate("admin.movies.date_invalid")),
     featuredTo: optionalDate(translate("admin.movies.date_invalid")),

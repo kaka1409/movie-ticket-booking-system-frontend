@@ -5,7 +5,7 @@ import { Check, Pencil, Star, Trash2, X } from "lucide-react";
 import Stars from "@/components/ui/Stars";
 import ExpandableText from "@/components/ui/ExpandableText";
 import { useLocale } from "@/contexts/LocaleContext";
-import { REVIEW_MAX_LENGTH } from "@/features/reviews/constants";
+import { REVIEW_MAX_LENGTH, REVIEW_RATING_STEPS } from "@/features/reviews/constants";
 import { useReviewEditor } from "@/features/reviews/hooks/useReviewEditor";
 import type { UiReview } from "@/features/reviews/types";
 
@@ -39,7 +39,7 @@ export default function ReviewCard({
     return (
       <article className="space-y-3 border-b border-(--color-border) py-5 last:border-0">
         <div className="flex gap-1">
-          {[1, 2, 3, 4, 5].map((star) => (
+          {REVIEW_RATING_STEPS.map((star) => (
             <button
               key={star}
               type="button"

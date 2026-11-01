@@ -8,13 +8,13 @@ import type { MyReview } from "@/features/reviews/types";
 import { useLocale } from "@/contexts/LocaleContext";
 import { formatDate } from "@/libs/utils";
 import ExpandableText from "@/components/ui/ExpandableText";
-import StarRating from "../shared/StarRating";
+import Stars from "@/components/ui/Stars";
 
 /**
- * Own-review card: movie poster + title link, my star rating (1–5 direct, no
- * /2 scaling — that divisor belongs to 10-scale catalog ratings), comment and
- * date. Delete is a two-tap inline confirm; the row only leaves the list
- * after the BE confirms (the parent keeps it + toasts on failure).
+ * Own-review card: movie poster + title link, my score (1–10, same scale as the
+ * movie score), comment and date. Delete is a two-tap inline confirm; the row
+ * only leaves the list after the BE confirms (the parent keeps it + toasts on
+ * failure).
  */
 export default function ReviewCard({
   review,
@@ -63,7 +63,7 @@ export default function ReviewCard({
           </div>
 
           <div className="flex items-center gap-2">
-            <StarRating rating={review.rating} />
+            <Stars rating={review.rating} size={12} />
             <span className="text-sm font-medium text-(--color-text-primary)">
               {review.rating.toFixed(1)}
             </span>

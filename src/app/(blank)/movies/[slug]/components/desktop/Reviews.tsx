@@ -15,10 +15,10 @@ import type { ReviewsResponse } from "@/features/reviews/types";
 function RatingBar({ stars, pct }: { stars: number; pct: number }) {
   return (
     <div className="flex items-center gap-2">
-      <span className="w-3 text-right text-2xs font-semibold text-(--color-text-muted)">
+      <span className="w-4 text-right text-2xs font-semibold text-(--color-text-muted)">
         {stars}
       </span>
-      <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-(--color-border)">
+      <div className="h-1 flex-1 overflow-hidden rounded-full bg-(--color-border)">
         <div
           className="h-full rounded-full bg-(--color-gold) transition duration-700"
           style={{ width: `${pct}%` }}
@@ -86,8 +86,11 @@ export default function Reviews({
 
       <div className="mt-5 mb-6 flex items-center gap-8 rounded-(--radius-lg) border border-(--color-border) bg-(--color-surface) p-5">
         <div className="flex shrink-0 flex-col items-center gap-1">
-          <span className="text-5xl leading-none font-extrabold text-(--color-gold)">
-            {average.toFixed(1)}
+          <span className="flex items-baseline gap-0.5">
+            <span className="text-5xl leading-none font-extrabold text-(--color-gold)">
+              {average.toFixed(1)}
+            </span>
+            <span className="text-sm font-bold text-(--color-text-muted)">/10</span>
           </span>
           <Stars rating={average} size={13} />
           <span className="mt-0.5 text-2xs text-(--color-text-muted)">
@@ -95,7 +98,7 @@ export default function Reviews({
           </span>
         </div>
 
-        <div className="flex-1 space-y-1.5">
+        <div className="flex-1 space-y-1">
           {breakdown.map((bar) => (
             <RatingBar key={bar.stars} stars={bar.stars} pct={bar.pct} />
           ))}

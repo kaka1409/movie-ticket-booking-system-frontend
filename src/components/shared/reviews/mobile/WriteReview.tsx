@@ -2,7 +2,7 @@
 
 import { Star } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
-import { REVIEW_MAX_LENGTH } from "@/features/reviews/constants";
+import { REVIEW_MAX_LENGTH, REVIEW_RATING_STEPS } from "@/features/reviews/constants";
 import { useReviewComposer } from "@/features/reviews/hooks/useReviewComposer";
 
 export default function WriteReview({
@@ -22,7 +22,7 @@ export default function WriteReview({
       </p>
 
       <div className="flex gap-1">
-        {[1, 2, 3, 4, 5].map((star) => (
+        {REVIEW_RATING_STEPS.map((star) => (
           <button
             type="button"
             key={star}

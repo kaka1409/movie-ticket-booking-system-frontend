@@ -50,9 +50,10 @@ export default function ReviewContent({
         ).toFixed(1)
       : "—";
 
+  // "Positive" = 8+/10, the same cut as 4+/5 on the old star scale.
   const positivePercent =
     reviews.length > 0
-      ? Math.round((reviews.filter((item) => item.rating >= 4).length / reviews.length) * 100)
+      ? Math.round((reviews.filter((item) => item.rating >= 8).length / reviews.length) * 100)
       : 0;
 
   if (reviews.length === 0) {
@@ -93,7 +94,7 @@ export default function ReviewContent({
             <Star size={18} fill="currentColor" />
           </span>
           <div>
-            <p className="text-xl font-black text-white">{averageRating} / 5.0</p>
+            <p className="text-xl font-black text-white">{averageRating} / 10</p>
             <p className="text-[11px] font-bold uppercase tracking-wider text-(--color-text-muted)">
               {translate("profile.myreviews.average_rating")}
             </p>

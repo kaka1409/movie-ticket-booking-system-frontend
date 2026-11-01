@@ -16,8 +16,8 @@ import ReviewCard from "@/components/shared/reviews/mobile/ReviewCard";
 function RatingBar({ stars, pct }: { stars: number; pct: number }) {
   return (
     <div className="flex items-center gap-2">
-      <span className="text-(--color-text-muted) text-xs w-2 text-right">{stars}</span>
-      <div className="flex-1 h-1.5 rounded-full bg-(--color-border) overflow-hidden">
+      <span className="text-(--color-text-muted) text-xs w-4 text-right">{stars}</span>
+      <div className="flex-1 h-1 rounded-full bg-(--color-border) overflow-hidden">
         <div className="h-full rounded-full bg-(--color-gold)" style={{ width: `${pct}%` }} />
       </div>
     </div>
@@ -85,8 +85,11 @@ export default function Reviews({ initialData, initialError }: ReviewsProps) {
 
       <div className="flex items-center gap-5 py-1">
         <div className="flex flex-col items-center gap-1 shrink-0">
-          <span className="text-5xl font-extrabold text-(--color-gold) leading-none">
-            {average.toFixed(1)}
+          <span className="flex items-baseline gap-0.5">
+            <span className="text-5xl font-extrabold text-(--color-gold) leading-none">
+              {average.toFixed(1)}
+            </span>
+            <span className="text-sm font-bold text-(--color-text-muted)">/10</span>
           </span>
           <Stars rating={average} size={13} />
           <span className="text-(--color-text-muted) text-2xs mt-0.5">
@@ -94,7 +97,7 @@ export default function Reviews({ initialData, initialError }: ReviewsProps) {
           </span>
         </div>
 
-        <div className="flex-1 space-y-1.5">
+        <div className="flex-1 space-y-1">
           {breakdown.map((bar) => (
             <RatingBar key={bar.stars} stars={bar.stars} pct={bar.pct} />
           ))}

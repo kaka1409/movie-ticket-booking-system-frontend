@@ -5,7 +5,7 @@ import Stars from "@/components/ui/Stars";
 import Avatar from "@/components/ui/Avatar";
 import ExpandableText from "@/components/ui/ExpandableText";
 import { useLocale } from "@/contexts/LocaleContext";
-import { REVIEW_MAX_LENGTH } from "@/features/reviews/constants";
+import { REVIEW_MAX_LENGTH, REVIEW_RATING_STEPS } from "@/features/reviews/constants";
 import { useReviewEditor } from "@/features/reviews/hooks/useReviewEditor";
 import type { UiReview } from "@/features/reviews/types";
 
@@ -36,7 +36,7 @@ export default function ReviewCard({
               {review.user}
             </p>
             <div className="flex gap-1 mt-1">
-              {[1, 2, 3, 4, 5].map((star) => (
+              {REVIEW_RATING_STEPS.map((star) => (
                 <button
                   type="button"
                   key={star}

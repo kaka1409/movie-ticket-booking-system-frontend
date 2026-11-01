@@ -11,9 +11,7 @@ export type AdminSidebarMode = "expanded" | "collapsed";
  * `IN_USE` and a dropped connection all arrive as `{ success: false }` with the
  * backend's own message, which is what the dialogs render.
  */
-export type AdminActionResult<TData = null> =
-  | { success: true; data: TData }
-  | ActionFailure;
+export type AdminActionResult<TData = null> = { success: true; data: TData } | ActionFailure;
 
 /** Pager envelope shared by every backend-paginated admin read. */
 export interface AdminPaginationMeta {
@@ -84,7 +82,10 @@ export interface AdminMovie {
   releaseDate?: string;
   ageRatingId?: string;
   ageRatingName?: string;
+  /** Effective score (0–10): the live-review average, else `editorialRating`. */
   rating: number;
+  /** Curated score (0–10) the form edits. */
+  editorialRating: number;
   isFeatured: boolean;
   featuredLabel?: string;
   featuredLabelVi?: string;
@@ -118,6 +119,8 @@ export interface AdminMovieInput {
   duration?: number;
   releaseDate?: string;
   ageRatingId?: string | null;
+  /** Curated score (0–10, one decimal). Drives `rating` until a review lands. */
+  editorialRating?: number;
   posterUrl?: string | null;
   genreIds?: string[];
   isFeatured?: boolean;
