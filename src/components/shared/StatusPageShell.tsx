@@ -9,16 +9,30 @@ import type { ReactNode } from "react";
 export default function StatusPageShell({
   children,
   aside,
+  layout = aside ? "split" : "centered",
 }: {
   children: ReactNode;
   /** Desktop-only actions panel — hidden below `md:`. */
   aside?: ReactNode;
+  /** Layout mode: split (2-column from md:) or centered (single centered container). */
+  layout?: "split" | "centered";
 }) {
+  const containerClasses =
+    layout === "centered"
+      ? "mx-auto flex min-h-dvh w-full max-w-7xl flex-col items-center justify-center px-6 py-12 md:py-16 lg:px-8"
+      : "mx-auto flex min-h-dvh w-full max-w-7xl flex-col items-center justify-center gap-12 px-6 py-16 md:grid md:grid-cols-[minmax(0,1fr)_360px] md:items-center md:gap-16 md:px-8 md:py-24";
+
   return (
     <div className="min-h-dvh bg-(--color-bg)">
-      <div className="mx-auto flex min-h-dvh w-full max-w-7xl flex-col items-center justify-center gap-12 px-6 py-16 md:grid md:grid-cols-[minmax(0,1fr)_360px] md:items-center md:gap-16 md:px-8 md:py-24">
-        <div className="flex w-full flex-col items-center md:items-start">{children}</div>
-        {aside ? <div className="hidden w-full md:block">{aside}</div> : null}
+      <div className={containerClasses}>
+        {layout === "centered" ? (
+          <div className="flex w-full flex-col items-center justify-center">{children}</div>
+        ) : (
+          <>
+            <div className="flex w-full flex-col items-center md:items-start">{children}</div>
+            {aside ? <div className="hidden w-full md:block">{aside}</div> : null}
+          </>
+        )}
       </div>
     </div>
   );

@@ -1,17 +1,22 @@
+import type { ReactNode } from "react";
+
 /**
- * Chrome shared by `LoginPrompt` and `ProtectedRoute`'s restore skeleton, so
- * nothing shifts when the restore settles. `md:` is the split (not `lg:`) — the
- * device layout renders exactly one instance per request. `.surface-raised`
- * keeps the prompt's `--color-surface` icon tile visible on the card.
+ * Responsive viewport shell for authentication gates.
+ * On mobile (< md): No card container, plain vertical flow on canvas.
+ * On tablet/desktop (>= md): Houses the max-w-7xl 50/50 split container.
  */
-export default function AuthGateShell({ children }: { children: React.ReactNode }) {
+export default function AuthGateShell({
+  children,
+  className = "",
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
   return (
-    <div className="flex w-full flex-col items-center justify-center px-4 py-24 md:px-6 md:py-16 lg:px-8">
-      <div className="w-full max-w-md md:rounded-2xl md:border md:border-(--color-border) md:bg-(--color-surface) md:p-8 lg:p-10">
-        <div className="surface-raised flex w-full flex-col items-center gap-4 md:gap-5">
-          {children}
-        </div>
-      </div>
+    <div
+      className={`flex w-full flex-col items-center justify-center px-4 py-16 md:px-6 md:py-16 lg:px-8 ${className}`}
+    >
+      {children}
     </div>
   );
 }

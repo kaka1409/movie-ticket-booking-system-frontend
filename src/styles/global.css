@@ -285,6 +285,15 @@ body {
   }
 }
 
+@keyframes scanline {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(400%);
+  }
+}
+
 /* Reduced motion (WCAG 2.3.3)
    0.01ms (not `none`) so `forwards` still fills final state â€” `.animate-fade-in`
    starts at `opacity: 0`, disabling animation must not leave it invisible. */
