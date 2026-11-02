@@ -82,10 +82,8 @@ export interface AdminMovie {
   releaseDate?: string;
   ageRatingId?: string;
   ageRatingName?: string;
-  /** Effective score (0–10): the live-review average, else `editorialRating`. */
-  rating: number;
-  /** Curated score (0–10) the form edits. */
-  editorialRating: number;
+  /** Live-review average (0–10); `null` while the movie has no review yet. */
+  rating: number | null;
   isFeatured: boolean;
   featuredLabel?: string;
   featuredLabelVi?: string;
@@ -119,8 +117,6 @@ export interface AdminMovieInput {
   duration?: number;
   releaseDate?: string;
   ageRatingId?: string | null;
-  /** Curated score (0–10, one decimal). Drives `rating` until a review lands. */
-  editorialRating?: number;
   posterUrl?: string | null;
   genreIds?: string[];
   isFeatured?: boolean;
