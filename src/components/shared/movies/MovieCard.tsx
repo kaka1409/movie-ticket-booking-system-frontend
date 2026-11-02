@@ -2,6 +2,7 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Star, Clock } from "lucide-react";
+import { PRESS_SOFT_CLASS } from "@/libs/press";
 import type { Movie } from "@/features/movies/types";
 
 /**
@@ -15,7 +16,10 @@ const MovieCard: React.FC<{
   sizes?: string;
   isFluid?: boolean;
 }> = ({ movie, minLabel = "min", sizes = "130px", isFluid = false }) => (
-  <Link href={`/movies/${movie.slug}`} className={`block ${isFluid ? "w-full" : "w-[130px]"}`}>
+  <Link
+    href={`/movies/${movie.slug}`}
+    className={`group block ${PRESS_SOFT_CLASS} ${isFluid ? "w-full" : "w-[130px]"}`}
+  >
     <article className="cursor-pointer">
       <div className="relative aspect-[2/3] overflow-hidden rounded-(--radius-lg) bg-(--color-surface-2)">
         <Image
@@ -24,11 +28,11 @@ const MovieCard: React.FC<{
           width={130}
           height={195}
           sizes={sizes}
-          className="h-full w-full object-cover"
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
-        {(movie.rating > 0 || movie.duration > 0) && (
+        {(movie.rating !== null || movie.duration > 0) && (
           <div className="absolute top-0 left-0 right-0 flex items-center justify-between p-(--space-sm)">
-            {movie.rating > 0 && (
+            {movie.rating !== null && (
               <span
                 className="
                   flex items-center gap-0.5 rounded-(--radius-sm)
@@ -53,7 +57,9 @@ const MovieCard: React.FC<{
           </div>
         )}
       </div>
-      <p className="mt-(--space-sm) text-base font-medium text-white">{movie.title}</p>
+      <p className="mt-(--space-sm) text-base font-medium text-white transition-colors group-hover:text-(--color-gold)">
+        {movie.title}
+      </p>
       <p className="mt-0.5 text-xs text-(--color-gold-light)">{movie.genre}</p>
     </article>
   </Link>

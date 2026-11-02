@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useRef, type ReactNode } from "react";
 import { lockBodyScroll } from "@/libs/scroll-lock";
+import { PRESS_SOFT_CLASS } from "@/libs/press";
 
 /**
  * Desktop confirmation modal. `ActionSheet` is a bottom sheet â€” correct on a
@@ -124,8 +125,10 @@ export default function ConfirmDialog({
             type="button"
             onClick={onConfirm}
             disabled={isPending}
-            className={`flex w-full items-center justify-center gap-2 py-3.5 rounded-2xl font-extrabold text-sm tracking-widest uppercase border bg-transparent transition duration-150 active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none ${
-              danger ? "border-red-500 text-red-500" : "border-(--color-gold) text-(--color-gold)"
+            className={`flex w-full items-center justify-center gap-2 rounded-2xl border bg-transparent py-3.5 text-sm font-extrabold tracking-widest uppercase ${PRESS_SOFT_CLASS} disabled:pointer-events-none disabled:opacity-40 ${
+              danger
+                ? "border-red-500 text-red-500 hover:border-red-400 hover:bg-red-500/10 hover:text-red-400"
+                : "border-(--color-gold) text-(--color-gold) hover:border-(--color-gold-light) hover:bg-(--color-gold)/10 hover:text-(--color-gold-light)"
             }`}
           >
             {confirmLabel}
@@ -135,7 +138,7 @@ export default function ConfirmDialog({
             type="button"
             onClick={onClose}
             disabled={isPending}
-            className="w-full py-3.5 rounded-2xl font-extrabold text-sm tracking-widest uppercase text-(--color-on-accent) bg-(--color-gold) transition duration-150 active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none"
+            className={`w-full rounded-2xl bg-(--color-gold) py-3.5 text-sm font-extrabold tracking-widest text-(--color-on-accent) uppercase hover:bg-(--color-gold-dark) ${PRESS_SOFT_CLASS} disabled:pointer-events-none disabled:opacity-40`}
           >
             {cancelLabel}
           </button>

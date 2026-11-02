@@ -7,6 +7,7 @@ import { useNotifications } from "@/features/notifications/contexts/Notification
 import NotificationRow from "@/components/shared/notifications/NotificationRow";
 import Dropdown from "@/components/ui/Dropdown";
 import { HEADER_PRESS_CLASS, HEADER_TILE_CLASS } from "@/layouts/components/constants";
+import { PRESS_CLASS } from "@/libs/press";
 
 /** Unread pill — widened past a single digit so two digits still fit. */
 function UnreadBadge({ count }: { count: number }) {
@@ -67,7 +68,7 @@ export default function NotificationBell() {
                 <button
                   type="button"
                   onClick={markAllRead}
-                  className="cursor-pointer text-2xs font-bold tracking-widest text-(--color-gold) uppercase transition-colors hover:text-(--color-gold-light)"
+                  className={`cursor-pointer text-2xs font-bold tracking-widest text-(--color-gold) uppercase hover:text-(--color-gold-light) ${PRESS_CLASS}`}
                 >
                   {translate("notif.mark_all_read")}
                 </button>
@@ -77,7 +78,7 @@ export default function NotificationBell() {
                 type="button"
                 onClick={close}
                 aria-label={translate("common.close")}
-                className="-mr-1 flex h-6 w-6 cursor-pointer items-center justify-center rounded-full text-(--color-text-muted) transition-colors duration-150 hover:bg-(--color-surface-2) hover:text-white"
+                className={`-mr-1 flex h-6 w-6 cursor-pointer items-center justify-center rounded-full text-(--color-text-muted) hover:bg-(--color-surface-2) hover:text-white ${PRESS_CLASS}`}
               >
                 <X size={14} aria-hidden />
               </button>

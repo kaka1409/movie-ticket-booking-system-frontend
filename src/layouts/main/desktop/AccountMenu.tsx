@@ -17,6 +17,7 @@ import { useLogout } from "@/features/auth/hooks/useLogout";
 import Avatar, { DEFAULT_AVATAR_SRC } from "@/components/ui/Avatar";
 import Dropdown from "@/components/ui/Dropdown";
 import { HEADER_PRESS_CLASS, HEADER_TILE_CLASS } from "@/layouts/components/constants";
+import { PRESS_SOFT_CLASS } from "@/libs/press";
 
 /**
  * Account popup entries, grouped the way the mobile profile menu groups them —
@@ -129,7 +130,7 @@ export default function AccountMenu() {
                     key={href}
                     href={href}
                     role="menuitem"
-                    className="group flex items-center gap-3 rounded-xl px-2.5 py-2 text-[13px] font-semibold text-(--color-text-primary) no-underline transition-colors duration-150 hover:bg-(--color-surface-2) hover:text-(--color-gold)"
+                    className={`group flex items-center gap-3 rounded-xl px-2.5 py-2 text-[13px] font-semibold text-(--color-text-primary) no-underline hover:bg-(--color-surface-2) hover:text-(--color-gold) ${PRESS_SOFT_CLASS}`}
                   >
                     <span className={ROW_ICON_CLASS}>
                       <Icon size={14} aria-hidden />
@@ -155,7 +156,7 @@ export default function AccountMenu() {
                 close();
                 void logout();
               }}
-              className="group flex w-full cursor-pointer items-center gap-3 rounded-xl px-2.5 py-2 text-left text-[13px] font-semibold text-red-400 transition-colors duration-150 hover:bg-red-500/10 disabled:opacity-50"
+              className={`group flex w-full cursor-pointer items-center gap-3 rounded-xl px-2.5 py-2 text-left text-[13px] font-semibold text-red-400 hover:bg-red-500/10 disabled:opacity-50 ${PRESS_SOFT_CLASS}`}
             >
               <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-red-500/10 transition-colors duration-150 group-hover:bg-red-500/20">
                 <LogOut size={14} aria-hidden />

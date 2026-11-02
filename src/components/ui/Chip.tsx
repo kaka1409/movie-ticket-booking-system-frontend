@@ -1,5 +1,7 @@
 "use client";
 
+import { PRESS_SOFT_CLASS } from "@/libs/press";
+
 /**
  * Selectable filter chip with two styles: `filled` (movies filter panel —
  * gold filled when active) and `outline` (reviews-style tabs and wishlist
@@ -16,16 +18,16 @@ export default function Chip({
   onClick: () => void;
   variant?: "filled" | "outline";
 }) {
-  const base = "whitespace-nowrap border transition duration-150 rounded-(--radius-sm) px-4";
+  const base = `cursor-pointer whitespace-nowrap rounded-(--radius-sm) border px-4 ${PRESS_SOFT_CLASS} disabled:cursor-not-allowed disabled:opacity-50`;
   const filled = `py-2 text-xs font-semibold ${
     active
-      ? "border-(--color-gold) bg-(--color-gold) text-(--color-on-accent) shadow-(--shadow-glow)"
-      : "border-(--color-border) bg-transparent text-white hover:border-(--color-gold)/40"
+      ? "border-(--color-gold) bg-(--color-gold) text-(--color-on-accent) shadow-(--shadow-glow) hover:brightness-110"
+      : "border-(--color-border) bg-transparent text-white hover:border-(--color-gold)/40 hover:text-(--color-gold-light)"
   }`;
   const outline = `py-1.5 text-sm ${
     active
-      ? "border-(--color-gold) text-(--color-gold)"
-      : "border-transparent text-(--color-text-muted)"
+      ? "border-(--color-gold) text-(--color-gold) hover:bg-(--color-gold)/10"
+      : "border-transparent text-(--color-text-muted) hover:border-(--color-border-strong) hover:text-(--color-text-primary)"
   }`;
 
   return (

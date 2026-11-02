@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useId, useRef } from "react";
+import { PRESS_SOFT_CLASS } from "@/libs/press";
 
 /** Id of a tab button (`role="tab"`) inside a `Tabs` instance. */
 export const tabId = (idBase: string, key: string) => `${idBase}-tab-${key}`;
@@ -85,7 +86,7 @@ export default function Tabs({
           href={linkFor(tab.key)}
           aria-current={active ? "page" : undefined}
           className={`
-              relative ${stretch ? "flex-1" : ""} pb-3 px-1 text-sm font-bold tracking-wide text-center transition-colors duration-150
+              relative ${stretch ? "flex-1" : ""} pb-3 px-1 text-sm font-bold tracking-wide text-center ${PRESS_SOFT_CLASS}
               ${active ? "text-(--color-gold)" : "text-(--color-text-muted) hover:text-(--color-gold-light)"}
             `}
         >
@@ -130,7 +131,7 @@ export default function Tabs({
             tabIndex={index === activeIndex ? 0 : -1}
             onClick={() => onTabChange?.(tab.key)}
             className={`
-              relative ${stretch ? "flex-1" : ""} pb-3 px-1 text-sm font-bold tracking-wide text-center transition-colors duration-150
+              relative ${stretch ? "flex-1" : ""} pb-3 px-1 text-sm font-bold tracking-wide text-center ${PRESS_SOFT_CLASS}
               ${active ? "text-(--color-gold)" : "text-(--color-text-muted) hover:text-(--color-gold-light)"}
             `}
           >

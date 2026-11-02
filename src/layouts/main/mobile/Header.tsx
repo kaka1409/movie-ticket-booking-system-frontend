@@ -6,6 +6,7 @@ import Logo from "@/components/ui/Logo";
 import LanguageToggle from "@/layouts/components/LanguageToggle";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useNotifications } from "@/features/notifications/contexts/NotificationsContext";
+import { PRESS_CLASS } from "@/libs/press";
 
 export default function Header() {
   const { translate } = useLocale();
@@ -21,7 +22,7 @@ export default function Header() {
 
           <Link
             href="/notifications"
-            className="relative text-(--color-gold-light)"
+            className={`relative text-(--color-gold-light) hover:text-(--color-gold) ${PRESS_CLASS}`}
             aria-label={translate("layout.header.notifications")}
           >
             <Bell className="w-5 h-5" />

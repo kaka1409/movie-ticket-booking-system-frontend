@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useLocale } from "@/contexts/LocaleContext";
+import { PRESS_SOFT_CLASS } from "@/libs/press";
 
 /** Above this length the text collapses to 3 lines with a Show more toggle. */
 const EXPAND_THRESHOLD = 160;
@@ -30,7 +31,7 @@ export default function ExpandableText({
       <button
         type="button"
         onClick={() => setIsExpanded((previous) => !previous)}
-        className="mt-1 text-xs font-bold text-(--color-gold)"
+        className={`mt-1 inline-flex items-center text-xs font-bold text-(--color-gold) hover:text-(--color-gold-light) hover:underline ${PRESS_SOFT_CLASS}`}
       >
         {isExpanded ? translate("common.show_less") : translate("common.show_more")}
       </button>

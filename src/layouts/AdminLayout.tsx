@@ -152,7 +152,7 @@ function AdminShell({ initialTheme, children }: { initialTheme: AdminTheme; chil
               onClick={() => setIsDrawerOpen(true)}
               aria-label={translate("admin.sidebar.open")}
               aria-expanded={isDrawerOpen}
-              className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl text-(--color-text-secondary) transition-colors hover:bg-(--color-surface-2) hover:text-(--color-text-primary) md:hidden"
+              className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl text-(--color-text-secondary) transition-colors active:scale-[0.98] hover:bg-(--color-surface-2) hover:text-(--color-text-primary) md:hidden"
             >
               <Menu size={20} aria-hidden />
             </button>
@@ -186,7 +186,7 @@ function AdminShell({ initialTheme, children }: { initialTheme: AdminTheme; chil
                   href="/"
                   prefetch={false}
                   title={translate("admin.back_to_site")}
-                  className={`flex items-center rounded-xl py-2 text-[11px] font-semibold text-(--color-text-primary) no-underline transition-colors hover:bg-(--color-surface-2) hover:text-(--color-gold) ${
+                  className={`flex items-center rounded-xl py-2 text-[11px] font-semibold text-(--color-text-primary) no-underline transition-colors active:scale-[0.98] hover:bg-(--color-surface-2) hover:text-(--color-gold) ${
                     isCollapsed ? "justify-center px-0" : "gap-2.5 px-2.5"
                   }`}
                 >
@@ -205,7 +205,7 @@ function AdminShell({ initialTheme, children }: { initialTheme: AdminTheme; chil
                   aria-label={translate(
                     isCollapsed ? "admin.sidebar.expand" : "admin.sidebar.collapse",
                   )}
-                  className={`flex w-full cursor-pointer items-center rounded-xl py-2 text-[11px] font-semibold text-(--color-text-primary) transition-colors hover:bg-(--color-surface-2) hover:text-(--color-gold) ${
+                  className={`flex w-full cursor-pointer items-center rounded-xl py-2 text-[11px] font-semibold text-(--color-text-primary) transition-colors active:scale-[0.98] hover:bg-(--color-surface-2) hover:text-(--color-gold) ${
                     isCollapsed ? "justify-center px-0" : "gap-2.5 px-2.5"
                   }`}
                 >
@@ -249,7 +249,7 @@ function AdminShell({ initialTheme, children }: { initialTheme: AdminTheme; chil
                 data-admin-drawer-close
                 onClick={closeDrawer}
                 aria-label={translate("admin.sidebar.close")}
-                className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl text-(--color-text-secondary) transition-colors hover:bg-(--color-surface-2)"
+                className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl text-(--color-text-secondary) transition-colors active:scale-[0.98] hover:bg-(--color-surface-2)"
               >
                 <X size={18} aria-hidden />
               </button>
@@ -262,7 +262,7 @@ function AdminShell({ initialTheme, children }: { initialTheme: AdminTheme; chil
                 href="/"
                 prefetch={false}
                 onClick={closeDrawer}
-                className="flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-[11px] font-semibold text-(--color-text-primary) no-underline transition-colors hover:bg-(--color-surface-2) hover:text-(--color-gold)"
+                className="flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-[11px] font-semibold text-(--color-text-primary) no-underline transition-colors active:scale-[0.98] hover:bg-(--color-surface-2) hover:text-(--color-gold)"
               >
                 <ArrowLeft size={14} aria-hidden className="shrink-0" />
                 <span>{translate("admin.back_to_site")}</span>
@@ -436,7 +436,7 @@ function AdminAccountMenu({
             <Link
               href="/admin/settings"
               onClick={close}
-              className="flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-[13px] font-semibold text-(--color-text-primary) no-underline transition-colors hover:bg-(--color-surface-2) hover:text-(--color-gold)"
+              className="flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-[13px] font-semibold text-(--color-text-primary) no-underline transition-colors active:scale-[0.98] hover:bg-(--color-surface-2) hover:text-(--color-gold)"
             >
               <Settings size={15} aria-hidden />
               <span>{translate("admin.nav.settings")}</span>
@@ -446,7 +446,7 @@ function AdminAccountMenu({
               href="/"
               prefetch={false}
               onClick={close}
-              className="flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-[13px] font-semibold text-(--color-text-primary) no-underline transition-colors hover:bg-(--color-surface-2) hover:text-(--color-gold)"
+              className="flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-[13px] font-semibold text-(--color-text-primary) no-underline transition-colors active:scale-[0.98] hover:bg-(--color-surface-2) hover:text-(--color-gold)"
             >
               <ArrowLeft size={15} aria-hidden />
               <span>{translate("admin.back_to_site")}</span>

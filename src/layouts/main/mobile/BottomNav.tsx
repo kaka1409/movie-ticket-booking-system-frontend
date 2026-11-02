@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useLocale } from "@/contexts/LocaleContext";
 import { NAV_ITEMS, ICON_SIZE } from "../types";
+import { PRESS_CLASS } from "@/libs/press";
 
 export default function BottomNav() {
   const pathname = usePathname();
@@ -21,14 +22,14 @@ export default function BottomNav() {
             <li key={href}>
               <Link
                 href={href}
-                className="flex flex-col items-center min-w-15"
+                className={`flex min-w-15 flex-col items-center ${PRESS_CLASS}`}
                 aria-current={isActive ? "page" : undefined}
               >
                 <div
-                  className={`flex flex-col gap-0.5 items-center w-full py-1.5 text-xs ${
+                  className={`flex w-full flex-col items-center gap-0.5 py-1.5 text-xs ${
                     isActive
-                      ? "text-(--color-gold-light) bg-(--color-gold-light)/20 rounded-(--radius-md)"
-                      : "text-(--color-text-muted)"
+                      ? "rounded-(--radius-md) bg-(--color-gold-light)/20 text-(--color-gold-light)"
+                      : "text-(--color-text-muted) hover:text-(--color-gold-light)"
                   }`}
                 >
                   <Icon size={ICON_SIZE} />

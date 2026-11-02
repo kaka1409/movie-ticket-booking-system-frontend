@@ -1,5 +1,7 @@
 "use client";
 
+import { PRESS_SOFT_CLASS } from "@/libs/press";
+
 /**
  * Reusable undo affordance for destructive toggles (wishlist removal). The mobile
  * skin pins it above the bottom nav; the desktop skin centres it near the bottom
@@ -24,7 +26,7 @@ export default function UndoSnackbar({
       <button
         type="button"
         onClick={onAction}
-        className="shrink-0 text-sm font-extrabold text-(--color-gold)"
+        className={`shrink-0 text-sm font-extrabold text-(--color-gold) hover:text-(--color-gold-light) ${PRESS_SOFT_CLASS}`}
       >
         {actionLabel}
       </button>

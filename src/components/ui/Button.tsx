@@ -3,17 +3,20 @@
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { PRESS_SOFT_CLASS } from "@/libs/press";
 
 type ButtonVariant = "primary" | "outline" | "loadMore" | "danger";
 type ButtonSize = "sm" | "md" | "lg";
 
 const variantClasses: Record<ButtonVariant, string> = {
-  primary: "bg-(--color-gold) text-(--color-on-accent) shadow-(--shadow-glow)",
-  outline: "border border-(--color-gold) text-(--color-gold) bg-transparent",
+  primary: "bg-(--color-gold) text-(--color-on-accent) shadow-(--shadow-glow) hover:opacity-90",
+  outline:
+    "border border-(--color-gold) text-(--color-gold) bg-transparent hover:border-(--color-gold-light) hover:bg-(--color-gold)/5 hover:text-(--color-gold-light)",
   loadMore:
     "border border-(--color-border) bg-(--color-surface) text-(--color-gold-light) hover:border-(--color-gold)/40 hover:text-(--color-gold)",
   /** Irreversible action (cancel a booking) — outlined, never a filled red block. */
-  danger: "border border-red-500/60 text-red-400 bg-transparent",
+  danger:
+    "border border-red-500/60 text-red-400 bg-transparent hover:border-red-400 hover:bg-red-500/10 hover:text-red-300",
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
@@ -56,13 +59,12 @@ export default function Button({
 
   const classes = `
         flex items-center justify-center gap-2.5 font-extrabold
-        transition duration-150 active:scale-[0.98]
+        ${PRESS_SOFT_CLASS}
         disabled:opacity-40 disabled:pointer-events-none
         ${fullWidth ? "w-full" : ""}
         ${uppercase ? "uppercase" : ""}
         ${variantClasses[variant]}
         ${sizeClasses[size]}
-        ${variant === "primary" ? "hover:opacity-90" : ""}
         ${className}
       `;
 

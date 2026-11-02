@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Star, Clock } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
+import { PRESS_SOFT_CLASS } from "@/libs/press";
 import type { Movie } from "@/features/movies/types";
 
 /**
@@ -22,7 +23,7 @@ export default function MoviePosterCard({
   const { translate } = useLocale();
 
   return (
-    <article className="group flex flex-col overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-surface) transition duration-300 hover:-translate-y-1.5 hover:border-(--color-gold)/50 hover:shadow-xl">
+    <article className="group flex flex-col overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-surface) transition duration-300 hover:-translate-y-1.5 hover:border-(--color-gold)/50 hover:shadow-xl active:scale-[0.99]">
       <Link
         href={`/movies/${movie.slug}`}
         className="relative block aspect-[2/3] w-full overflow-hidden bg-(--color-surface-2)"
@@ -38,7 +39,7 @@ export default function MoviePosterCard({
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 opacity-60 transition-opacity group-hover:opacity-80" />
 
         <div className="absolute top-2.5 right-2.5 left-2.5 flex items-center justify-between">
-          {movie.rating > 0 ? (
+          {movie.rating !== null ? (
             <span className="flex items-center gap-1 rounded-(--radius-sm) bg-(--color-gold) px-2 py-0.5 text-xs font-black text-black">
               <Star size={11} fill="currentColor" /> {movie.rating}
             </span>
@@ -75,7 +76,7 @@ export default function MoviePosterCard({
         {isBookable === true ? (
           <Link
             href={`/booking/${movie.slug}/cinema`}
-            className="mt-4 cursor-pointer rounded-(--radius-sm) bg-(--color-gold) py-2 text-center text-xs font-bold tracking-wider text-black no-underline transition hover:bg-(--color-gold-light)"
+            className={`mt-4 cursor-pointer rounded-(--radius-sm) bg-(--color-gold) py-2 text-center text-xs font-bold tracking-wider text-black no-underline transition hover:bg-(--color-gold-light) ${PRESS_SOFT_CLASS}`}
           >
             {translate("movies.book_now")}
           </Link>

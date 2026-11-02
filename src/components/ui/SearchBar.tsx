@@ -2,6 +2,7 @@
 
 import { Search, X } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
+import { PRESS_CLASS } from "@/libs/press";
 
 export default function SearchBar({
   value,
@@ -41,7 +42,7 @@ export default function SearchBar({
           type="button"
           onClick={() => onChange("")}
           aria-label={translate("common.clear_search")}
-          className="shrink-0 text-(--color-text-muted) transition-colors hover:text-(--color-text-primary)"
+          className={`shrink-0 text-(--color-text-muted) hover:text-(--color-text-primary) ${PRESS_CLASS}`}
         >
           <X size={14} />
         </button>

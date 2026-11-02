@@ -1,11 +1,12 @@
+import { PRESS_CLASS } from "@/libs/press";
+
 /**
  * Header press feedback — the platform-chrome feel (YouTube/Facebook): a control
  * that does not sink on press reads as static next to the rest of the row.
- * One scale for every control: a text tab and a 36px tile shrink by the same
- * amount, so a shared constant cannot drift into two different "feels".
+ * Re-exported from `libs/press` so the header, the UI primitives and the route
+ * cards all share one scale (see that file for the size ladder).
  */
-export const HEADER_PRESS_CLASS =
-  "transition duration-150 ease-out active:scale-[0.95] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-gold)";
+export const HEADER_PRESS_CLASS = PRESS_CLASS;
 
 /**
  * Shape of a header action tile (bell, locale, avatar chip). Carries no
