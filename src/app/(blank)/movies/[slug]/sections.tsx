@@ -1,7 +1,12 @@
 import { ShowtimesProvider } from "@/features/showtimes/contexts/ShowtimesContext";
 import { getMovieSchedule } from "@/features/showtimes/api";
-import { getMovieReviews } from "@/features/reviews/api";
+import {
+  getMovieReviewFilters,
+  getMovieReviewVotes,
+  getMovieReviews,
+} from "@/features/reviews/api";
 import { getMovieRecommendations } from "@/features/movies/api";
+import { getRequestCookie } from "@/libs/session";
 import { SITE_URL } from "@/libs/site";
 import type { Movie } from "@/features/movies/types";
 import MobileShowtimes from "./components/mobile/Showtimes";
@@ -56,26 +61,38 @@ export async function DesktopShowtimesSection({ slug, locale, today }: Showtimes
   );
 }
 
-export async function MobileReviewsSection({ slug, locale }: ReviewsSectionProps) {
-  const result = await getMovieReviews(slug, locale);
+/**
+ * One reviews payload for both review sections: the list, the caller's own
+ * votes (cookie read — empty for anonymous) and the localized sort labels. The
+ * three call into `cache()`-wrapped loaders, so the mobile tree, the desktop
+ * tree and the pagination share one backend read each.
+ */
+async function loadReviewBlock(slug: string, locale: "en" | "vn") {
+  const [result, cookie, filters] = await Promise.all([
+    getMovieReviews(slug, locale),
+    getRequestCookie(),
+    getMovieReviewFilters(locale),
+  ]);
+  const initialVotes = await getMovieReviewVotes(slug, cookie);
 
-  return (
-    <MobileReviews
-      initialData={"error" in result ? null : result.data}
-      initialError={"error" in result ? result.error.message : null}
-    />
-  );
+  return {
+    initialData: "error" in result ? null : result.data,
+    initialError: "error" in result ? result.error.message : null,
+    initialVotes,
+    filters,
+  };
+}
+
+export async function MobileReviewsSection({ slug, locale }: ReviewsSectionProps) {
+  const block = await loadReviewBlock(slug, locale);
+
+  return <MobileReviews {...block} />;
 }
 
 export async function DesktopReviewsSection({ slug, locale }: ReviewsSectionProps) {
-  const result = await getMovieReviews(slug, locale);
+  const block = await loadReviewBlock(slug, locale);
 
-  return (
-    <DesktopReviews
-      initialData={"error" in result ? null : result.data}
-      initialError={"error" in result ? result.error.message : null}
-    />
-  );
+  return <DesktopReviews {...block} />;
 }
 
 type RecommendedSectionProps = { slug: string; locale: "en" | "vn" };
