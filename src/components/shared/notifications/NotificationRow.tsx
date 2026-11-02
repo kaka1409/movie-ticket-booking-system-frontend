@@ -6,6 +6,7 @@ import { useLocale } from "@/contexts/LocaleContext";
 import { TYPE_CONFIG } from "@/features/notifications/constants";
 import type { Notification } from "@/features/notifications/types";
 import { formatRelativeTime } from "@/libs/utils";
+import { PRESS_ROW_CLASS } from "@/libs/press";
 
 /**
  * One inbox row, shared by the header popup (`compact`) and the desktop
@@ -89,8 +90,8 @@ export default function NotificationRow({
   );
 
   const rowClassName = isComfortable
-    ? "flex w-full cursor-pointer items-start gap-4 px-5 py-4 text-left transition-colors duration-150 hover:bg-(--color-surface-2)"
-    : `flex w-full cursor-pointer items-start gap-3 rounded-xl px-3 py-2.5 text-left transition-colors duration-150 hover:bg-(--color-surface-2) ${
+    ? `flex w-full cursor-pointer items-start gap-4 px-5 py-4 text-left hover:bg-(--color-surface-2) ${PRESS_ROW_CLASS}`
+    : `flex w-full cursor-pointer items-start gap-3 rounded-xl px-3 py-2.5 text-left hover:bg-(--color-surface-2) ${PRESS_ROW_CLASS} ${
         notification.read ? "opacity-55" : ""
       }`;
 
