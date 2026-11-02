@@ -28,9 +28,7 @@ export interface TransferDetail {
   createdAt: string;
 }
 
-export type TransferActionResult =
-  | { success: true; data: TransferDetail }
-  | ActionFailure;
+export type TransferActionResult = { success: true; data: TransferDetail } | ActionFailure;
 
 /**
  * Open a whole-ticket offer. The backend freezes `amount` from the booking's
@@ -58,8 +56,7 @@ export async function createTransferAction(
 }
 
 export type CancelTransferActionResult =
-  | { success: true; data: { id: string; status: string } }
-  | ActionFailure;
+  { success: true; data: { id: string; status: string } } | ActionFailure;
 
 export async function cancelTransferAction(
   prevState: CancelTransferActionResult,
@@ -91,8 +88,7 @@ export interface TransferDecision {
  * TRANSFER_NOT_PENDING` as "already handled" instead of an error.
  */
 export type TransferDecisionActionResult =
-  | { success: true; data: TransferDecision }
-  | ActionFailure;
+  { success: true; data: TransferDecision } | ActionFailure;
 
 async function submitTransferDecision(
   transferId: string,
@@ -152,9 +148,7 @@ export interface ModifyResult {
  * `status`/`code` are carried through so the review step can explain a known
  * rejection in the visitor's language instead of the backend's English prose.
  */
-export type ModifyActionResult =
-  | { success: true; data: ModifyResult }
-  | ActionFailure;
+export type ModifyActionResult = { success: true; data: ModifyResult } | ActionFailure;
 
 export async function modifyTicketAction(
   prevState: ModifyActionResult,

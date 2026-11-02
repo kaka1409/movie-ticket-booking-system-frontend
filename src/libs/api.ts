@@ -67,16 +67,18 @@ export type ActionFailure = {
   error: string;
   status?: number;
   code?: string;
-  details?: ErrorResponse['error']['details'];
+  details?: ErrorResponse["error"]["details"];
 };
 
 /** Preserve the normalized API error fields when converting a thrown mutation into an action result. */
 export function toActionFailure(reason: unknown): ActionFailure {
-  const error = reason as (Error & {
-    status?: number;
-    code?: string;
-    body?: { error?: { details?: ErrorResponse['error']['details'] } };
-  }) | null;
+  const error = reason as
+    | (Error & {
+        status?: number;
+        code?: string;
+        body?: { error?: { details?: ErrorResponse["error"]["details"] } };
+      })
+    | null;
   return {
     success: false,
     error: error instanceof Error ? error.message : String(reason),
@@ -86,7 +88,7 @@ export function toActionFailure(reason: unknown): ActionFailure {
   };
 }
 
-export function actionFailureFromApiError(error: ErrorResponse['error']): ActionFailure {
+export function actionFailureFromApiError(error: ErrorResponse["error"]): ActionFailure {
   return {
     success: false,
     error: error.message,

@@ -50,8 +50,7 @@ function cookieHeader(value: string): string {
 /* ─── Register ──────────────────────────────────────────── */
 
 /** POST /auth/register — returns `{ data: { message } }` or a failure union with the HTTP status. */
-export type RegisterActionResult =
-  { success: true; data: RegisterResponse } | ActionFailure;
+export type RegisterActionResult = { success: true; data: RegisterResponse } | ActionFailure;
 
 export async function registerAction(
   prevState: RegisterActionResult,
@@ -75,8 +74,7 @@ export async function registerAction(
  * the backend's refresh token is re-issued as our HttpOnly cookie, while the
  * access token + user go to the client for AuthContext (RAM only).
  */
-export type LoginActionResult =
-  { success: true; data: LoginResponse } | ActionFailure;
+export type LoginActionResult = { success: true; data: LoginResponse } | ActionFailure;
 
 export async function loginAction(
   prevState: LoginActionResult,
@@ -111,8 +109,7 @@ export async function loginAction(
  * previous value). Called on mount by AuthContext to restore a session; a
  * failure just means the user must log in again.
  */
-export type RefreshActionResult =
-  { success: true; data: RefreshResponse } | ActionFailure;
+export type RefreshActionResult = { success: true; data: RefreshResponse } | ActionFailure;
 
 export async function refreshAction(): Promise<RefreshActionResult> {
   try {

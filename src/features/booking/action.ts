@@ -1,6 +1,12 @@
 "use server";
 
-import { apiMutation, actionFailureFromApiError, toActionFailure, type ActionFailure, type ApiResponse } from "@/libs/api";
+import {
+  apiMutation,
+  actionFailureFromApiError,
+  toActionFailure,
+  type ActionFailure,
+  type ApiResponse,
+} from "@/libs/api";
 import type {
   BookingDetail,
   PaymentIntent,
@@ -9,8 +15,7 @@ import type {
   SimulatedOutcome,
 } from "./types";
 
-export type BookingActionResult<T> =
-  { success: true; data: T } | ActionFailure;
+export type BookingActionResult<T> = { success: true; data: T } | ActionFailure;
 
 function union<T>(result: ApiResponse<T>): BookingActionResult<T> {
   if ("error" in result) {

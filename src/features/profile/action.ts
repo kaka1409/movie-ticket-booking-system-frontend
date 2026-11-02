@@ -4,8 +4,7 @@ import type { UpdateProfileRequest } from "./types";
 import type { User } from "@/features/auth/types";
 import { apiMutation, toActionFailure, type ActionFailure } from "@/libs/api";
 
-export type ProfileActionResult =
-  { success: true; data: User } | ActionFailure;
+export type ProfileActionResult = { success: true; data: User } | ActionFailure;
 
 export async function updateProfileAction(
   prevState: ProfileActionResult,

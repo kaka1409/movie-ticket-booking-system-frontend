@@ -120,10 +120,12 @@ export function useRegisterForm({
     setConfirmPassword,
     termsAccepted,
     toggleTermsAccepted: () => setTermsAccepted((accepted) => !accepted),
-    nameError: touched ? serverFieldErrors.name ?? fieldErrors.name?.[0] : undefined,
-    emailError: touched ? serverFieldErrors.email ?? fieldErrors.email?.[0] : undefined,
-    passwordError: touched ? serverFieldErrors.password ?? fieldErrors.password?.[0] : undefined,
-    confirmError: touched ? serverFieldErrors.confirmPassword ?? fieldErrors.confirmPassword?.[0] : undefined,
+    nameError: touched ? (serverFieldErrors.name ?? fieldErrors.name?.[0]) : undefined,
+    emailError: touched ? (serverFieldErrors.email ?? fieldErrors.email?.[0]) : undefined,
+    passwordError: touched ? (serverFieldErrors.password ?? fieldErrors.password?.[0]) : undefined,
+    confirmError: touched
+      ? (serverFieldErrors.confirmPassword ?? fieldErrors.confirmPassword?.[0])
+      : undefined,
     serverError,
     isSubmitting,
     handleSubmit,
