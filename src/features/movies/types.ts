@@ -12,7 +12,8 @@ export interface Movie {
   title: string;
   slug: string;
   genre: string;
-  rating: number;
+  /** Live-review average (0–10); `null` while the movie has no review yet. */
+  rating: number | null;
   duration: number;
   src?: string;
   synopsis: string;

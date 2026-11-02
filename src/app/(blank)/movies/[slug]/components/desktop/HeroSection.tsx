@@ -102,12 +102,16 @@ export default function HeroSection() {
             </h1>
 
             <div className="mb-5 flex flex-wrap items-center gap-3">
-              <span className="flex items-center gap-1.5 text-sm font-bold text-(--color-gold)">
-                <Star size={14} className="fill-(--color-gold)" />
-                {movie.rating}/10
-              </span>
+              {movie.rating !== null && (
+                <>
+                  <span className="flex items-center gap-1.5 text-sm font-bold text-(--color-gold)">
+                    <Star size={14} className="fill-(--color-gold)" />
+                    {movie.rating}/10
+                  </span>
 
-              <span className="h-4 w-px bg-(--color-border)" />
+                  <span className="h-4 w-px bg-(--color-border)" />
+                </>
+              )}
 
               {genres.map((genre) => (
                 <span

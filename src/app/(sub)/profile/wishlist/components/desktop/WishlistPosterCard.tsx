@@ -48,7 +48,7 @@ export default function WishlistPosterCard({
 
         {/* Top Badges */}
         <div className="absolute left-2.5 top-2.5 flex items-center gap-1.5">
-          {movie.rating > 0 && (
+          {movie.rating !== null && (
             <span className="flex items-center gap-1 rounded-md bg-(--color-gold) px-1.5 py-0.5 text-xs font-black text-black shadow-sm">
               <Star size={11} fill="currentColor" />
               {movie.rating.toFixed(1)}

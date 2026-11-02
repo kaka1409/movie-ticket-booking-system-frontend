@@ -43,7 +43,7 @@ export default function WishlistCard({
           </div>
         </Link>
 
-        {movie.rating > 0 && (
+        {movie.rating !== null && (
           <span className="absolute left-2 top-2 flex items-center gap-0.5 rounded-(--radius-sm) bg-(--color-gold) px-1.5 py-0.5 text-xs font-bold text-black">
             <Star size={12} fill="currentColor" />
             {movie.rating.toFixed(1)}

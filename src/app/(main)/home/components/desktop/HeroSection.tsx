@@ -125,10 +125,14 @@ export default function HeroSection({
               <span className="rounded-(--radius-sm) bg-(--color-gold) px-2.5 py-0.5 text-2xs font-extrabold tracking-widest uppercase text-black">
                 {movie.label}
               </span>
-              <span className="flex items-center gap-1 text-xs font-bold text-(--color-gold)">
-                <Star size={13} fill="currentColor" /> {movie.rating}/10
-              </span>
-              <span className="text-[11px] text-(--color-text-muted)">•</span>
+              {movie.rating !== null && (
+                <>
+                  <span className="flex items-center gap-1 text-xs font-bold text-(--color-gold)">
+                    <Star size={13} fill="currentColor" /> {movie.rating}/10
+                  </span>
+                  <span className="text-[11px] text-(--color-text-muted)">•</span>
+                </>
+              )}
               <span className="text-xs text-(--color-text-secondary)">
                 {movie.duration} {translate("common.min")}
               </span>

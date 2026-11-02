@@ -102,9 +102,11 @@ export default function HeroBanner({
             <span className="rounded-(--radius-sm) bg-(--color-gold) px-1.5 py-0.5 text-[7px] font-bold tracking-widest text-black">
               {currentMovie.label}
             </span>
-            <span className="flex items-center gap-0.5 text-2xs font-bold text-(--color-gold)">
-              <Star size={9} fill="currentColor" /> {currentMovie.rating}
-            </span>
+            {currentMovie.rating !== null && (
+              <span className="flex items-center gap-0.5 text-2xs font-bold text-(--color-gold)">
+                <Star size={9} fill="currentColor" /> {currentMovie.rating}
+              </span>
+            )}
           </div>
           <h2 className="font-black uppercase leading-tight tracking-tight text-white text-lg">
             {currentMovie.title}

@@ -10,7 +10,8 @@ export interface WishlistMovie {
   title: string;
   genre: string;
   genres: string[];
-  rating: number;
+  /** Live-review average (0–10); `null` while the movie has no review yet. */
+  rating: number | null;
   duration: number;
   src?: string;
   posterUrl?: string;

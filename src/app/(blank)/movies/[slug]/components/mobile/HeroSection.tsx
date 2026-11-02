@@ -90,11 +90,15 @@ export default function HeroSection() {
             {movie.title}
           </h1>
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="flex items-center gap-1 text-(--color-gold) text-xs font-bold">
-              <Star size={11} className="fill-(--color-gold)" />
-              {movie.rating}/10
-            </span>
-            <span className="text-(--color-text-muted) text-xs">•</span>
+            {movie.rating !== null && (
+              <>
+                <span className="flex items-center gap-1 text-(--color-gold) text-xs font-bold">
+                  <Star size={11} className="fill-(--color-gold)" />
+                  {movie.rating}/10
+                </span>
+                <span className="text-(--color-text-muted) text-xs">•</span>
+              </>
+            )}
             <span className="text-(--color-gold-light) text-xs">{movie.genre}</span>
             <span className="text-(--color-text-muted) text-xs">•</span>
             <span className="flex items-center gap-1 text-(--color-text-secondary) text-xs">

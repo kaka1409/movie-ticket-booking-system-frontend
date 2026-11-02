@@ -58,7 +58,7 @@ export function useWishlistBrowser(initialItems: WishlistItem[]) {
 
     if (sortBy === "rating") {
       return [...filtered].sort(
-        (firstMovie, secondMovie) => secondMovie.rating - firstMovie.rating,
+        (firstMovie, secondMovie) => (secondMovie.rating ?? -1) - (firstMovie.rating ?? -1),
       );
     }
     if (sortBy === "title") {
