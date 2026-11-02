@@ -6,11 +6,12 @@ import { ChevronLeft, ChevronRight, LogIn, RotateCcw, X } from "lucide-react";
 import Stars from "@/components/ui/Stars";
 import ReviewCard from "@/components/shared/reviews/desktop/ReviewCard";
 import WriteReview from "@/components/shared/reviews/desktop/WriteReview";
+import ReviewSortBar from "./ReviewSortBar";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useMovieDetail } from "@/features/movies/contexts/MovieDetailContext";
 import { useMovieReviews, formatReviewCount } from "@/features/reviews/hooks/useMovieReviews";
 import { useReviewHighlight } from "@/features/reviews/hooks/useReviewHighlight";
-import type { ReviewsResponse } from "@/features/reviews/types";
+import type { ReviewFilter, ReviewVoteMap, ReviewsResponse } from "@/features/reviews/types";
 
 function RatingBar({ stars, pct }: { stars: number; pct: number }) {
   return (
@@ -32,9 +33,13 @@ function RatingBar({ stars, pct }: { stars: number; pct: number }) {
 export default function Reviews({
   initialData,
   initialError,
+  initialVotes,
+  filters,
 }: {
   initialData: ReviewsResponse | null;
   initialError: string | null;
+  initialVotes: ReviewVoteMap;
+  filters: ReviewFilter[];
 }) {
   const { translate } = useLocale();
   const { slug } = useMovieDetail();
@@ -50,6 +55,7 @@ export default function Reviews({
     hasReviews,
     page,
     totalPages,
+    sort,
     loadingPage,
     mutating,
     retrying,
@@ -59,14 +65,18 @@ export default function Reviews({
     currentUserId,
     clearActionError,
     goToPage,
+    changeSort,
     retry,
     create,
     save,
     remove,
+    vote,
+    isVoting,
   } = useMovieReviews({
     movieSlug: slug,
     initialData,
     initialError,
+    initialVotes,
     anchorRef: listRef,
   });
 
@@ -119,7 +129,7 @@ export default function Reviews({
             <button
               type="button"
               onClick={() => router.push("/login")}
-              className="w-full cursor-pointer rounded-(--radius-md) bg-(--color-gold) py-3 text-sm font-bold text-(--color-bg) transition duration-150 hover:bg-(--color-gold-dark)"
+              className="w-full cursor-pointer rounded-(--radius-md) bg-(--color-gold) py-3 text-sm font-bold text-(--color-bg) transition duration-150 hover:bg-(--color-gold-dark) active:scale-[0.98]"
             >
               {translate("auth.protected.login_btn")}
             </button>
@@ -134,7 +144,7 @@ export default function Reviews({
             type="button"
             onClick={clearActionError}
             aria-label={translate("movies.detail.cancel")}
-            className="shrink-0 cursor-pointer text-red-400 transition-colors hover:text-red-300"
+            className="shrink-0 cursor-pointer text-red-400 transition-colors hover:text-red-300 active:scale-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-gold)"
           >
             <X size={14} />
           </button>
@@ -165,6 +175,14 @@ export default function Reviews({
 
       {!error && hasReviews && (
         <>
+          <ReviewSortBar
+            filters={filters}
+            active={sort}
+            disabled={loadingPage}
+            onChange={(next) => void changeSort(next)}
+            className="mb-3 justify-end"
+          />
+
           <div
             ref={listRef}
             className="divide-y divide-(--color-border) rounded-(--radius-lg) border border-(--color-border) bg-(--color-surface) px-5"
@@ -174,7 +192,10 @@ export default function Reviews({
                 key={review.id}
                 review={review}
                 isOwner={currentUserId === review.userId}
+                canVote={currentUserId !== review.userId}
+                isVoting={isVoting(review.id)}
                 highlighted={highlightedId === review.id}
+                onVote={(next) => void vote(review, next)}
                 onSave={(rating, text) => save(review.id, rating, text)}
                 onDelete={() => remove(review.id)}
               />

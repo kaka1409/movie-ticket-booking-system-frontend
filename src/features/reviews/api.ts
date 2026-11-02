@@ -8,6 +8,8 @@ import type {
   ReviewSort,
   MyReview,
   ReviewsResponse,
+  ReviewVote,
+  ReviewVoteMap,
 } from "./types";
 
 /** Tagged so review mutations can invalidate it via `updateTag("reviews")`. */
@@ -92,6 +94,41 @@ export const getMovieReviews = cache(
     settleApiResponse(
       getReviews({ movieSlug, skip: 0, limit: REVIEWS_PAGE_SIZE, sort: "recent" }, locale),
     ),
+);
+
+/** LIVE - `GET /reviews/votes` — the caller's own votes on one movie (cookie or Bearer). */
+export function getMyReviewVotes(
+  movieSlug: string,
+  cookie?: string,
+): Promise<ApiResponse<{ votes: { reviewId: string; value: ReviewVote }[] }>> {
+  return apiFetch<{ votes: { reviewId: string; value: ReviewVote }[] }>(
+    `/reviews/votes?${new URLSearchParams({ movieSlug }).toString()}`,
+    undefined,
+    undefined,
+    cookie,
+  );
+}
+
+/**
+ * Vote map for the whole movie in one request: the detail list pages client-side,
+ * so seeding the map up front keeps the buttons correct on every page. No cookie
+ * means no session — the page renders the counts with the vote UI inert.
+ */
+export const getMovieReviewVotes = cache(
+  async (movieSlug: string, cookie: string | undefined): Promise<ReviewVoteMap> => {
+    if (!cookie) return {};
+    const result = await getMyReviewVotes(movieSlug, cookie);
+    if ("error" in result) return {};
+
+    const votes: ReviewVoteMap = {};
+    for (const vote of result.data.votes) votes[vote.reviewId] = vote.value;
+    return votes;
+  },
+);
+
+/** Localized sort labels for the detail page, one backend read per request. */
+export const getMovieReviewFilters = cache((locale: "en" | "vn"): Promise<ReviewFilter[]> =>
+  getReviewFilters(locale),
 );
 
 export interface MyReviewsOverview {

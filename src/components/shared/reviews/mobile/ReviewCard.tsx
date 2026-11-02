@@ -1,25 +1,33 @@
 "use client";
 
 import { Star, Pencil, Trash2, Check, X } from "lucide-react";
-import Stars from "@/components/ui/Stars";
+import RatingBadge from "@/components/ui/RatingBadge";
+import ReviewVoteButtons from "@/components/shared/reviews/ReviewVoteButtons";
 import Avatar from "@/components/ui/Avatar";
 import ExpandableText from "@/components/ui/ExpandableText";
 import { useLocale } from "@/contexts/LocaleContext";
 import { REVIEW_MAX_LENGTH, REVIEW_RATING_STEPS } from "@/features/reviews/constants";
 import { useReviewEditor } from "@/features/reviews/hooks/useReviewEditor";
-import type { UiReview } from "@/features/reviews/types";
+import type { ReviewVote, UiReview } from "@/features/reviews/types";
 
 export default function ReviewCard({
   review,
   isOwner,
+  canVote,
+  isVoting,
   highlighted = false,
+  onVote,
   onSave,
   onDelete,
 }: {
   review: UiReview;
   isOwner: boolean;
+  /** False on the author's own review — tallies only, no buttons. */
+  canVote: boolean;
+  isVoting: boolean;
   /** Deep-link target (`#review-<id>`): gold ring while the highlight is live. */
   highlighted?: boolean;
+  onVote: (next: ReviewVote | null) => void;
   onSave: (rating: number, text: string) => Promise<boolean>;
   onDelete: () => Promise<boolean>;
 }) {
@@ -109,7 +117,7 @@ export default function ReviewCard({
               {review.user}
             </p>
             <div className="flex items-center gap-2 mt-0.5">
-              <Stars rating={review.rating} size={11} />
+              <RatingBadge rating={review.rating} />
               <span className="text-(--color-text-muted) text-2xs">{review.time}</span>
             </div>
           </div>
@@ -143,6 +151,16 @@ export default function ReviewCard({
       <ExpandableText
         text={review.text}
         className="text-(--color-text-secondary) text-sm leading-relaxed pl-11"
+      />
+
+      <ReviewVoteButtons
+        upvoteCount={review.upvoteCount}
+        downvoteCount={review.downvoteCount}
+        myVote={review.myVote}
+        canVote={canVote}
+        isVoting={isVoting}
+        onVote={onVote}
+        className="mt-3 justify-end"
       />
     </div>
   );

@@ -3,6 +3,7 @@ export const REVIEWS_PAGE_SIZE = 5;
 /** Fallback filter list when `/reviews/filters` is unavailable — labels are i18n keys rendered by the consumer. */
 export const REVIEW_FILTER_FALLBACK = [
   { key: "recent", label: "Recent" },
+  { key: "helpful", label: "Most Helpful" },
   { key: "highest", label: "Highest Rated" },
   { key: "lowest", label: "Lowest Rated" },
 ] as const;

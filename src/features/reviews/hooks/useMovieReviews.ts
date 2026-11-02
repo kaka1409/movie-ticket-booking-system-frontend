@@ -8,7 +8,16 @@ import {
   updateReviewAction,
   deleteReviewAction,
 } from "../action";
-import type { MovieReview, ReviewSummary, ReviewsResponse, UiReview } from "../types";
+import { useReviewVotes } from "./useReviewVotes";
+import type {
+  MovieReview,
+  ReviewSort,
+  ReviewSummary,
+  ReviewVote,
+  ReviewVoteMap,
+  ReviewsResponse,
+  UiReview,
+} from "../types";
 import { formatRelativeTime } from "@/libs/utils";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -25,6 +34,9 @@ function mapReview(review: MovieReview, locale: "en" | "vn"): UiReview {
     rating: review.rating,
     time: formatRelativeTime(review.createdAt, locale),
     text: review.comment,
+    upvoteCount: review.upvoteCount,
+    downvoteCount: review.downvoteCount,
+    myVote: null,
   };
 }
 
@@ -44,24 +56,30 @@ interface ScrollAnchor {
 }
 
 /**
- * Detail-page review controller: list, paging, rating summary and the
- * create/update/delete mutations. `useReviewHighlight` owns the `#review-<id>`
- * scroll and ring, so the two must not be merged.
+ * Detail-page review controller: list, paging, sort, rating summary, votes and
+ * the create/update/delete mutations. `useReviewHighlight` owns the
+ * `#review-<id>` scroll and ring, so the two must not be merged.
+ *
+ * `initialVotes` covers the whole movie (every page), because the wire list is
+ * the shared anonymous read and carries no per-user vote.
  */
 export function useMovieReviews({
   movieSlug,
   initialData,
   initialError,
+  initialVotes,
   anchorRef,
 }: {
   movieSlug: string;
   initialData: ReviewsResponse | null;
   initialError: string | null;
+  initialVotes: ReviewVoteMap;
   anchorRef?: ScrollAnchor;
 }) {
   const { translate, locale } = useLocale();
   const { token, isAuthenticated, user } = useAuth();
   const { notify } = useToast();
+  const { getVote, setVote, isVoting } = useReviewVotes({ initialVotes });
 
   const [rawReviews, setRawReviews] = useState<MovieReview[]>(initialData?.reviews ?? []);
   const [total, setTotal] = useState(initialData?.total ?? 0);
@@ -71,11 +89,16 @@ export function useMovieReviews({
   const [mutating, setMutating] = useState(false);
   const [loadingPage, setLoadingPage] = useState(false);
   const [page, setPage] = useState(1);
+  const [sort, setSort] = useState<ReviewSort>("recent");
   const [retrying, setRetrying] = useState(false);
 
   const reviews = useMemo(
-    () => rawReviews.map((review) => mapReview(review, locale)),
-    [rawReviews, locale],
+    () =>
+      rawReviews.map((review) => ({
+        ...mapReview(review, locale),
+        ...getVote(review),
+      })),
+    [rawReviews, locale, getVote],
   );
 
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
@@ -95,11 +118,12 @@ export function useMovieReviews({
   }, [anchorRef]);
 
   const fetchPage = useCallback(
-    async (targetPage: number): Promise<boolean> => {
+    async (targetPage: number, nextSort: ReviewSort): Promise<boolean> => {
       const result = await loadReviewsAction({
         movieSlug,
         skip: (targetPage - 1) * PAGE_SIZE,
         limit: PAGE_SIZE,
+        sort: nextSort,
       });
       if (result.success) {
         applyData(result.data);
@@ -119,35 +143,41 @@ export function useMovieReviews({
       if (targetPage < 1 || targetPage > totalPages) return;
       setLoadingPage(true);
       try {
-        await fetchPage(targetPage);
+        await fetchPage(targetPage, sort);
       } finally {
         setLoadingPage(false);
       }
     },
-    [loadingPage, page, totalPages, fetchPage],
+    [loadingPage, page, totalPages, sort, fetchPage],
+  );
+
+  const changeSort = useCallback(
+    async (nextSort: ReviewSort) => {
+      if (nextSort === sort || loadingPage) return;
+      setLoadingPage(true);
+      setActionError(null);
+      try {
+        const loaded = await fetchPage(1, nextSort);
+        if (loaded) setSort(nextSort);
+      } finally {
+        setLoadingPage(false);
+      }
+    },
+    [sort, loadingPage, fetchPage],
   );
 
   const retry = useCallback(async () => {
     setRetrying(true);
     setActionError(null);
     try {
-      const result = await loadReviewsAction({
-        movieSlug,
-        skip: 0,
-        limit: PAGE_SIZE,
-      });
-      if (result.success) {
-        applyData(result.data);
-        setPage(1);
-      } else {
-        setError(result.error);
-      }
+      const loaded = await fetchPage(1, sort);
+      if (!loaded) setError(translate("common.error"));
     } catch {
       setError(translate("common.error"));
     } finally {
       setRetrying(false);
     }
-  }, [movieSlug, applyData, translate]);
+  }, [fetchPage, sort, translate]);
 
   const create = useCallback(
     async (rating: number, text: string): Promise<boolean> => {
@@ -162,6 +192,7 @@ export function useMovieReviews({
             comment: text,
             refetchSkip: 0,
             refetchLimit: PAGE_SIZE,
+            sort,
           },
           token,
         );
@@ -183,7 +214,7 @@ export function useMovieReviews({
         setMutating(false);
       }
     },
-    [token, movieSlug, applyData, scrollToAnchor, translate, notify],
+    [token, movieSlug, sort, applyData, scrollToAnchor, translate, notify],
   );
 
   const save = useCallback(
@@ -199,6 +230,7 @@ export function useMovieReviews({
             comment: text,
             refetchSkip: (page - 1) * PAGE_SIZE,
             refetchLimit: PAGE_SIZE,
+            sort,
           },
           token,
         );
@@ -216,7 +248,7 @@ export function useMovieReviews({
         return false;
       }
     },
-    [token, movieSlug, page, applyData, translate, notify],
+    [token, movieSlug, page, sort, applyData, translate, notify],
   );
 
   const remove = useCallback(
@@ -233,6 +265,7 @@ export function useMovieReviews({
             movieSlug,
             refetchSkip: (page - 1) * PAGE_SIZE,
             refetchLimit: PAGE_SIZE,
+            sort,
           },
           token,
         );
@@ -242,7 +275,7 @@ export function useMovieReviews({
           return false;
         }
         if (result.data.reviews.length === 0 && page > 1) {
-          await fetchPage(page - 1);
+          await fetchPage(page - 1, sort);
         } else {
           applyData(result.data);
         }
@@ -254,7 +287,18 @@ export function useMovieReviews({
         return false;
       }
     },
-    [token, movieSlug, page, applyData, fetchPage, translate, notify],
+    [token, movieSlug, page, sort, applyData, fetchPage, translate, notify],
+  );
+
+  const vote = useCallback(
+    async (review: UiReview, nextValue: ReviewVote | null) => {
+      if (!isAuthenticated) {
+        notify(translate("movies.detail.login_to_vote"), { variant: "error" });
+        return;
+      }
+      await setVote(review, nextValue);
+    },
+    [isAuthenticated, notify, translate, setVote],
   );
 
   const average = summary?.average ?? 0;
@@ -276,6 +320,7 @@ export function useMovieReviews({
     hasReviews: rawReviews.length > 0,
     page,
     totalPages,
+    sort,
     loadingPage,
     mutating,
     retrying,
@@ -285,9 +330,12 @@ export function useMovieReviews({
     currentUserId: user?.id ?? null,
     clearActionError: () => setActionError(null),
     goToPage,
+    changeSort,
     retry,
     create,
     save,
     remove,
+    vote,
+    isVoting,
   };
 }

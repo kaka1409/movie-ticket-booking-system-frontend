@@ -9,9 +9,10 @@ import { useLocale } from "@/contexts/LocaleContext";
 import { useMovieDetail } from "@/features/movies/contexts/MovieDetailContext";
 import { useMovieReviews, formatReviewCount } from "@/features/reviews/hooks/useMovieReviews";
 import { useReviewHighlight } from "@/features/reviews/hooks/useReviewHighlight";
-import type { ReviewsResponse } from "@/features/reviews/types";
+import type { ReviewFilter, ReviewVoteMap, ReviewsResponse } from "@/features/reviews/types";
 import WriteReview from "@/components/shared/reviews/mobile/WriteReview";
 import ReviewCard from "@/components/shared/reviews/mobile/ReviewCard";
+import ReviewSortBar from "./ReviewSortBar";
 
 function RatingBar({ stars, pct }: { stars: number; pct: number }) {
   return (
@@ -27,9 +28,16 @@ function RatingBar({ stars, pct }: { stars: number; pct: number }) {
 interface ReviewsProps {
   initialData: ReviewsResponse | null;
   initialError: string | null;
+  initialVotes: ReviewVoteMap;
+  filters: ReviewFilter[];
 }
 
-export default function Reviews({ initialData, initialError }: ReviewsProps) {
+export default function Reviews({
+  initialData,
+  initialError,
+  initialVotes,
+  filters,
+}: ReviewsProps) {
   const { translate } = useLocale();
   const { slug } = useMovieDetail();
   const router = useRouter();
@@ -45,6 +53,7 @@ export default function Reviews({ initialData, initialError }: ReviewsProps) {
     hasReviews,
     page,
     totalPages,
+    sort,
     loadingPage,
     mutating,
     retrying,
@@ -54,14 +63,18 @@ export default function Reviews({ initialData, initialError }: ReviewsProps) {
     currentUserId,
     clearActionError,
     goToPage,
+    changeSort,
     retry,
     create,
     save,
     remove,
+    vote,
+    isVoting,
   } = useMovieReviews({
     movieSlug: slug,
     initialData,
     initialError,
+    initialVotes,
     anchorRef: containerRef,
   });
 
@@ -161,6 +174,15 @@ export default function Reviews({ initialData, initialError }: ReviewsProps) {
       )}
 
       {!error && hasReviews && (
+        <ReviewSortBar
+          filters={filters}
+          active={sort}
+          disabled={loadingPage}
+          onChange={(next) => void changeSort(next)}
+        />
+      )}
+
+      {!error && hasReviews && (
         <div
           ref={containerRef}
           style={{ maxHeight }}
@@ -171,7 +193,10 @@ export default function Reviews({ initialData, initialError }: ReviewsProps) {
               key={review.id}
               review={review}
               isOwner={currentUserId === review.userId}
+              canVote={currentUserId !== review.userId}
+              isVoting={isVoting(review.id)}
               highlighted={highlightedId === review.id}
+              onVote={(next) => void vote(review, next)}
               onSave={(rating, text) => save(review.id, rating, text)}
               onDelete={() => remove(review.id)}
             />

@@ -8,7 +8,7 @@ import type { MyReview } from "@/features/reviews/types";
 import { useLocale } from "@/contexts/LocaleContext";
 import { formatDate } from "@/libs/utils";
 import ExpandableText from "@/components/ui/ExpandableText";
-import Stars from "@/components/ui/Stars";
+import RatingBadge from "@/components/ui/RatingBadge";
 
 /**
  * Own-review card: movie poster + title link, my score (1–10, same scale as the
@@ -63,10 +63,7 @@ export default function ReviewCard({
           </div>
 
           <div className="flex items-center gap-2">
-            <Stars rating={review.rating} size={12} />
-            <span className="text-sm font-medium text-(--color-text-primary)">
-              {review.rating.toFixed(1)}
-            </span>
+            <RatingBadge rating={review.rating} size={13} />
           </div>
 
           <span className="inline-block w-fit text-2xs font-bold tracking-wide uppercase text-(--color-gold) bg-(--color-gold)/10 rounded-full px-2 py-0.5">

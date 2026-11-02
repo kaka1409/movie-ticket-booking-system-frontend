@@ -8,7 +8,7 @@ import type { MyReview } from "@/features/reviews/types";
 import { useLocale } from "@/contexts/LocaleContext";
 import { formatDate } from "@/libs/utils";
 import ExpandableText from "@/components/ui/ExpandableText";
-import Stars from "@/components/ui/Stars";
+import RatingBadge from "@/components/ui/RatingBadge";
 import Button from "@/components/ui/Button";
 
 /**
@@ -69,10 +69,7 @@ export default function ReviewRow({
             </div>
 
             <div className="flex items-center gap-2 rounded-xl border border-(--color-border) bg-(--color-surface-2)/60 px-3 py-1.5 shadow-inner">
-              <Stars rating={review.rating} size={12} />
-              <span className="font-mono text-sm font-black text-(--color-gold)">
-                {review.rating.toFixed(1)}
-              </span>
+              <RatingBadge rating={review.rating} size={13} />
             </div>
           </div>
 

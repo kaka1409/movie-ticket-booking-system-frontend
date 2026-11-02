@@ -2,12 +2,13 @@
 
 import Image from "next/image";
 import { Check, Pencil, Star, Trash2, X } from "lucide-react";
-import Stars from "@/components/ui/Stars";
+import RatingBadge from "@/components/ui/RatingBadge";
+import ReviewVoteButtons from "@/components/shared/reviews/ReviewVoteButtons";
 import ExpandableText from "@/components/ui/ExpandableText";
 import { useLocale } from "@/contexts/LocaleContext";
 import { REVIEW_MAX_LENGTH, REVIEW_RATING_STEPS } from "@/features/reviews/constants";
 import { useReviewEditor } from "@/features/reviews/hooks/useReviewEditor";
-import type { UiReview } from "@/features/reviews/types";
+import type { ReviewVote, UiReview } from "@/features/reviews/types";
 
 function getInitials(name: string): string {
   return name
@@ -21,14 +22,21 @@ function getInitials(name: string): string {
 export default function ReviewCard({
   review,
   isOwner,
+  canVote,
+  isVoting,
   highlighted = false,
+  onVote,
   onSave,
   onDelete,
 }: {
   review: UiReview;
   isOwner: boolean;
+  /** False on the author's own review — tallies only, no buttons. */
+  canVote: boolean;
+  isVoting: boolean;
   /** Deep-link target (`#review-<id>`): gold ring while the highlight is live. */
   highlighted?: boolean;
+  onVote: (next: ReviewVote | null) => void;
   onSave: (rating: number, text: string) => Promise<boolean>;
   onDelete: () => Promise<boolean>;
 }) {
@@ -127,7 +135,7 @@ export default function ReviewCard({
               {review.user}
             </p>
             <div className="mt-0.5 flex items-center gap-2">
-              <Stars rating={review.rating} size={11} />
+              <RatingBadge rating={review.rating} />
               <span className="text-2xs text-(--color-text-muted)">{review.time}</span>
             </div>
           </div>
@@ -164,6 +172,16 @@ export default function ReviewCard({
       <ExpandableText
         text={review.text}
         className="pl-12 text-sm leading-relaxed text-(--color-text-muted)"
+      />
+
+      <ReviewVoteButtons
+        upvoteCount={review.upvoteCount}
+        downvoteCount={review.downvoteCount}
+        myVote={review.myVote}
+        canVote={canVote}
+        isVoting={isVoting}
+        onVote={onVote}
+        className="mt-3 justify-end"
       />
     </article>
   );
