@@ -13,7 +13,7 @@ export default function CheckRow({
     <button
       type="button"
       onClick={onChange}
-      className="flex items-center gap-2.5 py-0.5 group"
+      className="flex items-center gap-2.5 py-0.5 group active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-gold) transition duration-150"
       aria-pressed={checked}
     >
       <span
@@ -38,7 +38,11 @@ export default function CheckRow({
           </svg>
         )}
       </span>
-      <span className={`text-xs text-left font-medium transition-colors`}>{label}</span>
+      <span
+        className={`text-xs text-left font-medium transition-colors group-hover:text-(--color-text-primary)`}
+      >
+        {label}
+      </span>
     </button>
   );
 }

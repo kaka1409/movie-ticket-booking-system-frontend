@@ -44,7 +44,7 @@ export default function FilterSection({
         onClick={() => setIsOpen((open) => !open)}
         aria-expanded={isOpen}
         aria-controls={bodyId}
-        className="flex min-h-9 w-full items-center justify-between gap-2"
+        className="flex min-h-9 w-full items-center justify-between gap-2 active:scale-[0.99] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-gold) transition duration-150"
       >
         <span className="flex min-w-0 items-center gap-2">
           <span className={FILTER_LABEL_CLASS}>{title}</span>
