@@ -33,7 +33,6 @@ interface MovieFormState {
   director: string;
   language: string;
   duration: string;
-  editorialRating: string;
   releaseDate: string;
   ageRatingId: string;
   posterUrl: string;
@@ -57,7 +56,6 @@ const EMPTY_FORM: MovieFormState = {
   director: "",
   language: "",
   duration: "",
-  editorialRating: "",
   releaseDate: "",
   ageRatingId: "",
   posterUrl: "",
@@ -84,7 +82,6 @@ function toFormState(movie: AdminMovie | null): MovieFormState {
     director: movie.director ?? "",
     language: movie.language ?? "",
     duration: movie.duration === undefined ? "" : String(movie.duration),
-    editorialRating: movie.editorialRating === undefined ? "" : String(movie.editorialRating),
     releaseDate: movie.releaseDate ?? "",
     ageRatingId: movie.ageRatingId ?? "",
     posterUrl: movie.posterUrl ?? "",
@@ -188,7 +185,6 @@ export default function MovieFormDialog({
     if (form.director !== "") payload.director = form.director;
     if (form.language !== "") payload.language = form.language;
     if (form.duration !== "") payload.duration = Number(form.duration);
-    if (form.editorialRating !== "") payload.editorialRating = Number(form.editorialRating);
     if (form.releaseDate !== "") payload.releaseDate = form.releaseDate;
     if (form.synopsis !== "") payload.synopsis = form.synopsis;
     if (form.synopsisVi !== "") payload.synopsisVi = form.synopsisVi;
@@ -334,23 +330,6 @@ export default function MovieFormDialog({
               type="date"
               value={values.releaseDate}
               onChange={(event) => updateField("releaseDate", event.target.value)}
-              className={ADMIN_INPUT_CLASS}
-            />
-          </AdminFormField>
-
-          <AdminFormField
-            labelKey="admin.movies.editorial_rating"
-            hintKey="admin.movies.editorial_rating_hint"
-            error={fieldErrors.editorialRating}
-          >
-            <input
-              type="number"
-              min={0}
-              max={10}
-              step={0.1}
-              inputMode="decimal"
-              value={values.editorialRating}
-              onChange={(event) => updateField("editorialRating", event.target.value)}
               className={ADMIN_INPUT_CLASS}
             />
           </AdminFormField>

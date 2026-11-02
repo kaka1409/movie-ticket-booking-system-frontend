@@ -27,10 +27,10 @@ export default function DatePicker({
             key={dateOption.value}
             onClick={() => onSelect(dateOption.value)}
             aria-pressed={active}
-            className={`shrink-0 flex flex-col items-center justify-center w-17 py-2.5 rounded-xl transition duration-150 active:scale-[0.97] border ${
+            className={`shrink-0 flex flex-col items-center justify-center w-17 py-2.5 rounded-xl transition duration-150 active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-gold) border ${
               active
                 ? "bg-(--color-gold) border-(--color-gold) shadow-(--shadow-glow)"
-                : "bg-(--color-surface) border-(--color-border)"
+                : "bg-(--color-surface) border-(--color-border) hover:border-(--color-gold)/50"
             }`}
           >
             <span

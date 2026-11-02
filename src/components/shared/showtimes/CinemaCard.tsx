@@ -61,12 +61,12 @@ export default function CinemaCard({
                 }}
                 disabled={!available}
                 aria-pressed={isTimeActive}
-                className={`px-4 py-2 rounded-xl text-xs font-semibold border transition duration-150 active:scale-[0.96] ${
+                className={`px-4 py-2 rounded-xl text-xs font-semibold border transition duration-150 active:scale-[0.96] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-gold) ${
                   isTimeActive
                     ? "bg-(--color-gold) border-(--color-gold) text-(--color-bg) shadow-(--shadow-glow)"
                     : !available
                       ? "bg-transparent border-(--color-border) text-(--color-text-muted) line-through opacity-50 cursor-not-allowed"
-                      : "bg-(--color-surface-2) border-(--color-border) text-(--color-text-primary)"
+                      : "bg-(--color-surface-2) border-(--color-border) text-(--color-text-primary) hover:border-(--color-gold)/50 hover:text-(--color-gold)"
                 }`}
               >
                 <span>{time}</span>

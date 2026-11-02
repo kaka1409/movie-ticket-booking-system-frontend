@@ -68,7 +68,7 @@ export default function BookingBottomBar({
     );
 
     const activeClasses =
-      "flex items-center justify-center gap-2.5 w-full py-4 rounded-2xl font-extrabold text-sm tracking-widest uppercase transition duration-150 active:scale-[0.98] bg-(--color-gold) text-(--color-bg) shadow-(--shadow-glow)";
+      "flex items-center justify-center gap-2.5 w-full py-4 rounded-2xl font-extrabold text-sm tracking-widest uppercase transition duration-150 hover:brightness-110 active:scale-[0.98] bg-(--color-gold) text-(--color-bg) shadow-(--shadow-glow)";
 
     const disabledClasses =
       "flex items-center justify-center gap-2.5 w-full py-4 rounded-2xl font-extrabold text-sm tracking-widest uppercase bg-(--color-surface) text-(--color-text-muted) border border-(--color-border) cursor-not-allowed";

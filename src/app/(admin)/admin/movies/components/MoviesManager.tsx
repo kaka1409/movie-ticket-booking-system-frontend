@@ -151,12 +151,15 @@ export default function MoviesManager({
       headerKey: "admin.movies.column_rating",
       className: "w-24",
       align: "right",
-      cell: (movie) => (
-        <span className="tabular-nums">
-          {movie.rating.toFixed(1)}
-          <span className="text-[11px] text-(--color-text-muted)"> /10</span>
-        </span>
-      ),
+      cell: (movie) =>
+        movie.rating === null ? (
+          <span className="text-(--color-text-muted)">—</span>
+        ) : (
+          <span className="tabular-nums">
+            {movie.rating.toFixed(1)}
+            <span className="text-[11px] text-(--color-text-muted)"> /10</span>
+          </span>
+        ),
     },
     {
       id: "usage",
