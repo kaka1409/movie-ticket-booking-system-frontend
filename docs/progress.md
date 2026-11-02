@@ -15,7 +15,7 @@
 - [x] Environment documentation — `.env.example` added; README documents `BACKEND_URL`/`API_PREFIX` (evaluated at build time)
 - [x] README accuracy — stale `features/auth/api.ts` reference fixed; env + test sections added
 - [x] Unused dev tooling — `babel-plugin-react-compiler` removed (`reactCompiler: false` unchanged)
-- [ ] Mock data — live vs mock split marked at each function. Booking flow, tickets (listing/detail/transfer/modify/cancel), wishlist, notifications, home QuickBooking and the whole movies catalog are LIVE (no mock in any fetcher). Remaining: `movies/mock.tsx` (`ALL_MOVIES` — the desktop preview popover's field fallback only) and `reviews/mock.ts` (`FILTERS`/`FilterKey` used as the `getReviewFilters` fallback) `[blocked]`
+- [ ] Mock data - live vs mock split marked at each function. Booking flow, tickets (listing/detail/transfer/modify/cancel), wishlist, notifications, home QuickBooking, the whole movies catalog and the reviews block (list, votes, filters) are LIVE (no mock in any fetcher). Remaining: `movies/mock.tsx` (`ALL_MOVIES` - the desktop preview popover's field fallback only) `[blocked]`
 
 ### Level 2 — Security
 

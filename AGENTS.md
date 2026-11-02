@@ -62,7 +62,7 @@ The script also fails an alias import that resolves to nothing (L5), which is wh
 - Movie page components are split `{mobile,desktop,shared}/`: `shared/` carries the pieces **both** device trees drive — `Tabs.tsx` and `SearchBar.tsx` (movies-context adapters) plus the `FilterCheckRow.tsx`/`FilterLabel.tsx` atoms — and is layout-free, so each tree owns its own spacing. `FilterLabel.tsx` also exports its class string (`FILTER_LABEL_CLASS`) for the desktop `FilterSection`, whose label sits inside a `<button>` and therefore has to be a `<span>` (`<p>` is not allowed there). The chip itself is shared at `components/ui/Chip.tsx` (movies filter panel + wishlist status tabs).
 - All cinema data uses **PrimeSeat** brand — Vietnamese addresses, km-based distances, 24h time format.
 - Inline `style={}` props are used for dynamic/computed values (gradients, animation delays, computed widths, aspect ratios). Static styling always uses Tailwind utility classes with CSS custom property syntax.
-- Payment brand art lives in `features/booking/utils/paymentBrand.ts` (`PAYMENT_BRAND_IMAGES` + `getPaymentLabel`/`getPaymentBrandImage`) and is rendered with `next/image`; an id with no asset gets an icon tile, so the catalog can grow without a code change.
+- Payment brand art lives in `features/booking/utils/paymentBrand.ts` (`PAYMENT_BRAND_IMAGES` + `getPaymentLabel`/`getPaymentBrandImage`) and is rendered with `next/image`; an id with no asset gets an icon tile, so the catalog can grow without a code change.\n- Press feedback for interactive elements (hover + active scale + focus-visible gold ring) lives in `src/libs/press.ts`: `PRESS_CLASS` (0.95) for controls, `PRESS_SOFT_CLASS` (0.98) for buttons/cards, `PRESS_ROW_CLASS` (0.99) for full-width rows. `components/ui` cannot import `@/layouts`, so the header re-exports `PRESS_CLASS` as `HEADER_PRESS_CLASS` — never re-define the scale locally. Mobile-only controls get `active:` only (no `hover:`); text links need `inline-block`/`inline-flex` for `transform` to apply.
 - Pages using `useSearchParams()` must wrap content in `<Suspense>` to avoid 404 during SSR.
 
 ### Comment Policy
@@ -100,9 +100,18 @@ The backend now exposes a CRUD-first admin surface (BE `AGENTS.md` "Admin manage
 
 ## Rating (0–10)
 
-- `movie.rating` is the effective score (0–10): the live-review average while any review exists, else the admin-curated `editorialRating`. Every screen, filter, sort and ranking uses this single field — the hero (`{rating}/10`), the cards, `ratingMin/Max` and the reviews block all agree.
-- Reviews are scored **1–10** (same scale, no conversion); the composer, the cards and the histogram all use 10 stars. The reviews block shows `{average}/10` + `Stars`.
-- Admin movie form edits `editorialRating` (0–10, one decimal); the table column shows the effective `rating`. Editing it only moves `rating` while the movie has no reviews.
+- `movie.rating` is `number | null`: the live-review average, and `null` while the movie has no review yet (there is no editorial fallback). A `null` score is **hidden**, never rendered as `0`/`0.0` — the guards are `rating !== null`, and a hidden score takes its neighbouring separator/divider with it.
+- Reviews are scored **1–10** (same scale, no conversion); the composer and the histogram use 10 stars.
+- Two score presentations, deliberately different: the **movie-level** block shows `{average}/10` + the fractional `Stars` row, while **one review** shows the compact `components/ui/RatingBadge.tsx` (`★ 8/10`) — an exact integer score does not need ten icons.
+- The admin movie form has no score input (the server rejects one); the table column shows the crowd score or `—`.
+
+## Review votes
+
+- One vote per user per review, and the author cannot vote on their own review (`403 SELF_VOTE`) — the card still shows both tallies, only the buttons disappear (`canVote`).
+- The API takes the **desired end state**: `PUT /reviews/:id/vote {value}` sets it, `DELETE` clears it, so clicking the active side clears and clicking the other switches. `voteReviewAction` is a plain action, not a `useActionState` dispatcher.
+- Tallies ride on the public list (`upvoteCount`/`downvoteCount`); the caller's own side never does, because `GET /reviews` is cached and anonymous. It arrives once from `GET /reviews/votes?movieSlug=` (cookie read in the RSC loader) as `initialVotes`, and `useReviewVotes` keeps it as a local override map so paging does not lose it.
+- `useReviewVotes` paints optimistically, then overwrites with the server's recomputed counts (the server derives them from the rows) and rolls the row back with a toast on failure. A vote deliberately does **not** invalidate the `reviews` tag — that would refetch the list under the caller.
+- `sort=helpful` ranks by upvotes; the label comes from `GET /reviews/filters`, so the sort bar is data-driven like the other filters.
 
 - Route groups, layouts, shared components, hooks: `docs/architecture.md`
 - Per-page implementation detail: `docs/pages.md`

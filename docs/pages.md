@@ -237,7 +237,7 @@ Validation: Full name (required), phone (required), DOB as date picker. `loading
 - `components/mobile/ReviewList.tsx` — review list wrapper
 - `components/mobile/ReviewCard.tsx` — individual review card with rating, text, date
 - `components/mobile/FilterBar.tsx` — filter bar for rating-based filtering
-- `components/shared/StarRating.tsx` — star rating display component
+- `components/shared/StarRating.tsx` - star rating display component (the movie-level fractional row); a **single review** renders the compact `ui/RatingBadge` (`★ 8/10`) instead
 - `components/shared/LoadMoreButton.tsx` — load more pagination
 - `components/desktop/ReviewContent.tsx` — count line + `ui/Tabs stretch={false}` sort + `ReviewRow` cards (poster, title, rating, `ExpandableText` body, two-tap delete) + Load more + `EmptyState`; the listing state (paging, sort, delete) comes from `features/reviews/hooks/useMyReviews.ts`, shared with the mobile list. `ReviewRow`'s destructive confirm is its own red `<button>` (Button `size="sm"` metrics) rather than a recoloured gold `primary`.
 
@@ -383,6 +383,7 @@ Both pages are plain server components with no `<Suspense>` — nothing client-s
 
 - `(blank)/movies/[slug]/page.tsx` — streamed: awaits `params` + locale + `getMovieDetail` (404 → in-page `MobileMovieNotFound`; decides metadata) then paints both trees. Showtimes and reviews stream into their own `<Suspense>` per tree; JSON-LD for Movie schema flushes in a `fallback={null}` boundary.
 - New "You may also like" section (`components/{mobile,desktop}/Recommended.tsx`) streams at the bottom (mobile) / below the content+rail block (desktop) from `features/movies/api.ts` (`cache()` loader over `GET /movies/:slug/related`). Empty/error -> render `null`. Mobile uses `ui/MovieCard` in a 2-column grid with client-side pagination (4 cards/page, `RECOMMENDED_MOBILE_PAGE_SIZE`); desktop uses the shared `features/movies/components/MoviePosterCard.tsx` in a 6-card grid (`RECOMMENDED_DESKTOP_COUNT`).
+- Reviews block: `loadReviewBlock` (`sections.tsx`) reads the first page, the caller's own votes (`GET /reviews/votes`, cookie — empty for anonymous) and the localized sort labels in one pass, then both trees render `Reviews`. Per-review scores are the compact `ui/RatingBadge` (`★ 8/10`), not the ten-icon row; the movie-level `{average}/10` + `Stars` + histogram are unchanged. Each card carries `shared/reviews/ReviewVoteButtons` (optimistic, one vote per review, own review = tallies only) and the list is topped by a route-local `ReviewSortBar` (`desktop/` pill row, `mobile/` scrollable chips) driven by `GET /reviews/filters` (`recent` · `helpful` · `highest` · `lowest`).
 
 ## Shared Booking Components
 
@@ -413,7 +414,7 @@ URL scheme for movies page with query params:
 | `format`                  | `2D`, `IMAX`, `4DX`                   | empty         |
 | `ageRating`               | `P`, `PG-13`, `R`, `NC-17`            | empty         |
 
-`ratingMin`/`ratingMax` are clamped into 0–10 on read and an inverted pair is dropped before it can reach the API (the backend answers `400` for `min > max`); a bound sitting on its edge (min `0`, max `10`) means "unbounded" and is omitted. The old single-bound `?rating=` param is gone — the panel and the API move together (`forbidNonWhitelisted` turns a stray `rating` into a `400`).
+`ratingMin`/`ratingMax` are clamped into 0–10 on read and an inverted pair is dropped before it can reach the API (the backend answers `400` for `min > max`); a bound sitting on its edge (min `0`, max `10`) means "unbounded" and is omitted. Any sent bound means "the movie must have a score", so movies whose `rating` is `null` (no review yet) drop out of the filtered list. The old single-bound `?rating=` param is gone — the panel and the API move together (`forbidNonWhitelisted` turns a stray `rating` into a `400`).
 
 Home page "See All" / "Explore All" buttons link to movies page with appropriate `status` param.
 
