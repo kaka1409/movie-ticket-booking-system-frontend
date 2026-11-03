@@ -3,7 +3,7 @@
 import { Search } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useMovieList } from "@/features/movies/contexts/MovieListContext";
-import { useAppendReveal } from "@/hooks/useAppendReveal";
+import { useAppendFade } from "@/hooks/useAppendFade";
 import Button from "@/components/ui/Button";
 import SectionFallback from "@/components/ui/SectionFallback";
 import { SkeletonBar } from "@/components/ui/Skeleton";
@@ -12,13 +12,14 @@ import MoviePosterCard from "@/components/shared/movies/MoviePosterCard";
 /**
  * Desktop movies grid: 3 columns, 4 from `xl:`. "Bookable" is the ACTIVE TAB,
  * not `movie.status` — a Coming Soon row can never offer a CTA whatever the
- * payload says. Both trees run `useAppendReveal`; the hidden one is a no-op.
+ * payload says.
  */
 export default function MovieGrid() {
   const { translate } = useLocale();
   const {
     activeTab,
     movies,
+    listKey,
     hasMore,
     isLoadingMore,
     isFetching,
@@ -29,11 +30,7 @@ export default function MovieGrid() {
   } = useMovieList();
 
   /* Hooks must run before any early return */
-  const { containerRef: gridRef, animThreshold } = useAppendReveal<HTMLDivElement>({
-    count: movies.length,
-    cardSelector: "[data-movie-card]",
-    swapKey: activeTab,
-  });
+  const { animThreshold } = useAppendFade({ count: movies.length, swapKey: listKey });
 
   const isBookable = activeTab === "now_showing";
 
@@ -99,17 +96,12 @@ export default function MovieGrid() {
   return (
     <>
       <div
-        ref={gridRef}
         className={`grid grid-cols-3 gap-6 transition-opacity xl:grid-cols-4 ${
           isFetching ? "opacity-60" : "opacity-100"
         }`}
       >
         {movies.map((movie, index) => (
-          <div
-            key={movie.id}
-            data-movie-card
-            className={index >= animThreshold ? "animate-fade-in" : ""}
-          >
+          <div key={movie.id} className={index >= animThreshold ? "animate-fade-in" : ""}>
             <MoviePosterCard movie={movie} isBookable={isBookable} />
           </div>
         ))}

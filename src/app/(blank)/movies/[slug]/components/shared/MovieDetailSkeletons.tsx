@@ -102,18 +102,36 @@ export function DesktopRailSkeleton() {
   );
 }
 
-/** Desktop content column: reviews header, rating row, two wide review cards. */
+/** Bars the skeleton draws: a plausible distribution, only the silhouette matters. */
+const DESKTOP_CHART_BAR_HEIGHTS = [30, 55, 40, 75, 50, 85, 65, 45, 20, 10];
+
+/** Desktop content column: reviews header, rating panel (score + column chart), two wide review cards. */
 export function DesktopReviewsSkeleton() {
   return (
     <div className="space-y-5">
       <Skeleton className="h-6 w-24 rounded-full" />
 
-      <div className="flex items-center gap-6">
-        <Skeleton className="h-14 w-20 shrink-0 rounded-lg" />
-        <div className="flex-1 space-y-2">
-          {Array.from({ length: 5 }).map((_, index) => (
-            <Skeleton key={index} className="h-1.5 w-full rounded-full" />
-          ))}
+      <div className="flex items-center gap-8 rounded-(--radius-lg) border border-(--color-border) bg-(--color-surface) p-5">
+        <div className="flex shrink-0 flex-col items-center gap-2 border-r border-(--color-border) pr-8">
+          <Skeleton className="h-10 w-20 rounded-lg" />
+          <Skeleton className="h-3 w-24 rounded-full" />
+          <Skeleton className="h-2.5 w-16 rounded-full" />
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="flex h-32 items-end gap-1.5 border-b border-(--color-border)">
+            {DESKTOP_CHART_BAR_HEIGHTS.map((height, index) => (
+              <Skeleton
+                key={index}
+                className="flex-1 rounded-t-sm"
+                style={{ height: `${height}%` }}
+              />
+            ))}
+          </div>
+          <div className="mt-1.5 flex gap-1.5">
+            {Array.from({ length: DESKTOP_CHART_BAR_HEIGHTS.length }).map((_, index) => (
+              <Skeleton key={index} className="h-2 flex-1 rounded-full" />
+            ))}
+          </div>
         </div>
       </div>
 

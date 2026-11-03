@@ -16,6 +16,11 @@ interface MovieListState {
 /** What the movies page needs from the feed: rows, pager, loading and retry. */
 export interface MovieListFeed {
   movies: Movie[];
+  /**
+   * Identity of the list on screen (tab + committed query/filters). A new key
+   * means the rows were replaced, not appended — see `useAppendFade`.
+   */
+  listKey: string;
   /** Total matching results on the server (from meta.total). */
   total: number;
   hasMore: boolean;
@@ -191,6 +196,9 @@ export function useMovieListFeed({
   const isFetching = activeList.queryKey !== currentKey;
   const fetchError = fetchFailure && fetchFailure.key === currentKey ? fetchFailure.error : null;
   const total = activeList.meta?.total ?? activeList.movies.length;
+  // The rows on screen belong to one (tab, query) pair; `activeTab` alone would
+  // report a search or filter change as an append.
+  const listKey = `${activeTab}|${currentKey}`;
 
   const retryFetch = useCallback(() => {
     setFetchFailure(null);
@@ -271,6 +279,7 @@ export function useMovieListFeed({
 
   return {
     movies: activeList.movies,
+    listKey,
     total,
     hasMore: activeList.meta?.hasNextPage ?? false,
     isLoadingMore,

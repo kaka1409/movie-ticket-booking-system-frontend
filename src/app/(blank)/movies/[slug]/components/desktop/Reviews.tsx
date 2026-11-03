@@ -7,28 +7,12 @@ import Stars from "@/components/ui/Stars";
 import ReviewCard from "@/components/shared/reviews/desktop/ReviewCard";
 import WriteReview from "@/components/shared/reviews/desktop/WriteReview";
 import ReviewSortBar from "./ReviewSortBar";
+import RatingChart from "./RatingChart";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useMovieDetail } from "@/features/movies/contexts/MovieDetailContext";
 import { useMovieReviews, formatReviewCount } from "@/features/reviews/hooks/useMovieReviews";
 import { useReviewHighlight } from "@/features/reviews/hooks/useReviewHighlight";
 import type { ReviewFilter, ReviewVoteMap, ReviewsResponse } from "@/features/reviews/types";
-
-function RatingBar({ stars, pct }: { stars: number; pct: number }) {
-  return (
-    <div className="flex items-center gap-2">
-      <span className="w-4 text-right text-2xs font-semibold text-(--color-text-muted)">
-        {stars}
-      </span>
-      <div className="h-1 flex-1 overflow-hidden rounded-full bg-(--color-border)">
-        <div
-          className="h-full rounded-full bg-(--color-gold) transition duration-700"
-          style={{ width: `${pct}%` }}
-        />
-      </div>
-      <span className="w-7 text-2xs text-(--color-text-muted)">{pct}%</span>
-    </div>
-  );
-}
 
 export default function Reviews({
   initialData,
@@ -95,7 +79,7 @@ export default function Reviews({
       </h2>
 
       <div className="mt-5 mb-6 flex items-center gap-8 rounded-(--radius-lg) border border-(--color-border) bg-(--color-surface) p-5">
-        <div className="flex shrink-0 flex-col items-center gap-1">
+        <div className="flex shrink-0 flex-col items-center gap-1 border-r border-(--color-border) pr-8">
           <span className="flex items-baseline gap-0.5">
             <span className="text-5xl leading-none font-extrabold text-(--color-gold)">
               {average.toFixed(1)}
@@ -108,10 +92,8 @@ export default function Reviews({
           </span>
         </div>
 
-        <div className="flex-1 space-y-1">
-          {breakdown.map((bar) => (
-            <RatingBar key={bar.stars} stars={bar.stars} pct={bar.pct} />
-          ))}
+        <div className="min-w-0 flex-1">
+          <RatingChart breakdown={breakdown} />
         </div>
       </div>
 

@@ -3,7 +3,7 @@
 import { Search } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useMovieList } from "@/features/movies/contexts/MovieListContext";
-import { useAppendReveal } from "@/hooks/useAppendReveal";
+import { useAppendFade } from "@/hooks/useAppendFade";
 import MovieCard from "@/components/shared/movies/MovieCard";
 import SectionFallback from "@/components/ui/SectionFallback";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -11,9 +11,9 @@ import { Skeleton } from "@/components/ui/Skeleton";
 export default function MovieGrid() {
   const { translate } = useLocale();
   const {
-    activeTab,
     appliedQuery,
     movies,
+    listKey,
     total,
     hasMore,
     isLoadingMore,
@@ -26,11 +26,7 @@ export default function MovieGrid() {
   } = useMovieList();
 
   /* Hooks must run before any early return*/
-  const { containerRef: gridRef, animThreshold } = useAppendReveal<HTMLDivElement>({
-    count: movies.length,
-    cardSelector: "[data-movie-card]",
-    swapKey: activeTab,
-  });
+  const { animThreshold } = useAppendFade({ count: movies.length, swapKey: listKey });
 
   const showResultsCount = activeFilterCount > 0 || appliedQuery;
 
@@ -64,7 +60,6 @@ export default function MovieGrid() {
 
       {movies.length > 0 ? (
         <div
-          ref={gridRef}
           className={`grid grid-cols-2 gap-x-3 gap-y-6 px-(--space-md) transition-opacity ${
             isFetching ? "opacity-60" : "opacity-100"
           }`}
@@ -72,7 +67,6 @@ export default function MovieGrid() {
           {movies.map((movie, index) => (
             <div
               key={movie.id}
-              data-movie-card
               className={`w-full ${index >= animThreshold ? "animate-fade-in" : ""}`}
             >
               <MovieCard

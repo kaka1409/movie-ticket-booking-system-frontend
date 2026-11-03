@@ -36,6 +36,8 @@ interface MovieListContextType {
     options: FilterOptions[keyof FilterOptions],
   ) => void;
   movies: Movie[];
+  /** Identity of the list on screen (tab + committed query/filters). */
+  listKey: string;
   /** Total matching results on the server (from meta.total). */
   total: number;
   hasMore: boolean;

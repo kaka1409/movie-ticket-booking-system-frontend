@@ -2,6 +2,7 @@
 
 import { useLocale } from "@/contexts/LocaleContext";
 import { useMovieList } from "@/features/movies/contexts/MovieListContext";
+import DesktopPageHeader from "@/components/shared/DesktopPageHeader";
 
 /**
  * Desktop page heading for /movies: the active tab as the title and the server
@@ -17,16 +18,11 @@ export default function MoviesHeader() {
   const { activeTab, total, isFetching } = useMovieList();
 
   return (
-    <header className="min-w-0">
-      <h1 className="flex items-center gap-2.5 text-[26px] font-black tracking-tight text-white">
-        <span className="inline-block h-[26px] w-1 rounded-sm bg-(--color-gold)" />
-        {translate(`movies.${activeTab}`)}
-      </h1>
-      {/* Held open while the first page lands — `total` reads 0 until then,
-          and "0 Results Found" would be a lie. */}
-      <p className="mt-1.5 min-h-4 text-xs text-(--color-text-muted)">
-        {isFetching && total === 0 ? "" : `${total} ${translate("movies.results_found")}`}
-      </p>
-    </header>
+    <DesktopPageHeader
+      title={translate(`movies.${activeTab}`)}
+      // Held open while the first page lands — `total` reads 0 until then,
+      // and "0 Results Found" would be a lie.
+      subtitle={isFetching && total === 0 ? "" : `${total} ${translate("movies.results_found")}`}
+    />
   );
 }
