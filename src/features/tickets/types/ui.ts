@@ -156,6 +156,8 @@ export interface EligibleShowtime {
   time: string;
   room: string;
   date: string;
+  /** Catalog format name (2D / IMAX / 3D) — the card groups its chips by it. */
+  format: string;
   showtimeId?: string;
   /** The target room differs from the ticket's, so its seats must be picked again. */
   requiresSeatSelection: boolean;

@@ -1,5 +1,4 @@
 import { Skeleton } from "@/components/ui/Skeleton";
-import SuccessIcon from "@/components/shared/SuccessIcon";
 
 export default function ModifySuccessLoading() {
   return (

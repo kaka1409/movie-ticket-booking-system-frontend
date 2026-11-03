@@ -36,9 +36,9 @@ export default function TicketsSkeleton() {
   return (
     <div className="mx-auto w-full max-w-7xl px-6 py-8 lg:px-8">
       <div className="flex flex-wrap items-end justify-between gap-4">
-        <div className="space-y-2">
-          <SkeletonBar className="h-7 w-52 rounded" />
-          <SkeletonBar className="h-4 w-24 rounded-full" />
+        <div className="min-w-0">
+          <SkeletonBar className="h-[26px] w-52 rounded" />
+          <SkeletonBar className="mt-1.5 h-3 w-24 rounded-full" />
         </div>
         <div className="flex gap-8">
           <SkeletonBar className="h-5 w-24 rounded-full" />
@@ -46,7 +46,7 @@ export default function TicketsSkeleton() {
         </div>
       </div>
 
-      <div className="mt-6 rounded-2xl border border-(--color-border) bg-(--color-surface) p-5 lg:p-6">
+      <div className="mt-8 rounded-2xl border border-(--color-border) bg-(--color-surface) p-5 lg:p-6">
         <div className="surface-raised grid gap-5 lg:grid-cols-2">
           {Array.from({ length: 4 }).map((_, index) => (
             <TicketStubSkeleton key={index} />

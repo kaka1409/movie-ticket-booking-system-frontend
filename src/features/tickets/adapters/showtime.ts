@@ -13,6 +13,7 @@ export function toEligibleShowtime(row: EligibleShowtimeWire): EligibleShowtime 
     cinemaName: row.cinema.name,
     address: "",
     distance: "",
+    format: row.format,
     requiresSeatSelection: row.requiresSeatSelection,
   };
 }

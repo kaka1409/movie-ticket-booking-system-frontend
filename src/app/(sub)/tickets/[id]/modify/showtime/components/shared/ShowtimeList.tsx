@@ -25,6 +25,7 @@ function groupToCinemas(showtimes: EligibleShowtime[], stripDate?: boolean): Cin
       room: slot.room,
       available: true,
       date: stripDate ? undefined : slot.date,
+      format: slot.format,
     })),
   }));
 }

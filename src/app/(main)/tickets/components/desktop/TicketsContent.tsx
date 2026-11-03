@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Ticket, Film, Calendar } from "lucide-react";
+import { Ticket, Film } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import type { TicketPageMeta } from "@/features/tickets/types";
 import type { PastTicket, UpcomingTicket } from "@/features/tickets/types";
@@ -11,6 +11,7 @@ import Pager from "@/app/(main)/tickets/components/shared/Pager";
 import PastTicketCard from "./PastTicketCard";
 import UpcomingTicketCard from "./UpcomingTicketCard";
 import LocaleTransition from "@/components/ui/LocaleTransition";
+import DesktopPageHeader from "@/components/shared/DesktopPageHeader";
 
 type TicketTab = "upcoming" | "past";
 
@@ -35,40 +36,25 @@ export default function TicketsContent({
 
   return (
     <div className="mx-auto w-full max-w-7xl px-6 py-8 lg:px-8">
-      {/* Page Header */}
-      <header className="flex flex-wrap items-end justify-between gap-4 border-b border-(--color-border)/50 pb-6">
-        <div className="min-w-0">
-          <div className="flex items-center gap-2">
-            <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-(--color-gold)/10 text-(--color-gold)">
-              <Calendar size={15} />
-            </span>
-            <p className="text-xs font-bold tracking-widest text-(--color-gold) uppercase">
-              {translate("nav.tickets")}
-            </p>
-          </div>
-
-          <h1 className="mt-2 text-3xl font-black tracking-tight text-white">
-            {translate(`tickets.${tab}`)}
-          </h1>
-          <p className="mt-1 text-sm text-(--color-text-muted)">
-            {meta.total} {translate("common.tickets")}
-          </p>
-        </div>
-
-        <Tabs
-          ariaLabel={translate("aria.tickets_tabs")}
-          activeTab={tab}
-          linkFor={(key) => `/tickets?tab=${key}`}
-          stretch={false}
-          tabs={[
-            { key: "upcoming", label: translate("tickets.upcoming") },
-            { key: "past", label: translate("tickets.past") },
-          ]}
-        />
-      </header>
+      <DesktopPageHeader
+        title={translate(`tickets.${tab}`)}
+        subtitle={`${meta.total} ${translate("common.tickets")}`}
+        action={
+          <Tabs
+            ariaLabel={translate("aria.tickets_tabs")}
+            activeTab={tab}
+            linkFor={(key) => `/tickets?tab=${key}`}
+            stretch={false}
+            tabs={[
+              { key: "upcoming", label: translate("tickets.upcoming") },
+              { key: "past", label: translate("tickets.past") },
+            ]}
+          />
+        }
+      />
 
       {/* Main Listing Section */}
-      <section className="mt-6 rounded-2xl border border-(--color-border) bg-(--color-surface) p-5 lg:p-7 shadow-(--shadow-card)">
+      <section className="mt-8 rounded-2xl border border-(--color-border) bg-(--color-surface) p-5 lg:p-7 shadow-(--shadow-card)">
         <div className="surface-raised">
           {isEmpty ? (
             <EmptyState
