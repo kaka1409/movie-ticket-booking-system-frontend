@@ -61,6 +61,13 @@ export interface ReviewsResponse {
   ratingSummary: ReviewSummary;
 }
 
+/** ReviewsResponse → one histogram bar: how many reviews gave this score. */
+export interface RatingBreakdown {
+  stars: number;
+  count: number;
+  pct: number;
+}
+
 /** A review as the movie-detail cards render it (wire row already mapped to labels). */
 export interface UiReview {
   id: string;

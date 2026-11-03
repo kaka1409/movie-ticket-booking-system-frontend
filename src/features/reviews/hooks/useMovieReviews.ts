@@ -11,6 +11,7 @@ import {
 import { useReviewVotes } from "./useReviewVotes";
 import type {
   MovieReview,
+  RatingBreakdown,
   ReviewSort,
   ReviewSummary,
   ReviewVote,
@@ -44,11 +45,6 @@ function mapReview(review: MovieReview, locale: "en" | "vn"): UiReview {
 export function formatReviewCount(count: number): string {
   if (count >= 1000) return `${(count / 1000).toFixed(1)}k`;
   return String(count);
-}
-
-interface RatingBreakdown {
-  stars: number;
-  pct: number;
 }
 
 interface ScrollAnchor {
@@ -307,6 +303,7 @@ export function useMovieReviews({
     () =>
       (summary?.ratingSummary ?? []).map((entry) => ({
         stars: entry.stars,
+        count: entry.count,
         pct: ratingCount > 0 ? Math.round((entry.count / ratingCount) * 100) : 0,
       })),
     [summary, ratingCount],
