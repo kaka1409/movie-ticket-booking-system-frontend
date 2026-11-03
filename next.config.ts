@@ -54,6 +54,7 @@ const nextConfig: NextConfig = {
       `img-src 'self' data: blob: ${IMAGE_HOSTS.map((h) => `https://${h}`).join(" ")}`,
       "font-src 'self' data:",
       `connect-src 'self' ${backendOrigin} ${backendWsOrigin} ${backendWsOrigin.replace(/^ws/, "wss")}`,
+      "frame-src 'self' https://maps.google.com https://www.google.com",
       "frame-ancestors 'none'",
       "base-uri 'self'",
       "form-action 'self'",
@@ -66,7 +67,7 @@ const nextConfig: NextConfig = {
       { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
       {
         key: "Permissions-Policy",
-        value: "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
+        value: "camera=(), microphone=(), geolocation=(self), payment=(), usb=()",
       },
       {
         key: "Strict-Transport-Security",
