@@ -11,8 +11,6 @@ export default function DatePickerWrapper({ dates }: { dates: DateOption[] }) {
   const pathname = usePathname();
   const { date: selectedDate, setCinemaDate } = useBooking();
 
-  /* Picking another day clears the slot in the same reducer transition and
-     re-renders the page server-side with that day's showtimes. */
   const setSelectedDate = useCallback(
     (nextDate: string) => {
       if (nextDate === selectedDate) return;

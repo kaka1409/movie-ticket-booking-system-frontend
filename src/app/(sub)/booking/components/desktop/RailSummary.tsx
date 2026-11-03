@@ -1,9 +1,8 @@
 "use client";
 
 import { useBooking } from "@/features/booking/contexts/BookingContext";
-import { useLocale } from "@/contexts/LocaleContext";
-import MicroLabel from "@/components/ui/MicroLabel";
 import PriceBreakdown from "@/components/shared/PriceBreakdown";
+import RailTheater from "./RailTheater";
 
 /**
  * The tail of the desktop rail on the last steps: which theater/day the seats
@@ -11,25 +10,11 @@ import PriceBreakdown from "@/components/shared/PriceBreakdown";
  * `BookingRail`, so this stays purely booking-state.
  */
 export default function RailSummary() {
-  const { translate } = useLocale();
-  const { cinemaName, room, date, time, selectedSeats, combos, foods, total } = useBooking();
-
-  const theater = [cinemaName, room].filter(Boolean).join(", ");
+  const { selectedSeats, combos, foods, total } = useBooking();
 
   return (
     <>
-      <div className="space-y-1">
-        <MicroLabel className="text-(--color-text-muted)">
-          {translate("booking.common.theater")}
-        </MicroLabel>
-        <p className="text-sm font-bold text-(--color-text-primary)">{theater || "—"}</p>
-        {date && time && (
-          <p className="text-xs text-(--color-text-muted)">
-            {date} • {time}
-          </p>
-        )}
-      </div>
-
+      <RailTheater />
       <PriceBreakdown seats={selectedSeats} snacks={[...combos, ...foods]} total={total} />
     </>
   );

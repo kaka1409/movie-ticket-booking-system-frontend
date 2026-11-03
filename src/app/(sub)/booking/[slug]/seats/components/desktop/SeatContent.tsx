@@ -10,6 +10,8 @@ import Button from "@/components/ui/Button";
 import MicroLabel from "@/components/ui/MicroLabel";
 import BookingStepLayout from "@/app/(sub)/booking/components/desktop/BookingStepLayout";
 import CountdownRow from "@/app/(sub)/booking/components/desktop/CountdownRow";
+import RailTheater from "@/app/(sub)/booking/components/desktop/RailTheater";
+import RailSeats from "@/app/(sub)/booking/components/desktop/RailSeats";
 
 /**
  * Desktop seats step: the map arrives as `slots`, so the shell — stepper, title,
@@ -25,13 +27,8 @@ import CountdownRow from "@/app/(sub)/booking/components/desktop/CountdownRow";
 export default function SeatContent({ slots }: { slots: ReactNode }) {
   const { translate, locale } = useLocale();
   const { selectedSeats } = useBooking();
-  const { labels, hasSeats, isReserving, errorText, submit } = useSeatHoldSubmit();
+  const { hasSeats, isReserving, errorText, submit } = useSeatHoldSubmit();
 
-  // Chairs, not cells — a sweetbox cell covers two seats.
-  const seatCount = selectedSeats.reduce(
-    (total, seat) => total + Math.max(seat.seatIds.length, 1),
-    0,
-  );
   const ticketPrice = selectedSeats.reduce((total, seat) => total + seat.price, 0);
 
   return (
@@ -41,14 +38,8 @@ export default function SeatContent({ slots }: { slots: ReactNode }) {
         <div className="space-y-4">
           <CountdownRow />
 
-          <div>
-            <MicroLabel className="text-(--color-text-muted)">
-              {translate("booking.common.seats")} ({seatCount})
-            </MicroLabel>
-            <p className="mt-1 text-sm leading-snug font-bold text-(--color-text-primary)">
-              {labels || "—"}
-            </p>
-          </div>
+          <RailTheater />
+          <RailSeats />
 
           {ticketPrice > 0 && (
             <div className="flex items-end justify-between">

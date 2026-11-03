@@ -10,6 +10,8 @@ import Button from "@/components/ui/Button";
 import MicroLabel from "@/components/ui/MicroLabel";
 import BookingStepLayout from "@/app/(sub)/booking/components/desktop/BookingStepLayout";
 import CountdownRow from "@/app/(sub)/booking/components/desktop/CountdownRow";
+import RailTheater from "@/app/(sub)/booking/components/desktop/RailTheater";
+import RailSeats from "@/app/(sub)/booking/components/desktop/RailSeats";
 import SnackHeader from "../shared/SnackHeader";
 
 /**
@@ -38,6 +40,9 @@ export default function SnackContent({ slots }: { slots: ReactNode }) {
       summary={
         <div className="space-y-4">
           <CountdownRow />
+
+          <RailTheater />
+          <RailSeats />
 
           <div>
             <MicroLabel className="text-(--color-text-muted)">

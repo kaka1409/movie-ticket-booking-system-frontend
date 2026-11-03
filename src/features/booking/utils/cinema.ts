@@ -135,6 +135,8 @@ export function toCinemas(groups: ShowtimesResponse["cinemas"]): Cinema[] {
     id: group.id,
     name: group.name,
     address: group.address,
+    latitude: group.latitude,
+    longitude: group.longitude,
     badge: group.badge,
     badgeColor: "",
     showtimes: group.showtimes.map((slot) => ({
@@ -142,6 +144,7 @@ export function toCinemas(groups: ShowtimesResponse["cinemas"]): Cinema[] {
       time: slot.startTime,
       room: slot.roomName,
       available: slot.isAvailable,
+      format: slot.format,
     })),
   }));
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Clock } from "lucide-react";
+import { Clock, MapPin } from "lucide-react";
 import type { ReactNode } from "react";
 import { useBooking } from "@/features/booking/contexts/BookingContext";
 import { useLocale } from "@/contexts/LocaleContext";
@@ -33,9 +33,12 @@ export default function BookingRail({
   /** Movie the step itself holds; falls back to the draft snapshot. */
   movie?: Movie;
 }) {
-  const { movie: draftMovie } = useBooking();
+  const { movie: draftMovie, cinemaName, location } = useBooking();
   const { translate } = useLocale();
   const movieSnapshot = movie ?? draftMovie;
+  const mapQuery = location || cinemaName;
+  const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`;
+  const mapEmbedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(mapQuery)}&output=embed`;
 
   return (
     <aside className="lg:sticky lg:top-24 lg:self-start">
@@ -90,6 +93,27 @@ export default function BookingRail({
 
         {summary && (
           <div className="mt-5 space-y-4 border-t border-(--color-border) pt-5">{summary}</div>
+        )}
+
+        {mapQuery && (
+          <div className="mt-5 overflow-hidden rounded-xl border border-(--color-border)">
+            <iframe
+              title={`${translate("booking.common.map_location")} — ${cinemaName}`}
+              src={mapEmbedUrl}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              className="h-36 w-full border-0"
+            />
+            <a
+              href={mapUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center gap-2 border-t border-(--color-border) px-3 py-2.5 text-xs font-semibold text-(--color-gold) hover:bg-(--color-surface)"
+            >
+              <MapPin size={14} />
+              {translate("booking.common.open_map")}
+            </a>
+          </div>
         )}
 
         <div className="mt-5">{action}</div>

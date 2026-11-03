@@ -28,12 +28,23 @@ function CinemaCardsSkeleton({ raised, count }: { raised: boolean; count: number
       {Array.from({ length: count }).map((_, index) => (
         <SkeletonCard key={index} className="p-0">
           <div className="space-y-2 p-4">
-            <SurfaceSkeleton raised={raised} className="h-3.5 w-2/3 rounded-full" />
+            <div className="flex items-center justify-between gap-3">
+              <SurfaceSkeleton raised={raised} className="h-3.5 w-2/3 rounded-full" />
+              <SurfaceSkeleton raised={raised} className="h-5 w-14 shrink-0 rounded-full" />
+            </div>
             <SurfaceSkeleton raised={raised} className="h-2.5 w-1/2 rounded-full" />
-            <div className="flex flex-wrap gap-2 pt-2">
-              {Array.from({ length: 4 }).map((_, chipIndex) => (
-                <SurfaceSkeleton key={chipIndex} raised={raised} className="h-8 w-16 rounded-xl" />
-              ))}
+            <SurfaceSkeleton raised={raised} className="h-3 w-24 rounded-full" />
+            <div className="space-y-2 pt-1">
+              <SurfaceSkeleton raised={raised} className="h-2 w-8 rounded-full" />
+              <div className="flex flex-wrap gap-2">
+                {Array.from({ length: 4 }).map((_, chipIndex) => (
+                  <SurfaceSkeleton
+                    key={chipIndex}
+                    raised={raised}
+                    className="h-8 w-16 rounded-xl"
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </SkeletonCard>

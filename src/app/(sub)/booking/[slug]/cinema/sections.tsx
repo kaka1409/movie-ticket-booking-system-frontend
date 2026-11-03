@@ -5,7 +5,7 @@ import type { ShowtimeDateOption, ShowtimesResponse } from "@/features/showtimes
 import type { Movie } from "@/features/movies/types";
 import { toCinemas, toDateOptions } from "@/features/booking/utils/cinema";
 import CinemaList from "./components/mobile/CinemaList";
-import DatePickerWrapper from "./components/mobile/DatePickerWrapper";
+import DatePickerWrapper from "./components/shared/DatePickerWrapper";
 import SearchBar from "./components/mobile/SearchBar";
 
 type DatesPromise = ReturnType<typeof getShowtimeDates>;
