@@ -28,6 +28,7 @@ const SUPPORT_LINKS = [
 ] as const;
 
 const BOTTOM_LINKS = [
+  { labelKey: "layout.footer.credits", href: "/credits" },
   { labelKey: "layout.footer.privacy", href: "#" },
   { labelKey: "layout.footer.terms", href: "#" },
   { labelKey: "layout.footer.cookies", href: "#" },
