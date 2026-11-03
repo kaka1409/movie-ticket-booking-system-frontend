@@ -15,6 +15,8 @@ import type {
   AdminShowtimeBoard,
   AdminUser,
   AdminUserRole,
+  MovieResearchCandidate,
+  MovieResearchRun,
 } from "./types";
 
 /**
@@ -73,6 +75,24 @@ export async function getAdminMovies(params: {
     },
     meta: result.meta,
   };
+}
+
+export async function getMovieResearchCandidates(status?: string) {
+  return apiFetch<MovieResearchCandidate[]>(
+    `/movie-research/candidates${buildQuery({ status })}`,
+    NO_STORE,
+    undefined,
+    await getRequestCookie(),
+  );
+}
+
+export async function getMovieResearchRuns() {
+  return apiFetch<MovieResearchRun[]>(
+    "/movie-research/runs",
+    NO_STORE,
+    undefined,
+    await getRequestCookie(),
+  );
 }
 
 /** Usage counts differ per catalog; the screens only ever need "is it used". */

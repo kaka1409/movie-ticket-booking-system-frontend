@@ -1,20 +1,29 @@
+import type { Metadata } from "next";
+import { Suspense } from "react";
 import AdminPageHeader from "@/app/(admin)/admin/components/shared/AdminPageHeader";
-import AdminDashboardLinks from "./components/AdminDashboardLinks";
+import AdminDashboardSkeleton from "./components/AdminDashboardSkeleton";
+import { AdminDashboardSection } from "./sections";
+
+export const metadata: Metadata = {
+  title: "Dashboard",
+};
 
 /**
- * Console landing. Phase 2 ships the navigation launchpad; the KPI tiles and
- * Chart.js panels replace the body once the entity screens exist (every number
- * they show is an aggregation of admin reads, so nothing here is faked).
+ * PrimeSeat Admin Console Dashboard landing.
+ * Streams live KPI mini-charts, dual-axis revenue & attendance analytics,
+ * box office rankings, live showtimes monitor, and booking operations.
  */
 export default function AdminDashboardPage() {
   return (
-    <>
+    <div className="space-y-6">
       <AdminPageHeader
         eyebrowKey="admin.nav.overview"
         titleKey="admin.dashboard.title"
         descriptionKey="admin.dashboard.description"
       />
-      <AdminDashboardLinks />
-    </>
+      <Suspense fallback={<AdminDashboardSkeleton />}>
+        <AdminDashboardSection />
+      </Suspense>
+    </div>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useCallback, useEffect, useState, useTransition } from "react";
 import { Pencil, Trash2, UserRound, X } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/contexts/LocaleContext";
@@ -67,7 +67,7 @@ export default function MovieCastDialog({
 
   const isLoadingCast = isOpen && castItems === null && loadError === null;
 
-  const reloadCast = async () => {
+  const reloadCast = useCallback(async () => {
     if (!slug || !token) return;
 
     const result = await getMovieCastAction(token, slug);
@@ -79,7 +79,7 @@ export default function MovieCastDialog({
 
     setLoadError(null);
     setCastItems(result.data.items);
-  };
+  }, [slug, token]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -88,10 +88,8 @@ export default function MovieCastDialog({
       void reloadCast();
     }, 0);
 
-    // `reloadCast` closes over the current slug/token, which are the deps.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     return () => clearTimeout(handle);
-  }, [isOpen, slug, token]);
+  }, [isOpen, reloadCast]);
 
   const updateField = (field: keyof CastFormState, value: string) => {
     setValues((current) => ({ ...current, [field]: value }));

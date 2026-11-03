@@ -293,10 +293,18 @@ function CinemaFormDialog({
     name: string;
     address: string;
     badge: string;
+    latitude: string;
+    longitude: string;
   }>(() =>
     cinema
-      ? { name: cinema.name, address: cinema.address, badge: cinema.badge ?? "" }
-      : { name: "", address: "", badge: "" },
+      ? {
+          name: cinema.name,
+          address: cinema.address,
+          badge: cinema.badge ?? "",
+          latitude: cinema.latitude?.toString() ?? "",
+          longitude: cinema.longitude?.toString() ?? "",
+        }
+      : { name: "", address: "", badge: "", latitude: "", longitude: "" },
   );
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -308,8 +316,14 @@ function CinemaFormDialog({
     setSyncedFormSignature(formSignature);
     setValues(
       cinema
-        ? { name: cinema.name, address: cinema.address, badge: cinema.badge ?? "" }
-        : { name: "", address: "", badge: "" },
+        ? {
+            name: cinema.name,
+            address: cinema.address,
+            badge: cinema.badge ?? "",
+            latitude: cinema.latitude?.toString() ?? "",
+            longitude: cinema.longitude?.toString() ?? "",
+          }
+        : { name: "", address: "", badge: "", latitude: "", longitude: "" },
     );
     setFieldErrors({});
     setSubmitError(null);
@@ -344,6 +358,8 @@ function CinemaFormDialog({
       name: form.name,
       address: form.address,
       badge: form.badge === "" ? null : form.badge,
+      latitude: form.latitude,
+      longitude: form.longitude,
     };
 
     startTransition(async () => {
@@ -402,6 +418,27 @@ function CinemaFormDialog({
           className={ADMIN_INPUT_CLASS}
         />
       </AdminFormField>
+
+      <div className="grid grid-cols-2 gap-3">
+        <AdminFormField labelKey="admin.cinemas.latitude" error={fieldErrors.latitude}>
+          <input
+            type="number"
+            step="any"
+            value={values.latitude}
+            onChange={(event) => updateField("latitude", event.target.value)}
+            className={ADMIN_INPUT_CLASS}
+          />
+        </AdminFormField>
+        <AdminFormField labelKey="admin.cinemas.longitude" error={fieldErrors.longitude}>
+          <input
+            type="number"
+            step="any"
+            value={values.longitude}
+            onChange={(event) => updateField("longitude", event.target.value)}
+            className={ADMIN_INPUT_CLASS}
+          />
+        </AdminFormField>
+      </div>
     </AdminFormModal>
   );
 }

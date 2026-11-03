@@ -2,6 +2,7 @@ import {
   Building2,
   CalendarClock,
   Clapperboard,
+  Sparkles,
   CreditCard,
   LayoutDashboard,
   MessagesSquare,
@@ -41,6 +42,7 @@ export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
     labelKey: "admin.nav.cinema",
     items: [
       { labelKey: "admin.nav.movies", href: "/admin/movies", Icon: Clapperboard },
+      { labelKey: "admin.nav.movie_research", href: "/admin/movie-research", Icon: Sparkles },
       { labelKey: "admin.nav.showtimes", href: "/admin/showtimes", Icon: CalendarClock },
       { labelKey: "admin.nav.cinemas", href: "/admin/cinemas", Icon: Building2 },
       { labelKey: "admin.nav.catalogs", href: "/admin/catalogs", Icon: Tags },

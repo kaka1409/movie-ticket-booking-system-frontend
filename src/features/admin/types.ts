@@ -129,6 +129,38 @@ export interface AdminMovieInput {
   featuredOrder?: number;
 }
 
+export interface MovieResearchCandidate {
+  id: string;
+  tmdbId: number;
+  title: string;
+  originalTitle: string | null;
+  synopsis: string | null;
+  synopsisVi: string | null;
+  director: string | null;
+  language: string | null;
+  duration: number | null;
+  releaseDate: string | null;
+  posterUrl: string | null;
+  genres: string[];
+  markets: string[];
+  sourceUrl: string;
+  aiReason: string | null;
+  aiConfidence: number | null;
+  status: "pending" | "rejected" | "importing" | "imported";
+  importedMovieId: string | null;
+  discoveredAt: string;
+}
+
+export interface MovieResearchRun {
+  id: string;
+  status: string;
+  discovered: number;
+  enriched: number;
+  error: string | null;
+  startedAt: string;
+  finishedAt: string | null;
+}
+
 export interface AdminMovieCreateInput extends AdminMovieInput {
   title: string;
 }
@@ -153,6 +185,8 @@ export interface AdminCinema {
   id: string;
   name: string;
   address: string;
+  latitude: number | null;
+  longitude: number | null;
   badge?: string;
   rooms: AdminCinemaRoom[];
 }
@@ -191,6 +225,8 @@ export interface AdminSeatLayout {
 export interface AdminCinemaInput {
   name?: string;
   address?: string;
+  latitude?: number | null;
+  longitude?: number | null;
   badge?: string | null;
 }
 
@@ -384,4 +420,99 @@ export interface AdminCheckinResult {
   startTime: string;
   endTime: string;
   seatLabels: string[];
+}
+
+/* ── Dashboard Metrics & Live Operations ─────────────────────────────────── */
+
+export interface AdminKpiSummary {
+  revenue: {
+    today: number;
+    yesterday: number;
+    growthPercent: number;
+    sparkline: number[];
+  };
+  tickets: {
+    today: number;
+    yesterday: number;
+    growthPercent: number;
+    hourlyDistribution: { hour: string; count: number }[];
+  };
+  concessions: {
+    today: number;
+    yesterday: number;
+    growthPercent: number;
+    sparkline: number[];
+  };
+  occupancy: {
+    ratePercent: number;
+    peakPercent: number;
+    differenceFromAverage: number;
+    totalSeats: number;
+    bookedSeats: number;
+  };
+}
+
+export interface AdminAnalyticsDataPoint {
+  label: string;
+  ticketRevenue: number;
+  fnbRevenue: number;
+  totalRevenue: number;
+  attendance: number;
+}
+
+export type AdminAnalyticsTimeRange = "7d" | "30d" | "12m";
+
+export interface AdminTopMoviePerformance {
+  id: string;
+  rank: number;
+  title: string;
+  posterUrl: string;
+  genre: string;
+  revenue: number;
+  ticketsSold: number;
+  occupancyRate: number;
+}
+
+export interface AdminLiveShowtimeItem {
+  id: string;
+  startTime: string;
+  endTime: string;
+  movieTitle: string;
+  posterUrl: string;
+  cinemaName: string;
+  roomName: string;
+  format: string;
+  bookedSeats: number;
+  totalSeats: number;
+  status: "selling" | "almost_full" | "sold_out" | "in_screen" | "ended";
+}
+
+export interface AdminLiveBookingItem {
+  id: string;
+  bookingCode: string;
+  customerName: string;
+  customerPhone?: string;
+  isGuest?: boolean;
+  movieTitle: string;
+  cinemaName: string;
+  roomName: string;
+  showtime: string;
+  seatCount: number;
+  comboCount: number;
+  totalAmount: number;
+  paymentMethod: string;
+  status: "paid" | "holding" | "cancelled";
+  createdAt: string;
+}
+
+export interface AdminDashboardData {
+  kpi: AdminKpiSummary;
+  analytics: {
+    range7d: AdminAnalyticsDataPoint[];
+    range30d: AdminAnalyticsDataPoint[];
+    range12m: AdminAnalyticsDataPoint[];
+  };
+  topMovies: AdminTopMoviePerformance[];
+  liveShowtimes: AdminLiveShowtimeItem[];
+  liveBookings: AdminLiveBookingItem[];
 }
