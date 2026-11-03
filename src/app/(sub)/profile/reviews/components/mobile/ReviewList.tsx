@@ -4,7 +4,7 @@ import { Star } from "lucide-react";
 import Link from "next/link";
 import type { MyReview } from "@/features/reviews/types";
 import { useLocale } from "@/contexts/LocaleContext";
-import { useAppendReveal } from "@/hooks/useAppendReveal";
+import { useAppendFade } from "@/hooks/useAppendFade";
 import EmptyState from "@/components/ui/EmptyState";
 import FilterBar from "./FilterBar";
 import ReviewCard from "./ReviewCard";
@@ -32,10 +32,7 @@ export default function ReviewList({
     handleDelete,
   } = useMyReviews(initialReviews, total);
 
-  const { containerRef: listRef, animThreshold } = useAppendReveal<HTMLDivElement>({
-    count: reviews.length,
-    cardSelector: "[data-review-card]",
-  });
+  const { animThreshold } = useAppendFade({ count: reviews.length, swapKey: activeFilter });
 
   if (reviews.length === 0) {
     return (
@@ -60,7 +57,7 @@ export default function ReviewList({
     <main className="flex-1 overflow-y-auto py-4 space-y-4 px-4">
       <FilterBar filters={filters} active={activeFilter} onChange={handleFilterChange} />
 
-      <div ref={listRef} className="space-y-3">
+      <div className="space-y-3">
         {reviews.map((review, index) => (
           <div key={review.id} className={index >= animThreshold ? "animate-fade-in" : ""}>
             <ReviewCard

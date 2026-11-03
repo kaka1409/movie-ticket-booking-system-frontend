@@ -2,21 +2,16 @@
 
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { ShieldCheck, KeyRound, ArrowRight, UserCog, CheckCircle2 } from "lucide-react";
+import { ShieldCheck, KeyRound, ArrowRight, CheckCircle2 } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { formatCalendarDate, toDateInputValue } from "@/libs/date";
-import Button from "@/components/ui/Button";
 import AccountShell from "@/components/shared/profile/desktop/AccountShell";
-import MemberCard from "./MemberCard";
 
 /**
  * Desktop profile overview content:
- * Displays VIP Member Card, Next Screening showcase, interactive activity statistics,
+ * Displays next upcoming screening showcase, activity statistics counters,
  * and a side-by-side Personal Information & Account Security matrix.
- *
- * The two data-dependent blocks arrive as slots, so their server sections stream
- * while the member card and the details matrix paint from the session.
  */
 export default function ProfileContent({
   stats,
@@ -48,27 +43,19 @@ export default function ProfileContent({
     <AccountShell
       title={translate("profile.overview")}
       description={translate("profile.pages.overview_desc")}
-      action={
-        <Button href="/profile/edit" size="md" fullWidth={false} icon={UserCog} iconPosition="left">
-          {translate("profile.edit_profile")}
-        </Button>
-      }
     >
       <div className="space-y-6">
-        {/* VIP Member Card */}
-        <MemberCard user={user} />
-
-        {/* Next Screening Widget */}
+        {/* Next Screening Widget Showcase */}
         {nextTicket}
 
-        {/* Activity Statistics Cards */}
+        {/* Activity Statistics Counters */}
         {stats}
 
-        {/* Personal Details & Security Matrix */}
+        {/* Personal Details & Account Security Side-by-Side Matrix */}
         <div className="grid gap-6 lg:grid-cols-2">
           {/* Personal Information */}
-          <section className="rounded-2xl border border-(--color-border) bg-(--color-surface) p-6 shadow-md">
-            <div className="flex items-center justify-between border-b border-(--color-border)/50 pb-3 mb-4">
+          <section className="rounded-2xl border border-(--color-border) bg-(--color-surface) p-6 shadow-(--shadow-card)">
+            <div className="mb-4 flex items-center justify-between border-b border-(--color-border)/50 pb-3">
               <p className="text-xs font-bold tracking-wider text-(--color-gold) uppercase">
                 {translate("profile.personal_info")}
               </p>
@@ -94,7 +81,7 @@ export default function ProfileContent({
                     )}
                   </dd>
                   {detail.hint && (
-                    <p className="mt-0.5 text-[11px] text-(--color-text-muted)">{detail.hint}</p>
+                    <p className="mt-0.5 text-3xs text-(--color-text-muted)">{detail.hint}</p>
                   )}
                 </div>
               ))}
@@ -102,19 +89,19 @@ export default function ProfileContent({
           </section>
 
           {/* Account Security */}
-          <section className="rounded-2xl border border-(--color-border) bg-(--color-surface) p-6 shadow-md flex flex-col justify-between">
+          <section className="flex flex-col justify-between rounded-2xl border border-(--color-border) bg-(--color-surface) p-6 shadow-(--shadow-card)">
             <div>
-              <div className="flex items-center justify-between border-b border-(--color-border)/50 pb-3 mb-4">
+              <div className="mb-4 flex items-center justify-between border-b border-(--color-border)/50 pb-3">
                 <p className="text-xs font-bold tracking-wider text-(--color-gold) uppercase">
                   {translate("profile.security_title")}
                 </p>
-                <span className="flex items-center gap-1 text-[11px] font-bold text-emerald-400">
+                <span className="flex items-center gap-1 text-2xs font-bold text-emerald-400">
                   <CheckCircle2 size={13} />
                   <span>{translate("profile.password_status")}</span>
                 </span>
               </div>
 
-              <div className="flex items-start gap-3">
+              <div className="flex items-start gap-3.5">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-(--color-gold)/10 text-(--color-gold)">
                   <ShieldCheck size={20} />
                 </div>
@@ -129,7 +116,7 @@ export default function ProfileContent({
               </div>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-(--color-border)/40 flex items-center justify-between">
+            <div className="mt-6 flex items-center justify-between border-t border-(--color-border)/40 pt-4">
               <span className="text-xs text-(--color-text-muted)">
                 {translate("profile.change_password")}
               </span>

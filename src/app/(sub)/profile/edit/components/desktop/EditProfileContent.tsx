@@ -1,18 +1,17 @@
 "use client";
 
-import { Mail, Lock, Smartphone, Calendar, User, ShieldCheck, Sparkles } from "lucide-react";
+import { Mail, Lock, Smartphone, Calendar, User, Info } from "lucide-react";
 import FormField from "@/components/ui/FormField";
 import Button from "@/components/ui/Button";
 import ErrorAlert from "@/components/ui/ErrorAlert";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useProfileForm } from "@/features/profile/hooks/useProfileForm";
-import AvatarRing from "@/components/ui/AvatarRing";
 import AccountShell from "@/components/shared/profile/desktop/AccountShell";
 
 /**
  * Desktop edit-profile view:
- * Left member profile card with gold ring identity and account verification status,
- * right form with native desktop date picker, helper notes, and responsive action buttons.
+ * Clean, centered two-column form grid for updating personal details,
+ * email verification status, and responsive save/cancel actions.
  */
 export default function EditProfileContent() {
   const { translate } = useLocale();
@@ -40,35 +39,16 @@ export default function EditProfileContent() {
       title={translate("profile.edit_profile")}
       description={translate("profile.pages.edit_desc")}
     >
-      <div className="grid gap-6 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-8">
-        {/* Left Side: Member Card Identity */}
-        <aside>
-          <div className="flex flex-col items-center rounded-2xl border border-(--color-border) bg-(--color-surface) p-6 text-center shadow-md">
-            <AvatarRing src={user.avatarUrl} name={user.name} size="h-28 w-28" />
+      <section className="mx-auto max-w-4xl rounded-2xl border border-(--color-border) bg-(--color-surface) p-6 shadow-(--shadow-card) lg:p-8">
+        <div className="mb-6 border-b border-(--color-border)/50 pb-4">
+          <h2 className="text-lg font-black tracking-tight text-white lg:text-xl">
+            {translate("profile.personal_info")}
+          </h2>
+          <p className="mt-1 text-xs text-(--color-text-muted) lg:text-sm">
+            {translate("profile.pages.edit_desc")}
+          </p>
+        </div>
 
-            <div className="mt-4">
-              <p className="text-base font-extrabold text-white">{user.name}</p>
-              <p className="truncate text-xs text-(--color-text-muted)">{user.email}</p>
-            </div>
-
-            <div className="mt-4 flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-[11px] font-bold text-emerald-400">
-              <ShieldCheck size={13} />
-              <span>{translate("profile.active_member")}</span>
-            </div>
-
-            <div className="mt-5 w-full rounded-xl border border-(--color-border)/60 bg-(--color-surface-2)/60 p-3 text-left">
-              <div className="flex items-center gap-1.5 text-[11px] font-bold text-(--color-gold) uppercase tracking-wider">
-                <Sparkles size={13} />
-                <span>PrimeSeat Club</span>
-              </div>
-              <p className="mt-1 text-[11px] leading-relaxed text-(--color-text-muted)">
-                {translate("profile.edit.photo_unavailable")}
-              </p>
-            </div>
-          </div>
-        </aside>
-
-        {/* Right Side: Profile Form */}
         <form
           onSubmit={(event) => {
             event.preventDefault();
@@ -76,7 +56,7 @@ export default function EditProfileContent() {
           }}
           className="min-w-0"
         >
-          <div className="grid gap-5 lg:grid-cols-2">
+          <div className="grid gap-6 sm:grid-cols-2">
             {/* Full Name */}
             <FormField
               label={translate("profile.edit.full_name")}
@@ -105,7 +85,7 @@ export default function EditProfileContent() {
                   className="w-full bg-transparent text-(--color-text-primary) outline-none placeholder:text-(--color-text-muted)"
                 />
               </FormField>
-              <p className="mt-1.5 px-1 text-[11px] text-(--color-text-muted)">
+              <p className="mt-1.5 px-1 text-3xs text-(--color-text-muted)">
                 {translate("profile.edit.phone_hint")}
               </p>
             </div>
@@ -121,7 +101,7 @@ export default function EditProfileContent() {
                   type="date"
                   value={dob}
                   onChange={(event) => setDob(event.target.value)}
-                  className="w-full bg-transparent text-(--color-text-primary) outline-none cursor-pointer"
+                  className="w-full cursor-pointer bg-transparent text-(--color-text-primary) outline-none"
                 />
               </FormField>
             </div>
@@ -133,20 +113,26 @@ export default function EditProfileContent() {
                   type="email"
                   value={user.email}
                   disabled
-                  className="w-full bg-transparent text-(--color-text-muted) outline-none cursor-not-allowed"
+                  className="w-full cursor-not-allowed bg-transparent text-(--color-text-muted) outline-none"
                 />
                 <Lock className="h-4 w-4 shrink-0 text-(--color-text-muted)" />
               </FormField>
-              <p className="mt-1.5 px-1 text-[11px] text-(--color-text-muted)">
+              <p className="mt-1.5 px-1 text-3xs text-(--color-text-muted)">
                 {translate("profile.edit.email_readonly")}
               </p>
             </div>
           </div>
 
+          {/* Photo Note */}
+          <div className="mt-6 flex items-center gap-2 rounded-xl border border-(--color-border)/60 bg-(--color-surface-2)/60 px-4 py-3 text-xs text-(--color-text-muted)">
+            <Info size={15} className="shrink-0 text-(--color-gold)" />
+            <span>{translate("profile.edit.photo_unavailable")}</span>
+          </div>
+
           {serverError && <ErrorAlert className="mt-5" message={serverError} />}
 
           {/* Form Actions Footer */}
-          <div className="mt-8 flex flex-col-reverse gap-3 border-t border-(--color-border) pt-6 lg:flex-row lg:items-center lg:justify-between">
+          <div className="mt-8 flex flex-col-reverse gap-3 border-t border-(--color-border) pt-6 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-xs text-(--color-text-muted)">
               {hasChanges ? translate("profile.edit.unsaved") : ""}
             </p>
@@ -167,7 +153,7 @@ export default function EditProfileContent() {
             </div>
           </div>
         </form>
-      </div>
+      </section>
     </AccountShell>
   );
 }

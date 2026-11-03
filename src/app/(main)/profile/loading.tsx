@@ -7,7 +7,6 @@ export default function ProfileLoading() {
       <div className="min-h-dvh bg-(--color-bg) block md:hidden">
         <main className="flex flex-col items-center px-(--space-md) pt-4 pb-10">
           <Skeleton className="w-28 h-28 rounded-full" />
-
           <Skeleton className="mt-4 h-5 w-36 rounded-full" />
           <Skeleton className="mt-2 h-6 w-28 rounded-full" />
 

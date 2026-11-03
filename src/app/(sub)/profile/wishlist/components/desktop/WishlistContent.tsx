@@ -7,7 +7,7 @@ import { useLocale } from "@/contexts/LocaleContext";
 import SearchBar from "@/components/ui/SearchBar";
 import EmptyState from "@/components/ui/EmptyState";
 import UndoSnackbar from "@/components/ui/UndoSnackbar";
-import WishlistPosterCard from "./WishlistPosterCard";
+import WishlistMovieRow from "./WishlistMovieRow";
 import WishlistEmptyState from "@/app/(sub)/profile/wishlist/components/shared/WishlistEmptyState";
 import {
   useWishlistBrowser,
@@ -20,11 +20,12 @@ const TABS = ["all", "now_showing", "coming_soon"] as const;
 /**
  * Desktop wishlist browser:
  * Features top status metrics banner, search bar with status filter badges,
- * dynamic client-side sorting (rating, duration, title), and responsive movie cards grid.
+ * dynamic client-side sorting, and spacious horizontal movie row cards.
  */
 export default function WishlistContent({ initialItems }: { initialItems: WishlistItem[] }) {
   const { wishlist } = useWishlist();
   const { translate } = useLocale();
+  const pageTitle = translate("profile.wishlist_label");
   const {
     movies,
     visibleMovies,
@@ -45,63 +46,57 @@ export default function WishlistContent({ initialItems }: { initialItems: Wishli
 
   if (movies.length === 0) {
     return (
-      <AccountShell
-        title={translate("profile.wishlist_label")}
-        description={translate("profile.pages.wishlist_desc")}
-      >
+      <AccountShell title={pageTitle} description={translate("profile.pages.wishlist_desc")}>
         <WishlistEmptyState />
       </AccountShell>
     );
   }
 
   return (
-    <AccountShell
-      title={translate("profile.wishlist_label")}
-      description={translate("profile.pages.wishlist_desc")}
-    >
-      {/* Watchlist Quick Stats Overview Banner */}
+    <AccountShell title={pageTitle} description={translate("profile.pages.wishlist_desc")}>
+      {/* 1. Watchlist Quick Stats Overview Banner */}
       <div className="mb-6 grid gap-4 sm:grid-cols-3">
-        <div className="flex items-center gap-3.5 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 shadow-sm">
+        <div className="flex items-center gap-3.5 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 shadow-(--shadow-card)">
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-(--color-gold)/15 text-(--color-gold)">
             <Heart size={18} fill="currentColor" />
           </span>
           <div>
-            <p className="text-xl font-black text-white">{movies.length}</p>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-(--color-text-muted)">
+            <p className="text-2xl font-black text-white">{movies.length}</p>
+            <p className="text-xs font-bold uppercase tracking-wider text-(--color-text-muted)">
               {translate("profile.wishlist_label")}
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-3.5 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 shadow-sm">
+        <div className="flex items-center gap-3.5 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 shadow-(--shadow-card)">
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-400">
             <Ticket size={18} />
           </span>
           <div>
-            <p className="text-xl font-black text-white">{nowShowingCount}</p>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-(--color-text-muted)">
+            <p className="text-2xl font-black text-white">{nowShowingCount}</p>
+            <p className="text-xs font-bold uppercase tracking-wider text-(--color-text-muted)">
               {translate("profile.wishlist.ready_to_watch")}
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-3.5 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 shadow-sm">
+        <div className="flex items-center gap-3.5 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 shadow-(--shadow-card)">
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-(--color-gold-light)/15 text-(--color-gold-light)">
             <Calendar size={18} />
           </span>
           <div>
-            <p className="text-xl font-black text-white">{comingSoonCount}</p>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-(--color-text-muted)">
+            <p className="text-2xl font-black text-white">{comingSoonCount}</p>
+            <p className="text-xs font-bold uppercase tracking-wider text-(--color-text-muted)">
               {translate("profile.wishlist.coming_soon_count")}
             </p>
           </div>
         </div>
       </div>
 
-      {/* Integrated Filter & Sort Toolbar */}
+      {/* 2. Integrated Filter & Sort Toolbar */}
       <div className="flex flex-col gap-4 border-b border-(--color-border)/50 pb-5 lg:flex-row lg:items-center lg:justify-between">
         {/* Status Filter Tabs with Count Badges */}
-        <div className="flex items-center gap-2 overflow-x-auto overscroll-x-contain">
+        <div className="flex items-center gap-2 overflow-x-auto overscroll-x-contain pb-1 scrollbar-hide">
           {TABS.map((tab) => {
             const count =
               tab === "all"
@@ -151,7 +146,7 @@ export default function WishlistContent({ initialItems }: { initialItems: Wishli
             <select
               value={sortBy}
               onChange={(event) => setSortBy(event.target.value as WishlistSortOption)}
-              className="bg-transparent text-xs font-bold text-white outline-none cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-gold)"
+              className="cursor-pointer bg-transparent text-xs font-bold text-white outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-gold)"
               aria-label={translate("profile.wishlist.sort_by")}
             >
               <option value="default" className="bg-(--color-surface-2)">
@@ -190,7 +185,7 @@ export default function WishlistContent({ initialItems }: { initialItems: Wishli
         </div>
       )}
 
-      {/* Movies Grid or Empty Results */}
+      {/* 3. Horizontal Movie Cards List or Empty State */}
       {visibleMovies.length === 0 ? (
         <div className="mt-8">
           <EmptyState
@@ -208,9 +203,9 @@ export default function WishlistContent({ initialItems }: { initialItems: Wishli
           </EmptyState>
         </div>
       ) : (
-        <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+        <div className="mt-6 space-y-4">
           {visibleMovies.map((movie) => (
-            <WishlistPosterCard
+            <WishlistMovieRow
               key={movie.id}
               movie={movie}
               liked={wishlist.includes(movie.id)}
@@ -227,7 +222,7 @@ export default function WishlistContent({ initialItems }: { initialItems: Wishli
           message={translate("profile.wishlist.removed")}
           actionLabel={translate("profile.wishlist.undo")}
           onAction={handleUndo}
-          className="bottom-8 left-1/2 -translate-x-1/2 w-[min(92vw,420px)]"
+          className="bottom-8 left-1/2 w-[min(92vw,420px)] -translate-x-1/2"
         />
       )}
     </AccountShell>

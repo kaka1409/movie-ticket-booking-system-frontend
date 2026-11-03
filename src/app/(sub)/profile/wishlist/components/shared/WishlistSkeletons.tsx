@@ -1,10 +1,11 @@
 import { Skeleton, SkeletonCard } from "@/components/ui/Skeleton";
 import AccountSkeleton from "@/components/shared/profile/desktop/AccountSkeleton";
+import { WishlistDesktopSkeleton } from "@/components/shared/profile/desktop/AccountPageSkeletons";
 
 function WishlistCardSkeleton() {
   return (
     <SkeletonCard className="overflow-hidden p-0">
-      <Skeleton className="w-full" style={{ aspectRatio: "3/4" }} />
+      <Skeleton className="w-full" style={{ aspectRatio: "16 / 9" }} />
       <div className="space-y-2 px-4 pt-2 pb-4">
         <Skeleton className="h-4 w-3/4 rounded-full" />
         <div className="flex items-center gap-1.5">
@@ -30,7 +31,9 @@ export default function WishlistPageSkeleton() {
       </div>
       <div className="hidden md:block">
         <div className="mx-auto w-full max-w-7xl px-6 py-8 lg:px-8">
-          <AccountSkeleton />
+          <AccountSkeleton>
+            <WishlistDesktopSkeleton />
+          </AccountSkeleton>
         </div>
       </div>
     </>

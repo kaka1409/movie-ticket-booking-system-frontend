@@ -2,53 +2,58 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import type { ReactNode } from "react";
 
 /**
- * Generic desktop account skeleton: header + sticky nav + raised panel. Used by
- * every account route's `loading.tsx` so the desktop (740+) never flashes empty
- * while the server segment streams in.
+ * Generic desktop account skeleton:
+ * Matches the Header Hero + Horizontal Tabs geometry so desktop (740px+)
+ * transitions smoothly with zero cumulative layout shift.
  */
 export default function AccountSkeleton({ children }: { children?: ReactNode }) {
   return (
-    <div className="min-w-0">
-      <div className="min-w-0">
-        <Skeleton className="h-3 w-20 rounded-full" />
-        <Skeleton className="mt-2 h-7 w-48 rounded-md" />
-        <Skeleton className="mt-2 h-4 w-72 rounded-md" />
-      </div>
-
-      <div className="mt-8 grid items-start gap-6 lg:grid-cols-[260px_minmax(0,1fr)] xl:grid-cols-[280px_minmax(0,1fr)] xl:gap-8">
-        <div className="hidden rounded-2xl border border-(--color-border) bg-(--color-surface) p-2 lg:block">
-          <div className="flex items-center gap-3 border-b border-(--color-border) px-2.5 py-3">
-            <Skeleton className="h-10 w-10 rounded-full" />
-            <div className="flex-1 space-y-2">
-              <Skeleton className="h-3 w-24 rounded-md" />
-              <Skeleton className="h-2.5 w-32 rounded-md" />
+    <div className="min-w-0" aria-busy="true">
+      {/* 1. Hero Header Skeleton */}
+      <div className="rounded-3xl border border-(--color-border) bg-(--color-surface) p-6 lg:p-8">
+        <div className="flex flex-col justify-between gap-6 md:flex-row md:items-center">
+          <div className="flex items-center gap-5">
+            <Skeleton className="h-20 w-20 rounded-full lg:h-24 lg:w-24" />
+            <div className="space-y-2.5">
+              <div className="flex items-center gap-2">
+                <Skeleton className="h-7 w-48 rounded-lg" />
+                <Skeleton className="h-5 w-32 rounded-full" />
+              </div>
+              <Skeleton className="h-4 w-40 rounded-md" />
+              <Skeleton className="h-3 w-28 rounded-md" />
             </div>
           </div>
-          <div className="mt-2 space-y-1 p-1.5">
-            {Array.from({ length: 5 }).map((_, index) => (
-              <div key={index} className="flex items-center gap-3 rounded-xl px-2.5 py-2">
-                <Skeleton className="h-7 w-7 rounded-lg" />
-                <Skeleton className="h-3 w-28 rounded-md" />
-              </div>
-            ))}
+          <div className="flex items-center gap-3">
+            <Skeleton className="h-10 w-36 rounded-xl" />
+            <Skeleton className="h-10 w-28 rounded-xl" />
           </div>
         </div>
+      </div>
 
-        <section className="min-w-0 rounded-2xl border border-(--color-border) bg-(--color-surface) p-5 lg:p-6">
-          {children ?? (
-            <div className="surface-raised space-y-4">
-              <Skeleton className="h-24 w-24 rounded-full" />
-              <Skeleton className="h-4 w-40 rounded-md" />
-              <Skeleton className="h-3 w-64 rounded-md" />
-              <div className="mt-6 grid gap-3 sm:grid-cols-3">
-                {Array.from({ length: 3 }).map((_, index) => (
-                  <Skeleton key={index} className="h-24 rounded-xl" />
-                ))}
-              </div>
-              <Skeleton className="mt-6 h-40 rounded-xl" />
+      {/* 2. Horizontal Tabs Skeleton */}
+      <div className="mt-6 flex gap-6 border-b border-(--color-border) pb-3.5">
+        <Skeleton className="h-5 w-24 rounded-md" />
+        <Skeleton className="h-5 w-32 rounded-md" />
+        <Skeleton className="h-5 w-28 rounded-md" />
+        <Skeleton className="h-5 w-36 rounded-md" />
+        <Skeleton className="h-5 w-32 rounded-md" />
+      </div>
+
+      {/* 3. Content Area Skeleton */}
+      <div className="mt-8 min-w-0">
+        <div className="mb-6 space-y-2">
+          <Skeleton className="h-[26px] w-48 rounded-md" />
+          <Skeleton className="h-3 w-72 max-w-full rounded-full" />
+        </div>
+        {children ?? (
+          <div className="space-y-6">
+            <Skeleton className="h-44 w-full rounded-2xl" />
+            <div className="grid gap-6 lg:grid-cols-2">
+              <Skeleton className="h-56 rounded-2xl" />
+              <Skeleton className="h-56 rounded-2xl" />
             </div>
-          )}
-        </section>
+          </div>
+        )}
       </div>
     </div>
   );

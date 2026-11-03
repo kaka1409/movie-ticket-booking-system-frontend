@@ -8,6 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useLogout } from "@/features/auth/hooks/useLogout";
 import Avatar, { DEFAULT_AVATAR_SRC } from "@/components/ui/Avatar";
 import { ACCOUNT_SECTIONS, accountSectionForPathname } from "@/features/profile/constants";
+import { PRESS_CLASS, PRESS_SOFT_CLASS } from "@/libs/press";
 
 /**
  * Desktop account navigation: identity block + two labelled groups + quick logout.
@@ -33,7 +34,7 @@ export default function AccountNav() {
       {/* Tablet strip */}
       <nav
         aria-label={translate("profile.area_label")}
-        className="flex gap-2 overflow-x-auto overscroll-x-contain pb-1 scrollbar-hide lg:hidden"
+        className="flex gap-1 overflow-x-auto overscroll-x-contain px-3 pb-1 scrollbar-hide lg:hidden"
       >
         {ACCOUNT_SECTIONS.map((section) => {
           const isActive = section.key === activeKey;
@@ -42,10 +43,10 @@ export default function AccountNav() {
               key={section.href}
               href={section.href}
               aria-current={isActive ? "page" : undefined}
-              className={`flex shrink-0 items-center gap-2 rounded-(--radius-pill) border px-4 py-2 text-xs font-bold transition-colors ${
+              className={`flex shrink-0 items-center gap-1.5 rounded-(--radius-pill) border px-4 py-2 text-xs font-bold transition-colors ${PRESS_CLASS} ${
                 isActive
                   ? "border-(--color-gold)/50 bg-(--color-gold)/10 text-(--color-gold)"
-                  : "border-(--color-border) text-(--color-text-primary) hover:border-(--color-gold)/40 hover:text-(--color-gold)"
+                  : "border-(--color-border) text-(--color-text-primary) hover:border-(--color-gold)/40 hover:bg-(--color-surface-2) hover:text-(--color-gold)"
               }`}
             >
               <section.Icon size={14} aria-hidden />
@@ -94,7 +95,7 @@ export default function AccountNav() {
                       key={section.href}
                       href={section.href}
                       aria-current={isActive ? "page" : undefined}
-                      className={`group flex items-center gap-3 rounded-xl px-2.5 py-2 text-[13px] font-semibold no-underline transition-colors duration-150 ${
+                      className={`group flex items-center gap-3 rounded-xl px-2.5 py-2 text-[13px] font-semibold no-underline transition-colors duration-150 ${PRESS_CLASS} ${
                         isActive
                           ? "bg-(--color-surface-2) text-(--color-gold)"
                           : "text-(--color-text-primary) hover:bg-(--color-surface-2) hover:text-(--color-gold)"
@@ -123,7 +124,7 @@ export default function AccountNav() {
               type="button"
               onClick={logout}
               disabled={isLoggingOut}
-              className="group flex w-full items-center gap-3 rounded-xl px-2.5 py-2 text-[13px] font-semibold text-(--color-text-muted) transition-colors hover:bg-red-500/10 hover:text-red-400 active:scale-[0.98] disabled:opacity-50"
+              className={`group flex w-full items-center gap-3 rounded-xl px-2.5 py-2 text-[13px] font-semibold text-(--color-text-muted) transition-colors hover:bg-red-500/10 hover:text-red-400 disabled:opacity-50 ${PRESS_SOFT_CLASS}`}
             >
               <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-(--color-surface-2) text-(--color-text-muted) transition-colors group-hover:bg-red-500/20 group-hover:text-red-400">
                 {isLoggingOut ? (

@@ -29,10 +29,7 @@ export default function ReviewRow({
   const [isArmed, setIsArmed] = useState(false);
 
   return (
-    <article
-      data-review-card
-      className="group flex flex-col gap-4 rounded-2xl border border-(--color-border) bg-(--color-surface) p-5 shadow-sm transition duration-200 hover:border-(--color-gold)/40 hover:shadow-md sm:flex-row sm:items-start"
-    >
+    <article className="group flex flex-col gap-4 rounded-2xl border border-(--color-border) bg-(--color-surface) p-5 shadow-(--shadow-card) transition duration-200 hover:border-(--color-gold)/40 hover:shadow-lg sm:flex-row sm:items-start">
       {/* Movie Poster */}
       <Link
         href={`/movies/${review.movie.slug}`}

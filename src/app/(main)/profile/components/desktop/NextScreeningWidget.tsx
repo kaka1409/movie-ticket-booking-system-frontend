@@ -48,7 +48,7 @@ export default function NextScreeningWidget({ nextTicket }: { nextTicket: Upcomi
   const snackCount = (nextTicket.foodDrink ?? []).reduce((total, item) => total + item.qty, 0);
 
   return (
-    <section className="overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-surface) p-5 shadow-lg">
+    <section className="overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-surface) p-5 shadow-(--shadow-card)">
       <div className="flex items-center justify-between border-b border-(--color-border)/50 pb-3 mb-4">
         <div className="flex items-center gap-2">
           <span className="flex h-6 w-6 items-center justify-center rounded-md bg-(--color-gold)/15 text-(--color-gold)">
@@ -117,7 +117,9 @@ export default function NextScreeningWidget({ nextTicket }: { nextTicket: Upcomi
             {snackCount > 0 && (
               <span className="flex items-center gap-1 rounded-lg border border-(--color-border) bg-(--color-surface-2) px-2 py-1 font-semibold text-(--color-gold)">
                 <Popcorn size={12} />
-                <span>{snackCount} combo</span>
+                <span>
+                  {snackCount} {translate("profile.combo_label")}
+                </span>
               </span>
             )}
           </div>
