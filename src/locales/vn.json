@@ -210,6 +210,7 @@
       "booking_id": "Mã Đặt Vé",
       "scan_enter": "Quét Để In Vé",
       "download_ticket": "Tải Vé",
+      "download_ticket_desc": "Lưu vé dưới dạng ảnh",
       "qr_invalid": "Không Có Mã QR",
       "qr_invalid_hint": "Vé này không còn sử dụng được ở cổng soát vé.",
       "cancel_refund": "Hủy & Hoàn Tiền",
@@ -218,7 +219,16 @@
       "edit_ticket_desc": "Thay đổi suất chiếu, ghế, hoặc đồ ăn",
       "transfer_ticket": "Nhượng lại Vé",
       "transfer_ticket_desc": "Nhượng vé này cho người khác và hoàn tiền",
-      "cancel_refund_desc": "Hủy đặt vé và hoàn tiền"
+      "cancel_refund_desc": "Hủy đặt vé và hoàn tiền",
+      "mobile_hint": {
+        "title": "Sử dụng điện thoại tại rạp",
+        "description": "Để dễ dàng quét mã QR tại cổng vào, vui lòng truy cập trang này trên thiết bị di động và đăng nhập.",
+        "cta_prefix": "Mở trên điện thoại",
+        "benefit_1": "Quét mã QR dễ dàng tại cổng",
+        "benefit_2": "Truy cập nhanh từ túi áo",
+        "benefit_3": "Luôn sẵn sàng khi cần"
+      },
+      "actions_title": "Bạn có thể làm gì với vé này"
     },
     "transfer": {
       "title": "Chuyển Vé",
@@ -593,7 +603,8 @@
       "standard": "Tiêu Chuẩn",
       "continue_snacks": "Tiếp Tục Chọn Đồ Ăn",
       "hold_taken": "Một số ghế bạn chọn vừa có người khác giữ — hãy chọn ghế khác.",
-      "hold_failed": "Không thể giữ ghế. Vui lòng thử lại."
+      "hold_failed": "Không thể giữ ghế. Vui lòng thử lại.",
+      "legend_hint": "Chú thích ghế"
     },
     "snack": {
       "title": "Đồ Ăn & Thức Uống",
@@ -624,7 +635,12 @@
       "error_email_invalid": "Vui lòng nhập địa chỉ email hợp lệ.",
       "error_phone_required": "Số điện thoại là bắt buộc.",
       "error_phone_invalid": "Vui lòng nhập số điện thoại hợp lệ.",
-      "country_code": "Mã quốc gia"
+      "country_code": "Mã quốc gia",
+      "privacy_title": "Bảo Mật & An Toàn",
+      "privacy_desc": "Thông tin của bạn được bảo vệ và chỉ sử dụng cho đặt vé của bạn.",
+      "privacy_point_1": "Dữ liệu của bạn được mã hóa và không bao giờ chia sẻ với bên thứ ba.",
+      "privacy_point_2": "Chúng tôi chỉ sử dụng thông tin liên hệ của bạn để xác nhận đặt vé và gửi vé điện tử.",
+      "privacy_point_3": "Bạn có thể xóa lịch sử đặt vé và dữ liệu cá nhân bất cứ lúc nào."
     },
     "payment": {
       "title": "Thanh Toán",

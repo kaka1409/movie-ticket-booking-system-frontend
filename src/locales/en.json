@@ -210,6 +210,7 @@
       "booking_id": "Booking ID",
       "scan_enter": "Scan to Print Tickets",
       "download_ticket": "Download Ticket",
+      "download_ticket_desc": "Save ticket as image",
       "qr_invalid": "QR Unavailable",
       "qr_invalid_hint": "This ticket can no longer be used at the gate.",
       "cancel_refund": "Cancel & Refund",
@@ -218,7 +219,16 @@
       "edit_ticket_desc": "Modify date, seats, or snacks",
       "transfer_ticket": "Transfer Ticket",
       "transfer_ticket_desc": "Send this ticket to someone",
-      "cancel_refund_desc": "Cancel booking and get a refund"
+      "cancel_refund_desc": "Cancel booking and get a refund",
+      "mobile_hint": {
+        "title": "Use your phone at the cinema",
+        "description": "For easy QR code scanning at the gate, please access this page on your mobile device and log in.",
+        "cta_prefix": "Open on mobile",
+        "benefit_1": "Easy QR scanning at the gate",
+        "benefit_2": "Quick access from your pocket",
+        "benefit_3": "Always have your ticket ready"
+      },
+      "actions_title": "What you can do with this ticket"
     },
     "transfer": {
       "title": "Transfer Ticket",
@@ -593,7 +603,8 @@
       "standard": "Standard",
       "continue_snacks": "Continue to Snacks",
       "hold_taken": "Some of those seats were just taken — pick another one.",
-      "hold_failed": "Couldn't reserve your seats. Please try again."
+      "hold_failed": "Couldn't reserve your seats. Please try again.",
+      "legend_hint": "Seat guide"
     },
     "snack": {
       "title": "Food & Drinks",
@@ -624,7 +635,12 @@
       "error_email_invalid": "Enter a valid email address.",
       "error_phone_required": "Phone number is required.",
       "error_phone_invalid": "Enter a valid phone number.",
-      "country_code": "Country code"
+      "country_code": "Country code",
+      "privacy_title": "Privacy & Security",
+      "privacy_desc": "Your information is protected and used only for your booking.",
+      "privacy_point_1": "Your data is encrypted and never shared with third parties.",
+      "privacy_point_2": "We only use your contact details for booking confirmation and e-ticket delivery.",
+      "privacy_point_3": "You can delete your booking history and personal data at any time."
     },
     "payment": {
       "title": "Payment",
