@@ -40,11 +40,15 @@ export default function UpcomingTicketCard({ ticket }: { ticket: UpcomingTicket 
               className="object-cover transition-transform duration-300 group-hover:scale-105"
             />
             {ticket.isTransferring ? (
-              <span className="absolute inset-x-0 top-0 bg-black/80 px-1 py-1.5 text-center text-2xs font-black tracking-wider text-(--color-gold) uppercase backdrop-blur-xs">
+              <span className="absolute inset-x-0 top-0 bg-(--color-gold) px-1 py-1.5 text-center text-2xs font-black tracking-wider text-black uppercase">
                 {translate("tickets.transfer.pending_badge")}
               </span>
             ) : (
-              <TicketCountdown startsAtMs={ticket.startsAtMs} endsAtMs={ticket.endsAtMs} />
+              <TicketCountdown
+                startsAtMs={ticket.startsAtMs}
+                endsAtMs={ticket.endsAtMs}
+                tone="gold"
+              />
             )}
             <span className="absolute bottom-2 left-2 text-3xs font-black tracking-tight text-white/20 uppercase">
               {ticket.movie}
@@ -62,13 +66,6 @@ export default function UpcomingTicketCard({ ticket }: { ticket: UpcomingTicket 
                   <Badge variant="neutral" size="xs" className="uppercase font-bold">
                     {ticket.ageRating}
                   </Badge>
-                )}
-                {ticket.isTransferring && (
-                  <span className="rounded-full border border-(--color-gold)/40 bg-(--color-gold)/10 px-2.5 py-0.5 text-2xs font-bold text-(--color-gold)">
-                    {ticket.transferRecipientName
-                      ? `→ ${ticket.transferRecipientName}`
-                      : translate("tickets.transfer.pending_badge")}
-                  </span>
                 )}
               </div>
 

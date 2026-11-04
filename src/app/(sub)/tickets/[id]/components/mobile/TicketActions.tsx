@@ -19,7 +19,12 @@ import ActionSheet, { ActionRow } from "@/components/ui/ActionSheet";
 import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext";
 import { useTransferDecisions } from "@/features/tickets/hooks/useTransferDecisions";
 
-export default function TicketActions() {
+interface TicketActionsProps {
+  downloadTicket: () => void;
+  isDownloading: boolean;
+}
+
+export default function TicketActions({ downloadTicket, isDownloading }: TicketActionsProps) {
   const { ticket, viewerRole, transfer, incomingTransfer } = useTicketDetail();
   const { translate } = useLocale();
   const params = useParams();
@@ -98,9 +103,11 @@ export default function TicketActions() {
       {!hasOpenTransfer && hasScannableQr && (
         <button
           type="button"
-          className="w-full flex items-center justify-center gap-2.5 py-4 rounded-xl font-extrabold text-sm tracking-wide transition duration-150 active:scale-[0.98] bg-(--color-gold) text-(--color-bg) shadow-(--shadow-glow)"
+          onClick={downloadTicket}
+          disabled={isDownloading}
+          className="w-full flex items-center justify-center gap-2.5 py-4 rounded-xl font-extrabold text-sm tracking-wide transition duration-150 active:scale-[0.98] bg-(--color-gold) text-(--color-bg) shadow-(--shadow-glow) disabled:opacity-50"
         >
-          <Download size={18} />
+          {isDownloading ? <Loader2 size={18} className="animate-spin" /> : <Download size={18} />}
           {translate("tickets.detail.download_ticket")}
         </button>
       )}
@@ -118,6 +125,7 @@ export default function TicketActions() {
 
           <ActionSheet isOpen={isActionsOpen} onClose={() => setIsActionsOpen(false)}>
             <ActionRow
+              variant="mobile"
               icon={Pencil}
               label={translate("tickets.detail.edit_ticket")}
               description={translate("tickets.detail.edit_ticket_desc")}
@@ -127,6 +135,7 @@ export default function TicketActions() {
               }}
             />
             <ActionRow
+              variant="mobile"
               icon={ArrowUpRight}
               label={translate("tickets.detail.transfer_ticket")}
               description={translate("tickets.detail.transfer_ticket_desc")}
@@ -136,6 +145,7 @@ export default function TicketActions() {
               }}
             />
             <ActionRow
+              variant="mobile"
               icon={XCircle}
               label={translate("tickets.detail.cancel_refund")}
               description={translate("tickets.detail.cancel_refund_desc")}

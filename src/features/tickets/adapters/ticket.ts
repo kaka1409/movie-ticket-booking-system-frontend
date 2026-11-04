@@ -9,7 +9,8 @@ import type {
   TicketSummaryWire,
   UpcomingTicket,
 } from "../types";
-import { buildShowtimeEnd, buildShowtimeStart, formatTicketDatetime } from "./time";
+import { formatShowtimeWallClock } from "@/libs/date";
+import { buildShowtimeEnd, buildShowtimeStart } from "./time";
 import { toIncomingTransfer, toTransfer } from "./transfer";
 
 /* ─── Display maps ─── */
@@ -59,7 +60,7 @@ export function toUpcomingTicket(summary: TicketSummaryWire, locale: "en" | "vn"
     id: summary.ticketId,
     status: toUpcomingStatus(),
     movie: summary.movieTitle,
-    datetime: formatTicketDatetime(summary.showtimeDate, summary.showtimeStart, locale),
+    datetime: formatShowtimeWallClock(summary.showtimeDate, summary.showtimeStart, locale),
     startsAtMs,
     endsAtMs: buildShowtimeEnd(summary.showtimeDate, summary.showtimeEnd, startsAtMs),
     cinema: summary.cinemaName,
@@ -69,7 +70,6 @@ export function toUpcomingTicket(summary: TicketSummaryWire, locale: "en" | "vn"
     room: summary.roomName,
     totalPrice: summary.totalPrice,
     isTransferring: summary.pendingTransfer !== null,
-    transferRecipientName: summary.pendingTransfer?.recipientName,
   };
 }
 
@@ -80,7 +80,7 @@ export function toPastTicket(summary: TicketSummaryWire, locale: "en" | "vn"): P
     status: toPastStatus(summary.ticketStatus, transferProvenance?.direction === "sent"),
     movie: summary.movieTitle,
     format: summary.format,
-    datetime: formatTicketDatetime(summary.showtimeDate, summary.showtimeStart, locale),
+    datetime: formatShowtimeWallClock(summary.showtimeDate, summary.showtimeStart, locale),
     ticketCount: summary.seatCount,
     poster: summary.posterUrl ?? POSTER_FALLBACK,
     cinema: summary.cinemaName,
@@ -129,7 +129,7 @@ export function toDetailTicket(
     id: detail.ticketId,
     showtimeId: detail.showtime.id,
     movie: detail.showtime.movie.title,
-    datetime: formatTicketDatetime(detail.showtime.date, detail.showtime.startTime, locale),
+    datetime: formatShowtimeWallClock(detail.showtime.date, detail.showtime.startTime, locale),
     startsAtMs,
     endsAtMs: buildShowtimeEnd(detail.showtime.date, detail.showtime.endTime, startsAtMs),
     cinema: detail.showtime.cinema.name,
@@ -176,7 +176,6 @@ export function toDetailTicket(
       transfer: toTransfer(detail),
       incomingTransfer: toIncomingTransfer(detail),
       isTransferring: detail.pendingTransfer !== null,
-      transferRecipientName: detail.pendingTransfer?.recipient.name,
       // The backend only issues the signed scan payload for a usable owner
       // ticket; absent means "no QR to render" (dead entitlement / recipient).
       qrCode: detail.qrCode ?? detail.qrToken ?? undefined,

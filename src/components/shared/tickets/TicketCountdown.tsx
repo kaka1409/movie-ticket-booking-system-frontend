@@ -13,6 +13,12 @@ const NEAR_MS = HOUR_MS;
 /** An exact minute count stops being useful this close to the start. */
 const SOON_MS = 5 * MINUTE_MS;
 
+/** The ribbon's paint: a black scrim over the poster, or the card's gold status chip. */
+const TONE_CLASS = {
+  dark: "bg-black/70 text-white backdrop-blur-[2px]",
+  gold: "bg-(--color-gold) text-black",
+} as const;
+
 /** `translate()` has no interpolation — fill placeholders like the rest of the app. */
 function fill(template: string, values: Record<string, number>): string {
   return Object.entries(values).reduce(
@@ -32,9 +38,12 @@ function fill(template: string, values: Record<string, number>): string {
 export default function TicketCountdown({
   startsAtMs,
   endsAtMs,
+  tone = "dark",
 }: {
   startsAtMs: number;
   endsAtMs: number;
+  /** `gold` = the upcoming-card status chip (gold fill, black text). */
+  tone?: keyof typeof TONE_CLASS;
 }) {
   const { translate } = useLocale();
   const mounted = useMounted(0);
@@ -74,7 +83,9 @@ export default function TicketCountdown({
   }
 
   return (
-    <span className="absolute inset-x-0 top-0 flex items-center justify-center gap-1 bg-black/70 px-1 py-1 text-center text-3xs font-black uppercase leading-tight tracking-tight text-white backdrop-blur-[2px]">
+    <span
+      className={`absolute inset-x-0 top-0 flex items-center justify-center gap-1 px-1 py-1 text-center text-3xs font-black uppercase leading-tight tracking-tight ${TONE_CLASS[tone]}`}
+    >
       <Clock size={10} className="shrink-0" />
       <span>{label}</span>
     </span>

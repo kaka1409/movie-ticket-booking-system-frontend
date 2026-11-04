@@ -46,8 +46,8 @@ export default function TicketsSkeleton() {
         </div>
       </div>
 
-      <div className="mt-8 rounded-2xl border border-(--color-border) bg-(--color-surface) p-5 lg:p-6">
-        <div className="surface-raised grid gap-5 lg:grid-cols-2">
+      <div className="mt-8 rounded-2xl border border-(--color-border) bg-(--color-surface) p-5 shadow-(--shadow-card) lg:p-7">
+        <div className="surface-raised grid gap-6 lg:grid-cols-2">
           {Array.from({ length: 4 }).map((_, index) => (
             <TicketStubSkeleton key={index} />
           ))}

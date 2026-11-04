@@ -5,10 +5,11 @@ export default function CancelSkeleton() {
   return (
     <div className="mx-auto w-full max-w-7xl px-6 py-8 lg:px-8">
       <Skeleton className="h-3 w-28 rounded-full" />
-      <Skeleton className="mt-3 h-7 w-64 rounded" />
+      <Skeleton className="mt-3 h-2.5 w-20 rounded-full" />
+      <Skeleton className="mt-1.5 h-7 w-64 rounded" />
 
       <div className="mt-6 grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_360px] xl:gap-10">
-        <div className="space-y-5">
+        <div className="min-w-0 space-y-5">
           <div className="rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 lg:p-6">
             <Skeleton className="h-2.5 w-24 rounded-full" />
             <div className="mt-3 flex gap-3">
@@ -39,13 +40,13 @@ export default function CancelSkeleton() {
           </div>
         </div>
 
-        <div className="space-y-4 rounded-2xl border border-(--color-border) bg-(--color-surface) p-5">
+        <aside className="space-y-4 rounded-2xl border border-(--color-border) bg-(--color-surface) p-5 lg:sticky lg:top-24">
           <Skeleton className="h-4 w-40 rounded-full" />
           {Array.from({ length: 4 }).map((_, index) => (
             <Skeleton key={index} className="h-3 w-full rounded-full" />
           ))}
           <Skeleton className="h-12 w-full rounded-2xl" />
-        </div>
+        </aside>
       </div>
     </div>
   );

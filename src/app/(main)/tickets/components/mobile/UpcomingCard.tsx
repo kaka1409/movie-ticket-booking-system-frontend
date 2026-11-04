@@ -25,11 +25,15 @@ export default function UpcomingCard({ ticket }: { ticket: UpcomingTicket }) {
             className="object-cover"
           />
           {ticket.isTransferring ? (
-            <span className="absolute inset-x-0 top-0 bg-black/70 px-1 py-1 text-center text-3xs font-black uppercase leading-tight tracking-tight text-(--color-gold) backdrop-blur-[2px]">
+            <span className="absolute inset-x-0 top-0 bg-(--color-gold) px-1 py-1 text-center text-3xs font-black uppercase leading-tight tracking-tight text-black">
               {translate("tickets.transfer.pending_badge")}
             </span>
           ) : (
-            <TicketCountdown startsAtMs={ticket.startsAtMs} endsAtMs={ticket.endsAtMs} />
+            <TicketCountdown
+              startsAtMs={ticket.startsAtMs}
+              endsAtMs={ticket.endsAtMs}
+              tone="gold"
+            />
           )}
           <span className="absolute bottom-2 left-2 text-3xs font-black uppercase tracking-tight text-white/15">
             {ticket.movie}
@@ -58,15 +62,6 @@ export default function UpcomingCard({ ticket }: { ticket: UpcomingTicket }) {
               {translate("tickets.seats_label")}
               {ticket.seatItems.map((seat) => seat.label).join(", ")}
             </span>
-            {ticket.isTransferring && (
-              // The poster ribbon already names the state — this pill keeps the
-              // one thing it cannot fit: who the ticket is waiting on.
-              <span className="px-3 py-1 rounded-full text-[11px] font-bold bg-(--color-gold)/10 text-(--color-gold) border border-(--color-gold)/40">
-                {ticket.transferRecipientName
-                  ? `→ ${ticket.transferRecipientName}`
-                  : translate("tickets.transfer.pending_badge")}
-              </span>
-            )}
           </div>
         </div>
       </div>

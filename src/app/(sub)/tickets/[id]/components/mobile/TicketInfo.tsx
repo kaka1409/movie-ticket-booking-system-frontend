@@ -52,7 +52,9 @@ export default function TicketInfo() {
         <TearLine className="px-0 my-0" lineClassName="mx-3" />
 
         <div className="px-4 py-4 space-y-4">
-          <div className="flex justify-center">
+          {/* The venue column takes the leftover width (a long name wraps), the
+              time column keeps its natural width so the clock never breaks. */}
+          <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
             <DetailRow
               icon={MonitorPlay}
               label={translate("booking.common.theater")}
@@ -68,8 +70,8 @@ export default function TicketInfo() {
               icon={CalendarDays}
               label={translate("booking.common.date_time")}
               value={ticket.datetime}
-              valueClass="text-white font-bold text-sm text-right"
-              labelClass="justify-end "
+              valueClass="text-white font-bold text-sm text-right whitespace-nowrap"
+              labelClass="justify-end"
             />
           </div>
 

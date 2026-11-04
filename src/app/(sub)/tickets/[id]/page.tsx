@@ -1,5 +1,4 @@
-import MobileTicketInfo from "./components/mobile/TicketInfo";
-import MobileTicketActions from "./components/mobile/TicketActions";
+import MobileTicketDetail from "./components/mobile/MobileTicketDetail";
 import DesktopTicketDetail from "./components/desktop/TicketDetail";
 
 export default async function TicketDetailPage() {
@@ -7,8 +6,7 @@ export default async function TicketDetailPage() {
     <>
       {/* Mobile */}
       <div className="block md:hidden">
-        <MobileTicketInfo />
-        <MobileTicketActions />
+        <MobileTicketDetail />
       </div>
 
       {/* Desktop */}

@@ -1,6 +1,6 @@
 "use client";
 
-import { Clock, Loader2, Printer, XCircle } from "lucide-react";
+import { Clock, Loader2, XCircle } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { formatVND } from "@/libs/utils";
 import MicroLabel from "@/components/ui/MicroLabel";
@@ -147,10 +147,6 @@ export default function TicketQrPanel() {
     );
   }
 
-  const handlePrint = () => {
-    window.print();
-  };
-
   if ("transferProvenance" in ticket && ticket.transferProvenance?.direction === "sent") {
     return (
       <section className={PANEL_CLASS}>
@@ -178,14 +174,7 @@ export default function TicketQrPanel() {
             {translate("tickets.scan_instruction")}
           </p>
 
-          <button
-            type="button"
-            onClick={handlePrint}
-            className="flex w-full items-center justify-center gap-2 rounded-xl border border-(--color-gold)/40 bg-(--color-gold)/10 py-2.5 text-xs font-bold text-(--color-gold) transition hover:bg-(--color-gold)/20 active:scale-95"
-          >
-            <Printer size={15} />
-            <span>{translate("tickets.print_ticket")}</span>
-          </button>
+
         </div>
       ) : (
         <div className="flex flex-col items-center gap-2 rounded-2xl border border-(--color-border) bg-(--color-surface-2) px-4 py-8 text-center">

@@ -2,6 +2,7 @@
 
 import { ArrowUpRight, Check, CreditCard, Download, Pencil, X, XCircle } from "lucide-react";
 import Button from "@/components/ui/Button";
+import ActionRow from "@/components/ui/ActionRow";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext";
 import { useTransferDecisions } from "@/features/tickets/hooks/useTransferDecisions";
@@ -16,8 +17,14 @@ const PANEL_CLASS =
  * scannable payload offers the download.
  *
  * Both dispatchers sit on real `<form action>`s (see `useTransferDecisions`).
+ * Actions use ActionRow style with icon container + label + description.
  */
-export default function TicketActionsPanel() {
+interface TicketActionsPanelProps {
+  downloadTicket: () => void;
+  isDownloading: boolean;
+}
+
+export default function TicketActionsPanel({ downloadTicket, isDownloading }: TicketActionsPanelProps) {
   const { ticket, viewerRole, transfer, incomingTransfer } = useTicketDetail();
   const { translate } = useLocale();
   const { acceptFormAction, declineFormAction, isAccepting, isDeclining, isBusy, error } =
@@ -32,6 +39,7 @@ export default function TicketActionsPanel() {
               href={`/tickets/${ticket.id}/transfer/payment`}
               icon={CreditCard}
               iconPosition="left"
+              size="lg"
             >
               {translate("tickets.transfer.incoming_awaiting_cta")}
             </Button>
@@ -48,6 +56,7 @@ export default function TicketActionsPanel() {
               loading={isAccepting}
               icon={Check}
               iconPosition="left"
+              size="lg"
             >
               {translate("tickets.transfer.accept")}
             </Button>
@@ -63,6 +72,7 @@ export default function TicketActionsPanel() {
             loading={isDeclining}
             icon={X}
             iconPosition="left"
+            size="lg"
           >
             {translate("tickets.transfer.decline")}
           </Button>
@@ -89,47 +99,49 @@ export default function TicketActionsPanel() {
     return null;
   }
 
-  const handleDownload = () => {
-    window.print();
-  };
-
   return (
     <section className={PANEL_CLASS}>
+      <h3 className="text-sm font-bold text-white mb-3">
+        {translate("tickets.detail.actions_title")}
+      </h3>
+
       {!hasOpenTransfer && hasScannableQr && (
-        <Button type="button" icon={Download} iconPosition="left" onClick={handleDownload}>
-          {translate("tickets.detail.download_ticket")}
-        </Button>
+        <ActionRow
+          variant="desktop"
+          icon={Download}
+          label={translate("tickets.detail.download_ticket")}
+          description={isDownloading ? "Downloading..." : translate("tickets.detail.download_ticket_desc")}
+          onClick={downloadTicket}
+        />
       )}
 
       {!hasOpenTransfer && canCancel && (
-        <div className="space-y-3 pt-1">
-          <Button
-            variant="loadMore"
-            href={`/tickets/${ticket.id}/modify`}
+        <div className="space-y-2">
+          <ActionRow
+            variant="desktop"
             icon={Pencil}
-            iconPosition="left"
-          >
-            {translate("tickets.detail.edit_ticket")}
-          </Button>
+            label={translate("tickets.detail.edit_ticket")}
+            description={translate("tickets.detail.edit_ticket_desc")}
+            href={`/tickets/${ticket.id}/modify`}
+          />
 
-          <Button
-            variant="loadMore"
-            href={`/tickets/${ticket.id}/transfer`}
+          <ActionRow
+            variant="desktop"
             icon={ArrowUpRight}
-            iconPosition="left"
-          >
-            {translate("tickets.detail.transfer_ticket")}
-          </Button>
+            label={translate("tickets.detail.transfer_ticket")}
+            description={translate("tickets.detail.transfer_ticket_desc")}
+            href={`/tickets/${ticket.id}/transfer`}
+          />
 
           <div className="border-t border-(--color-border)/50 pt-2">
-            <Button
-              variant="danger"
-              href={`/tickets/${ticket.id}/cancel`}
+            <ActionRow
+              variant="desktop"
               icon={XCircle}
-              iconPosition="left"
-            >
-              {translate("tickets.detail.cancel_refund")}
-            </Button>
+              label={translate("tickets.detail.cancel_refund")}
+              description={translate("tickets.detail.cancel_refund_desc")}
+              danger
+              href={`/tickets/${ticket.id}/cancel`}
+            />
           </div>
         </div>
       )}
