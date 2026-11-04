@@ -41,6 +41,7 @@ function DesktopLoading() {
           <div className="flex items-start gap-10">
             <div className="min-w-0 flex-1 space-y-10">
               <div className="space-y-3">
+                <Skeleton className="mb-3 h-6 w-28 rounded-md" />
                 <div className="space-y-2">
                   <Skeleton className="h-3 w-full rounded-full" />
                   <Skeleton className="h-3 w-full rounded-full" />
@@ -49,10 +50,14 @@ function DesktopLoading() {
               </div>
 
               <div className="space-y-4">
-                <Skeleton className="h-6 w-28 rounded-full" />
+                <Skeleton className="h-6 w-28 rounded-md" />
                 <div className="flex flex-wrap gap-4">
                   {Array.from({ length: 6 }).map((_, index) => (
-                    <Skeleton key={index} className="h-20 w-20 rounded-(--radius-lg)" />
+                    <div key={index} className="flex w-20 flex-col items-center">
+                      <Skeleton className="h-20 w-20 rounded-(--radius-lg)" />
+                      <Skeleton className="mt-2 h-2.5 w-14 rounded-full" />
+                      <Skeleton className="mt-1 h-2 w-10 rounded-full" />
+                    </div>
                   ))}
                 </div>
               </div>

@@ -119,7 +119,7 @@ export default function MoviePreviewPopover({
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-black/20" />
 
           <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5">
-            {movie.rating > 0 && (
+            {movie.rating !== null && (
               <span className="flex items-center gap-1 rounded-(--radius-sm) bg-(--color-gold) px-2 py-0.5 text-[11px] font-black text-black shadow">
                 <Star size={11} fill="currentColor" /> {movie.rating}
               </span>
