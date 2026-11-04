@@ -203,7 +203,7 @@ export default function WishlistContent({ initialItems }: { initialItems: Wishli
           </EmptyState>
         </div>
       ) : (
-        <div className="mt-6 space-y-4">
+        <div className="mt-6 grid items-start gap-6 lg:grid-cols-2">
           {visibleMovies.map((movie) => (
             <WishlistMovieRow
               key={movie.id}

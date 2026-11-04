@@ -33,9 +33,9 @@ export function DesktopReviewsSkeleton() {
           ))}
         </div>
       </div>
-      <div className="mt-5 space-y-4">
+      <div className="mt-5 grid gap-6 lg:grid-cols-2">
         {Array.from({ length: 4 }).map((_, index) => (
-          <SurfaceSkeleton key={index} raised className="h-32 rounded-2xl" />
+          <SurfaceSkeleton key={index} raised className="h-40 rounded-2xl" />
         ))}
       </div>
     </div>

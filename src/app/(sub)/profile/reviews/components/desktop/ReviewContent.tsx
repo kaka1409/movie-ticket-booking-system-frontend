@@ -129,7 +129,7 @@ export default function ReviewContent({
       </div>
 
       {/* Review Cards List */}
-      <div className="mt-5 space-y-4">
+      <div className="mt-5 grid gap-6 lg:grid-cols-2">
         {reviews.map((review, index) => (
           <div key={review.id} className={index >= animThreshold ? "animate-fade-in" : ""}>
             <ReviewRow

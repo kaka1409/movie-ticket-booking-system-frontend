@@ -54,3 +54,48 @@ export function NextScreeningSkeleton() {
     </section>
   );
 }
+
+/**
+ * The overview body in the order `ProfileContent` paints it: next screening,
+ * then the three activity tiles, then the personal/security pair.
+ */
+export function ProfileOverviewSkeleton() {
+  return (
+    <div className="space-y-6">
+      <NextScreeningSkeleton />
+      <AccountStatsSkeleton />
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        {Array.from({ length: 2 }).map((_, index) => (
+          <section
+            key={index}
+            className="flex flex-col justify-between rounded-2xl border border-(--color-border) bg-(--color-surface) p-6 shadow-(--shadow-card)"
+          >
+            <div>
+              <div className="mb-4 flex items-center justify-between border-b border-(--color-border)/50 pb-3">
+                <Skeleton className="h-3 w-28 rounded-full" />
+                <Skeleton className="h-3 w-20 rounded-full" />
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                {Array.from({ length: 4 }).map((_, rowIndex) => (
+                  <div key={rowIndex} className="min-w-0">
+                    <Skeleton className="h-2.5 w-16 rounded-full" />
+                    <Skeleton className="mt-1.5 h-3.5 w-24 rounded-full" />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {index === 1 && (
+              <div className="mt-6 flex items-center justify-between border-t border-(--color-border)/40 pt-4">
+                <Skeleton className="h-3 w-24 rounded-full" />
+                <Skeleton className="h-9 w-32 rounded-xl" />
+              </div>
+            )}
+          </section>
+        ))}
+      </div>
+    </div>
+  );
+}

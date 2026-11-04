@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Trash2, ArrowUpRight, Loader2, Quote, Film } from "lucide-react";
+import { Trash2, ArrowUpRight, Loader2, Film } from "lucide-react";
 import type { MyReview } from "@/features/reviews/types";
 import { useLocale } from "@/contexts/LocaleContext";
 import { formatDate } from "@/libs/utils";
@@ -13,8 +13,9 @@ import Button from "@/components/ui/Button";
 
 /**
  * Desktop review card:
- * High-res movie poster, star rating badge, stylish quote comment block,
- * direct link to film page, and confirm-to-delete action.
+ * High-res movie poster, compact rating badge, the review text at full card
+ * width, a direct link to the film page, and confirm-to-delete. Cards stretch
+ * to their grid row so a list of mixed comment lengths still reads as a grid.
  */
 export default function ReviewRow({
   review,
@@ -29,7 +30,7 @@ export default function ReviewRow({
   const [isArmed, setIsArmed] = useState(false);
 
   return (
-    <article className="group flex flex-col gap-4 rounded-2xl border border-(--color-border) bg-(--color-surface) p-5 shadow-(--shadow-card) transition duration-200 hover:border-(--color-gold)/40 hover:shadow-lg sm:flex-row sm:items-start">
+    <article className="group flex h-full flex-col gap-4 rounded-2xl border border-(--color-border) bg-(--color-surface) p-5 shadow-(--shadow-card) transition duration-200 hover:border-(--color-gold)/40 hover:shadow-lg sm:flex-row sm:items-start">
       {/* Movie Poster */}
       <Link
         href={`/movies/${review.movie.slug}`}
@@ -51,7 +52,7 @@ export default function ReviewRow({
       </Link>
 
       {/* Review Body */}
-      <div className="flex min-w-0 flex-1 flex-col justify-between gap-3">
+      <div className="flex min-w-0 flex-1 flex-col justify-between gap-3 self-stretch">
         <div>
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div className="min-w-0">
@@ -70,15 +71,12 @@ export default function ReviewRow({
             </div>
           </div>
 
-          {/* Comment with quote styling */}
+          {/* Review Text */}
           {review.comment && (
-            <div className="relative mt-3 rounded-xl border-l-2 border-(--color-gold)/50 bg-(--color-surface-2)/40 py-2 pl-3.5 pr-3">
-              <Quote size={12} className="mb-1 text-(--color-gold)/40" />
-              <ExpandableText
-                text={review.comment}
-                className="text-xs leading-relaxed text-(--color-text-secondary)"
-              />
-            </div>
+            <ExpandableText
+              text={review.comment}
+              className="mt-3 text-xs leading-relaxed text-white"
+            />
           )}
         </div>
 
@@ -92,7 +90,7 @@ export default function ReviewRow({
             <ArrowUpRight size={13} />
           </Link>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center justify-end gap-2">
             {isArmed ? (
               <>
                 <span className="text-xs text-(--color-text-muted)">

@@ -1,5 +1,6 @@
 import { Skeleton, SkeletonCard } from "@/components/ui/Skeleton";
 import AccountSkeleton from "@/components/shared/profile/desktop/AccountSkeleton";
+import { ProfileOverviewSkeleton } from "./components/desktop/ProfileSkeletons";
 
 export default function ProfileLoading() {
   return (
@@ -40,7 +41,9 @@ export default function ProfileLoading() {
       </div>
       <div className="hidden md:block">
         <div className="mx-auto w-full max-w-7xl px-6 py-8 lg:px-8">
-          <AccountSkeleton />
+          <AccountSkeleton>
+            <ProfileOverviewSkeleton />
+          </AccountSkeleton>
         </div>
       </div>
     </>

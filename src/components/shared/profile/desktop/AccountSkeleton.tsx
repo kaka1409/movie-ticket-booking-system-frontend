@@ -30,13 +30,14 @@ export default function AccountSkeleton({ children }: { children?: ReactNode }) 
         </div>
       </div>
 
-      {/* 2. Horizontal Tabs Skeleton */}
-      <div className="mt-6 flex gap-6 border-b border-(--color-border) pb-3.5">
-        <Skeleton className="h-5 w-24 rounded-md" />
-        <Skeleton className="h-5 w-32 rounded-md" />
-        <Skeleton className="h-5 w-28 rounded-md" />
-        <Skeleton className="h-5 w-36 rounded-md" />
-        <Skeleton className="h-5 w-32 rounded-md" />
+      {/* 2. Horizontal Tabs Skeleton — `AccountTabs`: icon + label per item, `p-4` */}
+      <div className="mt-4 flex gap-1 overflow-hidden border-b border-(--color-border)">
+        {["w-12", "w-16", "w-14", "w-20", "w-16"].map((width) => (
+          <div key={width} className="flex h-[52px] shrink-0 items-center gap-1.5 px-4">
+            <Skeleton className="h-4 w-4 rounded-sm" />
+            <Skeleton className={`h-4 ${width} rounded-full`} />
+          </div>
+        ))}
       </div>
 
       {/* 3. Content Area Skeleton */}
