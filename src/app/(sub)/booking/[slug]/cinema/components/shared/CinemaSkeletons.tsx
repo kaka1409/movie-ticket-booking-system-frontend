@@ -1,6 +1,7 @@
 import { Skeleton, SkeletonBar, SkeletonCard, SurfaceSkeleton } from "@/components/ui/Skeleton";
 import BookingSkeleton from "@/app/(sub)/booking/components/mobile/BookingSkeleton";
 import BookingPanelSkeleton from "@/app/(sub)/booking/components/desktop/BookingPanelSkeleton";
+import { CinemaRailSkeleton } from "@/app/(sub)/booking/components/desktop/RailSkeleton";
 
 /**
  * Fallbacks for the cinema step. Each mirrors the box its section paints (day
@@ -103,7 +104,7 @@ export default function CinemaPageSkeleton() {
       </div>
 
       <div className="hidden md:block">
-        <BookingPanelSkeleton>
+        <BookingPanelSkeleton summary={<CinemaRailSkeleton />}>
           <SkeletonBar className="h-5 w-40 rounded-md" />
           <DesktopCinemaDatesSkeleton />
           <DesktopCinemaSlotsSkeleton />

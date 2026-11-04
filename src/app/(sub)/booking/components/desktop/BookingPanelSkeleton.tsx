@@ -4,9 +4,19 @@ import { SkeletonBar } from "@/components/ui/Skeleton";
 /**
  * Route-level fallback for the desktop booking steps: the same panel, stepper,
  * two-column grid and rail `SplitStepLayout` paints, so navigation into a step
- * lands on its final shape. The step body is the only part a caller supplies.
+ * lands on its final shape.
+ *
+ * The step body and the rail's selection block are the only parts a caller
+ * supplies — the identity block above them is the same on every step.
  */
-export default function BookingPanelSkeleton({ children }: { children: ReactNode }) {
+export default function BookingPanelSkeleton({
+  children,
+  summary,
+}: {
+  children: ReactNode;
+  /** The step's own summary block (see `RailSkeleton`). */
+  summary?: ReactNode;
+}) {
   return (
     <div className="mx-auto w-full max-w-7xl px-6 py-8 lg:px-8">
       <div className="rounded-2xl border border-(--color-border) bg-(--color-surface) p-5 lg:p-6">
@@ -14,6 +24,7 @@ export default function BookingPanelSkeleton({ children }: { children: ReactNode
           {Array.from({ length: 5 }).map((_, index) => (
             <div key={index} className="flex flex-1 items-center gap-3 last:flex-none">
               <SkeletonBar className="h-8 w-8 shrink-0 rounded-full" />
+              <SkeletonBar className="hidden h-2.5 w-20 rounded-full lg:block" />
               {index < 4 && <span className="h-px flex-1 bg-(--color-border)" />}
             </div>
           ))}
@@ -34,9 +45,13 @@ export default function BookingPanelSkeleton({ children }: { children: ReactNode
               </div>
             </div>
 
-            <div className="mt-5 space-y-3 border-t border-(--color-border) pt-5">
-              <SkeletonBar className="h-3 w-2/3 rounded-full" />
-              <SkeletonBar className="h-3 w-1/2 rounded-full" />
+            <div className="mt-5 space-y-4 border-t border-(--color-border) pt-5">
+              {summary ?? (
+                <>
+                  <SkeletonBar className="h-3 w-2/3 rounded-full" />
+                  <SkeletonBar className="h-3 w-1/2 rounded-full" />
+                </>
+              )}
             </div>
 
             <SkeletonBar className="mt-5 h-12 w-full rounded-(--radius-md)" />

@@ -48,7 +48,9 @@ export default function CredentialsContent({ slug }: { slug: string }) {
         </Button>
       }
     >
-      <ContactForm className="space-y-4" />
+      <div className="rounded-2xl border border-(--color-border) bg-(--color-surface) p-5">
+        <ContactForm className="space-y-6 md:space-y-8 max-w-2xl" showPrivacy />
+      </div>
     </BookingStepLayout>
   );
 }

@@ -11,8 +11,11 @@ import type { SeatRow } from "@/features/booking/types";
  * in `SeatMapAdopter` (mounted once at page level); this only paints the draft
  * grid, falling back to the server rows with the draft's seats re-marked so the
  * first paint (before adoption) never flashes empty.
+ *
+ * Desktop: legend is rendered separately in SeatContent, so showLegend=false, size=xl.
+ * Mobile: legend is rendered by SeatGrid, so showLegend=true, size=sm (default).
  */
-export default function SeatMapWrapper({ initialRows }: { initialRows: SeatRow[] }) {
+export default function SeatMapWrapper({ initialRows, showLegend = true, size = "sm" }: { initialRows: SeatRow[]; showLegend?: boolean; size?: "xs" | "sm" | "md" | "lg" | "xl" }) {
   const { seatGrid, selectedSeats, toggleSeat } = useBooking();
 
   const rows = useMemo(
@@ -20,5 +23,5 @@ export default function SeatMapWrapper({ initialRows }: { initialRows: SeatRow[]
     [seatGrid, initialRows, selectedSeats],
   );
 
-  return <SeatGrid rows={rows} onToggle={toggleSeat} />;
+  return <SeatGrid rows={rows} onToggle={toggleSeat} showLegend={showLegend} size={size} />;
 }

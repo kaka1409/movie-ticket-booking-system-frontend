@@ -18,19 +18,24 @@ export default function SeatGrid({
   onToggle,
   selectedLabels = [],
   originalLabels = [],
-  showLegend = true,
   showScreen = true,
+  showLegend = true,
+  size = "sm",
 }: {
   rows: SeatRow[];
   onToggle: (rowLabel: string, seat: Seat) => void;
   selectedLabels?: string[];
   originalLabels?: string[];
-  showLegend?: boolean;
   showScreen?: boolean;
+  showLegend?: boolean;
+  size?: "xs" | "sm" | "md" | "lg" | "xl";
 }) {
   const { translate } = useLocale();
 
   const hasExternalSelection = selectedLabels.length > 0;
+
+  const screenWidth = size === "xl" ? 600 : size === "lg" ? 500 : size === "md" ? 400 : 300;
+  const screenHeight = size === "xl" ? 36 : size === "lg" ? 32 : size === "md" ? 28 : 24;
 
   return (
     <>
@@ -39,8 +44,8 @@ export default function SeatGrid({
           <span className="text-2xs font-bold tracking-[0.2em] text-(--color-gold) uppercase">
             {translate("booking.common.screen")}
           </span>
-          <svg width="300" height="24" viewBox="0 0 260 24" fill="none">
-            <path d="M 4 20 Q 130 0 256 20" stroke="rgba(255,204,77,0.8)" strokeWidth="5" />
+          <svg width={screenWidth} height={screenHeight} viewBox={`0 0 ${screenWidth - 40} ${screenHeight}`} fill="none">
+            <path d={`M 2 ${screenHeight - 4} Q ${screenWidth / 2} 0 ${screenWidth - 2} ${screenHeight - 4}`} stroke="rgba(255,204,77,0.8)" strokeWidth="5" />
           </svg>
         </div>
       )}
@@ -65,6 +70,7 @@ export default function SeatGrid({
                       seat={effectiveSeat}
                       onToggle={(cell) => onToggle(row.label, cell)}
                       originalIndicator={originalLabels.includes(label)}
+                      size={size}
                     />
                   );
                 })}
@@ -83,6 +89,7 @@ export default function SeatGrid({
                       seat={effectiveSeat}
                       onToggle={(cell) => onToggle(row.label, cell)}
                       originalIndicator={originalLabels.includes(label)}
+                      size={size}
                     />
                   );
                 })}

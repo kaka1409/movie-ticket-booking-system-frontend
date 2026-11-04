@@ -1,6 +1,7 @@
 import { SkeletonBar, SkeletonCard, SurfaceSkeleton } from "@/components/ui/Skeleton";
 import BookingSkeleton from "@/app/(sub)/booking/components/mobile/BookingSkeleton";
 import BookingPanelSkeleton from "@/app/(sub)/booking/components/desktop/BookingPanelSkeleton";
+import { SummaryRailSkeleton } from "@/app/(sub)/booking/components/desktop/RailSkeleton";
 
 /**
  * Fallbacks for the payment step: one gateway row (radio, brand tile, name +
@@ -49,7 +50,7 @@ export default function PaymentPageSkeleton() {
       </div>
 
       <div className="hidden md:block">
-        <BookingPanelSkeleton>
+        <BookingPanelSkeleton summary={<SummaryRailSkeleton />}>
           <div className="space-y-6">
             <SkeletonBar className="h-5 w-56 rounded-md" />
             <div className="grid gap-3 xl:grid-cols-2">

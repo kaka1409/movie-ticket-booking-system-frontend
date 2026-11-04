@@ -63,3 +63,31 @@ export function formatCalendarDate(value: string | null | undefined, locale: "en
     year: "numeric",
   });
 }
+
+/**
+ * Showtime `date` (`YYYY-MM-DD`) + `startTime` (`HH:mm`) → card label
+ * (`Fri, Nov 10, 20:00` in EN, `Th 6, 10 thg 11, 20:00` in VN). Both halves are
+ * cinema wall clock, so the parts are composed with local setters — never the
+ * host timezone — and the clock stays 24-hour in both locales.
+ */
+export function formatShowtimeWallClock(
+  showtimeDate: string,
+  showtimeStart: string,
+  locale: "en" | "vn",
+): string {
+  const [year, month, day] = showtimeDate.split("-").map(Number);
+  const [hours, minutes] = showtimeStart.split(":").map(Number);
+  const at = new Date(year, month - 1, day, hours, minutes);
+  const tag = toLocaleTag(locale);
+  const datePart = new Intl.DateTimeFormat(tag, {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+  }).format(at);
+  const timePart = new Intl.DateTimeFormat(tag, {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(at);
+  return `${datePart}, ${timePart}`;
+}

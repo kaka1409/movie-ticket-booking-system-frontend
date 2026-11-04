@@ -8,6 +8,7 @@ import { useSeatHoldSubmit } from "@/features/booking/hooks/useSeatHoldSubmit";
 import { formatVND } from "@/libs/utils";
 import Button from "@/components/ui/Button";
 import MicroLabel from "@/components/ui/MicroLabel";
+import SeatLegend from "@/components/shared/seats/SeatLegend";
 import BookingStepLayout from "@/app/(sub)/booking/components/desktop/BookingStepLayout";
 import CountdownRow from "@/app/(sub)/booking/components/desktop/CountdownRow";
 import RailTheater from "@/app/(sub)/booking/components/desktop/RailTheater";
@@ -17,9 +18,8 @@ import RailSeats from "@/app/(sub)/booking/components/desktop/RailSeats";
  * Desktop seats step: the map arrives as `slots`, so the shell — stepper, title,
  * rail with the running clock and the CTA — paints before the rows land.
  *
- * The map is capped at `max-w-md` because `SeatGrid` uses fixed 26px cells with
- * a `justify-between` row layout — stretching it across a wide column would tear
- * a row's two blocks apart instead of scaling it.
+ * The map now expands to full width of the left column (no max-w-md cap).
+ * Seat legend is moved to the top of the card for better visibility.
  *
  * The hold itself is created by `useSeatHoldSubmit` (shared with the mobile bar,
  * so the network side exists once); nothing here touches the backend.
@@ -60,12 +60,13 @@ export default function SeatContent({ slots }: { slots: ReactNode }) {
       }
       errorText={errorText}
     >
-      <div className="space-y-6">
-        <h1 className="text-xl font-extrabold tracking-wide text-(--color-text-primary)">
+      <div className="rounded-2xl border border-(--color-border) bg-(--color-surface) p-5 min-h-[600px]">
+        <h1 className="text-xl font-extrabold tracking-wide text-(--color-text-primary) mb-6">
           {translate("booking.seats.title")}
         </h1>
 
-        <div className="mx-auto w-full max-w-md rounded-2xl border border-(--color-border) bg-(--color-surface) p-5">
+        <SeatLegend desktop />
+        <div className="mt-6">
           {slots}
         </div>
       </div>

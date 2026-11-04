@@ -1,6 +1,7 @@
 import { SkeletonBar, SurfaceSkeleton } from "@/components/ui/Skeleton";
 import BookingSkeleton from "@/app/(sub)/booking/components/mobile/BookingSkeleton";
 import BookingPanelSkeleton from "@/app/(sub)/booking/components/desktop/BookingPanelSkeleton";
+import { SelectionRailSkeleton } from "@/app/(sub)/booking/components/desktop/RailSkeleton";
 
 /**
  * Fallbacks for the seats step: the screen, eight half-row pairs of 26px cells
@@ -61,7 +62,7 @@ export default function SeatsPageSkeleton() {
       </div>
 
       <div className="hidden md:block">
-        <BookingPanelSkeleton>
+        <BookingPanelSkeleton summary={<SelectionRailSkeleton />}>
           <div className="space-y-6">
             <SkeletonBar className="h-5 w-40 rounded-md" />
             <div className="mx-auto w-full max-w-md rounded-2xl border border-(--color-border) bg-(--color-surface) p-5">

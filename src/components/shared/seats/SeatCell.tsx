@@ -13,11 +13,15 @@ export default function SeatCell({
   onToggle,
   disabled = false,
   originalIndicator = false,
+  size = "sm",
+  legendMode = false,
 }: {
   seat: Seat;
   onToggle: (seat: Seat) => void;
   disabled?: boolean;
   originalIndicator?: boolean;
+  size?: "xs" | "sm" | "md" | "lg" | "xl";
+  legendMode?: boolean;
 }) {
   const occupied = seat.status === "occupied";
   const selected = seat.status === "selected";
@@ -25,6 +29,13 @@ export default function SeatCell({
 
   if (seat.kind === "sweetbox") {
     const pairLabel = seat.pairId?.split("-").slice(1).join("-") ?? "";
+    const sizeClasses = {
+      xs: "w-12 h-5",
+      sm: "w-18.5 h-8",
+      md: "w-24 h-10",
+      lg: "w-28 h-12",
+      xl: "w-32 h-14",
+    };
     return (
       <button
         type="button"
@@ -34,7 +45,7 @@ export default function SeatCell({
         }}
         aria-pressed={selected}
         aria-label={`${translate("booking.seats.sweetbox")} ${pairLabel}`}
-        className={`w-18.5 h-8 rounded-sm text-[11px] font-bold tracking-wide transition duration-150 active:scale-[0.95] ${
+        className={`${sizeClasses[size || "sm"]} rounded-sm text-[11px] font-bold tracking-wide transition duration-150 active:scale-[0.95] ${
           occupied
             ? "bg-(--color-surface-2) border border-(--color-border) text-(--color-text-muted) line-through cursor-not-allowed"
             : selected
@@ -42,7 +53,7 @@ export default function SeatCell({
               : "bg-pink-500 text-white hover:brightness-110"
         }`}
       >
-        {occupied ? "×" : pairLabel}
+        {occupied ? "×" : legendMode ? "" : pairLabel}
       </button>
     );
   }
@@ -60,6 +71,14 @@ export default function SeatCell({
   else if (seat.kind === "vip") cls = baseVip;
   else cls = baseAvail;
 
+  const sizeClasses = {
+    xs: "w-5 h-5",
+    sm: "w-6.5 h-6.5",
+    md: "w-9 h-9",
+    lg: "w-12 h-12",
+    xl: "w-14 h-14",
+  };
+
   return (
     <button
       type="button"
@@ -69,11 +88,11 @@ export default function SeatCell({
       }}
       aria-pressed={selected}
       aria-label={`${translate("booking.seats.seat_label")} ${seat.col}`}
-      className={`relative w-6.5 h-6.5 rounded-sm text-[11px] font-bold transition duration-150 active:scale-[0.92] ${cls} ${
+      className={`relative ${sizeClasses[size || "sm"]} rounded-sm text-[11px] font-bold transition duration-150 active:scale-[0.92] ${cls} ${
         originalIndicator && !selected ? "ring-1 ring-white/30" : ""
       }`}
     >
-      {occupied ? "×" : seat.col}
+      {occupied ? "×" : legendMode ? "" : seat.col}
       {originalIndicator && !selected && !occupied && (
         <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-white/40" />
       )}

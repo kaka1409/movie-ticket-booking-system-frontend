@@ -4,6 +4,7 @@ import Image from "next/image";
 import { MonitorPlay, CalendarDays } from "lucide-react";
 import { useBooking } from "@/features/booking/contexts/BookingContext";
 import { useLocale } from "@/contexts/LocaleContext";
+import { formatShowtimeWallClock } from "@/libs/date";
 import DetailRow from "@/components/shared/DetailRow";
 import PriceBreakdown from "@/components/shared/PriceBreakdown";
 import TearLine from "@/components/ui/TearLine";
@@ -14,7 +15,7 @@ import TearLine from "@/components/ui/TearLine";
  * not see the summary change shape between two adjacent steps.
  */
 export default function OrderSummary() {
-  const { translate } = useLocale();
+  const { translate, locale } = useLocale();
   const { movie, cinemaName, room, location, date, time, selectedSeats, combos, foods, total } =
     useBooking();
 
@@ -54,23 +55,25 @@ export default function OrderSummary() {
       <TearLine className="px-0 my-0" lineClassName="mx-3" />
 
       <div className="px-4 py-4 space-y-4">
-        <div className="flex justify-between gap-4">
+        {/* Venue takes the leftover width (a long name wraps); the clock keeps its
+            natural width so the date never breaks — same block as the ticket page. */}
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
           <DetailRow
             icon={MonitorPlay}
             label={translate("booking.common.theater")}
             value={
               <>
                 {cinemaName || "—"}
-                {room && <>, {room}</>}
                 {location && <>, {location}</>}
+                {room && <>, {room}</>}
               </>
             }
           />
           <DetailRow
             icon={CalendarDays}
             label={translate("booking.common.date_time")}
-            value={date && time ? `${date} • ${time}` : "—"}
-            valueClass="text-white font-bold text-sm text-right"
+            value={date && time ? formatShowtimeWallClock(date, time, locale) : "—"}
+            valueClass="text-white font-bold text-sm text-right whitespace-nowrap"
             labelClass="justify-end"
           />
         </div>

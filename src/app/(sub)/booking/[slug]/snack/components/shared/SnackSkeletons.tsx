@@ -1,6 +1,7 @@
 import { SkeletonBar, SkeletonCard, SurfaceSkeleton } from "@/components/ui/Skeleton";
 import BookingSkeleton from "@/app/(sub)/booking/components/mobile/BookingSkeleton";
 import BookingPanelSkeleton from "@/app/(sub)/booking/components/desktop/BookingPanelSkeleton";
+import { SelectionRailSkeleton } from "@/app/(sub)/booking/components/desktop/RailSkeleton";
 
 /**
  * Fallbacks for the snack step: one combo card (28-unit art tile + name/price
@@ -160,7 +161,7 @@ export default function SnackPageSkeleton() {
       </div>
 
       <div className="hidden md:block">
-        <BookingPanelSkeleton>
+        <BookingPanelSkeleton summary={<SelectionRailSkeleton />}>
           <div className="space-y-8">
             <div className="space-y-1">
               <SkeletonBar className="h-6 w-40 rounded-md" />

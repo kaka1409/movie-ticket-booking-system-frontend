@@ -25,7 +25,7 @@ export default function SnackContent({ slots }: { slots: ReactNode }) {
   const params = useParams();
   const slug = params.slug as string;
   const { translate, locale } = useLocale();
-  const { combos: selectedCombos, foods: selectedFoods, snackTotal } = useBooking();
+  const { combos: selectedCombos, foods: selectedFoods, total } = useBooking();
 
   // The selected arrays only hold qty > 0 entries, so the counter derives
   // straight from them — zeroing a stepper updates it live.
@@ -61,10 +61,10 @@ export default function SnackContent({ slots }: { slots: ReactNode }) {
 
           <div className="flex items-end justify-between">
             <MicroLabel className="text-(--color-text-muted)">
-              {translate("booking.common.total")}
+              {translate("booking.common.total_price")}
             </MicroLabel>
             <span className="text-base font-extrabold text-(--color-gold)">
-              {formatVND(snackTotal, locale)}
+              {formatVND(total, locale)}
             </span>
           </div>
         </div>

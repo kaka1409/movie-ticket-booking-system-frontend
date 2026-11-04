@@ -110,6 +110,21 @@ export function buildSeatsHref(
   return `/booking/${movieSlug}/seats${search ? `?${search}` : ""}`;
 }
 
+/** Restores the selected cinema slice when returning from a later booking step. */
+export function buildCinemaHref(
+  movieSlug: string,
+  selection: Pick<CinemaDraft, "showtimeId" | "cinemaId" | "time" | "date">,
+): string {
+  const query = new URLSearchParams();
+  if (selection.showtimeId) query.set("showtimeId", selection.showtimeId);
+  if (selection.cinemaId) query.set("cinema", selection.cinemaId);
+  if (selection.time) query.set("time", selection.time);
+  if (selection.date) query.set("date", selection.date);
+
+  const search = query.toString();
+  return `/booking/${movieSlug}/cinema${search ? `?${search}` : ""}`;
+}
+
 /**
  * Backend date records → the booking step's chips. `dayOfWeek` arrives in the
  * request locale; today's chip shows the translated "today" word instead.
