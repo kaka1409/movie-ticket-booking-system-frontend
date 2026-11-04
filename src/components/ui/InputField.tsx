@@ -1,7 +1,33 @@
 "use client";
 
-import FormField from "./FormField";
+import { useId } from "react";
+import FormField, { type FormFieldSize } from "./FormField";
 
+export interface InputFieldProps {
+  type?: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder: string;
+  icon?: React.ElementType;
+  label?: string;
+  id?: string;
+  rightSlot?: React.ReactNode;
+  error?: string;
+  hint?: string;
+  disabled?: boolean;
+  required?: boolean;
+  size?: FormFieldSize;
+  uppercaseLabel?: boolean;
+  className?: string;
+  autoComplete?: string;
+  inputMode?: React.HTMLAttributes<HTMLInputElement>["inputMode"];
+  maxLength?: number;
+}
+
+/**
+ * Standard text input field integrated with FormField wrapper,
+ * supporting desktop-responsive sizing, label, icons, and error states.
+ */
 export default function InputField({
   type = "text",
   value,
@@ -9,32 +35,38 @@ export default function InputField({
   placeholder,
   icon,
   label,
-  id,
+  id: customId,
   rightSlot,
   error,
+  hint,
   disabled,
+  required,
+  size = "md",
+  uppercaseLabel,
+  className,
   autoComplete,
   inputMode,
   maxLength,
-}: {
-  type?: string;
-  value: string;
-  onChange: (value: string) => void;
-  placeholder: string;
-  icon: React.ElementType;
-  label?: string;
-  id?: string;
-  rightSlot?: React.ReactNode;
-  error?: string;
-  disabled?: boolean;
-  autoComplete?: string;
-  inputMode?: React.HTMLAttributes<HTMLInputElement>["inputMode"];
-  maxLength?: number;
-}) {
+}: InputFieldProps) {
+  const generatedId = useId();
+  const inputId = customId || generatedId;
+
   return (
-    <FormField label={label} icon={icon} disabled={disabled} error={error} rightSlot={rightSlot}>
+    <FormField
+      id={inputId}
+      label={label}
+      icon={icon}
+      disabled={disabled}
+      required={required}
+      error={error}
+      hint={hint}
+      size={size}
+      uppercaseLabel={uppercaseLabel}
+      className={className}
+      rightSlot={rightSlot}
+    >
       <input
-        id={id}
+        id={inputId}
         type={type}
         value={value}
         disabled={disabled}
@@ -43,7 +75,7 @@ export default function InputField({
         maxLength={maxLength}
         placeholder={placeholder}
         onChange={(event) => onChange(event.target.value)}
-        className="flex-1 bg-transparent text-(--color-text-primary) outline-none placeholder:text-(--color-text-muted)"
+        className="flex-1 min-w-0 bg-transparent text-(--color-text-primary) outline-none placeholder:text-(--color-text-muted) disabled:cursor-not-allowed"
       />
     </FormField>
   );

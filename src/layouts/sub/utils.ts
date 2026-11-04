@@ -1,3 +1,5 @@
+import { buildCinemaHref, buildSeatsHref } from "@/features/booking/utils/cinema";
+
 /**
  * Back-button target for the sub layout. Every route maps to a deterministic
  * in-app parent so the back button always works, even on a first entry with no
@@ -6,15 +8,24 @@
  * button there (both have a "Back to Home" CTA). Unrecognised routes fall back
  * to the home page.
  */
-export function getBackHref(pathname: string): string | null {
+export function getBackHref(
+  pathname: string,
+  selection?: { showtimeId: string; cinemaId: string | null; time: string; date: string },
+): string | null {
   if (pathname.includes("/status/success") || pathname.includes("/status/failed")) {
     return null;
   }
   if (pathname.startsWith("/booking/")) {
     const slug = pathname.split("/")[2] ?? "";
     if (pathname.endsWith("/cinema")) return `/movies/${slug}`;
-    if (pathname.endsWith("/seats")) return `/booking/${slug}/cinema`;
-    if (pathname.endsWith("/snack")) return `/booking/${slug}/seats`;
+    if (pathname.endsWith("/seats")) {
+      if (selection) return buildCinemaHref(slug, selection);
+      return `/booking/${slug}/cinema`;
+    }
+    if (pathname.endsWith("/snack")) {
+      if (selection) return buildSeatsHref(slug, selection);
+      return `/booking/${slug}/seats`;
+    }
     if (pathname.endsWith("/credentials")) return `/booking/${slug}/snack`;
     if (pathname.endsWith("/payment")) return `/booking/${slug}/credentials`;
     return `/movies/${slug}`;

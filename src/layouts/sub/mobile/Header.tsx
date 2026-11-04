@@ -4,6 +4,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { getSubTitle, getBackHref } from "../utils";
+import BookingBackButton from "./BookingBackButton";
 
 export default function Header() {
   const router = useRouter();
@@ -17,7 +18,9 @@ export default function Header() {
 
   return (
     <header className="flex items-center justify-between px-4 py-2 border-b border-(--color-border)">
-      {backHref ? (
+      {pathname.startsWith("/booking/") ? (
+        <BookingBackButton pathname={pathname} />
+      ) : backHref ? (
         <button
           type="button"
           onClick={() => router.replace(backHref)}

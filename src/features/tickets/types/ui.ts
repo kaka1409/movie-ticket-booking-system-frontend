@@ -78,8 +78,6 @@ export interface UpcomingTicket {
   transfer?: TicketTransfer;
   /** Owner view — an open transfer is in flight (drives the list-card badge). */
   isTransferring?: boolean;
-  /** Who the badge names when the transfer is open. */
-  transferRecipientName?: string;
   /** Recipient view — the offer this viewer must accept or decline. */
   incomingTransfer?: IncomingTransfer;
   /** Which side of the ticket the payload was shaped for (defaults to owner). */
