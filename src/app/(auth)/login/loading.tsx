@@ -1,4 +1,4 @@
-import { Skeleton } from "@/components/ui/Skeleton";
+import { Skeleton, SkeletonBar } from "@/components/ui/Skeleton";
 
 export default function LoginLoading() {
   return (
@@ -18,19 +18,38 @@ export default function LoginLoading() {
         </div>
       </div>
 
-      {/* Desktop */}
+      {/*
+        Desktop: `loading.tsx` renders inside the auth layout's form column, so
+        this is the form body only — the layout already paints the card, artwork
+        and padding. Bars are `SkeletonBar` because that column is
+        `.surface-raised`, where a plain `Skeleton` would be the panel's colour.
+      */}
       <div className="hidden md:block">
-        <div className="mx-auto flex w-full max-w-7xl items-center justify-center px-6 py-16 lg:px-8">
-          <div className="grid w-full max-w-5xl grid-cols-1 gap-0 overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-surface) lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
-            <Skeleton className="hidden h-[620px] lg:block" />
-            <div className="space-y-6 p-8">
-              <Skeleton className="h-8 w-40 rounded" />
-              <Skeleton className="h-4 w-56 rounded-full" />
-              <Skeleton className="h-12 w-full rounded-xl" />
-              <Skeleton className="h-12 w-full rounded-xl" />
-              <Skeleton className="h-12 w-full rounded-2xl" />
+        <div className="mx-auto w-full max-w-md lg:max-w-none">
+          <SkeletonBar className="h-8 w-40 rounded-sm" />
+          <SkeletonBar className="mt-1.5 h-5 w-56 rounded-full" />
+
+          <div className="mt-6 flex border-b border-(--color-border)">
+            <div className="flex flex-1 justify-center pb-3">
+              <SkeletonBar className="h-4 w-16 rounded-full" />
+            </div>
+            <div className="flex flex-1 justify-center pb-3">
+              <SkeletonBar className="h-4 w-20 rounded-full" />
             </div>
           </div>
+
+          <div className="mt-5 space-y-3.5">
+            <SkeletonBar className="h-[54px] rounded-xl" />
+
+            <div>
+              <SkeletonBar className="h-[54px] rounded-xl" />
+              <SkeletonBar className="mt-1.5 ml-auto h-3 w-24 rounded-full" />
+            </div>
+
+            <SkeletonBar className="h-[52px] rounded-2xl" />
+          </div>
+
+          <SkeletonBar className="mx-auto mt-5 h-3 w-48 rounded-full" />
         </div>
       </div>
     </>
