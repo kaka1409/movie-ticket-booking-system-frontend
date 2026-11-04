@@ -1,4 +1,4 @@
-import { Skeleton, SkeletonCard } from "@/components/ui/Skeleton";
+import { Skeleton, SkeletonBar, SkeletonCard } from "@/components/ui/Skeleton";
 
 export function MobileNotificationCardSkeleton() {
   return (
@@ -20,11 +20,11 @@ export function MobileNotificationCardSkeleton() {
 export function DesktopNotificationRowSkeleton() {
   return (
     <div className="flex items-start gap-4 px-5 py-4">
-      <Skeleton className="h-11 w-11 shrink-0 rounded-full" />
+      <SkeletonBar className="h-11 w-11 shrink-0 rounded-full" />
       <div className="flex-1 space-y-2">
-        <Skeleton className="h-3.5 w-1/3 rounded-full" />
-        <Skeleton className="h-3 w-3/4 rounded-full" />
-        <Skeleton className="h-2.5 w-24 rounded-full" />
+        <SkeletonBar className="h-3.5 w-1/3 rounded-full" />
+        <SkeletonBar className="h-3 w-3/4 rounded-full" />
+        <SkeletonBar className="h-2.5 w-24 rounded-full" />
       </div>
     </div>
   );
@@ -46,23 +46,32 @@ export function DesktopInboxSkeleton() {
   return (
     <div className="hidden md:block">
       <div className="mx-auto w-full max-w-4xl px-6 py-8 lg:px-8">
-        <div className="flex items-end justify-between gap-4">
-          <div className="space-y-2">
-            <Skeleton className="h-7 w-56 rounded-md" />
-            <Skeleton className="h-3.5 w-72 rounded-full" />
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div className="min-w-0">
+            <SkeletonBar className="h-[26px] w-56 rounded" />
+            <SkeletonBar className="mt-1.5 h-3 w-72 rounded-full" />
           </div>
-          <Skeleton className="h-9 w-40 rounded-xl" />
+          <SkeletonBar className="h-9 w-40 rounded-xl" />
         </div>
 
-        <div className="mt-6 rounded-2xl border border-(--color-border) bg-(--color-surface) px-5 pt-4">
-          <div className="flex gap-8 border-b border-(--color-border) pb-3">
-            <Skeleton className="h-4 w-14 rounded-full" />
-            <Skeleton className="h-4 w-20 rounded-full" />
+        <section className="mt-6 overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-surface)">
+          {/* The inbox rows live on the raised surface, so the bars must not use the
+              card colour they sit on (see `ui/Skeleton`). */}
+          <div className="surface-raised">
+            <div className="px-5 pt-4">
+              <div className="flex gap-8 border-b border-(--color-border) pb-3">
+                <SkeletonBar className="h-4 w-14 rounded-full" />
+                <SkeletonBar className="h-4 w-20 rounded-full" />
+              </div>
+            </div>
+
+            <div className="divide-y divide-(--color-border)">
+              {Array.from({ length: 5 }).map((_, index) => (
+                <DesktopNotificationRowSkeleton key={index} />
+              ))}
+            </div>
           </div>
-          {Array.from({ length: 5 }).map((_, index) => (
-            <DesktopNotificationRowSkeleton key={index} />
-          ))}
-        </div>
+        </section>
       </div>
     </div>
   );

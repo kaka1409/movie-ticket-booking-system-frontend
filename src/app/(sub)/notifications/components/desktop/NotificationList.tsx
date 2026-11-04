@@ -5,8 +5,9 @@ import { Bell, CheckCheck } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useNotifications } from "@/features/notifications/contexts/NotificationsContext";
 import NotificationRow from "@/components/shared/notifications/NotificationRow";
+import DesktopPageHeader from "@/components/shared/DesktopPageHeader";
 import Button from "@/components/ui/Button";
-import { Skeleton } from "@/components/ui/Skeleton";
+import { SkeletonBar } from "@/components/ui/Skeleton";
 import EmptyState from "@/components/ui/EmptyState";
 import Tabs, { tabId, tabPanelId } from "@/components/ui/Tabs";
 import LocaleTransition from "@/components/ui/LocaleTransition";
@@ -39,21 +40,17 @@ export default function NotificationList() {
 
   return (
     <div className="mx-auto w-full max-w-4xl px-6 py-8 lg:px-8">
-      <header className="flex flex-wrap items-end justify-between gap-4">
-        <div className="min-w-0">
-          <h1 className="flex items-center gap-2.5 text-[26px] font-black tracking-tight text-white">
-            <span className="inline-block h-[26px] w-1 rounded-sm bg-(--color-gold)" />
-            {translate("notif.title")}
-          </h1>
-          <p className="mt-1.5 text-sm text-(--color-text-muted)">{translate("notif.subtitle")}</p>
-        </div>
-
-        {unreadCount > 0 && (
-          <Button variant="outline" size="sm" fullWidth={false} onClick={markAllRead}>
-            {translate("notif.mark_all_read")}
-          </Button>
-        )}
-      </header>
+      <DesktopPageHeader
+        title={translate("notif.title")}
+        subtitle={translate("notif.subtitle")}
+        action={
+          unreadCount > 0 && (
+            <Button variant="outline" size="sm" fullWidth={false} onClick={markAllRead}>
+              {translate("notif.mark_all_read")}
+            </Button>
+          )
+        }
+      />
 
       <section className="mt-6 overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-surface)">
         <div className="surface-raised">
@@ -83,11 +80,11 @@ export default function NotificationList() {
               <div className="space-y-3 px-5 py-4">
                 {Array.from({ length: 4 }).map((_, index) => (
                   <div key={index} className="flex items-start gap-4">
-                    <Skeleton className="h-11 w-11 shrink-0 rounded-full" />
+                    <SkeletonBar className="h-11 w-11 shrink-0 rounded-full" />
                     <div className="flex-1 space-y-2">
-                      <Skeleton className="h-3.5 w-1/3 rounded-full" />
-                      <Skeleton className="h-3 w-3/4 rounded-full" />
-                      <Skeleton className="h-2.5 w-24 rounded-full" />
+                      <SkeletonBar className="h-3.5 w-1/3 rounded-full" />
+                      <SkeletonBar className="h-3 w-3/4 rounded-full" />
+                      <SkeletonBar className="h-2.5 w-24 rounded-full" />
                     </div>
                   </div>
                 ))}
