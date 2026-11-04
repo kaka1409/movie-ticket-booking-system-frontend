@@ -85,7 +85,7 @@ The script also fails an alias import that resolves to nothing (L5), which is wh
 - Showtime `date` + `HH:mm` fields are cinema wall clock (`Asia/Ho_Chi_Minh`), not instants; compose them with `buildShowtimeStart`/`buildShowtimeEnd`.
 - Multi-feed pages **stream** — the page awaits only what it cannot paint without, every data block is an async section in its own `<Suspense>`:
   1. Page awaits `params`, `searchParams`, the `locale` cookie, `hasSession()`, plus a read that decides a redirect/404 (`getMovieDetail` on a booking step). Never two independent feeds in one page body.
-  2. Each block gets a skeleton that mirrors its box; the route's `loading.tsx` renders the same composition, so the navigation fallback cannot drift from the in-page one.
+  2. Each block gets a skeleton that mirrors its box; the route's `loading.tsx` renders the same composition, so the navigation fallback cannot drift from the in-page one. Mirror the box, not the chrome: a fallback renders as a child of its segment's layout, so it must never repaint a header/shell the layout already drew. Inside `.surface-raised` use `SkeletonBar`/`SurfaceSkeleton raised` — plain `Skeleton` paints `--color-surface-2`, which is the very colour the raised wrapper sets, so the bar turns invisible.
   3. A feed read by several boundaries goes through a `cache()`-memoized loader (`features/<domain>/<page>.ts`) — N boundaries, one backend call. Memoize on scalar keys (slug, locale), never on arrays/objects — the key is by reference.
   4. A boundary holds no side effect: adoption/realtime effects mount once at page level in their own `fallback={null}` boundary.
   5. Errors render in place (`SectionFallback` or the page's error panel); a 401 renders `null` and the route's gate shows the prompt.
