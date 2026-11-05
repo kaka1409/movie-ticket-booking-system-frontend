@@ -2,6 +2,9 @@ import { getAdminCinemas, getAdminMovies } from "./api";
 import type {
   AdminAnalyticsDataPoint,
   AdminDashboardData,
+  AdminKpiDataPoint,
+  AdminKpiOccupancyRange,
+  AdminKpiRangeData,
   AdminKpiSummary,
   AdminLiveBookingItem,
   AdminLiveShowtimeItem,
@@ -188,6 +191,120 @@ function buildAnalyticsDatasets(): {
   ];
 
   return { range7d, range30d, range12m };
+}
+
+/** Zips parallel label/value arrays into chart points. */
+function kpiPoints(labels: string[], values: number[]): AdminKpiDataPoint[] {
+  return labels.map((label, index) => ({ label, value: values[index] ?? 0 }));
+}
+
+function kpiWindow(
+  value: number,
+  growthPercent: number,
+  labels: string[],
+  values: number[],
+): AdminKpiRangeData {
+  return { value, growthPercent, series: kpiPoints(labels, values) };
+}
+
+const WEEK_LABELS = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
+const MONTH_LABELS = Array.from({ length: 12 }, (_, index) => `Th${String(index + 1).padStart(2, "0")}`);
+const WEEK_BLOCK_LABELS = ["Tuần 1", "Tuần 2", "Tuần 3", "Tuần 4"];
+
+/**
+ * Builds the 4 KPI cards' per-range payloads (7d / 30d / 12m). Revenue and
+ * concessions series are in millions of VND to match the chart tick formatters;
+ * `value` stays in full VND for `formatVND`.
+ */
+function buildKpiSummary(): AdminKpiSummary {
+  const revenue: AdminKpiSummary["revenue"] = {
+    "7d": kpiWindow(1520000000, 9.4, WEEK_LABELS, [188, 205, 196, 224, 218, 231, 258]),
+    "30d": kpiWindow(1385000000, 12.6, WEEK_BLOCK_LABELS, [298, 342, 389, 356]),
+    "12m": kpiWindow(15880000000, 21.3, MONTH_LABELS, [
+      980, 1240, 860, 1120, 1360, 1290, 1480, 1250, 1060, 1190, 1340, 1610,
+    ]),
+  };
+
+  const tickets: AdminKpiSummary["tickets"] = {
+    "7d": kpiWindow(13290, 7.9, WEEK_LABELS, [1620, 1780, 1710, 1950, 1890, 2080, 2260]),
+    "30d": kpiWindow(45400, 10.4, WEEK_BLOCK_LABELS, [9800, 11200, 12800, 11600]),
+    "12m": kpiWindow(561200, 16.8, MONTH_LABELS, [
+      38200, 45600, 34100, 42800, 51200, 48600, 55400, 47100, 40200, 44800, 50900, 62300,
+    ]),
+  };
+
+  const concessions: AdminKpiSummary["concessions"] = {
+    "7d": kpiWindow(354000000, 11.8, WEEK_LABELS, [42, 48, 45, 52, 50, 55, 62]),
+    "30d": kpiWindow(369000000, 14.2, WEEK_BLOCK_LABELS, [78, 92, 104, 95]),
+    "12m": kpiWindow(3200000000, 18.6, MONTH_LABELS, [
+      210, 268, 185, 242, 295, 280, 322, 272, 230, 258, 290, 348,
+    ]),
+  };
+
+  const occupancyWindow = (
+    ratePercent: number,
+    peakPercent: number,
+    differenceFromAverage: number,
+    daysInRange: number,
+    labels: string[],
+    values: number[],
+  ): AdminKpiOccupancyRange => {
+    const totalSeats = 2350 * daysInRange;
+    return {
+      ratePercent,
+      peakPercent,
+      differenceFromAverage,
+      totalSeats,
+      bookedSeats: Math.round((ratePercent / 100) * totalSeats),
+      series: kpiPoints(labels, values),
+    };
+  };
+
+  const occupancy: AdminKpiSummary["occupancy"] = {
+    "7d": occupancyWindow(78.4, 84, 4.2, 7, WEEK_LABELS, [74, 76, 75, 80, 78, 82, 78]),
+    "30d": occupancyWindow(73.8, 81, 2.8, 30, WEEK_BLOCK_LABELS, [71, 74, 76, 73]),
+    "12m": occupancyWindow(72.6, 83, 1.4, 365, MONTH_LABELS, [
+      68, 72, 70, 75, 78, 76, 80, 74, 71, 73, 77, 79,
+    ]),
+  };
+
+  // avgTicketPrice: `value`/series are full VND; rate metrics are percents;
+  // pendingPayments counts open payment intents at each bucket.
+  const avgTicketPrice: AdminKpiSummary["avgTicketPrice"] = {
+    "7d": kpiWindow(87000, 3.2, WEEK_LABELS, [
+      82000, 84000, 81000, 86000, 88000, 90000, 92000,
+    ]),
+    "30d": kpiWindow(86500, 2.1, WEEK_BLOCK_LABELS, [84000, 86000, 88000, 87000]),
+    "12m": kpiWindow(91000, 6.4, MONTH_LABELS, [
+      79000, 82000, 84000, 86000, 88000, 90000, 92000, 93000, 91000, 89000, 90000, 96000,
+    ]),
+  };
+
+  const attachRate: AdminKpiSummary["attachRate"] = {
+    "7d": kpiWindow(41, 5.1, WEEK_LABELS, [38, 40, 39, 42, 41, 43, 45]),
+    "30d": kpiWindow(38, 4.0, WEEK_BLOCK_LABELS, [36, 38, 40, 39]),
+    "12m": kpiWindow(40, 9.6, MONTH_LABELS, [
+      30, 32, 34, 35, 37, 36, 39, 38, 36, 37, 39, 42,
+    ]),
+  };
+
+  const checkinRate: AdminKpiSummary["checkinRate"] = {
+    "7d": kpiWindow(91, 1.8, WEEK_LABELS, [88, 90, 89, 91, 92, 90, 93]),
+    "30d": kpiWindow(88, 1.2, WEEK_BLOCK_LABELS, [86, 88, 89, 87]),
+    "12m": kpiWindow(89, 2.4, MONTH_LABELS, [
+      82, 84, 85, 86, 87, 88, 89, 88, 87, 88, 90, 91,
+    ]),
+  };
+
+  const pendingPayments: AdminKpiSummary["pendingPayments"] = {
+    "7d": kpiWindow(24, 12.5, WEEK_LABELS, [12, 18, 15, 22, 19, 26, 31]),
+    "30d": kpiWindow(118, 8.7, WEEK_BLOCK_LABELS, [95, 110, 120, 104]),
+    "12m": kpiWindow(1150, 14.2, MONTH_LABELS, [
+      820, 940, 780, 1020, 1180, 1240, 1320, 1150, 1080, 1120, 1260, 1480,
+    ]),
+  };
+
+  return { revenue, tickets, concessions, occupancy, avgTicketPrice, attachRate, checkinRate, pendingPayments };
 }
 
 /**
@@ -414,45 +531,8 @@ export async function getAdminDashboardData(): Promise<AdminDashboardData> {
     },
   ];
 
-  const kpi: AdminKpiSummary = {
-    revenue: {
-      today: 245800000,
-      yesterday: 215200000,
-      growthPercent: 14.2,
-      sparkline: [178, 192, 185, 210, 204, 215, 245],
-    },
-    tickets: {
-      today: 1842,
-      yesterday: 1698,
-      growthPercent: 8.5,
-      hourlyDistribution: [
-        { hour: "09h", count: 45 },
-        { hour: "11h", count: 120 },
-        { hour: "13h", count: 185 },
-        { hour: "15h", count: 240 },
-        { hour: "17h", count: 320 },
-        { hour: "19h", count: 480 },
-        { hour: "21h", count: 310 },
-        { hour: "23h", count: 142 },
-      ],
-    },
-    concessions: {
-      today: 58400000,
-      yesterday: 49400000,
-      growthPercent: 18.1,
-      sparkline: [38, 42, 40, 48, 46, 49, 58],
-    },
-    occupancy: {
-      ratePercent: 78.4,
-      peakPercent: 92.0,
-      differenceFromAverage: 4.2,
-      totalSeats: 2350,
-      bookedSeats: 1842,
-    },
-  };
-
   return {
-    kpi,
+    kpi: buildKpiSummary(),
     analytics: buildAnalyticsDatasets(),
     topMovies,
     liveShowtimes,

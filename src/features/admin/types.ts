@@ -74,6 +74,7 @@ export interface AdminMovie {
   status: AdminMovieStatus;
   posterUrl?: string;
   synopsis?: string;
+  trailerUrl?: string | null;
   synopsisVi?: string;
   director?: string;
   language?: string;
@@ -118,6 +119,7 @@ export interface AdminMovieInput {
   releaseDate?: string;
   ageRatingId?: string | null;
   posterUrl?: string | null;
+  trailerUrl?: string | null;
   genreIds?: string[];
   isFeatured?: boolean;
   featuredLabel?: string | null;
@@ -141,6 +143,7 @@ export interface MovieResearchCandidate {
   duration: number | null;
   releaseDate: string | null;
   posterUrl: string | null;
+  trailerUrl: string | null;
   genres: string[];
   markets: string[];
   sourceUrl: string;
@@ -424,32 +427,47 @@ export interface AdminCheckinResult {
 
 /* ── Dashboard Metrics & Live Operations ─────────────────────────────────── */
 
+export interface AdminKpiDataPoint {
+  label: string;
+  value: number;
+}
+
+/**
+ * One reporting window of a KPI card: headline figure, growth versus the
+ * previous window, and the chart series. Revenue/concessions `value` is in
+ * VND while `series` stays in millions so Chart.js tick formatters keep working.
+ */
+export interface AdminKpiRangeData {
+  value: number;
+  growthPercent: number;
+  series: AdminKpiDataPoint[];
+}
+
+/** Occupancy window: the gauge reads `ratePercent`, the series plots it per bucket. */
+export interface AdminKpiOccupancyRange {
+  ratePercent: number;
+  peakPercent: number;
+  differenceFromAverage: number;
+  totalSeats: number;
+  bookedSeats: number;
+  series: AdminKpiDataPoint[];
+}
+
+export type AdminKpiRangeMap<T> = Record<AdminAnalyticsTimeRange, T>;
+
 export interface AdminKpiSummary {
-  revenue: {
-    today: number;
-    yesterday: number;
-    growthPercent: number;
-    sparkline: number[];
-  };
-  tickets: {
-    today: number;
-    yesterday: number;
-    growthPercent: number;
-    hourlyDistribution: { hour: string; count: number }[];
-  };
-  concessions: {
-    today: number;
-    yesterday: number;
-    growthPercent: number;
-    sparkline: number[];
-  };
-  occupancy: {
-    ratePercent: number;
-    peakPercent: number;
-    differenceFromAverage: number;
-    totalSeats: number;
-    bookedSeats: number;
-  };
+  revenue: AdminKpiRangeMap<AdminKpiRangeData>;
+  tickets: AdminKpiRangeMap<AdminKpiRangeData>;
+  concessions: AdminKpiRangeMap<AdminKpiRangeData>;
+  occupancy: AdminKpiRangeMap<AdminKpiOccupancyRange>;
+  /** Mean ticket price per window; `value`/series are full VND. */
+  avgTicketPrice: AdminKpiRangeMap<AdminKpiRangeData>;
+  /** Share of tickets sold with a combo; `value`/series are percents. */
+  attachRate: AdminKpiRangeMap<AdminKpiRangeData>;
+  /** Share of issued tickets checked in; `value`/series are percents. */
+  checkinRate: AdminKpiRangeMap<AdminKpiRangeData>;
+  /** Payments still awaiting settlement at window end; `value`/series are counts. */
+  pendingPayments: AdminKpiRangeMap<AdminKpiRangeData>;
 }
 
 export interface AdminAnalyticsDataPoint {

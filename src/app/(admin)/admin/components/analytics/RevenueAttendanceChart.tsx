@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Chart } from "react-chartjs-2";
 import "@/libs/chartjs";
 import { BarChart3 } from "lucide-react";
@@ -13,6 +13,8 @@ interface RevenueAttendanceChartProps {
   range7d: AdminAnalyticsDataPoint[];
   range30d: AdminAnalyticsDataPoint[];
   range12m: AdminAnalyticsDataPoint[];
+  /** Controlled by the KPI card's shared range filter — this chart has no pills of its own. */
+  selectedRange: AdminAnalyticsTimeRange;
 }
 
 /**
@@ -22,10 +24,10 @@ export default function RevenueAttendanceChart({
   range7d,
   range30d,
   range12m,
+  selectedRange,
 }: RevenueAttendanceChartProps) {
   const { locale, translate } = useLocale();
   const { palette } = useAdminChartTheme();
-  const [selectedRange, setSelectedRange] = useState<AdminAnalyticsTimeRange>("7d");
 
   const currentDataPoints = useMemo(() => {
     if (selectedRange === "30d") return range30d;
@@ -166,40 +168,17 @@ export default function RevenueAttendanceChart({
 
   return (
     <div className="flex h-full flex-col rounded-2xl border border-(--color-border) bg-(--color-surface) p-5 shadow-(--shadow-card)">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-(--color-surface-2) text-(--color-text-secondary)">
-            <BarChart3 size={16} aria-hidden />
-          </div>
-          <div>
-            <h2 className="text-sm font-bold text-(--color-text-primary)">
-              {translate("admin.dashboard.chart_revenue_attendance_title")}
-            </h2>
-            <p className="text-2xs text-(--color-text-muted)">
-              {translate("admin.dashboard.chart_revenue_attendance_subtitle")}
-            </p>
-          </div>
+      <div className="flex items-center gap-2.5">
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-(--color-surface-2) text-(--color-text-secondary)">
+          <BarChart3 size={16} aria-hidden />
         </div>
-
-        {/* Time range selector pills */}
-        <div className="inline-flex self-start rounded-xl border border-(--color-border) bg-(--color-surface-2) p-1 sm:self-auto">
-          {(["7d", "30d", "12m"] as const).map((rangeOption) => {
-            const isActive = selectedRange === rangeOption;
-            return (
-              <button
-                key={rangeOption}
-                type="button"
-                onClick={() => setSelectedRange(rangeOption)}
-                className={`cursor-pointer rounded-lg px-2.5 py-1 text-2xs font-semibold transition-colors ${
-                  isActive
-                    ? "bg-(--color-surface) text-(--color-text-primary) shadow-sm"
-                    : "text-(--color-text-muted) hover:text-(--color-text-primary)"
-                }`}
-              >
-                {translate(`admin.dashboard.range_${rangeOption}`)}
-              </button>
-            );
-          })}
+        <div>
+          <h2 className="text-sm font-bold text-(--color-text-primary)">
+            {translate("admin.dashboard.chart_revenue_attendance_title")}
+          </h2>
+          <p className="text-2xs text-(--color-text-muted)">
+            {translate("admin.dashboard.chart_revenue_attendance_subtitle")}
+          </p>
         </div>
       </div>
 

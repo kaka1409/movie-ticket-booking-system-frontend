@@ -41,6 +41,14 @@ export interface ChartPalette {
   emeraldAlpha: string;
   purple: string;
   purpleAlpha: string;
+  blue: string;
+  blueAlpha: string;
+  orange: string;
+  orangeAlpha: string;
+  teal: string;
+  tealAlpha: string;
+  rose: string;
+  roseAlpha: string;
   textPrimary: string;
   textMuted: string;
   gridLine: string;
@@ -60,6 +68,14 @@ export const DARK_CHART_PALETTE: ChartPalette = {
   emeraldAlpha: "rgba(52, 211, 153, 0.18)",
   purple: "#c084fc",
   purpleAlpha: "rgba(192, 132, 252, 0.18)",
+  blue: "#60a5fa",
+  blueAlpha: "rgba(96, 165, 250, 0.18)",
+  orange: "#fb923c",
+  orangeAlpha: "rgba(251, 146, 60, 0.18)",
+  teal: "#2dd4bf",
+  tealAlpha: "rgba(45, 212, 191, 0.18)",
+  rose: "#fb7185",
+  roseAlpha: "rgba(251, 113, 133, 0.18)",
   textPrimary: "#f6f6f4",
   textMuted: "#8e8e8e",
   gridLine: "rgba(255, 255, 255, 0.08)",
@@ -79,6 +95,14 @@ export const LIGHT_CHART_PALETTE: ChartPalette = {
   emeraldAlpha: "rgba(5, 150, 105, 0.14)",
   purple: "#7c3aed",
   purpleAlpha: "rgba(124, 58, 237, 0.14)",
+  blue: "#2563eb",
+  blueAlpha: "rgba(37, 99, 235, 0.14)",
+  orange: "#ea580c",
+  orangeAlpha: "rgba(234, 88, 12, 0.14)",
+  teal: "#0d9488",
+  tealAlpha: "rgba(13, 148, 136, 0.14)",
+  rose: "#e11d48",
+  roseAlpha: "rgba(225, 29, 72, 0.14)",
   textPrimary: "#14130f",
   textMuted: "#6f6a60",
   gridLine: "rgba(0, 0, 0, 0.08)",
