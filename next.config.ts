@@ -19,6 +19,7 @@ const IMAGE_HOSTS = [
   "lumiere-a.akamaihd.net",
   "i.pravatar.cc",
   "images.ctfassets.net",
+  "res.cloudinary.com",
   "flagcdn.com",
 ];
 
@@ -26,7 +27,6 @@ const isDev = process.env.NODE_ENV === "development";
 
 const nextConfig: NextConfig = {
   reactCompiler: false,
-  output: "standalone",
   turbopack: {
     root: path.resolve(__dirname),
   },
@@ -54,7 +54,7 @@ const nextConfig: NextConfig = {
       `img-src 'self' data: blob: ${IMAGE_HOSTS.map((h) => `https://${h}`).join(" ")}`,
       "font-src 'self' data:",
       `connect-src 'self' ${backendOrigin} ${backendWsOrigin} ${backendWsOrigin.replace(/^ws/, "wss")}`,
-      "frame-src 'self' https://maps.google.com https://www.google.com",
+      "frame-src 'self' https://maps.google.com https://www.google.com https://www.youtube-nocookie.com https://player.vimeo.com",
       "frame-ancestors 'none'",
       "base-uri 'self'",
       "form-action 'self'",
