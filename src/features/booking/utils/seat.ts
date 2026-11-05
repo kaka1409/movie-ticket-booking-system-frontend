@@ -2,9 +2,9 @@ import type { Seat, SeatRow } from "../types";
 
 /**
  * Identity/display label for a seat: `A1` for regular and VIP seats, `A(2)`
- * for sweetbox pairs (the `pairId` segment after the first `-`). The exact
- * string is used as the seat's identity in BookingContext, ticket transfer
- * and the modify flow — changing the format would orphan saved selections.
+ * for sweetbox pairs (the `pairId` segment after the first `-`). Display only —
+ * a seat's identity is its `seatIds` UUIDs, which is what the draft, the hold
+ * and every restore matches on.
  */
 export function getSeatLabel(rowLabel: string, seat: Seat): string {
   if (seat.kind === "sweetbox" && seat.pairId) {
@@ -14,39 +14,44 @@ export function getSeatLabel(rowLabel: string, seat: Seat): string {
 }
 
 /**
- * After back-navigation, re-mark the seats saved in the booking draft as
- * `selected`. Labels are built with the same format as the draft sync
- * (`A1` for regular/VIP, `A(1)` for sweetbox pairs). Occupied cells are never
- * re-selected — after a `SEAT_TAKEN` bounce the stolen seats stay greyed out.
+ * Re-mark cells as `selected` by seat id. `occupied` cells are skipped unless
+ * `includeOccupied` is set: a server-confirmed hold of the caller's own
+ * (`GET`/`PUT /seat-holds`) overrules the map, which can only paint an
+ * identity-less request's held seats as `occupied` (contract §4.1.4).
  */
-export function restoreSelectedSeats(base: SeatRow[], savedSeats: { label: string }[]): SeatRow[] {
-  if (savedSeats.length === 0) return base;
-  return base.map((row) => ({
-    ...row,
-    segments: row.segments.map((segment) =>
-      segment.map((seat) => {
-        const found =
-          seat.status === "idle" &&
-          savedSeats.some((savedSeat) => savedSeat.label === getSeatLabel(row.label, seat));
-        return found ? { ...seat, status: "selected" as const } : seat;
-      }),
-    ),
-  }));
-}
-
-/** Select every idle cell carrying one of `wanted`'s seat ids (hold restore / conflict survivor). */
-export function selectCellsByIds(base: SeatRow[], wanted: Set<string>): SeatRow[] {
+export function selectCellsByIds(
+  base: SeatRow[],
+  wanted: Set<string>,
+  options: { includeOccupied?: boolean } = {},
+): SeatRow[] {
   if (wanted.size === 0) return base;
+  const { includeOccupied = false } = options;
+
   return base.map((row) => ({
     ...row,
     segments: row.segments.map((segment) =>
       segment.map((cell) =>
-        cell.status === "idle" && cell.seatIds.some((id) => wanted.has(id))
+        cell.seatIds.some((id) => wanted.has(id)) &&
+        (cell.status === "idle" || (includeOccupied && cell.status === "occupied"))
           ? { ...cell, status: "selected" as const }
           : cell,
       ),
     ),
   }));
+}
+
+/**
+ * After back-navigation, re-mark the draft's seats on a fresh server map.
+ * Matching is by `seatIds`, never by label: labels repeat across rooms, so a
+ * label match would re-select a different seat after a showtime change.
+ */
+export function restoreSelectedSeats(
+  base: SeatRow[],
+  savedSeats: { seatIds: string[] }[],
+  options: { includeOccupied?: boolean } = {},
+): SeatRow[] {
+  const wanted = new Set(savedSeats.flatMap((seat) => seat.seatIds));
+  return selectCellsByIds(base, wanted, options);
 }
 
 /** Drop every selected cell (hold expiry — the backend released our seats). */

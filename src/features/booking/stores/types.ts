@@ -35,6 +35,11 @@ export interface BookingState {
   countdownStartTime: number;
   /** Absolute hold deadline (epoch ms) from `PUT /seat-holds`; null when no live hold. */
   holdExpiresAt: number | null;
+  /**
+   * Showtime the live hold belongs to. Kept apart from `showtimeId` so a slot
+   * change can still release the old hold instead of stranding it until its TTL.
+   */
+  holdShowtimeId: string | null;
 
   // Snacks
   combos: SelectedCombo[];
@@ -67,7 +72,7 @@ export type BookingAction =
   | { type: "SET_CINEMA_DATE"; date: string }
   | { type: "CLEAR_CINEMA_SLOT" }
   | { type: "ADOPT_MOVIE"; movie: BookingMovie }
-  | { type: "ADOPT_SEAT_GRID"; rows: SeatRow[]; maxSeats: number }
+  | { type: "ADOPT_SEAT_GRID"; rows: SeatRow[]; maxSeats: number; restoreHeldSeats: boolean }
   | { type: "SET_SEAT_GRID"; rows: SeatRow[]; maxSeats: number }
   | { type: "SELECT_HOLD_CELLS"; seatIds: string[] }
   | { type: "CLEAR_SEAT_SELECTION" }
@@ -75,7 +80,7 @@ export type BookingAction =
   | { type: "SET_SNACKS"; combos: SelectedCombo[]; foods: SelectedFood[] }
   | { type: "SET_CONTACT"; name: string; email: string; phone: string; countryCode: string }
   | { type: "SET_PAYMENT"; methodId: string; methodName: string }
-  | { type: "SET_HOLD"; deadline: number | null }
+  | { type: "SET_HOLD"; deadline: number | null; showtimeId: string | null }
   | { type: "START_COUNTDOWN"; now: number }
   | { type: "EXPIRE_SESSION" }
   | { type: "RESET" };

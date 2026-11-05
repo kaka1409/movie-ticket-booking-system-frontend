@@ -19,6 +19,7 @@ export const INITIAL_BOOKING_STATE: BookingState = {
   countdownStarted: false,
   countdownStartTime: 0,
   holdExpiresAt: null,
+  holdShowtimeId: null,
 
   // Snacks
   combos: [],

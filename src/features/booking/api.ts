@@ -15,13 +15,34 @@ import type {
 /* ─── Booking catalogs (LIVE) ──────────────────────────────── */
 
 /**
+ * Caller identity for the seat map. The backend excludes the caller's own live
+ * holds from `occupied` when it can resolve them (contract §4.1.4): a server
+ * render forwards the `refreshToken` cookie, a browser caller its Bearer token.
+ */
+interface SeatMapIdentity {
+  token?: string;
+  cookie?: string;
+}
+
+/**
  * LIVE - `GET /seats?showtimeId=` (contract §4.1) — uncached, holds change every second.
  * Also kept uncached: `/showtimes` slot lists (`features/showtimes/api.ts`) so the
  * booking flow always reads fresh availability; movie detail pages cache them at
  * the page level (ISR) instead.
+ *
+ * Never cacheable: the payload is identity-scoped, so a cached copy would hand
+ * one caller's "own hold" cells to the next.
  */
-export function getSeatMap(showtimeId: string): Promise<ApiResponse<SeatMapResponse>> {
-  return apiFetch<SeatMapResponse>(`/seats?showtimeId=${encodeURIComponent(showtimeId)}`);
+export function getSeatMap(
+  showtimeId: string,
+  identity: SeatMapIdentity = {},
+): Promise<ApiResponse<SeatMapResponse>> {
+  return apiFetch<SeatMapResponse>(
+    `/seats?showtimeId=${encodeURIComponent(showtimeId)}`,
+    { cache: "no-store" },
+    identity.token,
+    identity.cookie,
+  );
 }
 
 /** Wire shape allows nulls that the FE cards render as non-null strings. */

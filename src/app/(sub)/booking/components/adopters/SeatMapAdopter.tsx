@@ -35,7 +35,8 @@ export default function SeatMapAdopter({
     selectHoldCells,
     clearSeatSelection,
     holdExpiresAt,
-    setHoldExpiresAt,
+    holdShowtimeId,
+    setSeatHold,
   } = useBooking();
 
   // Holds follow the showtime the seat map was fetched for (URL param first).
@@ -63,8 +64,15 @@ export default function SeatMapAdopter({
     if (adoptedRef.current) return;
     adoptedRef.current = true;
 
-    adoptSeatGrid(initialRows, maxSeats);
-  }, [initialRows, maxSeats, adoptSeatGrid]);
+    // The draft holds seats of THIS showtime, so the fresh map may report them
+    // `occupied` (a server render cannot always resolve the caller). Only a
+    // same-showtime hold may overrule that: seat ids are physical seats shared
+    // by every showtime of a room, so a hold from another slot proves nothing.
+    const holdsThisShowtime =
+      holdShowtimeId === showtimeId && holdExpiresAt !== null && holdExpiresAt > Date.now();
+
+    adoptSeatGrid(initialRows, maxSeats, holdsThisShowtime);
+  }, [initialRows, maxSeats, adoptSeatGrid, holdShowtimeId, showtimeId, holdExpiresAt]);
 
   useSeatHolds({
     rows: seatGrid ?? initialRows,
@@ -73,7 +81,8 @@ export default function SeatMapAdopter({
     showtimeId,
     token,
     holdExpiresAt,
-    setHoldExpiresAt,
+    holdShowtimeId,
+    setSeatHold,
   });
 
   return null;

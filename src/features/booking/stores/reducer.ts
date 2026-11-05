@@ -27,8 +27,8 @@ function collectSelectedSeats(rows: SeatRow[]): SelectedSeat[] {
 /** Pure transition — no side effects, navigation stays in event handlers. */
 export function bookingReducer(state: BookingState, action: BookingAction): BookingState {
   switch (action.type) {
-    case "SET_CINEMA":
-      return {
+    case "SET_CINEMA": {
+      const next = {
         ...state,
         cinemaId: action.cinemaId,
         cinemaName: action.cinemaName,
@@ -38,6 +38,12 @@ export function bookingReducer(state: BookingState, action: BookingAction): Book
         location: action.location,
         showtimeId: action.showtimeId,
       };
+      // A different slot invalidates the seat draft — the picked seats belong to
+      // another map. The hold fields stay so `useSeatHolds` can release the old
+      // hold against its own showtime instead of stranding it until its TTL.
+      if (action.showtimeId === state.showtimeId) return next;
+      return { ...next, selectedSeats: [], seatGrid: null, maxSeats: 0 };
+    }
 
     case "SET_CINEMA_QUERY":
       return { ...state, cinemaQuery: action.query };
@@ -54,6 +60,9 @@ export function bookingReducer(state: BookingState, action: BookingAction): Book
         room: "",
         location: "",
         showtimeId: "",
+        selectedSeats: [],
+        seatGrid: null,
+        maxSeats: 0,
       };
 
     case "CLEAR_CINEMA_SLOT":
@@ -65,6 +74,9 @@ export function bookingReducer(state: BookingState, action: BookingAction): Book
         room: "",
         location: "",
         showtimeId: "",
+        selectedSeats: [],
+        seatGrid: null,
+        maxSeats: 0,
       };
 
     case "ADOPT_MOVIE":
@@ -75,9 +87,13 @@ export function bookingReducer(state: BookingState, action: BookingAction): Book
       return { ...state, movie: action.movie };
 
     case "ADOPT_SEAT_GRID": {
-      // Fresh server map + seats saved in the draft: re-mark the saved labels
-      // (a SEAT_TAKEN bounce leaves stolen cells occupied, never selected).
-      const restored = restoreSelectedSeats(action.rows, state.selectedSeats);
+      // Fresh server map + seats saved in the draft: re-mark them by seat id.
+      // `restoreHeldSeats` lets a live hold overrule cells the identity-less
+      // map painted `occupied` (its own seats); a SEAT_TAKEN bounce still
+      // leaves stolen cells greyed out because no hold backs them.
+      const restored = restoreSelectedSeats(action.rows, state.selectedSeats, {
+        includeOccupied: action.restoreHeldSeats,
+      });
       return {
         ...state,
         seatGrid: restored,
@@ -98,7 +114,11 @@ export function bookingReducer(state: BookingState, action: BookingAction): Book
 
     case "SELECT_HOLD_CELLS": {
       if (!state.seatGrid) return state;
-      const nextRows = selectCellsByIds(state.seatGrid, new Set(action.seatIds));
+      // `GET/PUT /seat-holds` just confirmed these ids are the caller's own live
+      // hold, so it outranks a map that could not resolve the caller's identity.
+      const nextRows = selectCellsByIds(state.seatGrid, new Set(action.seatIds), {
+        includeOccupied: true,
+      });
       return {
         ...state,
         seatGrid: nextRows,
@@ -178,7 +198,7 @@ export function bookingReducer(state: BookingState, action: BookingAction): Book
       return { ...state, paymentMethodId: action.methodId, paymentMethod: action.methodName };
 
     case "SET_HOLD":
-      return { ...state, holdExpiresAt: action.deadline };
+      return { ...state, holdExpiresAt: action.deadline, holdShowtimeId: action.showtimeId };
 
     case "START_COUNTDOWN":
       // The countdown begins only when the user commits at the seats-step CTA.

@@ -29,7 +29,7 @@ interface BookingContextType extends BookingState {
   setCinemaDate: (date: string) => void;
   clearCinemaSlot: () => void;
   adoptMovie: (movie: BookingMovie) => void;
-  adoptSeatGrid: (rows: SeatRow[], maxSeats: number) => void;
+  adoptSeatGrid: (rows: SeatRow[], maxSeats: number, restoreHeldSeats?: boolean) => void;
   setSeatGrid: (rows: SeatRow[], maxSeats: number) => void;
   selectHoldCells: (seatIds: string[]) => void;
   clearSeatSelection: () => void;
@@ -37,7 +37,8 @@ interface BookingContextType extends BookingState {
   setSnacks: (combos: SelectedCombo[], foods: SelectedFood[]) => void;
   setPayment: (methodId: string, methodName: string) => void;
   setCredentials: (name: string, email: string, phone: string, countryCode: string) => void;
-  setHoldExpiresAt: (deadline: number | null) => void;
+  /** Records the live hold (`PUT`/`GET /seat-holds`); `null` clears it. */
+  setSeatHold: (deadline: number | null, showtimeId: string | null) => void;
   /** Starts the booking countdown — dispatched when the user commits at the seats-step CTA. */
   startCountdown: () => void;
   /** Ends the 10-minute session early release-side: drops the session clock, keeps the draft. */
@@ -109,9 +110,12 @@ export function BookingProvider({
     dispatch({ type: "ADOPT_MOVIE", movie });
   }, []);
 
-  const adoptSeatGrid = useCallback((rows: SeatRow[], maxSeats: number) => {
-    dispatch({ type: "ADOPT_SEAT_GRID", rows, maxSeats });
-  }, []);
+  const adoptSeatGrid = useCallback(
+    (rows: SeatRow[], maxSeats: number, restoreHeldSeats = false) => {
+      dispatch({ type: "ADOPT_SEAT_GRID", rows, maxSeats, restoreHeldSeats });
+    },
+    [],
+  );
 
   const setSeatGrid = useCallback((rows: SeatRow[], maxSeats: number) => {
     dispatch({ type: "SET_SEAT_GRID", rows, maxSeats });
@@ -147,8 +151,8 @@ export function BookingProvider({
     dispatch({ type: "SET_PAYMENT", methodId, methodName });
   }, []);
 
-  const setHoldExpiresAt = useCallback((deadline: number | null) => {
-    dispatch({ type: "SET_HOLD", deadline });
+  const setSeatHold = useCallback((deadline: number | null, showtimeId: string | null) => {
+    dispatch({ type: "SET_HOLD", deadline, showtimeId });
   }, []);
 
   const startCountdown = useCallback(() => {
@@ -203,7 +207,7 @@ export function BookingProvider({
       setSnacks,
       setCredentials,
       setPayment,
-      setHoldExpiresAt,
+      setSeatHold,
       startCountdown,
       expireSession,
       resetBooking,
@@ -225,7 +229,7 @@ export function BookingProvider({
     setSnacks,
     setCredentials,
     setPayment,
-    setHoldExpiresAt,
+    setSeatHold,
     startCountdown,
     expireSession,
     resetBooking,

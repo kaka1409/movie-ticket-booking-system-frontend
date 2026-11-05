@@ -63,15 +63,19 @@ export function adaptSeatMap(response: SeatMapResponse): AdaptedSeatMap {
 
 /**
  * `409 SEAT_TAKEN` recovery: another user holds/owns part of the wanted seats.
- * Refetch the map — the taken cells come back `occupied`, the survivors are
- * re-marked `selected` so they re-hold on the next attempt.
+ * Refetch the map with the caller's Bearer token — the seats still held by the
+ * caller come back `idle` (already held for them), the stolen cells
+ * `occupied` — and re-mark the survivors `selected` so they re-hold on the
+ * next attempt. Without identity the survivors could never be re-marked, so the
+ * retry would always fail.
  */
 export async function recoverSeatMap(
   showtimeId: string,
   wantedSeatIds: string[],
   setSeatGrid: (rows: SeatRow[], maxSeats: number) => void,
+  token: string,
 ): Promise<void> {
-  const result = await getSeatMap(showtimeId);
+  const result = await getSeatMap(showtimeId, { token });
   if ("error" in result) return;
 
   const adapted = adaptSeatMap(result.data);

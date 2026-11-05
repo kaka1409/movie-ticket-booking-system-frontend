@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { getSeatMap } from "@/features/booking/api";
 import { getShowtimeById } from "@/features/showtimes/api";
+import { getRequestCookie } from "@/libs/session";
 
 // Shared
 import StepBar from "@/app/(sub)/booking/components/mobile/StepBar";
@@ -22,6 +23,11 @@ import { DesktopSeatMapSection, MobileSeatMapSection, SeatMapAdoptSection } from
  * the step is navigable before the map lands. The grid streams into each tree's
  * own boundary and the adoption effect rides a `fallback={null}` one; all three
  * read the same seat map and showtime requests, so each endpoint is called once.
+ *
+ * The map is rendered FOR THE CALLER: the refresh cookie identifies them, so the
+ * seats their own live hold still pins come back `idle` (contract §4.1.4) and
+ * survive a back-navigation or a refresh. Dropping the cookie would paint them
+ * `occupied` and empty the draft's selection.
  */
 export default async function SelectSeatPage({
   params,
@@ -35,7 +41,10 @@ export default async function SelectSeatPage({
   // The seat map is keyed by showtime — a deep link without one goes back to step 1.
   if (!showtimeId) redirect(`/booking/${slug}/cinema`);
 
-  const seatMapPromise = getSeatMap(showtimeId);
+  // The identity read must finish before the fetch starts, so the two calls are
+  // sequential here (the cookie read is a local parse, not a round trip).
+  const cookie = await getRequestCookie();
+  const seatMapPromise = getSeatMap(showtimeId, { cookie });
   const showtimePromise = getShowtimeById(showtimeId);
 
   return (

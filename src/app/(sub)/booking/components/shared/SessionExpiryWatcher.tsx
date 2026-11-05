@@ -18,8 +18,9 @@ export default function SessionExpiryWatcher() {
     countdownStartTime,
     countdownSeconds,
     showtimeId,
+    holdShowtimeId,
     clearSeatSelection,
-    setHoldExpiresAt,
+    setSeatHold,
     expireSession,
   } = useBooking();
   const { token } = useAuth();
@@ -41,15 +42,26 @@ export default function SessionExpiryWatcher() {
       if (Date.now() < sessionDeadline || firedRef.current) return;
       firedRef.current = true;
 
-      setHoldExpiresAt(null);
+      // The hold is keyed by the showtime it was created for — after a slot
+      // change that is `holdShowtimeId`, not the step the user sits on.
+      const heldShowtimeId = holdShowtimeId ?? showtimeId;
+      setSeatHold(null, null);
       clearSeatSelection();
       expireSession();
-      if (token && showtimeId) void releaseSeatHolds(showtimeId, token);
+      if (token && heldShowtimeId) void releaseSeatHolds(heldShowtimeId, token);
     };
 
     const id = setInterval(check, 1000);
     return () => clearInterval(id);
-  }, [sessionDeadline, token, showtimeId, setHoldExpiresAt, clearSeatSelection, expireSession]);
+  }, [
+    sessionDeadline,
+    token,
+    showtimeId,
+    holdShowtimeId,
+    setSeatHold,
+    clearSeatSelection,
+    expireSession,
+  ]);
 
   return null;
 }

@@ -32,7 +32,7 @@ export function useSeatHoldSubmit(): SeatHoldSubmitResult {
   const params = useParams();
   const router = useRouter();
   const { token } = useAuth();
-  const { selectedSeats, showtimeId, setSeatGrid, setHoldExpiresAt, startCountdown } = useBooking();
+  const { selectedSeats, showtimeId, setSeatGrid, setSeatHold, startCountdown } = useBooking();
   const { translate } = useLocale();
 
   const [isReserving, setIsReserving] = useState(false);
@@ -51,7 +51,7 @@ export function useSeatHoldSubmit(): SeatHoldSubmitResult {
     const result = await saveSeatHolds(showtimeId, seatIds, token);
     if ("error" in result) {
       if (result.error.status === 409 || result.error.code === "SEAT_TAKEN") {
-        await recoverSeatMap(showtimeId, seatIds, setSeatGrid);
+        await recoverSeatMap(showtimeId, seatIds, setSeatGrid, token);
         setErrorText(translate("booking.seats.hold_taken"));
       } else {
         setErrorText(translate("booking.seats.hold_failed"));
@@ -60,7 +60,7 @@ export function useSeatHoldSubmit(): SeatHoldSubmitResult {
       return;
     }
 
-    setHoldExpiresAt(Date.parse(result.data.expiresAt));
+    setSeatHold(Date.parse(result.data.expiresAt), showtimeId);
     startCountdown();
     router.push(`/booking/${slug}/snack`);
   };
