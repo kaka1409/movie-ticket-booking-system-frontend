@@ -1,8 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import { ArrowLeft, Heart, Play, Star, Clock } from "lucide-react";
 import { useMovieDetail } from "@/features/movies/contexts/MovieDetailContext";
+import { toTrailerEmbedUrl } from "@/features/movies/utils/trailer";
+import TrailerModal from "@/components/shared/TrailerModal";
 import { useWishlist, type WishlistFeedback } from "@/features/wishlist/contexts/WishlistContext";
 import { useSmartBack } from "@/hooks/useSmartBack";
 import { useLocale } from "@/contexts/LocaleContext";
@@ -13,6 +16,8 @@ export default function HeroSection() {
   const { translate } = useLocale();
   const handleBack = useSmartBack("/movies");
   const liked = isWishlisted(movie.id);
+  const [isTrailerOpen, setIsTrailerOpen] = useState(false);
+  const trailerEmbedUrl = toTrailerEmbedUrl(movie.trailerUrl);
 
   function buildFeedback(): WishlistFeedback {
     return {
@@ -24,7 +29,8 @@ export default function HeroSection() {
   }
 
   return (
-    <section className="relative w-full h-85">
+    <>
+      <section className="relative w-full h-85">
       <Image
         src={movie.src || "/images/movie-poster-placeholder.jpg"}
         alt={movie.title}
@@ -39,6 +45,7 @@ export default function HeroSection() {
 
       <button
         type="button"
+        onClick={() => setIsTrailerOpen(true)}
         className="absolute inset-0 flex items-center justify-center group"
         aria-label={translate("movies.detail.watch_trailer")}
       >
@@ -112,5 +119,13 @@ export default function HeroSection() {
         </div>
       </div>
     </section>
+
+    <TrailerModal
+      isOpen={isTrailerOpen}
+      onClose={() => setIsTrailerOpen(false)}
+      title={movie.title}
+      src={trailerEmbedUrl}
+    />
+    </>
   );
 }

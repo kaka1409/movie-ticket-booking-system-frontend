@@ -22,6 +22,8 @@ export interface Movie {
   releaseDate: string;
   ageRating: string;
   language: string;
+  /** Canonical watch page (YouTube/Vimeo); the embed URL is derived client-side. */
+  trailerUrl?: string;
   /** Optional in the movie list payload; wishlist rows always carry it. */
   status?: MovieStatus;
 }

@@ -36,6 +36,7 @@ interface MovieFormState {
   releaseDate: string;
   ageRatingId: string;
   posterUrl: string;
+  trailerUrl: string;
   synopsis: string;
   synopsisVi: string;
   featuredLabel: string;
@@ -59,6 +60,7 @@ const EMPTY_FORM: MovieFormState = {
   releaseDate: "",
   ageRatingId: "",
   posterUrl: "",
+  trailerUrl: "",
   synopsis: "",
   synopsisVi: "",
   featuredLabel: "",
@@ -85,6 +87,7 @@ function toFormState(movie: AdminMovie | null): MovieFormState {
     releaseDate: movie.releaseDate ?? "",
     ageRatingId: movie.ageRatingId ?? "",
     posterUrl: movie.posterUrl ?? "",
+    trailerUrl: movie.trailerUrl ?? "",
     synopsis: movie.synopsis ?? "",
     synopsisVi: movie.synopsisVi ?? "",
     featuredLabel: movie.featuredLabel ?? "",
@@ -193,6 +196,7 @@ export default function MovieFormDialog({
     if (isEditing) {
       payload.ageRatingId = form.ageRatingId || null;
       payload.posterUrl = form.posterUrl || null;
+      payload.trailerUrl = form.trailerUrl || null;
       payload.featuredLabel = form.featuredLabel || null;
       payload.featuredLabelVi = form.featuredLabelVi || null;
       payload.featuredDescription = form.featuredDescription || null;
@@ -202,6 +206,7 @@ export default function MovieFormDialog({
     } else {
       if (form.ageRatingId !== "") payload.ageRatingId = form.ageRatingId;
       if (form.posterUrl !== "") payload.posterUrl = form.posterUrl;
+      if (form.trailerUrl !== "") payload.trailerUrl = form.trailerUrl;
       if (form.featuredLabel !== "") payload.featuredLabel = form.featuredLabel;
       if (form.featuredLabelVi !== "") payload.featuredLabelVi = form.featuredLabelVi;
       if (form.featuredDescription !== "") payload.featuredDescription = form.featuredDescription;
@@ -361,6 +366,15 @@ export default function MovieFormDialog({
             value={values.posterUrl}
             onChange={(event) => updateField("posterUrl", event.target.value)}
             className={ADMIN_INPUT_CLASS}
+          />
+        </AdminFormField>
+        <AdminFormField labelKey="admin.movies.trailer_url" error={fieldErrors.trailerUrl}>
+          <input
+            type="url"
+            value={values.trailerUrl}
+            onChange={(event) => updateField("trailerUrl", event.target.value)}
+            className={ADMIN_INPUT_CLASS}
+            placeholder="https://www.youtube.com/watch?v=..."
           />
         </AdminFormField>
       </FormSection>

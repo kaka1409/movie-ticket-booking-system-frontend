@@ -108,6 +108,7 @@ export function createMovieSchema(translate: Translate, isEditing: boolean) {
     featuredOrder: optionalInteger(0, 999, translate("admin.common.number_required")),
     ageRatingId: z.string(),
     posterUrl: z.string().trim().max(1024, translate("admin.movies.too_long")),
+    trailerUrl: z.string().trim().max(2048, translate("admin.movies.too_long")),
     synopsis: z.string().trim().max(4000, translate("admin.movies.too_long")),
     synopsisVi: z.string().trim().max(4000, translate("admin.movies.too_long")),
     featuredLabel: z.string().trim().max(120, translate("admin.movies.too_long")),

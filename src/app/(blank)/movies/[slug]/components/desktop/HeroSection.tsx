@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ArrowLeft, Clock, Heart, Play, Star, Ticket } from "lucide-react";
 import TrailerModal from "@/components/shared/TrailerModal";
 import { useMovieDetail } from "@/features/movies/contexts/MovieDetailContext";
+import { toTrailerEmbedUrl } from "@/features/movies/utils/trailer";
 import { useWishlist, type WishlistFeedback } from "@/features/wishlist/contexts/WishlistContext";
 import { useSmartBack } from "@/hooks/useSmartBack";
 import { useLocale } from "@/contexts/LocaleContext";
@@ -19,6 +20,8 @@ export default function HeroSection() {
   const { translate } = useLocale();
   const [isTrailerOpen, setIsTrailerOpen] = useState(false);
   const handleBack = useSmartBack("/movies");
+
+  const trailerEmbedUrl = toTrailerEmbedUrl(movie.trailerUrl);
 
   const liked = isWishlisted(movie.id);
 
@@ -167,6 +170,7 @@ export default function HeroSection() {
         isOpen={isTrailerOpen}
         onClose={() => setIsTrailerOpen(false)}
         title={movie.title}
+        src={trailerEmbedUrl}
       />
     </>
   );

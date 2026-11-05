@@ -9,9 +9,10 @@ interface TrailerModalProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
+  src: string | null;
 }
 
-export default function TrailerModal({ isOpen, onClose, title }: TrailerModalProps) {
+export default function TrailerModal({ isOpen, onClose, title, src }: TrailerModalProps) {
   const { translate } = useLocale();
 
   useEffect(() => {
@@ -53,13 +54,19 @@ export default function TrailerModal({ isOpen, onClose, title }: TrailerModalPro
           </button>
         </div>
         <div className="relative aspect-video w-full bg-black">
-          <iframe
-            className="h-full w-full"
-            src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?autoplay=1"
-            title={`${title} Trailer`}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          />
+          {src ? (
+            <iframe
+              className="h-full w-full"
+              src={src}
+              title={`${title} Trailer`}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center px-6 text-center text-sm text-(--color-text-muted)">
+              {translate("movies.detail.trailer_unavailable")}
+            </div>
+          )}
         </div>
       </div>
     </div>

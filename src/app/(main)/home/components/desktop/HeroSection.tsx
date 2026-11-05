@@ -7,6 +7,7 @@ import { Star, Play, ChevronLeft, ChevronRight } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import type { FeaturedMovie } from "@/features/movies/types";
 import type { ErrorResponse } from "@/libs/api";
+import { toTrailerEmbedUrl } from "@/features/movies/utils/trailer";
 import SectionFallback from "@/components/ui/SectionFallback";
 import TrailerModal from "@/components/shared/TrailerModal";
 
@@ -66,6 +67,8 @@ export default function HeroSection({
   if (movies.length === 0) return null;
 
   const movie = movies[safeIndex];
+
+  const trailerEmbedUrl = toTrailerEmbedUrl(movie.trailerUrl);
 
   return (
     <>
@@ -198,6 +201,7 @@ export default function HeroSection({
         isOpen={isTrailerOpen}
         onClose={() => setIsTrailerOpen(false)}
         title={movie.title}
+        src={trailerEmbedUrl}
       />
     </>
   );
