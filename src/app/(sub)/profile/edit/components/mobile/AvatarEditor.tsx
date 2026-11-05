@@ -1,19 +1,18 @@
 "use client";
 
+import { useRef } from "react";
 import Image from "next/image";
-import { Camera } from "lucide-react";
+import { Camera, Loader2 } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { DEFAULT_AVATAR_SRC } from "@/components/ui/Avatar";
+import { useAvatarUpload } from "@/features/profile/hooks/useAvatarUpload";
 
-/**
- * Avatar editor. Photo upload is not wired to a backend yet, so the control is
- * honestly disabled instead of previewing a file that would be silently dropped
- * on save.
- */
 export default function AvatarEditor() {
   const { translate } = useLocale();
   const { user } = useAuth();
+  const { upload, remove, isPending } = useAvatarUpload();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   if (!user) return null;
 
@@ -44,19 +43,44 @@ export default function AvatarEditor() {
         </div>
       </div>
 
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={(event) => {
+          const file = event.target.files?.[0];
+          if (file) void upload(file);
+          event.target.value = "";
+        }}
+      />
+
       <button
         type="button"
-        disabled
+        disabled={isPending}
+        onClick={() => fileInputRef.current?.click()}
         aria-label={translate("profile.edit.change_photo")}
-        className="relative -mt-5 ml-20 flex h-10 w-10 items-center justify-center rounded-full bg-(--color-gold) shadow-(--shadow-card) z-10 opacity-40 cursor-not-allowed"
+        className="relative -mt-5 ml-20 flex h-10 w-10 items-center justify-center rounded-full bg-(--color-gold) shadow-(--shadow-card) z-10 disabled:opacity-60"
       >
-        <Camera className="h-5 w-5 text-black" strokeWidth={2.2} />
+        {isPending ? (
+          <Loader2 className="h-5 w-5 animate-spin text-black" />
+        ) : (
+          <Camera className="h-5 w-5 text-black" strokeWidth={2.2} />
+        )}
       </button>
 
+      {user.avatarUrl && (
+        <button
+          type="button"
+          disabled={isPending}
+          onClick={remove}
+          className="mt-3 text-xs font-semibold text-(--color-text-muted) underline disabled:opacity-60"
+        >
+          {translate("profile.edit.remove_photo")}
+        </button>
+      )}
+
       <p className="mt-4 text-xl font-bold text-(--color-text-primary)">{user.name}</p>
-      <p className="mt-1 text-sm text-(--color-text-secondary)">
-        {translate("profile.edit.photo_unavailable")}
-      </p>
     </div>
   );
 }

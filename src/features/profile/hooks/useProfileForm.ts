@@ -23,7 +23,6 @@ export function useProfileForm() {
   const [phone, setPhone] = useState(user?.phone ?? "");
   const [dob, setDob] = useState(toDateInputValue(user?.dob));
   const [touched, setTouched] = useState(false);
-  const [avatarChanged, setAvatarChanged] = useState(false);
   const [serverError, setServerError] = useState("");
 
   const [isPending, startTransition] = useTransition();
@@ -31,8 +30,7 @@ export function useProfileForm() {
   const hasChanges =
     fullName !== (user?.name ?? "") ||
     phone !== (user?.phone ?? "") ||
-    dob !== toDateInputValue(user?.dob) ||
-    avatarChanged;
+    dob !== toDateInputValue(user?.dob);
 
   const schema = useMemo(() => createProfileSchema(translate), [translate]);
   const result = schema.safeParse({ name: fullName, phone, dob });
@@ -86,7 +84,6 @@ export function useProfileForm() {
     setFullName,
     setPhone,
     setDob,
-    setAvatarChanged,
     touched,
     setTouched,
     showErrors,

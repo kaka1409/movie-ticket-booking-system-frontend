@@ -1,11 +1,15 @@
 "use client";
 
-import { Mail, Lock, Smartphone, Calendar, User, Info } from "lucide-react";
+import { useRef } from "react";
+import { Mail, Lock, Smartphone, Calendar, User, Camera, Loader2 } from "lucide-react";
+import Image from "next/image";
 import FormField from "@/components/ui/FormField";
 import Button from "@/components/ui/Button";
 import ErrorAlert from "@/components/ui/ErrorAlert";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useProfileForm } from "@/features/profile/hooks/useProfileForm";
+import { useAvatarUpload } from "@/features/profile/hooks/useAvatarUpload";
+import { DEFAULT_AVATAR_SRC } from "@/components/ui/Avatar";
 import AccountShell from "@/components/shared/profile/desktop/AccountShell";
 
 /**
@@ -15,22 +19,10 @@ import AccountShell from "@/components/shared/profile/desktop/AccountShell";
  */
 export default function EditProfileContent() {
   const { translate } = useLocale();
-  const {
-    user,
-    fullName,
-    phone,
-    dob,
-    setFullName,
-    setPhone,
-    setDob,
-    showErrors,
-    errors,
-    hasChanges,
-    isPending,
-    serverError,
-    submit,
-    cancel,
-  } = useProfileForm();
+  const profile = useProfileForm();
+  const { user, fullName, phone, dob, setFullName, setPhone, setDob, showErrors, errors, hasChanges, isPending, serverError, submit, cancel } = profile;
+  const { upload, remove, isPending: isAvatarPending } = useAvatarUpload();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   if (!user) return null;
 
@@ -40,6 +32,56 @@ export default function EditProfileContent() {
       description={translate("profile.pages.edit_desc")}
     >
       <section className="mx-auto max-w-4xl rounded-2xl border border-(--color-border) bg-(--color-surface) p-6 shadow-(--shadow-card) lg:p-8">
+        <div className="mb-6 flex items-center gap-5">
+          <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-full bg-(--color-surface-2)">
+            <Image
+              src={user.avatarUrl || DEFAULT_AVATAR_SRC}
+              alt={user.name || ""}
+              fill
+              sizes="80px"
+              className="object-cover"
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(event) => {
+                const file = event.target.files?.[0];
+                if (file) void upload(file);
+                event.target.value = "";
+              }}
+            />
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              fullWidth={false}
+              disabled={isAvatarPending}
+              onClick={() => fileInputRef.current?.click()}
+            >
+              {isAvatarPending ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Camera className="h-4 w-4" />
+              )}
+              <span className="ml-2">{translate("profile.edit.change_photo")}</span>
+            </Button>
+            {user.avatarUrl && (
+              <button
+                type="button"
+                disabled={isAvatarPending}
+                onClick={remove}
+                className="text-left text-xs font-semibold text-(--color-text-muted) underline disabled:opacity-60"
+              >
+                {translate("profile.edit.remove_photo")}
+              </button>
+            )}
+          </div>
+        </div>
+
         <div className="mb-6 border-b border-(--color-border)/50 pb-4">
           <h2 className="text-lg font-black tracking-tight text-white lg:text-xl">
             {translate("profile.personal_info")}
@@ -121,12 +163,6 @@ export default function EditProfileContent() {
                 {translate("profile.edit.email_readonly")}
               </p>
             </div>
-          </div>
-
-          {/* Photo Note */}
-          <div className="mt-6 flex items-center gap-2 rounded-xl border border-(--color-border)/60 bg-(--color-surface-2)/60 px-4 py-3 text-xs text-(--color-text-muted)">
-            <Info size={15} className="shrink-0 text-(--color-gold)" />
-            <span>{translate("profile.edit.photo_unavailable")}</span>
           </div>
 
           {serverError && <ErrorAlert className="mt-5" message={serverError} />}
