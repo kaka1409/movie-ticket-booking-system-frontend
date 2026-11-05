@@ -54,3 +54,8 @@
 - [ ] Unit tests — 0 test files, no test runner; `tests/{unit,integration,e2e}/` are empty `[before deploy]`
 - [ ] E2E tests `[before deploy]`
 - [ ] Tests pass in CI `[before deploy]`
+
+### Trailer + Avatar upload (2026-11-05)
+- [x] FE trailer: Movie.trailerUrl, 	oTrailerEmbedUrl, TrailerModal src prop, wired movie-detail mobile+desktop + home desktop, admin MovieFormDialog field.
+- [x] FE avatar: piUpload, 	oAvatarBlob, useAvatarUpload, mobile AvatarEditor + desktop AvatarSection enabled.
+- [ ] Backend migration + Cloudinary creds (user).

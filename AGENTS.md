@@ -7,8 +7,7 @@ pnpm dev           # dev server on :3000 (compiles new routes on demand)
 pnpm build         # production build - needs the backend on :8080
 pnpm lint          # ESLint flat config (next/core-web-vitals + typescript)
 pnpm typecheck     # tsc --noEmit
-pnpm check:layers  # scripts/check-layers.mjs - the folder rules below (L1-L6)
-pnpm verify        # lint + typecheck + check:layers - run before handing work over
+pnpm verify        # lint + typecheck - run before handing work over
 pnpm format        # Prettier write (printWidth 100, double quotes)
 ```
 
@@ -32,7 +31,7 @@ Never run `pnpm build` while `pnpm dev` is running: both write `.next`, and Next
 - `reactCompiler: false`. Navigation is `<Link>` + `usePathname()`/`useSearchParams()` (wrap the latter in `<Suspense>`); `"use client"` on any file using hooks; every route has a `loading.tsx`.
 - Icons `lucide-react`, QR `qrcode.react`, images `next/image` (host allowlist in `next.config.ts`).
 
-### Layering (R1-R7, enforced by `pnpm check:layers`)
+### Layering (R1-R7)
 
 `app/` = routing + route-specific presentation. `features/<domain>/` = domain data, API calls, business logic and state; it does not own visual components. Cross-feature presentation belongs in `components/shared/`, and route-specific presentation belongs under that route in `app/`. `components/ui` is primitive. Full prose + the route-by-route table live in `docs/architecture.md` §Layering; the per-domain inventory is `docs/features.md`.
 
@@ -41,10 +40,10 @@ Never run `pnpm build` while `pnpm dev` is running: both write `.next`, and Next
 - R3: route-specific components stay in that route's `app/**/components/`; reusable presentation used across features belongs in `components/shared/`. Keep feature folders free of visual components.
 - R4: one context per file at `features/<domain>/contexts/<Name>Context.tsx` — never a `context.tsx` barrel. `src/contexts/` holds only Auth/Device/Locale/Toast.
 - R5: endpoint calls live in `features/<domain>/api.ts`; pure helper = `utils/<concern>.ts`; static data = `constants.ts`; effect-only mount = route `components/adopters/<Name>Adopter.tsx`; multi-file state = `state/` (`types.ts` + `initial.ts` + `reducer.ts` + barrel). Stream independent feeds with page-local async sections and Suspense.
-- R6: `{desktop,mobile,shared}/` only when more than one device tree exists, and a piece both trees drive lives in `shared/`; a skin never imports the other skin (`check-layers` L6).
+- R6: `{desktop,mobile,shared}/` only when more than one device tree exists, and a piece both trees drive lives in `shared/`; a skin never imports the other skin.
 - R7: ~200 lines per file is the soft ceiling — past it, split by concern (a cohesive hook that is genuinely one unit may stay).
 
-The script also fails an alias import that resolves to nothing (L5), which is what catches a move that forgot a call site.
+No automated layer checker ships yet — `pnpm typecheck` still catches an alias import that resolves to nothing, which is what fails a move that forgot a call site; the rest of R1-R7 is a review rule.
 
 ## Conventions
 
@@ -77,7 +76,7 @@ The script also fails an alias import that resolves to nothing (L5), which is wh
 ## Write-time rules (short form)
 
 - `api.ts` = GET queries via `apiFetch`; `action.ts` = `"use server"` mutations via `apiMutation`. Actions return `{ success: true, data } | { success: false, error, status? }` and never throw.
-- Server components fetching user-scoped data must pass `await getRequestCookie()`; `credentials: "include"` only works in the browser.
+- Server components fetching user-scoped data must pass `await getRequestCookie()`; `credentials: "include"` only works in the browser. `GET /seats` is one of them: with the refresh cookie the backend reports the caller's own held seats as `idle` (contract §4.1.4), without it they come back `occupied` and a back-navigation/refresh empties the seat draft. That call is also `cache: "no-store"` — the payload is identity-scoped.
 - React 19: a `useActionState` dispatcher must sit on a real `<form action={formAction}>` - calling it from `onClick` skips the transition, so `isPending` never flips and double submits get through.
 - Both device trees always render: mount every side effect once at PAGE level, keep step logic in `features/*/hooks`, use `lg:`/`xl:` inside desktop components.
 - Desktop container `mx-auto max-w-7xl px-6 lg:px-8` (notifications = `max-w-4xl`); every desktop page title renders `components/shared/DesktopPageHeader` (gold bar, 26px title, `text-xs` subtitle, optional `action`) — never a hand-rolled `h1`, no eyebrow, no divider; `.surface-raised` goes on a wrapper; tokens `--color-bg #0f0f0f`, `--color-surface #1c1b1b`, `--color-surface-2 #242424`, `--color-border #2e2e2e`, `--color-border-strong #6b6b6b`, `--text-2xs/3xs`, z-index ladder `--z-*`.
