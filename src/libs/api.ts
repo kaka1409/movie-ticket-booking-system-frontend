@@ -299,3 +299,62 @@ export async function apiMutation<T>(
 
   return raw ? response : response.json();
 }
+
+/**
+ * POST a multipart/form-data body (file upload). Never sets `Content-Type` — the
+ * browser must attach the multipart boundary itself.
+ */
+export async function apiUpload<T>(
+  path: string,
+  formData: FormData,
+  token?: string,
+  cookie?: string,
+): Promise<T> {
+  let response: Response;
+  try {
+    response = await fetch(backendUrl + path, {
+      method: "POST",
+      body: formData,
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...(cookie ? { Cookie: cookie } : {}),
+      },
+      credentials: "include",
+    });
+  } catch (cause) {
+    const error = new Error("Network error") as Error & {
+      status: number;
+      body: unknown;
+      code: string;
+    };
+    error.status = 0;
+    error.body = null;
+    error.code = "NETWORK_ERROR";
+    error.cause = cause;
+    throw error;
+  }
+
+  if (!response.ok) {
+    const body = await response.json().catch(() => null);
+    if (response.status === 401) notifyUnauthorized(path);
+    const apiError = parseApiError(response.status, body);
+    const error = new Error(apiError.message) as Error & {
+      status: number;
+      body: unknown;
+      code: string;
+    };
+    error.status = apiError.status;
+    error.body = body;
+    error.code = apiError.code;
+    throw error;
+  }
+
+  const body = await response.json().catch(() => null);
+  if (body === null || body === undefined) {
+    throw new Error("Invalid response body");
+  }
+  if (typeof body === "object" && "data" in body) {
+    return (body as { data: T }).data;
+  }
+  return body as T;
+}
