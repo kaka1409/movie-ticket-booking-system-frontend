@@ -2,11 +2,10 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Building2, MapPin, Pencil, Plus, Settings2, Trash2 } from "lucide-react";
+import { Building2, MapPin, Plus } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useToast } from "@/contexts/ToastContext";
-import Badge from "@/components/ui/Badge";
 import AdminButton from "@/app/(admin)/admin/components/shared/AdminButton";
 import AdminDeleteDialog from "@/app/(admin)/admin/components/shared/AdminDeleteDialog";
 import AdminFormField from "@/app/(admin)/admin/components/shared/AdminFormField";
@@ -25,6 +24,8 @@ import {
   updateRoomAction,
 } from "@/features/admin/actions/cinemas.action";
 import type { AdminCinema, AdminCinemaRoom, AdminRoom } from "@/features/admin/types";
+import CinemaDetailPanel from "./CinemaDetailPanel";
+import CinemaMap from "./CinemaMap";
 import SeatLayoutEditor from "./SeatLayoutEditor";
 
 export default function CinemasManager({ cinemas }: { cinemas: AdminCinema[] }) {
@@ -33,14 +34,23 @@ export default function CinemasManager({ cinemas }: { cinemas: AdminCinema[] }) 
   const { notify } = useToast();
   const router = useRouter();
 
-  const [selectedCinemaId, setSelectedCinemaId] = useState<string | null>(cinemas[0]?.id ?? null);
+  const [selectedCinemaId, setSelectedCinemaId] = useState<string | null>(
+    cinemas[0]?.id ?? null,
+  );
   const [cinemaFormTarget, setCinemaFormTarget] = useState<AdminCinema | "new" | null>(null);
   const [roomFormTarget, setRoomFormTarget] = useState<AdminRoom | "new" | null>(null);
   const [deleteCinemaTarget, setDeleteCinemaTarget] = useState<AdminCinema | null>(null);
   const [deleteRoomTarget, setDeleteRoomTarget] = useState<AdminCinemaRoom | null>(null);
   const [layoutRoom, setLayoutRoom] = useState<AdminCinemaRoom | null>(null);
+  const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
 
   const selectedCinema = cinemas.find((cinema) => cinema.id === selectedCinemaId) ?? null;
+
+  const selectCinema = (cinemaId: string) => {
+    setSelectedCinemaId(cinemaId);
+    const cinema = cinemas.find((entry) => entry.id === cinemaId);
+    setSelectedRoomId(cinema?.rooms[0]?.id ?? null);
+  };
 
   const cinemaColumns: AdminTableColumn<AdminCinema>[] = [
     {
@@ -62,116 +72,11 @@ export default function CinemasManager({ cinemas }: { cinemas: AdminCinema[] }) 
       ),
     },
     {
-      id: "badge",
-      headerKey: "admin.cinemas.column_badge",
-      className: "w-24",
-      cell: (cinema) =>
-        cinema.badge ? (
-          <Badge variant="gold" size="xs">
-            {cinema.badge}
-          </Badge>
-        ) : (
-          <span className="text-[11px] text-(--color-text-muted)">
-            {translate("admin.common.none")}
-          </span>
-        ),
-    },
-    {
       id: "rooms",
       headerKey: "admin.cinemas.column_rooms",
       className: "w-20",
       align: "right",
       cell: (cinema) => <span className="tabular-nums">{cinema.rooms.length}</span>,
-    },
-    {
-      id: "actions",
-      className: "w-32",
-      align: "right",
-      cell: (cinema) => (
-        <div className="flex items-center justify-end gap-1">
-          <AdminButton
-            size="icon"
-            variant="ghost"
-            icon={Settings2}
-            label={translate("admin.cinemas.manage_rooms")}
-            onClick={() => setSelectedCinemaId(cinema.id)}
-          />
-          <AdminButton
-            size="icon"
-            variant="ghost"
-            icon={Pencil}
-            label={translate("admin.common.edit")}
-            onClick={() => setCinemaFormTarget(cinema)}
-          />
-          <AdminButton
-            size="icon"
-            variant="ghost"
-            icon={Trash2}
-            label={translate("admin.common.delete")}
-            onClick={() => setDeleteCinemaTarget(cinema)}
-          />
-        </div>
-      ),
-    },
-  ];
-
-  const roomColumns: AdminTableColumn<AdminCinemaRoom>[] = [
-    {
-      id: "room",
-      headerKey: "admin.rooms.column_room",
-      cell: (room) => <p className="font-semibold text-(--color-text-primary)">{room.name}</p>,
-    },
-    {
-      id: "showtimes",
-      headerKey: "admin.rooms.column_showtimes",
-      className: "w-28",
-      align: "right",
-      cell: (room) => <span className="tabular-nums">{room.showtimes}</span>,
-    },
-    {
-      id: "seats",
-      headerKey: "admin.rooms.column_seats",
-      className: "w-24",
-      align: "right",
-      cell: (room) => <span className="tabular-nums">{room.seats}</span>,
-    },
-    {
-      id: "actions",
-      className: "w-40",
-      align: "right",
-      cell: (room) => (
-        <div className="flex items-center justify-end gap-1">
-          <AdminButton
-            size="sm"
-            variant="ghost"
-            icon={Settings2}
-            label={translate("admin.seatLayout.open")}
-            onClick={() => setLayoutRoom(room)}
-          >
-            {translate("admin.seatLayout.open")}
-          </AdminButton>
-          <AdminButton
-            size="icon"
-            variant="ghost"
-            icon={Pencil}
-            label={translate("admin.common.edit")}
-            onClick={() =>
-              setRoomFormTarget({
-                ...room,
-                cinemaId: selectedCinema?.id ?? "",
-                cinemaName: selectedCinema?.name ?? "",
-              })
-            }
-          />
-          <AdminButton
-            size="icon"
-            variant="ghost"
-            icon={Trash2}
-            label={translate("admin.common.delete")}
-            onClick={() => setDeleteRoomTarget(room)}
-          />
-        </div>
-      ),
     },
   ];
 
@@ -188,44 +93,44 @@ export default function CinemasManager({ cinemas }: { cinemas: AdminCinema[] }) 
         </AdminButton>
       </div>
 
-      <AdminTable
-        columns={cinemaColumns}
-        rows={cinemas}
-        getRowId={(cinema) => cinema.id}
-        emptyIcon={Building2}
-        emptyTitleKey="admin.cinemas.empty_title"
-        emptyDescriptionKey="admin.cinemas.empty_body"
-        captionKey="admin.cinemas.title"
-      />
+      <div className="grid gap-4 lg:grid-cols-5">
+        <div className="min-w-0 lg:col-span-3">
+          <CinemaMap cinema={selectedCinema ?? cinemas[0] ?? null} />
+        </div>
+
+        <div className="min-w-0 lg:col-span-2">
+          <AdminTable
+            columns={cinemaColumns}
+            rows={cinemas}
+            getRowId={(cinema) => cinema.id}
+            emptyIcon={Building2}
+            emptyTitleKey="admin.cinemas.empty_title"
+            emptyDescriptionKey="admin.cinemas.empty_body"
+            captionKey="admin.cinemas.title"
+            onRowClick={(cinema) => selectCinema(cinema.id)}
+            isRowSelected={(cinema) => cinema.id === selectedCinemaId}
+          />
+        </div>
+      </div>
 
       {selectedCinema && (
-        <section className="mt-6">
-          <div className="mb-3 flex flex-wrap items-center gap-2">
-            <h2 className="text-sm font-extrabold tracking-tight text-(--color-text-primary)">
-              {selectedCinema.name} — {translate("admin.rooms.title")}
-            </h2>
-
-            <AdminButton
-              icon={Plus}
-              variant="primary"
-              size="sm"
-              className="ml-auto"
-              onClick={() => setRoomFormTarget("new")}
-            >
-              {translate("admin.rooms.new")}
-            </AdminButton>
-          </div>
-
-          <AdminTable
-            columns={roomColumns}
-            rows={selectedCinema.rooms}
-            getRowId={(room) => room.id}
-            emptyIcon={Building2}
-            emptyTitleKey="admin.rooms.empty_title"
-            emptyDescriptionKey="admin.rooms.empty_body"
-            captionKey="admin.rooms.title"
-          />
-        </section>
+        <CinemaDetailPanel
+          cinema={selectedCinema}
+          selectedRoomId={selectedRoomId}
+          onSelectRoom={setSelectedRoomId}
+          onEditCinema={() => setCinemaFormTarget(selectedCinema)}
+          onDeleteCinema={() => setDeleteCinemaTarget(selectedCinema)}
+          onAddRoom={() => setRoomFormTarget("new")}
+          onEditRoom={(room) =>
+            setRoomFormTarget({
+              ...room,
+              cinemaId: selectedCinema.id,
+              cinemaName: selectedCinema.name,
+            })
+          }
+          onDeleteRoom={setDeleteRoomTarget}
+          onEditLayout={setLayoutRoom}
+        />
       )}
 
       <CinemaFormDialog
