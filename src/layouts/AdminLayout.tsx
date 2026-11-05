@@ -31,6 +31,7 @@ import Avatar, { DEFAULT_AVATAR_SRC } from "@/components/ui/Avatar";
 import Dropdown from "@/components/ui/Dropdown";
 import LoginPrompt from "@/components/shared/LoginPrompt";
 import Logo from "@/components/ui/Logo";
+import LanguageToggle from "@/layouts/components/LanguageToggle";
 
 const THEME_OPTIONS: Array<{ value: AdminTheme; labelKey: string; Icon: LucideIcon }> = [
   { value: "dark", labelKey: "admin.theme.dark", Icon: Moon },
@@ -164,6 +165,7 @@ function AdminShell({ initialTheme, children }: { initialTheme: AdminTheme; chil
             </span>
 
             <div className="ml-auto flex items-center gap-1.5 md:gap-2.5">
+              <LanguageToggle variant="flag" size="sm" />
               <ThemeToggle theme={theme} onSelect={setTheme} />
 
               {user && (
@@ -179,22 +181,27 @@ function AdminShell({ initialTheme, children }: { initialTheme: AdminTheme; chil
                 width: isCollapsed ? ADMIN_SIDEBAR_COLLAPSED_PX : ADMIN_SIDEBAR_EXPANDED_PX,
               }}
             >
-              <AdminNav isCollapsed={isCollapsed} />
-
-              <div className="shrink-0 space-y-0.5 border-t border-(--color-border) p-2">
+              {/* Top row: back-to-site keeps its label, collapse stays icon-only on the right */}
+              <div
+                className={`flex shrink-0 items-center border-b border-(--color-border) ${
+                  isCollapsed ? "justify-center gap-1 p-1.5" : "gap-1 px-2 py-1.5"
+                }`}
+              >
                 <Link
                   href="/"
                   prefetch={false}
                   title={translate("admin.back_to_site")}
-                  className={`flex items-center rounded-xl py-2 text-[11px] font-semibold text-(--color-text-primary) no-underline transition-colors active:scale-[0.98] hover:bg-(--color-surface-2) hover:text-(--color-gold) ${
-                    isCollapsed ? "justify-center px-0" : "gap-2.5 px-2.5"
-                  }`}
+                  className={
+                    isCollapsed
+                      ? "flex h-7 w-7 items-center justify-center rounded-lg text-(--color-text-primary) transition-colors active:scale-[0.98] hover:bg-(--color-surface-2) hover:text-(--color-gold)"
+                      : "flex min-w-0 flex-1 items-center gap-2 rounded-xl px-2.5 py-2 text-[11px] font-semibold text-(--color-text-primary) no-underline transition-colors active:scale-[0.98] hover:bg-(--color-surface-2) hover:text-(--color-gold)"
+                  }
                 >
                   <ArrowLeft size={14} aria-hidden className="shrink-0" />
                   {isCollapsed ? (
                     <span className="sr-only">{translate("admin.back_to_site")}</span>
                   ) : (
-                    <span>{translate("admin.back_to_site")}</span>
+                    <span className="truncate">{translate("admin.back_to_site")}</span>
                   )}
                 </Link>
 
@@ -205,18 +212,21 @@ function AdminShell({ initialTheme, children }: { initialTheme: AdminTheme; chil
                   aria-label={translate(
                     isCollapsed ? "admin.sidebar.expand" : "admin.sidebar.collapse",
                   )}
-                  className={`flex w-full cursor-pointer items-center rounded-xl py-2 text-[11px] font-semibold text-(--color-text-primary) transition-colors active:scale-[0.98] hover:bg-(--color-surface-2) hover:text-(--color-gold) ${
-                    isCollapsed ? "justify-center px-0" : "gap-2.5 px-2.5"
-                  }`}
+                  className={
+                    isCollapsed
+                      ? "flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-lg text-(--color-text-primary) transition-colors active:scale-[0.98] hover:bg-(--color-surface-2) hover:text-(--color-gold)"
+                      : "flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-lg text-(--color-text-primary) transition-colors active:scale-[0.98] hover:bg-(--color-surface-2) hover:text-(--color-gold)"
+                  }
                 >
                   {isCollapsed ? (
-                    <PanelLeftOpen size={14} aria-hidden className="shrink-0" />
+                    <PanelLeftOpen size={14} aria-hidden />
                   ) : (
-                    <PanelLeftClose size={14} aria-hidden className="shrink-0" />
+                    <PanelLeftClose size={14} aria-hidden />
                   )}
-                  {!isCollapsed && <span>{translate("admin.sidebar.collapse")}</span>}
                 </button>
               </div>
+
+              <AdminNav isCollapsed={isCollapsed} />
             </aside>
 
             <main className="mx-auto w-full min-w-0 max-w-7xl flex-1 px-4 py-5 md:px-6 md:py-7 lg:px-8">

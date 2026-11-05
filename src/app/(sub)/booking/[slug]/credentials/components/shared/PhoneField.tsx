@@ -84,8 +84,6 @@ export default function PhoneField({
           aria-invalid={error ? true : undefined}
           placeholder={translate("booking.credentials.phone_placeholder")}
           value={phone}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
           onChange={(event) => onPhoneChange(event.target.value.replace(/\D/g, ""))}
           className="flex-1 min-w-0 bg-transparent text-sm text-(--color-text-primary) placeholder-(--color-text-muted) outline-none font-[inherit]"
         />

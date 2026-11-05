@@ -32,6 +32,8 @@ export default function AdminTable<TRow>({
   emptyTitleKey,
   emptyDescriptionKey,
   captionKey,
+  onRowClick,
+  isRowSelected,
 }: {
   columns: AdminTableColumn<TRow>[];
   rows: TRow[];
@@ -41,6 +43,9 @@ export default function AdminTable<TRow>({
   emptyDescriptionKey?: string;
   /** Visually hidden `<caption>` — the page header already names the table. */
   captionKey?: string;
+  /** Makes a row activate on click (selection sync with another surface). */
+  onRowClick?: (row: TRow) => void;
+  isRowSelected?: (row: TRow) => boolean;
 }) {
   const { translate } = useLocale();
 
@@ -81,7 +86,16 @@ export default function AdminTable<TRow>({
 
         <tbody>
           {rows.map((row) => (
-            <tr key={getRowId(row)}>
+            <tr
+              key={getRowId(row)}
+              onClick={onRowClick ? () => onRowClick(row) : undefined}
+              className={[
+                onRowClick ? "cursor-pointer" : "",
+                isRowSelected?.(row) ? "bg-(--color-gold)/10" : "",
+              ]
+                .filter(Boolean)
+                .join(" ")}
+            >
               {columns.map((column) => (
                 <td
                   key={column.id}
