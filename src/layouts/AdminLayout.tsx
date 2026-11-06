@@ -29,6 +29,7 @@ import { useAdminTheme } from "@/features/admin/hooks/useAdminTheme";
 import type { AdminSidebarMode, AdminTheme } from "@/features/admin/types";
 import Avatar, { DEFAULT_AVATAR_SRC } from "@/components/ui/Avatar";
 import Dropdown from "@/components/ui/Dropdown";
+import AuthenticatingPanel from "@/components/shared/AuthenticatingPanel";
 import LoginPrompt from "@/components/shared/LoginPrompt";
 import Logo from "@/components/ui/Logo";
 import LanguageToggle from "@/layouts/components/LanguageToggle";
@@ -131,7 +132,7 @@ function AdminShell({ initialTheme, children }: { initialTheme: AdminTheme; chil
 
   const gate = !isAuthenticated ? (
     isLoading ? (
-      <AdminRestoreSkeleton />
+      <AuthenticatingPanel className="flex-1" />
     ) : (
       <LoginPrompt />
     )
@@ -480,20 +481,6 @@ function AdminAccountMenu({
         </>
       )}
     </Dropdown>
-  );
-}
-
-/** Shown while `AuthContext` restores the session from the refresh cookie. */
-function AdminRestoreSkeleton() {
-  return (
-    <div className="mx-auto w-full max-w-md px-4 py-24">
-      <div className="animate-pulse space-y-4">
-        <div className="h-8 w-2/3 rounded-lg bg-(--color-surface-2)" />
-        <div className="h-4 w-full rounded-lg bg-(--color-surface-2)" />
-        <div className="h-4 w-5/6 rounded-lg bg-(--color-surface-2)" />
-        <div className="h-12 w-full rounded-xl bg-(--color-surface-2)" />
-      </div>
-    </div>
   );
 }
 
