@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import AdminPageHeader from "@/app/(admin)/admin/components/shared/AdminPageHeader";
-import { AdminTableSkeleton } from "@/app/(admin)/admin/components/shared/AdminSkeletons";
+import { AdminListSkeleton } from "@/app/(admin)/admin/components/shared/AdminSkeletons";
 import { ReviewsManagerSection } from "./sections";
 
 export const metadata: Metadata = { title: "Reviews" };
@@ -22,7 +22,7 @@ export default async function AdminReviewsPage({
         titleKey="admin.reviews.title"
         descriptionKey="admin.reviews.description"
       />
-      <Suspense fallback={<AdminTableSkeleton />}>
+      <Suspense fallback={<AdminListSkeleton search={false} total={false} action={false} columns={5} />}>
         <ReviewsManagerSection skip={skip} limit={limit} />
       </Suspense>
     </>

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import AdminPageHeader from "@/app/(admin)/admin/components/shared/AdminPageHeader";
-import { AdminTableSkeleton } from "@/app/(admin)/admin/components/shared/AdminSkeletons";
+import { AdminListSkeleton } from "@/app/(admin)/admin/components/shared/AdminSkeletons";
 import { UsersManagerSection } from "./sections";
 
 export const metadata: Metadata = { title: "Users" };
@@ -23,7 +23,7 @@ export default async function AdminUsersPage({
         titleKey="admin.users.title"
         descriptionKey="admin.users.description"
       />
-      <Suspense fallback={<AdminTableSkeleton />}>
+      <Suspense fallback={<AdminListSkeleton search select apply total action columns={5} />}>
         <UsersManagerSection search={search} role={role} page={page} />
       </Suspense>
     </>

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import AdminPageHeader from "@/app/(admin)/admin/components/shared/AdminPageHeader";
-import { AdminTableSkeleton } from "@/app/(admin)/admin/components/shared/AdminSkeletons";
+import ShowtimesSkeleton from "../components/skeletons/ShowtimesSkeleton";
 import { ShowtimesManagerSection } from "./sections";
 
 export const metadata: Metadata = { title: "Showtimes" };
@@ -22,7 +22,7 @@ export default async function AdminShowtimesPage({
         titleKey="admin.showtimes.title"
         descriptionKey="admin.showtimes.description"
       />
-      <Suspense fallback={<AdminTableSkeleton />}>
+      <Suspense fallback={<ShowtimesSkeleton />}>
         <ShowtimesManagerSection movie={movie} date={date} />
       </Suspense>
     </>

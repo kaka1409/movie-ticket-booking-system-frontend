@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import AdminPageHeader from "@/app/(admin)/admin/components/shared/AdminPageHeader";
-import { AdminTableSkeleton } from "@/app/(admin)/admin/components/shared/AdminSkeletons";
+import { AdminListSkeleton } from "@/app/(admin)/admin/components/shared/AdminSkeletons";
 import { CatalogsManagerSection } from "./sections";
 
 export const metadata: Metadata = { title: "Catalogs" };
@@ -15,7 +15,7 @@ export default function AdminCatalogsPage() {
         titleKey="admin.catalogs.title"
         descriptionKey="admin.catalogs.description"
       />
-      <Suspense fallback={<AdminTableSkeleton />}>
+      <Suspense fallback={<AdminListSkeleton tabs={3} columns={4} />}>
         <CatalogsManagerSection />
       </Suspense>
     </>

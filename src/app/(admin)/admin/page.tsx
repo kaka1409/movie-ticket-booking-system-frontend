@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import AdminPageHeader from "@/app/(admin)/admin/components/shared/AdminPageHeader";
-import AdminDashboardSkeleton from "./components/AdminDashboardSkeleton";
+import AdminDashboardSkeleton from "./components/skeletons/AdminDashboardSkeleton";
 import { AdminDashboardSection } from "./sections";
 
 export const metadata: Metadata = {
