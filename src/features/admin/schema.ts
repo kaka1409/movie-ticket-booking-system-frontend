@@ -45,6 +45,8 @@ const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 const TIME_PATTERN = /^([01]\d|2[0-3]):[0-5]\d$/;
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const CATEGORY_TOKEN_PATTERN = /^[a-z][a-z0-9_-]*$/;
+const TRAILER_URL_PATTERN =
+  /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/|vimeo\.com\/)/;
 
 /** A required money field: blank is invalid, otherwise the amount must be ≥ 0. */
 function requiredAmount(message: string) {
@@ -106,16 +108,25 @@ export function createMovieSchema(translate: Translate, isEditing: boolean) {
     featuredFrom: optionalDate(translate("admin.movies.date_invalid")),
     featuredTo: optionalDate(translate("admin.movies.date_invalid")),
     featuredOrder: optionalInteger(0, 999, translate("admin.common.number_required")),
-    ageRatingId: z.string(),
+    ageRatingId: z.string().optional(),
     posterUrl: z.string().trim().max(1024, translate("admin.movies.too_long")),
-    trailerUrl: z.string().trim().max(2048, translate("admin.movies.too_long")),
+    trailerUrl: z
+      .string()
+      .trim()
+      .max(2048, translate("admin.movies.too_long"))
+      .refine(
+        (value) => value === "" || TRAILER_URL_PATTERN.test(value),
+        translate("admin.movies.trailer_url_invalid"),
+      ),
     synopsis: z.string().trim().max(4000, translate("admin.movies.too_long")),
     synopsisVi: z.string().trim().max(4000, translate("admin.movies.too_long")),
     featuredLabel: z.string().trim().max(120, translate("admin.movies.too_long")),
     featuredLabelVi: z.string().trim().max(120, translate("admin.movies.too_long")),
     featuredDescription: z.string().trim().max(600, translate("admin.movies.too_long")),
     featuredDescriptionVi: z.string().trim().max(600, translate("admin.movies.too_long")),
-    genreIds: z.array(z.string()),
+    genreIds: z
+      .array(z.string().uuid())
+      .max(20, translate("admin.movies.too_many_genres")),
     isFeatured: z.boolean(),
   });
 }

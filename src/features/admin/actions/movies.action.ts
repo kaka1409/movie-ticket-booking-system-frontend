@@ -28,6 +28,18 @@ export async function updateMovieAction(
   return mutateAdmin<AdminMovie>("PATCH", `/movies/${slug}`, token, input);
 }
 
+/**
+ * Quick featured toggle from the table — sends only `isFeatured`, so the
+ * label/window/order fields the edit dialog owns stay untouched.
+ */
+export async function toggleMovieFeaturedAction(
+  token: string,
+  slug: string,
+  isFeatured: boolean,
+): Promise<AdminActionResult<AdminMovie>> {
+  return mutateAdmin<AdminMovie>("PATCH", `/movies/${slug}`, token, { isFeatured });
+}
+
 /** Answers `409 MOVIE_IN_USE` while showtimes, reviews or wishlists reference it. */
 export async function deleteMovieAction(
   token: string,

@@ -8,6 +8,7 @@ import type {
   AdminFoodItem,
   AdminMovie,
   AdminMovieCounts,
+  AdminMovieFeaturedState,
   AdminMovieStatus,
   AdminPaginationMeta,
   AdminPaymentMethod,
@@ -41,12 +42,22 @@ export async function getAdminMovies(params: {
   limit?: number;
   search?: string;
   status?: AdminMovieStatus | "";
+  genres?: string;
+  ageRating?: string;
+  releaseFrom?: string;
+  releaseTo?: string;
+  featuredState?: AdminMovieFeaturedState | "";
 }): Promise<ApiResponse<{ movies: AdminMovie[] }, AdminPaginationMeta>> {
   const query = buildQuery({
     page: params.page,
     limit: params.limit,
     search: params.search,
     status: params.status,
+    genres: params.genres,
+    ageRating: params.ageRating,
+    releaseFrom: params.releaseFrom,
+    releaseTo: params.releaseTo,
+    featuredState: params.featuredState,
   });
 
   const result = await apiFetch<

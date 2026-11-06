@@ -23,6 +23,13 @@ export interface AdminPaginationMeta {
 }
 
 export type AdminMovieStatus = "now_showing" | "coming_soon" | "ended";
+/**
+ * Featured lifecycle the admin list can filter by. Mirrors the backend
+ * `FEATURED_STATES`: `flagged` = raw `isFeatured`, `active` = inside the
+ * featured window (what the home block shows), `scheduled`/`expired` = the
+ * window bounds the storefront never reports.
+ */
+export type AdminMovieFeaturedState = "flagged" | "active" | "scheduled" | "expired";
 export type AdminUserRole = "USER" | "ADMIN";
 export type AdminUserStatus = "active" | "banned";
 
