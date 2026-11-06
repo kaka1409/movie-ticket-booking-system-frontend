@@ -1,7 +1,7 @@
 "use client";
 
-import type { ReactNode } from "react";
-import type { LucideIcon } from "lucide-react";
+import { Fragment, useState, type ReactNode } from "react";
+import { ChevronDown, type LucideIcon } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import EmptyState from "@/components/ui/EmptyState";
 import { ADMIN_CARD_CLASS } from "@/features/admin/constants";
@@ -23,6 +23,10 @@ export interface AdminTableColumn<TRow> {
  * up, a stack of labelled cards below it (see `.admin-table` in
  * `styles/admin-theme.css`). Rows are already fetched by the page — this never
  * sorts, filters or paginates on its own.
+ *
+ * Expansion is opt-in: pass `renderExpanded` and every row gains a centred
+ * toggle bar plus a full-width detail row underneath. State is internal
+ * (accordion by default); pass `expandedRowId` + `onToggleExpand` to control it.
  */
 export default function AdminTable<TRow>({
   columns,
@@ -34,6 +38,11 @@ export default function AdminTable<TRow>({
   captionKey,
   onRowClick,
   isRowSelected,
+  expandedRowId,
+  onToggleExpand,
+  renderExpanded,
+  expandLabelKey = "admin.common.view_detail",
+  collapseLabelKey = "admin.common.collapse",
 }: {
   columns: AdminTableColumn<TRow>[];
   rows: TRow[];
@@ -46,8 +55,38 @@ export default function AdminTable<TRow>({
   /** Makes a row activate on click (selection sync with another surface). */
   onRowClick?: (row: TRow) => void;
   isRowSelected?: (row: TRow) => boolean;
+  /** Id of the row whose detail panel is open; `null` collapses all. */
+  expandedRowId?: string | null;
+  onToggleExpand?: (row: TRow) => void;
+  /** Detail content rendered in a `colSpan` row under the expanded row;
+   * receives `closePanel` so the panel can dismiss itself. */
+  renderExpanded?: (row: TRow, closePanel: () => void) => ReactNode;
+  expandLabelKey?: string;
+  collapseLabelKey?: string;
 }) {
   const { translate } = useLocale();
+  // Expansion state lives here so a toggle re-renders only the table, not the
+  // page that owns the row data. Controlled mode stays for callers that need it.
+  const isControlled = expandedRowId !== undefined || onToggleExpand !== undefined;
+  const [internalExpandedId, setInternalExpandedId] = useState<string | null>(null);
+  const activeExpandedId = isControlled ? expandedRowId : internalExpandedId;
+  const isExpandable = Boolean(renderExpanded);
+  const handleToggleExpand = (row: TRow) => {
+    if (isControlled) {
+      onToggleExpand?.(row);
+      return;
+    }
+    const rowId = getRowId(row);
+    setInternalExpandedId((current) => (current === rowId ? null : rowId));
+  };
+  const expandedRow = rows.find((row) => getRowId(row) === activeExpandedId);
+  const closePanel = () => {
+    if (isControlled) {
+      if (expandedRow) onToggleExpand?.(expandedRow);
+    } else {
+      setInternalExpandedId(null);
+    }
+  };
 
   if (rows.length === 0) {
     return (
@@ -85,28 +124,62 @@ export default function AdminTable<TRow>({
         </thead>
 
         <tbody>
-          {rows.map((row) => (
-            <tr
-              key={getRowId(row)}
-              onClick={onRowClick ? () => onRowClick(row) : undefined}
-              className={[
-                onRowClick ? "cursor-pointer" : "",
-                isRowSelected?.(row) ? "bg-(--color-gold)/10" : "",
-              ]
-                .filter(Boolean)
-                .join(" ")}
-            >
-              {columns.map((column) => (
-                <td
-                  key={column.id}
-                  data-label={column.headerKey ? translate(column.headerKey) : undefined}
-                  className={`${column.align === "right" ? "admin-table-right" : ""} ${column.className ?? ""}`}
+          {rows.map((row) => {
+            const rowId = getRowId(row);
+            const isExpanded = activeExpandedId === rowId;
+
+            return (
+              <Fragment key={rowId}>
+                <tr
+                  onClick={onRowClick ? () => onRowClick(row) : undefined}
+                  className={[
+                    onRowClick ? "cursor-pointer" : "",
+                    isRowSelected?.(row) ? "bg-(--color-gold)/10" : "",
+                  ]
+                    .filter(Boolean)
+                    .join(" ")}
                 >
-                  {column.cell(row)}
-                </td>
-              ))}
-            </tr>
-          ))}
+                  {columns.map((column) => (
+                    <td
+                      key={column.id}
+                      data-label={column.headerKey ? translate(column.headerKey) : undefined}
+                      className={`${column.align === "right" ? "admin-table-right" : ""} ${column.className ?? ""}`}
+                    >
+                      {column.cell(row)}
+                    </td>
+                  ))}
+                </tr>
+
+                {isExpandable && (
+                  <>
+                    <tr className={isExpanded ? "admin-expand-toggle is-expanded" : "admin-expand-toggle"}>
+                      <td colSpan={columns.length}>
+                        <button
+                          type="button"
+                          onClick={() => handleToggleExpand(row)}
+                          aria-expanded={isExpanded}
+                          className="admin-expand-toggle-button"
+                        >
+                          {translate(isExpanded ? collapseLabelKey : expandLabelKey)}
+                          <ChevronDown
+                            size={14}
+                            aria-hidden
+                            className={isExpanded ? "rotate-180" : ""}
+                          />
+                        </button>
+                      </td>
+                    </tr>
+
+                    {isExpanded && renderExpanded && (
+                      <tr className="admin-expand-panel">
+                        <td colSpan={columns.length}>{renderExpanded(row, closePanel)}</td>
+                      </tr>
+                    )}
+                  </>
+                )}
+              </Fragment>
+            );
+          })}
         </tbody>
       </table>
     </div>

@@ -130,6 +130,62 @@
   text-align: right;
 }
 
+/* Expandable rows: the toggle is a slim centred bar between the data row and
+   its detail panel; the panel cell carries the full-width form. Selectors
+   repeat `.admin-table` because `.admin-table tbody td` (0,1,2) would
+   otherwise win on padding/border. */
+/* The toggle hides until the row is hovered — the expanded row keeps it
+   visible so "collapse" stays reachable, and `:focus-within`/`:hover` on the
+   bar itself cover keyboard users and the cursor drifting onto the target. */
+.admin-table .admin-expand-toggle {
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.admin-table tbody tr:hover + .admin-expand-toggle,
+.admin-table .admin-expand-toggle:hover,
+.admin-table .admin-expand-toggle:focus-within,
+.admin-table .admin-expand-toggle.is-expanded {
+  opacity: 1;
+}
+
+.admin-table .admin-expand-toggle > td {
+  padding: 0;
+  border-bottom: 1px dashed var(--color-border);
+}
+
+.admin-expand-toggle-button {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  color: var(--color-text-muted);
+  font-size: var(--text-2xs);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transition: color 0.15s ease;
+}
+
+.admin-expand-toggle-button:hover {
+  color: var(--color-gold);
+}
+
+.admin-table .admin-expand-panel > td {
+  padding: 1rem;
+  /* Matches the row surface so `surface-2` inputs inside stay visible. */
+  background: var(--color-surface);
+}
+
+/* The expand bar and its form panel are chrome, not data rows — the
+   row-hover wash must not repaint them. */
+.admin-table tbody tr.admin-expand-toggle:hover td,
+.admin-table tbody tr.admin-expand-panel:hover td {
+  background: var(--color-surface);
+}
+
 /* Sync with `--breakpoint-md` (740px) in global.css — CSS variables are
    not allowed in media conditions, so this stays a literal. */
 @media (max-width: 739.98px) {
@@ -182,6 +238,26 @@
     letter-spacing: 0.14em;
     text-align: left;
     text-transform: uppercase;
+  }
+
+  /* Expand rows are full-width content, not label/value cells — the mobile
+     `display:flex` cell layout would crush the form inside the panel. */
+  .admin-table .admin-expand-toggle > td,
+  .admin-table .admin-expand-panel > td {
+    display: block;
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 0;
+    text-align: left;
+  }
+
+  .admin-table .admin-expand-panel > td {
+    padding: 0.75rem;
+  }
+
+  /* Touch has no hover — the expand toggle must stay visible on phones. */
+  .admin-table .admin-expand-toggle {
+    opacity: 1;
   }
 }
 
