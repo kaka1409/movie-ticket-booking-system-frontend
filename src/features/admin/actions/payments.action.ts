@@ -13,5 +13,5 @@ export async function updatePaymentMethodAction(
   id: string,
   input: AdminPaymentMethodInput,
 ): Promise<AdminActionResult<AdminPaymentMethod>> {
-  return mutateAdmin<AdminPaymentMethod>("PATCH", `/payment-methods/${id}`, token, input);
+  return mutateAdmin<AdminPaymentMethod>("PATCH", `/admin/payment-methods/${id}`, token, input);
 }

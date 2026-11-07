@@ -16,7 +16,7 @@ export async function createMovieAction(
   token: string,
   input: AdminMovieCreateInput,
 ): Promise<AdminActionResult<AdminMovie>> {
-  return mutateAdmin<AdminMovie>("POST", "/movies", token, input);
+  return mutateAdmin<AdminMovie>("POST", "/admin/movies", token, input);
 }
 
 /** `slug` is immutable: it is the public URL every deep link already points at. */
@@ -25,7 +25,7 @@ export async function updateMovieAction(
   slug: string,
   input: AdminMovieInput,
 ): Promise<AdminActionResult<AdminMovie>> {
-  return mutateAdmin<AdminMovie>("PATCH", `/movies/${slug}`, token, input);
+  return mutateAdmin<AdminMovie>("PATCH", `/admin/movies/${slug}`, token, input);
 }
 
 /**
@@ -37,7 +37,7 @@ export async function toggleMovieFeaturedAction(
   slug: string,
   isFeatured: boolean,
 ): Promise<AdminActionResult<AdminMovie>> {
-  return mutateAdmin<AdminMovie>("PATCH", `/movies/${slug}`, token, { isFeatured });
+  return mutateAdmin<AdminMovie>("PATCH", `/admin/movies/${slug}`, token, { isFeatured });
 }
 
 /** Answers `409 MOVIE_IN_USE` while showtimes, reviews or wishlists reference it. */
@@ -45,7 +45,7 @@ export async function deleteMovieAction(
   token: string,
   slug: string,
 ): Promise<AdminActionResult<{ id: string }>> {
-  return mutateAdmin<{ id: string }>("DELETE", `/movies/${slug}`, token);
+  return mutateAdmin<{ id: string }>("DELETE", `/admin/movies/${slug}`, token);
 }
 
 /**
@@ -59,7 +59,7 @@ export async function getMovieCastAction(
 ): Promise<AdminActionResult<{ items: AdminMovieCastItem[] }>> {
   try {
     const result = await apiFetch<{ items: AdminMovieCastItem[] }>(
-      `/movies/${slug}/cast`,
+      `/admin/movies/${slug}/cast`,
       { cache: "no-store" },
       token,
       await getRequestCookie(),
@@ -80,7 +80,7 @@ export async function addMovieCastAction(
   slug: string,
   input: AdminCastInput,
 ): Promise<AdminActionResult<AdminMovieCastItem>> {
-  return mutateAdmin<AdminMovieCastItem>("POST", `/movies/${slug}/cast`, token, input);
+  return mutateAdmin<AdminMovieCastItem>("POST", `/admin/movies/${slug}/cast`, token, input);
 }
 
 export async function updateMovieCastAction(
@@ -89,7 +89,7 @@ export async function updateMovieCastAction(
   castId: string,
   input: AdminCastInput,
 ): Promise<AdminActionResult<AdminMovieCastItem>> {
-  return mutateAdmin<AdminMovieCastItem>("PATCH", `/movies/${slug}/cast/${castId}`, token, input);
+  return mutateAdmin<AdminMovieCastItem>("PATCH", `/admin/movies/${slug}/cast/${castId}`, token, input);
 }
 
 export async function deleteMovieCastAction(
@@ -97,5 +97,5 @@ export async function deleteMovieCastAction(
   slug: string,
   castId: string,
 ): Promise<AdminActionResult<{ id: string }>> {
-  return mutateAdmin<{ id: string }>("DELETE", `/movies/${slug}/cast/${castId}`, token);
+  return mutateAdmin<{ id: string }>("DELETE", `/admin/movies/${slug}/cast/${castId}`, token);
 }

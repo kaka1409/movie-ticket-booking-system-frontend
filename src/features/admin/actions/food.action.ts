@@ -14,7 +14,7 @@ export async function createComboAction(
   token: string,
   input: AdminComboInput & { name: string; price: number },
 ): Promise<AdminActionResult<AdminCombo>> {
-  return mutateAdmin<AdminCombo>("POST", "/combos", token, input);
+  return mutateAdmin<AdminCombo>("POST", "/admin/combos", token, input);
 }
 
 export async function updateComboAction(
@@ -22,7 +22,7 @@ export async function updateComboAction(
   id: string,
   input: AdminComboInput,
 ): Promise<AdminActionResult<AdminCombo>> {
-  return mutateAdmin<AdminCombo>("PATCH", `/combos/${id}`, token, input);
+  return mutateAdmin<AdminCombo>("PATCH", `/admin/combos/${id}`, token, input);
 }
 
 /** Answers `409 IN_USE` while booking history references the combo. */
@@ -30,14 +30,14 @@ export async function deleteComboAction(
   token: string,
   id: string,
 ): Promise<AdminActionResult<{ id: string }>> {
-  return mutateAdmin<{ id: string }>("DELETE", `/combos/${id}`, token);
+  return mutateAdmin<{ id: string }>("DELETE", `/admin/combos/${id}`, token);
 }
 
 export async function createFoodItemAction(
   token: string,
   input: AdminFoodItemInput & { name: string; category: string; price: number },
 ): Promise<AdminActionResult<AdminFoodItem>> {
-  return mutateAdmin<AdminFoodItem>("POST", "/food-items", token, input);
+  return mutateAdmin<AdminFoodItem>("POST", "/admin/food-items", token, input);
 }
 
 export async function updateFoodItemAction(
@@ -45,12 +45,12 @@ export async function updateFoodItemAction(
   id: string,
   input: AdminFoodItemInput,
 ): Promise<AdminActionResult<AdminFoodItem>> {
-  return mutateAdmin<AdminFoodItem>("PATCH", `/food-items/${id}`, token, input);
+  return mutateAdmin<AdminFoodItem>("PATCH", `/admin/food-items/${id}`, token, input);
 }
 
 export async function deleteFoodItemAction(
   token: string,
   id: string,
 ): Promise<AdminActionResult<{ id: string }>> {
-  return mutateAdmin<{ id: string }>("DELETE", `/food-items/${id}`, token);
+  return mutateAdmin<{ id: string }>("DELETE", `/admin/food-items/${id}`, token);
 }

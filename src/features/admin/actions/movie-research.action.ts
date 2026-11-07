@@ -6,7 +6,7 @@ import type { AdminActionResult, AdminMovie, MovieResearchCandidate } from "../t
 export async function runMovieResearchAction(token: string) {
   return mutateAdmin<{ id: string; status: string; discovered: number; enriched: number }>(
     "POST",
-    "/movie-research/runs",
+    "/admin/movie-research/runs",
     token,
   );
 }
@@ -16,12 +16,12 @@ export async function updateMovieResearchCandidateAction(
   id: string,
   status: "pending" | "rejected",
 ): Promise<AdminActionResult<MovieResearchCandidate>> {
-  return mutateAdmin("PATCH", `/movie-research/candidates/${id}`, token, { status });
+  return mutateAdmin("PATCH", `/admin/movie-research/candidates/${id}`, token, { status });
 }
 
 export async function importMovieResearchCandidateAction(
   token: string,
   id: string,
 ): Promise<AdminActionResult<AdminMovie>> {
-  return mutateAdmin("POST", `/movie-research/candidates/${id}/import`, token);
+  return mutateAdmin("POST", `/admin/movie-research/candidates/${id}/import`, token);
 }

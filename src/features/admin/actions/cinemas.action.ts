@@ -20,7 +20,7 @@ export async function createCinemaAction(
   token: string,
   input: AdminCinemaInput,
 ): Promise<AdminActionResult<AdminCinema>> {
-  return mutateAdmin<AdminCinema>("POST", "/cinemas", token, input);
+  return mutateAdmin<AdminCinema>("POST", "/admin/cinemas", token, input);
 }
 
 export async function updateCinemaAction(
@@ -28,14 +28,14 @@ export async function updateCinemaAction(
   id: string,
   input: AdminCinemaInput,
 ): Promise<AdminActionResult<AdminCinema>> {
-  return mutateAdmin<AdminCinema>("PATCH", `/cinemas/${id}`, token, input);
+  return mutateAdmin<AdminCinema>("PATCH", `/admin/cinemas/${id}`, token, input);
 }
 
 export async function deleteCinemaAction(
   token: string,
   id: string,
 ): Promise<AdminActionResult<{ id: string }>> {
-  return mutateAdmin<{ id: string }>("DELETE", `/cinemas/${id}`, token);
+  return mutateAdmin<{ id: string }>("DELETE", `/admin/cinemas/${id}`, token);
 }
 
 /* ── Rooms ─────────────────────────────────────────────────────────────────── */
@@ -44,7 +44,7 @@ export async function createRoomAction(
   token: string,
   input: AdminRoomInput & { cinemaId: string; name: string },
 ): Promise<AdminActionResult<AdminRoom>> {
-  return mutateAdmin<AdminRoom>("POST", "/rooms", token, input);
+  return mutateAdmin<AdminRoom>("POST", "/admin/rooms", token, input);
 }
 
 export async function updateRoomAction(
@@ -52,7 +52,7 @@ export async function updateRoomAction(
   id: string,
   input: AdminRoomInput,
 ): Promise<AdminActionResult<AdminRoom>> {
-  return mutateAdmin<AdminRoom>("PATCH", `/rooms/${id}`, token, input);
+  return mutateAdmin<AdminRoom>("PATCH", `/admin/rooms/${id}`, token, input);
 }
 
 /** Answers `409 ROOM_IN_USE` once the room has showtimes. */
@@ -60,7 +60,7 @@ export async function deleteRoomAction(
   token: string,
   id: string,
 ): Promise<AdminActionResult<{ id: string }>> {
-  return mutateAdmin<{ id: string }>("DELETE", `/rooms/${id}`, token);
+  return mutateAdmin<{ id: string }>("DELETE", `/admin/rooms/${id}`, token);
 }
 
 /**
@@ -72,7 +72,7 @@ export async function setRoomSeatLayoutAction(
   id: string,
   input: AdminSeatLayoutInput,
 ): Promise<AdminActionResult<AdminSeatLayout>> {
-  return mutateAdmin<AdminSeatLayout>("POST", `/rooms/${id}/seat-layout`, token, input);
+  return mutateAdmin<AdminSeatLayout>("POST", `/admin/rooms/${id}/seat-layout`, token, input);
 }
 
 /* ── Reads used by the seat-layout editor (on demand) ─────────────────────── */
@@ -82,7 +82,7 @@ export async function getAdminSeatTypesAction(
 ): Promise<AdminActionResult<AdminSeatType[]>> {
   try {
     const result = await apiFetch<AdminSeatType[]>(
-      "/seat-types",
+      "/admin/seat-types",
       { cache: "no-store" },
       token,
       await getRequestCookie(),
@@ -104,7 +104,7 @@ export async function getAdminRoomSeatLayoutAction(
 ): Promise<AdminActionResult<AdminSeatLayout>> {
   try {
     const result = await apiFetch<AdminSeatLayout>(
-      `/rooms/${roomId}/seat-layout`,
+      `/admin/rooms/${roomId}/seat-layout`,
       { cache: "no-store" },
       token,
       await getRequestCookie(),

@@ -19,5 +19,5 @@ export async function restoreAdminReviewAction(
   token: string,
   reviewId: string,
 ): Promise<AdminActionResult<{ id: string }>> {
-  return mutateAdmin<{ id: string }>("PATCH", `/reviews/${reviewId}/restore`, token);
+  return mutateAdmin<{ id: string }>("PATCH", `/admin/reviews/${reviewId}/restore`, token);
 }

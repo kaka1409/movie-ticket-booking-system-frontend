@@ -18,7 +18,7 @@ export async function createCatalogEntryAction(
   kind: AdminCatalogKind,
   input: AdminCatalogInput,
 ): Promise<AdminActionResult<AdminCatalogEntry>> {
-  return mutateAdmin<AdminCatalogEntry>("POST", `/${kind}`, token, input);
+  return mutateAdmin<AdminCatalogEntry>("POST", `/admin/${kind}`, token, input);
 }
 
 export async function updateCatalogEntryAction(
@@ -27,7 +27,7 @@ export async function updateCatalogEntryAction(
   id: string,
   input: AdminCatalogInput,
 ): Promise<AdminActionResult<AdminCatalogEntry>> {
-  return mutateAdmin<AdminCatalogEntry>("PATCH", `/${kind}/${id}`, token, input);
+  return mutateAdmin<AdminCatalogEntry>("PATCH", `/admin/${kind}/${id}`, token, input);
 }
 
 export async function deleteCatalogEntryAction(
@@ -35,5 +35,5 @@ export async function deleteCatalogEntryAction(
   kind: AdminCatalogKind,
   id: string,
 ): Promise<AdminActionResult<{ id: string }>> {
-  return mutateAdmin<{ id: string }>("DELETE", `/${kind}/${id}`, token);
+  return mutateAdmin<{ id: string }>("DELETE", `/admin/${kind}/${id}`, token);
 }

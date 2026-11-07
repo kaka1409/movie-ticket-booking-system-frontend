@@ -13,7 +13,7 @@ export async function createShowtimeAction(
   token: string,
   input: AdminShowtimeCreateInput,
 ): Promise<AdminActionResult<AdminShowtime>> {
-  return mutateAdmin<AdminShowtime>("POST", "/showtimes", token, input);
+  return mutateAdmin<AdminShowtime>("POST", "/admin/showtimes", token, input);
 }
 
 /** Answers `409 SHOWTIME_IN_USE` while live bookings point at the slot. */
@@ -22,12 +22,12 @@ export async function updateShowtimeAction(
   id: string,
   input: AdminShowtimeInput,
 ): Promise<AdminActionResult<AdminShowtime>> {
-  return mutateAdmin<AdminShowtime>("PATCH", `/showtimes/${id}`, token, input);
+  return mutateAdmin<AdminShowtime>("PATCH", `/admin/showtimes/${id}`, token, input);
 }
 
 export async function deleteShowtimeAction(
   token: string,
   id: string,
 ): Promise<AdminActionResult<{ id: string }>> {
-  return mutateAdmin<{ id: string }>("DELETE", `/showtimes/${id}`, token);
+  return mutateAdmin<{ id: string }>("DELETE", `/admin/showtimes/${id}`, token);
 }

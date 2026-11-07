@@ -13,7 +13,7 @@ export async function updateUserRoleAction(
   id: string,
   role: AdminUserRole,
 ): Promise<AdminActionResult<AdminUser>> {
-  return mutateAdmin<AdminUser>("PATCH", `/user/${id}/role`, token, { role });
+  return mutateAdmin<AdminUser>("PATCH", `/admin/users/${id}/role`, token, { role });
 }
 
 /** Banning also revokes the account's refresh tokens (next refresh gets 403). */
@@ -22,5 +22,5 @@ export async function updateUserStatusAction(
   id: string,
   status: AdminUserStatus,
 ): Promise<AdminActionResult<AdminUser>> {
-  return mutateAdmin<AdminUser>("PATCH", `/user/${id}/status`, token, { status });
+  return mutateAdmin<AdminUser>("PATCH", `/admin/users/${id}/status`, token, { status });
 }

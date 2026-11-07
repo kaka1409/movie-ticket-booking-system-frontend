@@ -1,6 +1,7 @@
 import { apiFetch, type ApiResponse } from "@/libs/api";
 import { getRequestCookie } from "@/libs/session";
 import type {
+  AdminBookingStatus,
   AdminCatalogEntry,
   AdminCatalogKind,
   AdminCinema,
@@ -12,10 +13,18 @@ import type {
   AdminMovieStatus,
   AdminPaginationMeta,
   AdminPaymentMethod,
+  AdminPaymentMethodCode,
+  AdminPaymentStatus,
   AdminReview,
   AdminShowtimeBoard,
+  AdminTicket,
+  AdminTicketDetail,
+  AdminTicketStatus,
+  AdminTransaction,
+  AdminTransactionDetail,
   AdminUser,
   AdminUserRole,
+  AdminUserStatus,
   MovieResearchCandidate,
   MovieResearchRun,
 } from "./types";
@@ -63,7 +72,7 @@ export async function getAdminMovies(params: {
   const result = await apiFetch<
     { movies: AdminMovie[]; counts: (AdminMovieCounts & { id: string })[] },
     AdminPaginationMeta
-  >(`/movies/list${query}`, NO_STORE, undefined, await getRequestCookie());
+  >(`/admin/movies${query}`, NO_STORE, undefined, await getRequestCookie());
 
   if ("error" in result) return result;
 
@@ -90,7 +99,7 @@ export async function getAdminMovies(params: {
 
 export async function getMovieResearchCandidates(status?: string) {
   return apiFetch<MovieResearchCandidate[]>(
-    `/movie-research/candidates${buildQuery({ status })}`,
+    `/admin/movie-research/candidates${buildQuery({ status })}`,
     NO_STORE,
     undefined,
     await getRequestCookie(),
@@ -99,7 +108,7 @@ export async function getMovieResearchCandidates(status?: string) {
 
 export async function getMovieResearchRuns() {
   return apiFetch<MovieResearchRun[]>(
-    "/movie-research/runs",
+    "/admin/movie-research/runs",
     NO_STORE,
     undefined,
     await getRequestCookie(),
@@ -112,7 +121,7 @@ export async function getAdminCatalog(
 ): Promise<ApiResponse<AdminCatalogEntry[]>> {
   const result = await apiFetch<
     (AdminCatalogEntry & { movieCount?: number; showtimeCount?: number })[]
-  >(`/${kind}/admin`, NO_STORE, undefined, await getRequestCookie());
+  >(`/admin/${kind}`, NO_STORE, undefined, await getRequestCookie());
 
   if ("error" in result) return result;
 
@@ -129,7 +138,7 @@ export async function getAdminCatalog(
 }
 
 export async function getAdminCinemas(): Promise<ApiResponse<AdminCinema[]>> {
-  return apiFetch<AdminCinema[]>("/cinemas/admin", NO_STORE, undefined, await getRequestCookie());
+  return apiFetch<AdminCinema[]>("/admin/cinemas", NO_STORE, undefined, await getRequestCookie());
 }
 
 export async function getAdminShowtimeBoard(params: {
@@ -146,7 +155,7 @@ export async function getAdminShowtimeBoard(params: {
 
 export async function getAdminFoodItems(): Promise<ApiResponse<AdminFoodItem[]>> {
   return apiFetch<AdminFoodItem[]>(
-    "/food-items/admin",
+    "/admin/food-items",
     NO_STORE,
     undefined,
     await getRequestCookie(),
@@ -154,7 +163,7 @@ export async function getAdminFoodItems(): Promise<ApiResponse<AdminFoodItem[]>>
 }
 
 export async function getAdminCombos(): Promise<ApiResponse<AdminCombo[]>> {
-  return apiFetch<AdminCombo[]>("/combos/admin", NO_STORE, undefined, await getRequestCookie());
+  return apiFetch<AdminCombo[]>("/admin/combos", NO_STORE, undefined, await getRequestCookie());
 }
 
 export async function getAdminUsers(params: {
@@ -162,13 +171,15 @@ export async function getAdminUsers(params: {
   limit?: number;
   search?: string;
   role?: AdminUserRole | "";
+  status?: AdminUserStatus | "";
 }): Promise<ApiResponse<{ users: AdminUser[] }, AdminPaginationMeta>> {
   return apiFetch<{ users: AdminUser[] }, AdminPaginationMeta>(
-    `/user/list${buildQuery({
+    `/admin/users${buildQuery({
       page: params.page,
       limit: params.limit,
       search: params.search,
       role: params.role,
+      status: params.status,
     })}`,
     NO_STORE,
     undefined,
@@ -178,21 +189,122 @@ export async function getAdminUsers(params: {
 
 export async function getAdminPaymentMethods(): Promise<ApiResponse<AdminPaymentMethod[]>> {
   return apiFetch<AdminPaymentMethod[]>(
-    "/payment-methods/all",
+    "/admin/payment-methods",
     NO_STORE,
     undefined,
     await getRequestCookie(),
   );
 }
 
-/** Soft-deleted reviews only — the live ones stay on the public movie page. */
-export async function getAdminDeletedReviews(params: {
-  skip?: number;
+export type AdminReviewStatusFilter = "all" | "live" | "deleted";
+
+/**
+ * Admin review table (`GET /admin/reviews`): every review — live and
+ * soft-deleted — with author/movie cards, paginated like `/admin/users`.
+ */
+export async function getAdminReviews(params: {
+  page?: number;
   limit?: number;
+  search?: string;
+  movieSlug?: string;
+  userId?: string;
+  rating?: number | "";
+  status?: AdminReviewStatusFilter | "";
+  sort?: string;
   lang: "en" | "vn";
-}): Promise<ApiResponse<{ reviews: AdminReview[]; total: number }>> {
-  return apiFetch<{ reviews: AdminReview[]; total: number }>(
-    `/reviews/deleted${buildQuery({ skip: params.skip, limit: params.limit, lang: params.lang })}`,
+}): Promise<ApiResponse<{ reviews: AdminReview[] }, AdminPaginationMeta>> {
+  return apiFetch<{ reviews: AdminReview[] }, AdminPaginationMeta>(
+    `/admin/reviews${buildQuery({
+      page: params.page,
+      limit: params.limit,
+      search: params.search,
+      movieSlug: params.movieSlug,
+      userId: params.userId,
+      rating: params.rating === "" ? undefined : params.rating,
+      status: params.status,
+      sort: params.sort,
+      lang: params.lang,
+    })}`,
+    NO_STORE,
+    undefined,
+    await getRequestCookie(),
+  );
+}
+
+/* ── Transactions ─────────────────────────────────────────────────────────── */
+
+export interface AdminTransactionQuery {
+  page?: number;
+  limit?: number;
+  search?: string;
+  status?: AdminBookingStatus | "";
+  paymentStatus?: AdminPaymentStatus | "";
+  paymentMethod?: AdminPaymentMethodCode | "";
+  dateFrom?: string;
+  dateTo?: string;
+}
+
+/** Admin transaction table (`GET /admin/transactions`). */
+export async function getAdminTransactions(params: AdminTransactionQuery) {
+  return apiFetch<{ transactions: AdminTransaction[] }, AdminPaginationMeta>(
+    `/admin/transactions${buildQuery({
+      page: params.page,
+      limit: params.limit,
+      search: params.search,
+      status: params.status,
+      paymentStatus: params.paymentStatus,
+      paymentMethod: params.paymentMethod,
+      dateFrom: params.dateFrom,
+      dateTo: params.dateTo,
+    })}`,
+    NO_STORE,
+    undefined,
+    await getRequestCookie(),
+  );
+}
+
+/** Admin transaction detail (`GET /admin/transactions/:id`). */
+export async function getAdminTransactionDetail(id: string) {
+  return apiFetch<AdminTransactionDetail>(
+    `/admin/transactions/${id}`,
+    NO_STORE,
+    undefined,
+    await getRequestCookie(),
+  );
+}
+
+/* ── Tickets ──────────────────────────────────────────────────────────────── */
+
+export interface AdminTicketQuery {
+  page?: number;
+  limit?: number;
+  ownerSearch?: string;
+  status?: AdminTicketStatus | "";
+  dateFrom?: string;
+  dateTo?: string;
+}
+
+/** Admin ticket table (`GET /admin/tickets`). */
+export async function getAdminTickets(params: AdminTicketQuery) {
+  return apiFetch<{ tickets: AdminTicket[] }, AdminPaginationMeta>(
+    `/admin/tickets${buildQuery({
+      page: params.page,
+      limit: params.limit,
+      ownerSearch: params.ownerSearch,
+      status: params.status,
+      dateFrom: params.dateFrom,
+      dateTo: params.dateTo,
+    })}`,
+    NO_STORE,
+    undefined,
+    await getRequestCookie(),
+  );
+}
+
+/** Admin ticket detail (`GET /admin/tickets/:id`) — no QR credential. */
+export async function getAdminTicketDetail(id: string) {
+  return apiFetch<AdminTicketDetail>(
+    `/admin/tickets/${id}`,
     NO_STORE,
     undefined,
     await getRequestCookie(),
