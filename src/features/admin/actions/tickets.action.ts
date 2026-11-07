@@ -16,5 +16,5 @@ export async function checkInTicketAction(
   token: string,
   payload: string,
 ): Promise<AdminActionResult<AdminCheckinResult>> {
-  return mutateAdmin<AdminCheckinResult>("POST", "/tickets/check-in", token, { payload });
+  return mutateAdmin<AdminCheckinResult>("POST", "/admin/tickets/check-in", token, { payload });
 }
