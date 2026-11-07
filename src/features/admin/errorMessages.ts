@@ -15,6 +15,7 @@ type AdminFailure = Extract<AdminActionResult<never>, { success: false }>;
  * `NOT_FOUND` never says "ticket not found" on a showtime screen.
  */
 const CODE_KEYS: Record<string, string> = {
+  VALIDATION_ERROR: "admin.common.validation_error",
   SHOWTIME_CONFLICT: "admin.showtimes.conflict",
   SHOWTIME_IN_USE: "admin.showtimes.in_use",
   SELF_ROLE_CHANGE: "admin.users.self_change",
@@ -34,6 +35,13 @@ export function resolveAdminError(
   // The last-admin guard answers 409 FORBIDDEN, the only 409 in the user surface.
   if (failure.status === 409 && failure.code === "FORBIDDEN") {
     return translate("admin.users.last_admin");
+  }
+
+  // Validation errors often carry field-specific messages in `details`. Use the
+  // first detail's message if available, since it's more actionable than the generic
+  // "Validation failed" top-level message.
+  if (failure.code === "VALIDATION_ERROR" && failure.details && failure.details.length > 0) {
+    return failure.details[0].message;
   }
 
   const key = failure.code ? (surfaceKeys[failure.code] ?? CODE_KEYS[failure.code]) : undefined;

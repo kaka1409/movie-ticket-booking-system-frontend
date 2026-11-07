@@ -13,20 +13,30 @@ export default function AdminFormField({
   labelKey,
   hintKey,
   error,
+  required = false,
   className = "",
   children,
 }: {
   labelKey: string;
   hintKey?: string;
   error?: string;
+  required?: boolean;
   className?: string;
   children: ReactNode;
 }) {
   const { translate } = useLocale();
 
   return (
-    <label className={`flex flex-col gap-1.5 ${className}`}>
-      <span className={ADMIN_LABEL_CLASS}>{translate(labelKey)}</span>
+    <label className={`flex flex-col gap-1.5 ${error ? "admin-field-invalid" : ""} ${className}`}>
+      <span className={ADMIN_LABEL_CLASS}>
+        {translate(labelKey)}
+        {required && <span className="ml-0.5 text-red-500">*</span>}
+        {!required && (
+          <span className="ml-1.5 text-[11px] font-normal text-(--color-text-muted)">
+            ({translate("admin.common.optional")})
+          </span>
+        )}
+      </span>
       {children}
       {hintKey && !error && (
         <span className="text-[11px] leading-snug text-(--color-text-muted)">

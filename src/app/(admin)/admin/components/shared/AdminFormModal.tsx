@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useRef, type ReactNode } from "react";
 import { lockBodyScroll } from "@/libs/scroll-lock";
-import { X } from "lucide-react";
+import { Sparkles, X } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import ErrorAlert from "@/components/ui/ErrorAlert";
 import AdminButton from "@/app/(admin)/admin/components/shared/AdminButton";
@@ -26,6 +26,8 @@ export default function AdminFormModal({
   error,
   isPending = false,
   size = "lg",
+  onFillSample,
+  sampleLabelKey = "admin.common.fill_sample",
   children,
 }: {
   isOpen: boolean;
@@ -38,6 +40,9 @@ export default function AdminFormModal({
   error?: string | null;
   isPending?: boolean;
   size?: "md" | "lg" | "xl";
+  /** Create-mode only: prefills the form with a valid sample record. */
+  onFillSample?: () => void;
+  sampleLabelKey?: string;
   children: ReactNode;
 }) {
   const { translate } = useLocale();
@@ -100,13 +105,26 @@ export default function AdminFormModal({
             )}
           </div>
 
-          <AdminButton
-            size="icon"
-            variant="ghost"
-            icon={X}
-            label={translate("admin.common.close")}
-            onClick={onClose}
-          />
+          <div className="flex shrink-0 items-center gap-1">
+            {onFillSample && (
+              <AdminButton
+                size="sm"
+                variant="ghost"
+                icon={Sparkles}
+                disabled={isPending}
+                onClick={onFillSample}
+              >
+                {translate(sampleLabelKey)}
+              </AdminButton>
+            )}
+            <AdminButton
+              size="icon"
+              variant="ghost"
+              icon={X}
+              label={translate("admin.common.close")}
+              onClick={onClose}
+            />
+          </div>
         </header>
 
         <div className="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-3.5">{children}</div>

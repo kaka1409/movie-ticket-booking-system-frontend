@@ -398,12 +398,21 @@ export interface AdminPaymentMethodInput {
   isActive?: boolean;
 }
 
+/** Row of `GET /reviews/admin`: the review plus its author and vote tallies. */
 export interface AdminReview {
   id: string;
   rating: number;
   comment: string;
   createdAt: string;
   deletedAt?: string;
+  upvoteCount: number;
+  downvoteCount: number;
+  user: {
+    id: string;
+    fullname: string;
+    email: string;
+    avatarUrl?: string;
+  };
   movie: {
     id: string;
     slug: string;
@@ -540,4 +549,258 @@ export interface AdminDashboardData {
   topMovies: AdminTopMoviePerformance[];
   liveShowtimes: AdminLiveShowtimeItem[];
   liveBookings: AdminLiveBookingItem[];
+}
+
+/* ── Transactions (bookings + payments + tickets) ─────────────────────────── */
+
+export type AdminBookingStatus = "pending" | "paid" | "expired" | "cancelled";
+export type AdminPaymentStatus = "pending" | "success" | "failed" | "expired";
+export type AdminPaymentMethodCode = "vnpay" | "momo" | "simulated";
+export type AdminTicketStatus = "active" | "used" | "expired" | "cancelled" | "refunded";
+
+/** One row of the admin transaction table — the booking (= order) plus payment/ticket state. */
+export interface AdminTransaction {
+  id: string;
+  status: AdminBookingStatus;
+  totalPrice: number;
+  createdAt: string;
+  contact: {
+    name: string | null;
+    email: string | null;
+    phone: string | null;
+  };
+  customer: {
+    id: string;
+    fullname: string | null;
+    email: string;
+  };
+  movie: {
+    id: string;
+    title: string;
+    slug: string;
+    posterUrl: string | null;
+  };
+  showtime: {
+    id: string;
+    date: string;
+    startTime: string;
+    cinemaName: string;
+    roomName: string;
+  };
+  seatCount: number;
+  payment: {
+    id: string;
+    method: AdminPaymentMethodCode;
+    status: AdminPaymentStatus;
+    reason: string | null;
+    transactionRef: string | null;
+    paidAt: string | null;
+  } | null;
+  ticket: {
+    id: string;
+    status: AdminTicketStatus;
+    usedAt: string | null;
+  } | null;
+}
+
+export interface AdminTransactionDetail {
+  id: string;
+  status: AdminBookingStatus;
+  totalPrice: number;
+  createdAt: string;
+  expiresAt: string | null;
+  contact: {
+    name: string | null;
+    email: string | null;
+    phone: string | null;
+  };
+  customer: {
+    id: string;
+    fullname: string | null;
+    email: string;
+  };
+  showtime: {
+    id: string;
+    date: string;
+    startTime: string;
+    endTime: string;
+    format: string;
+    movie: {
+      id: string;
+      title: string;
+      slug: string;
+      posterUrl: string | null;
+      duration: number | null;
+      ageRating: string | null;
+    };
+    cinema: {
+      id: string;
+      name: string;
+      address: string;
+    };
+    room: {
+      id: string;
+      name: string;
+    };
+  };
+  seats: { id: string; label: string; type: string; price: number }[];
+  combos: { id: string; name: string; quantity: number; price: number }[];
+  foods: { id: string; name: string; quantity: number; price: number }[];
+  payments: {
+    id: string;
+    kind: string;
+    method: AdminPaymentMethodCode;
+    status: AdminPaymentStatus;
+    reason: string | null;
+    amount: number;
+    transactionRef: string | null;
+    providerTransactionId: string | null;
+    paidAt: string | null;
+    expiresAt: string | null;
+    createdAt: string;
+    refunds: {
+      id: string;
+      amount: number;
+      status: string;
+      reason: string | null;
+      createdAt: string;
+    }[];
+  }[];
+  ticket: {
+    id: string;
+    status: AdminTicketStatus;
+    issuedAt: string;
+    usedAt: string | null;
+    revokedAt: string | null;
+    owner: {
+      id: string;
+      fullname: string | null;
+      email: string;
+    };
+    transfers: {
+      id: string;
+      status: string;
+      amount: number;
+      paymentExpiresAt: string | null;
+      createdAt: string;
+      senderId: string;
+      recipientId: string;
+    }[];
+  } | null;
+}
+
+/* ── Tickets ──────────────────────────────────────────────────────────────── */
+
+/** One row of the admin ticket table — entitlement + owner/buyer + showtime context. */
+export interface AdminTicket {
+  id: string;
+  status: AdminTicketStatus;
+  issuedAt: string;
+  usedAt: string | null;
+  revokedAt: string | null;
+  owner: {
+    id: string;
+    fullname: string | null;
+    email: string;
+  };
+  buyer: {
+    id: string;
+    fullname: string | null;
+    email: string;
+  };
+  booking: {
+    id: string;
+    status: AdminBookingStatus;
+    totalPrice: number;
+  };
+  showtime: {
+    id: string;
+    date: string;
+    startTime: string;
+    movie: {
+      id: string;
+      title: string;
+      slug: string;
+      posterUrl: string | null;
+    };
+    cinemaName: string;
+    roomName: string;
+  };
+  seatCount: number;
+  hasOpenTransfer: boolean;
+}
+
+export interface AdminTicketDetail {
+  id: string;
+  status: AdminTicketStatus;
+  issuedAt: string;
+  usedAt: string | null;
+  revokedAt: string | null;
+  reminderSentAt: string | null;
+  owner: {
+    id: string;
+    fullname: string | null;
+    email: string;
+  };
+  /** Same wire shape as the customer-facing booking detail (`toBookingDetail`). */
+  booking: {
+    id: string;
+    status: AdminBookingStatus;
+    totalPrice: number;
+    createdAt: string;
+    expiresAt: string | null;
+    transactionRef: string | null;
+    payment: {
+      method: AdminPaymentMethodCode;
+      status: AdminPaymentStatus;
+      reason: string | null;
+    } | null;
+    showtime: {
+      id: string;
+      date: string;
+      startTime: string;
+      endTime: string;
+      format: string;
+      movie: {
+        id: string;
+        title: string;
+        slug: string;
+        posterUrl: string | null;
+        duration: number | null;
+        ageRating: string | null;
+      };
+      cinema: { id: string; name: string; address: string };
+      room: { id: string; name: string };
+    };
+    seats: { id: string; label: string; type: string; price: number }[];
+    combos: { id: string; name: string; quantity: number; price: number }[];
+    foods: { id: string; name: string; quantity: number; price: number }[];
+    contact: { name: string; email: string; phone: string } | null;
+  };
+  transfers: {
+    id: string;
+    status: string;
+    amount: number;
+    paymentExpiresAt: string | null;
+    createdAt: string;
+    sender: { id: string; fullname: string | null; email: string };
+    recipient: { id: string; fullname: string | null; email: string };
+    payments: {
+      id: string;
+      kind: string;
+      method: AdminPaymentMethodCode;
+      status: AdminPaymentStatus;
+      amount: number;
+      transactionRef: string | null;
+      paidAt: string | null;
+      createdAt: string;
+    }[];
+  }[];
+}
+
+/** Result of an admin ticket cancel — same shape as the customer cancel. */
+export interface AdminTicketCancelResult {
+  success: boolean;
+  refundStatus: "processing" | "none";
+  refundAmount: number;
 }

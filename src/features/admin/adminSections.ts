@@ -8,9 +8,11 @@ import {
   MessagesSquare,
   Package,
   Popcorn,
+  Receipt,
   ScanLine,
   Settings,
   Tags,
+  Ticket,
   Users,
   type LucideIcon,
 } from "lucide-react";
@@ -30,8 +32,7 @@ export interface AdminNavGroup {
 
 /**
  * Sidebar source of truth. Every entry maps to a mounted route — the console
- * links nothing the backend cannot answer (bookings and refunds are deferred
- * until they have an admin read surface).
+ * links nothing the backend cannot answer.
  */
 export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
   {
@@ -58,6 +59,8 @@ export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
   {
     labelKey: "admin.nav.transactions",
     items: [
+      { labelKey: "admin.nav.transactions_list", href: "/admin/transactions", Icon: Receipt },
+      { labelKey: "admin.nav.tickets", href: "/admin/tickets", Icon: Ticket },
       { labelKey: "admin.nav.payment_methods", href: "/admin/payment-methods", Icon: CreditCard },
     ],
   },
