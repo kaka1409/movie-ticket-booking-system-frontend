@@ -16,6 +16,7 @@ import {
   updateMovieCastAction,
 } from "@/features/admin/actions/movies.action";
 import type { AdminMovie, AdminMovieCastItem } from "@/features/admin/types";
+import { ADMIN_FORM_SAMPLES } from "@/features/admin/samples";
 
 interface CastFormState {
   name: string;
@@ -96,6 +97,12 @@ export default function MovieCastDialog({
     setSubmitError(null);
   };
 
+  /** Prefill a valid test cast entry — only offered while adding, not editing. */
+  const fillSample = () => {
+    setValues({ ...ADMIN_FORM_SAMPLES.cast });
+    setSubmitError(null);
+  };
+
   const handleSubmit = () => {
     if (values.name.trim() === "") {
       setSubmitError(translate("admin.movies.cast_name_required"));
@@ -163,6 +170,7 @@ export default function MovieCastDialog({
       error={submitError ?? loadError}
       isPending={isPending}
       size="lg"
+      onFillSample={editingCastId === null ? fillSample : undefined}
     >
       <ul className="divide-y divide-(--color-border) rounded-xl border border-(--color-border)">
         {(castItems ?? []).length === 0 && (

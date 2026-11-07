@@ -1,24 +1,64 @@
 import AdminDataError from "@/app/(admin)/admin/components/shared/AdminDataError";
-import { getAdminDeletedReviews } from "@/features/admin/api";
+import { getAdminMovies, getAdminReviews } from "@/features/admin/api";
+import type { AdminReviewStatusFilter } from "@/features/admin/api";
 import { isUnauthorizedResult, getRequestLocale } from "@/libs/session";
 import ReviewsManager from "./components/ReviewsManager";
 
+/** The query the page resolved from `searchParams`. */
 export interface AdminReviewsQuery {
-  skip: number;
-  limit: number;
+  search: string;
+  movieSlug: string;
+  userId: string;
+  rating: number;
+  status: AdminReviewStatusFilter;
+  sort: string;
+  page: number;
 }
 
-export async function ReviewsManagerSection({ skip, limit }: AdminReviewsQuery) {
+export async function ReviewsManagerSection({
+  search,
+  movieSlug,
+  userId,
+  rating,
+  status,
+  sort,
+  page,
+}: AdminReviewsQuery) {
   const locale = await getRequestLocale();
-  const result = await getAdminDeletedReviews({ skip, limit, lang: locale });
-  if (isUnauthorizedResult(result)) return null;
-  if ("error" in result) return <AdminDataError message={result.error.message} />;
+  const [reviewsResult, moviesResult] = await Promise.all([
+    getAdminReviews({
+      page,
+      search,
+      movieSlug,
+      userId,
+      rating: rating === 0 ? "" : rating,
+      status,
+      sort,
+      lang: locale,
+    }),
+    getAdminMovies({ page: 1, limit: 100 }),
+  ]);
+
+  if (isUnauthorizedResult(reviewsResult) || isUnauthorizedResult(moviesResult)) {
+    return null;
+  }
+  if ("error" in reviewsResult) return <AdminDataError message={reviewsResult.error.message} />;
+  if ("error" in moviesResult) return <AdminDataError message={moviesResult.error.message} />;
+
   return (
+    // Remount on committed-filter change so unapplied draft edits cannot leak
+    // into the new result set (same convention as MoviesManager).
     <ReviewsManager
-      reviews={result.data.reviews}
-      total={result.data.total}
-      skip={skip}
-      limit={limit}
+      key={[search, movieSlug, userId, rating, status, sort].join("|")}
+      reviews={reviewsResult.data.reviews}
+      pagination={reviewsResult.meta!}
+      movies={moviesResult.data.movies}
+      search={search}
+      movieSlug={movieSlug}
+      userId={userId}
+      rating={rating}
+      status={status}
+      sort={sort}
     />
   );
 }

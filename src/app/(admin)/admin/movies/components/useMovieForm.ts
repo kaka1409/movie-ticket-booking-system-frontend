@@ -6,12 +6,9 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useToast } from "@/contexts/ToastContext";
 import { createMovieSchema, toAdminFieldErrors } from "@/features/admin/schema";
+import { ADMIN_FORM_SAMPLES } from "@/features/admin/samples";
 import { createMovieAction, updateMovieAction } from "@/features/admin/actions/movies.action";
-import type {
-  AdminMovie,
-  AdminMovieInput,
-  AdminMovieStatus,
-} from "@/features/admin/types";
+import type { AdminMovie, AdminMovieInput, AdminMovieStatus } from "@/features/admin/types";
 
 export interface MovieFormState {
   title: string;
@@ -144,6 +141,13 @@ export function useMovieForm({
     }));
   };
 
+  /** Prefill the create form with a valid test record — never submits. */
+  const fillSample = () => {
+    setValues({ ...ADMIN_FORM_SAMPLES.movie, genreIds: [] });
+    setFieldErrors({});
+    setSubmitError(null);
+  };
+
   const submit = () => {
     const isEditing = movie !== null;
     const parsed = createMovieSchema(translate, isEditing).safeParse(values);
@@ -164,7 +168,6 @@ export function useMovieForm({
       title: form.title,
       status: form.status,
       genreIds: form.genreIds,
-      isFeatured: form.isFeatured,
     };
 
     if (!isEditing && form.slug !== "") payload.slug = form.slug;
@@ -177,6 +180,7 @@ export function useMovieForm({
     if (form.featuredOrder !== "") payload.featuredOrder = Number(form.featuredOrder);
 
     if (isEditing) {
+      payload.isFeatured = form.isFeatured;
       payload.ageRatingId = form.ageRatingId || null;
       payload.posterUrl = form.posterUrl || null;
       payload.trailerUrl = form.trailerUrl || null;
@@ -225,6 +229,7 @@ export function useMovieForm({
     isPending,
     updateField,
     toggleGenre,
+    fillSample,
     submit,
   };
 }

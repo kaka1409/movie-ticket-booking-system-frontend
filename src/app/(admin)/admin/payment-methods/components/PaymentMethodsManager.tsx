@@ -1,54 +1,56 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
-import { CreditCard, FlaskConical, Pencil } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
+import { CreditCard, FlaskConical } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
-import { useToast } from "@/contexts/ToastContext";
 import Badge from "@/components/ui/Badge";
-import AdminButton from "@/app/(admin)/admin/components/shared/AdminButton";
-import AdminFormField, {
-  AdminCheckbox,
-} from "@/app/(admin)/admin/components/shared/AdminFormField";
-import AdminFormModal from "@/app/(admin)/admin/components/shared/AdminFormModal";
 import AdminTable, {
   type AdminTableColumn,
 } from "@/app/(admin)/admin/components/shared/AdminTable";
-import { ADMIN_INPUT_CLASS } from "@/features/admin/constants";
-import { createPaymentMethodSchema, toAdminFieldErrors } from "@/features/admin/schema";
-import { updatePaymentMethodAction } from "@/features/admin/actions/payments.action";
+import { useAdminTableState } from "@/features/admin/hooks/useAdminTableState";
 import type { AdminPaymentMethod } from "@/features/admin/types";
+import PaymentMethodInlineEdit from "./PaymentMethodInlineEdit";
+import PaymentMethodsFiltersCard, {
+  type PaymentMethodFilterDraft,
+} from "./PaymentMethodsFiltersCard";
 
-interface PaymentMethodFormState {
-  nameEn: string;
-  nameVi: string;
-  descriptionEn: string;
-  descriptionVi: string;
-  sortOrder: string;
-  isActive: boolean;
+interface PaymentMethodFilters {
+  isActive: string;
+  adapterEnabled: string;
 }
 
-function toFormState(method: AdminPaymentMethod): PaymentMethodFormState {
-  return {
-    nameEn: method.nameEn,
-    nameVi: method.nameVi ?? "",
-    descriptionEn: method.descriptionEn ?? "",
-    descriptionVi: method.descriptionVi ?? "",
-    sortOrder: String(method.sortOrder),
-    isActive: method.isActive,
-  };
-}
+const EMPTY_FILTERS: PaymentMethodFilters = { isActive: "", adapterEnabled: "" };
+
+const getPaymentMethodSearchText = (method: AdminPaymentMethod) =>
+  `${method.nameEn} ${method.nameVi ?? ""} ${method.id}`;
+
+const matchesPaymentMethodFilters = (method: AdminPaymentMethod, filters: PaymentMethodFilters) =>
+  (filters.isActive === "" || String(method.isActive) === filters.isActive) &&
+  (filters.adapterEnabled === "" || String(method.adapterEnabled) === filters.adapterEnabled);
 
 /**
  * The catalog rows are seeded by migrations — the console edits labels, order and
  * the sales switch, but never creates or deletes a gateway. Whether a method is
  * sellable is derived (`isActive && adapterEnabled`), so the table shows both
- * halves instead of a single misleading flag.
+ * halves instead of a single misleading flag. Rows expand into an inline editor.
  */
 export default function PaymentMethodsManager({ methods }: { methods: AdminPaymentMethod[] }) {
   const { translate } = useLocale();
-  const [formTarget, setFormTarget] = useState<AdminPaymentMethod | null>(null);
+
+  const { filters, setFilters, visibleRows } = useAdminTableState<
+    AdminPaymentMethod,
+    PaymentMethodFilters
+  >({
+    rows: methods,
+    getSearchText: getPaymentMethodSearchText,
+    matches: matchesPaymentMethodFilters,
+    initialFilters: EMPTY_FILTERS,
+  });
+
+  const isFiltered = filters.isActive !== "" || filters.adapterEnabled !== "";
+
+  const applyFilters = (draft: PaymentMethodFilterDraft) => {
+    setFilters({ isActive: draft.isActive, adapterEnabled: draft.adapterEnabled });
+  };
 
   const columns: AdminTableColumn<AdminPaymentMethod>[] = [
     {
@@ -124,210 +126,32 @@ export default function PaymentMethodsManager({ methods }: { methods: AdminPayme
         );
       },
     },
-    {
-      id: "actions",
-      className: "w-16",
-      align: "right",
-      cell: (method) => (
-        <AdminButton
-          size="icon"
-          variant="ghost"
-          icon={Pencil}
-          label={translate("admin.common.edit")}
-          onClick={() => setFormTarget(method)}
-        />
-      ),
-    },
   ];
 
   return (
     <>
+      <PaymentMethodsFiltersCard
+        isActive={filters.isActive}
+        adapterEnabled={filters.adapterEnabled}
+        isFiltered={isFiltered}
+        onApply={applyFilters}
+        onClear={() => setFilters(EMPTY_FILTERS)}
+      />
+
       <AdminTable
         columns={columns}
-        rows={methods}
+        rows={visibleRows}
         getRowId={(method) => method.id}
         emptyIcon={CreditCard}
-        emptyTitleKey="admin.paymentMethods.empty_title"
-        emptyDescriptionKey="admin.paymentMethods.empty_body"
+        emptyTitleKey={isFiltered ? "admin.common.no_results" : "admin.paymentMethods.empty_title"}
+        emptyDescriptionKey={
+          isFiltered ? "admin.common.no_results_body" : "admin.paymentMethods.empty_body"
+        }
         captionKey="admin.paymentMethods.title"
-      />
-
-      <PaymentMethodFormDialog
-        isOpen={formTarget !== null}
-        method={formTarget}
-        onClose={() => setFormTarget(null)}
+        renderExpanded={(method, closePanel) => (
+          <PaymentMethodInlineEdit key={method.id} method={method} onClose={closePanel} />
+        )}
       />
     </>
-  );
-}
-
-function PaymentMethodFormDialog({
-  isOpen,
-  method,
-  onClose,
-}: {
-  isOpen: boolean;
-  method: AdminPaymentMethod | null;
-  onClose: () => void;
-}) {
-  const { translate } = useLocale();
-  const { token } = useAuth();
-  const { notify } = useToast();
-  const router = useRouter();
-
-  const [values, setValues] = useState<PaymentMethodFormState>(() =>
-    method
-      ? toFormState(method)
-      : {
-          nameEn: "",
-          nameVi: "",
-          descriptionEn: "",
-          descriptionVi: "",
-          sortOrder: "0",
-          isActive: true,
-        },
-  );
-  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-  const [submitError, setSubmitError] = useState<string | null>(null);
-  const [isPending, startTransition] = useTransition();
-
-  const formSignature = `${isOpen}-${method?.id ?? "none"}`;
-  const [syncedFormSignature, setSyncedFormSignature] = useState(formSignature);
-  if (formSignature !== syncedFormSignature) {
-    setSyncedFormSignature(formSignature);
-    if (method) setValues(toFormState(method));
-    setFieldErrors({});
-    setSubmitError(null);
-  }
-
-  const updateField = <TField extends keyof PaymentMethodFormState>(
-    field: TField,
-    value: PaymentMethodFormState[TField],
-  ) => {
-    setValues((current) => ({ ...current, [field]: value }));
-    setFieldErrors((current) => {
-      if (!(field in current)) return current;
-      const next = { ...current };
-      delete next[field];
-      return next;
-    });
-  };
-
-  const handleSubmit = () => {
-    if (!method) return;
-
-    const parsed = createPaymentMethodSchema(translate).safeParse(values);
-    if (!parsed.success) {
-      setFieldErrors(toAdminFieldErrors(parsed.error));
-      return;
-    }
-    if (!token) {
-      setSubmitError(translate("admin.common.session_expired"));
-      return;
-    }
-
-    const form = parsed.data;
-    const target = method;
-
-    startTransition(async () => {
-      const result = await updatePaymentMethodAction(token, target.id, {
-        nameEn: form.nameEn,
-        ...(form.nameVi === "" ? {} : { nameVi: form.nameVi }),
-        ...(form.descriptionEn === "" ? {} : { descriptionEn: form.descriptionEn }),
-        ...(form.descriptionVi === "" ? {} : { descriptionVi: form.descriptionVi }),
-        sortOrder: form.sortOrder,
-        isActive: form.isActive,
-      });
-
-      if (!result.success) {
-        setSubmitError(result.error);
-        return;
-      }
-
-      notify(translate("admin.common.saved"), { variant: "success" });
-      onClose();
-      router.refresh();
-    });
-  };
-
-  return (
-    <AdminFormModal
-      isOpen={isOpen}
-      onClose={onClose}
-      onSubmit={handleSubmit}
-      titleKey="admin.paymentMethods.edit_title"
-      descriptionKey="admin.paymentMethods.description"
-      submitLabelKey="admin.common.save"
-      error={submitError}
-      isPending={isPending}
-      size="lg"
-    >
-      <div className="grid gap-3 sm:grid-cols-2">
-        <AdminFormField labelKey="admin.paymentMethods.name_en" error={fieldErrors.nameEn}>
-          <input
-            type="text"
-            value={values.nameEn}
-            onChange={(event) => updateField("nameEn", event.target.value)}
-            className={ADMIN_INPUT_CLASS}
-            autoFocus
-          />
-        </AdminFormField>
-
-        <AdminFormField labelKey="admin.paymentMethods.name_vi" error={fieldErrors.nameVi}>
-          <input
-            type="text"
-            value={values.nameVi}
-            onChange={(event) => updateField("nameVi", event.target.value)}
-            className={ADMIN_INPUT_CLASS}
-          />
-        </AdminFormField>
-
-        <AdminFormField
-          labelKey="admin.paymentMethods.description_en"
-          error={fieldErrors.descriptionEn}
-        >
-          <input
-            type="text"
-            value={values.descriptionEn}
-            onChange={(event) => updateField("descriptionEn", event.target.value)}
-            className={ADMIN_INPUT_CLASS}
-          />
-        </AdminFormField>
-
-        <AdminFormField
-          labelKey="admin.paymentMethods.description_vi"
-          error={fieldErrors.descriptionVi}
-        >
-          <input
-            type="text"
-            value={values.descriptionVi}
-            onChange={(event) => updateField("descriptionVi", event.target.value)}
-            className={ADMIN_INPUT_CLASS}
-          />
-        </AdminFormField>
-      </div>
-
-      <AdminFormField
-        labelKey="admin.paymentMethods.sort_order"
-        error={fieldErrors.sortOrder}
-        className="sm:max-w-[10rem]"
-      >
-        <input
-          type="number"
-          min={0}
-          max={99}
-          value={values.sortOrder}
-          onChange={(event) => updateField("sortOrder", event.target.value)}
-          className={ADMIN_INPUT_CLASS}
-        />
-      </AdminFormField>
-
-      <AdminCheckbox
-        labelKey="admin.paymentMethods.is_active"
-        hintKey="admin.paymentMethods.is_active_hint"
-        checked={values.isActive}
-        onChange={(checked) => updateField("isActive", checked)}
-      />
-    </AdminFormModal>
   );
 }

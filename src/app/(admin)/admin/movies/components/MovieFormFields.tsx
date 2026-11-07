@@ -51,7 +51,7 @@ export default function MovieFormFields({
     <>
       <FormSection titleKey="admin.movies.section_basics">
         <div className="grid gap-3 sm:grid-cols-2">
-          <AdminFormField labelKey="admin.movies.field_title" error={fieldErrors.title}>
+          <AdminFormField labelKey="admin.movies.field_title" error={fieldErrors.title} required>
             <input
               type="text"
               value={values.title}
@@ -65,6 +65,7 @@ export default function MovieFormFields({
             labelKey="admin.movies.slug"
             hintKey={isEditing ? undefined : "admin.movies.slug_hint"}
             error={fieldErrors.slug}
+            required={!isEditing}
           >
             <input
               type="text"
@@ -75,7 +76,11 @@ export default function MovieFormFields({
             />
           </AdminFormField>
 
-          <AdminFormField labelKey="admin.movies.status" error={fieldErrors.status}>
+          <div>
+            <span className={ADMIN_LABEL_CLASS}>
+              {translate("admin.movies.status")}
+              <span className="ml-0.5 text-red-500">*</span>
+            </span>
             <div className="mt-1.5 flex flex-wrap gap-1.5">
               {STATUS_OPTIONS.map((option) => (
                 <Chip
@@ -87,9 +92,20 @@ export default function MovieFormFields({
                 />
               ))}
             </div>
-          </AdminFormField>
+            {fieldErrors.status && (
+              <span role="alert" className="mt-1.5 text-[11px] font-semibold text-red-500">
+                {fieldErrors.status}
+              </span>
+            )}
+          </div>
 
-          <AdminFormField labelKey="admin.movies.age_rating" error={fieldErrors.ageRatingId}>
+          <div>
+            <span className={ADMIN_LABEL_CLASS}>
+              {translate("admin.movies.age_rating")}
+              <span className="ml-1.5 text-[11px] font-normal text-(--color-text-muted)">
+                ({translate("admin.common.optional")})
+              </span>
+            </span>
             <div className="mt-1.5 flex flex-wrap gap-1.5">
               <Chip
                 label={translate("admin.movies.age_rating_none")}
@@ -107,7 +123,12 @@ export default function MovieFormFields({
                 />
               ))}
             </div>
-          </AdminFormField>
+            {fieldErrors.ageRatingId && (
+              <span role="alert" className="mt-1.5 text-[11px] font-semibold text-red-500">
+                {fieldErrors.ageRatingId}
+              </span>
+            )}
+          </div>
 
           <AdminFormField labelKey="admin.movies.director" error={fieldErrors.director}>
             <input

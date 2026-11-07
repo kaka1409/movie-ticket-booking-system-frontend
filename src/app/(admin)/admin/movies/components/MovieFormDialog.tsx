@@ -24,12 +24,20 @@ export default function MovieFormDialog({
   ageRatings: AdminCatalogEntry[];
   onClose: () => void;
 }) {
-  const { values, fieldErrors, submitError, isPending, updateField, toggleGenre, submit } =
-    useMovieForm({
-      movie,
-      resetKey: `${isOpen}-${movie?.id ?? "new"}`,
-      onSaved: onClose,
-    });
+  const {
+    values,
+    fieldErrors,
+    submitError,
+    isPending,
+    updateField,
+    toggleGenre,
+    fillSample,
+    submit,
+  } = useMovieForm({
+    movie,
+    resetKey: `${isOpen}-${movie?.id ?? "new"}`,
+    onSaved: onClose,
+  });
 
   return (
     <AdminFormModal
@@ -41,6 +49,7 @@ export default function MovieFormDialog({
       error={submitError}
       isPending={isPending}
       size="xl"
+      onFillSample={movie === null ? fillSample : undefined}
     >
       <MovieFormFields
         values={values}
