@@ -1,23 +1,14 @@
 "use client";
 
-import Image from "next/image";
 import { Check, Pencil, Star, Trash2, X } from "lucide-react";
 import RatingBadge from "@/components/ui/RatingBadge";
 import ReviewVoteButtons from "@/components/shared/reviews/ReviewVoteButtons";
 import ExpandableText from "@/components/ui/ExpandableText";
+import Avatar, { DEFAULT_AVATAR_SRC } from "@/components/ui/Avatar";
 import { useLocale } from "@/contexts/LocaleContext";
 import { REVIEW_MAX_LENGTH, REVIEW_RATING_STEPS } from "@/features/reviews/constants";
 import { useReviewEditor } from "@/features/reviews/hooks/useReviewEditor";
 import type { ReviewVote, UiReview } from "@/features/reviews/types";
-
-function getInitials(name: string): string {
-  return name
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part.charAt(0).toUpperCase())
-    .join("");
-}
 
 export default function ReviewCard({
   review,
@@ -46,30 +37,34 @@ export default function ReviewCard({
   if (editor.isEditing) {
     return (
       <article className="space-y-3 border-b border-(--color-border) py-5 last:border-0">
-        <div className="flex gap-1">
-          {REVIEW_RATING_STEPS.map((star) => (
-            <button
-              key={star}
-              type="button"
-              onMouseEnter={() => editor.setHoveredRating(star)}
-              onMouseLeave={() => editor.setHoveredRating(0)}
-              onClick={() => editor.selectRating(star)}
-              aria-label={translate("movies.detail.rate_star")}
-              className="cursor-pointer transition-transform duration-100 hover:scale-110"
-            >
-              <Star
-                size={20}
-                className={
-                  star <= (editor.hoveredRating || editor.rating)
-                    ? "text-(--color-gold) fill-(--color-gold)"
-                    : "text-(--color-border) fill-(--color-border)"
-                }
-              />
-            </button>
-          ))}
+        <div className="flex items-center gap-3">
+          <Avatar src={review.src} name={review.user} size="h-9 w-9" fallbackSrc={DEFAULT_AVATAR_SRC} />
+          <div className="flex gap-1">
+            {REVIEW_RATING_STEPS.map((star) => (
+              <button
+                key={star}
+                type="button"
+                onMouseEnter={() => editor.setHoveredRating(star)}
+                onMouseLeave={() => editor.setHoveredRating(0)}
+                onClick={() => editor.selectRating(star)}
+                aria-label={translate("movies.detail.rate_star")}
+                className="cursor-pointer transition-transform duration-100 hover:scale-110"
+              >
+                <Star
+                  size={20}
+                  className={
+                    star <= (editor.hoveredRating || editor.rating)
+                      ? "text-(--color-gold) fill-(--color-gold)"
+                      : "text-(--color-border) fill-(--color-border)"
+                  }
+                />
+              </button>
+            ))}
+          </div>
         </div>
 
         <textarea
+          name="review-text"
           value={editor.text}
           onChange={(event) => editor.setText(event.target.value)}
           rows={3}
@@ -114,21 +109,7 @@ export default function ReviewCard({
     >
       <div className="mb-2 flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-(--color-border) bg-(--color-surface-2)">
-            {review.src ? (
-              <Image
-                src={review.src}
-                alt={review.user}
-                width={36}
-                height={36}
-                className="h-full w-full object-cover"
-              />
-            ) : (
-              <span className="text-xs font-bold text-(--color-text-muted)">
-                {getInitials(review.user)}
-              </span>
-            )}
-          </div>
+          <Avatar src={review.src} name={review.user} size="h-9 w-9" fallbackSrc={DEFAULT_AVATAR_SRC} />
 
           <div>
             <p className="text-sm leading-tight font-bold text-(--color-text-primary)">

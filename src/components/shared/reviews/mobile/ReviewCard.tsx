@@ -3,7 +3,7 @@
 import { Star, Pencil, Trash2, Check, X } from "lucide-react";
 import RatingBadge from "@/components/ui/RatingBadge";
 import ReviewVoteButtons from "@/components/shared/reviews/ReviewVoteButtons";
-import Avatar from "@/components/ui/Avatar";
+import Avatar, { DEFAULT_AVATAR_SRC } from "@/components/ui/Avatar";
 import ExpandableText from "@/components/ui/ExpandableText";
 import { useLocale } from "@/contexts/LocaleContext";
 import { REVIEW_MAX_LENGTH, REVIEW_RATING_STEPS } from "@/features/reviews/constants";
@@ -38,7 +38,7 @@ export default function ReviewCard({
     return (
       <div className="py-4 border-b border-(--color-border) last:border-0 space-y-3">
         <div className="flex items-center gap-2">
-          <Avatar src={review.src} name={review.user} size="w-9 h-9" />
+          <Avatar src={review.src} name={review.user} size="w-9 h-9" fallbackSrc={DEFAULT_AVATAR_SRC} />
           <div>
             <p className="text-(--color-text-primary) text-sm font-bold leading-tight">
               {review.user}
@@ -68,6 +68,7 @@ export default function ReviewCard({
         </div>
 
         <textarea
+          name="review-text"
           value={editor.text}
           onChange={(event) => editor.setText(event.target.value)}
           rows={3}
@@ -111,7 +112,7 @@ export default function ReviewCard({
     >
       <div className="flex items-start justify-between mb-2">
         <div className="flex items-center gap-2">
-          <Avatar src={review.src} name={review.user} size="w-9 h-9" />
+          <Avatar src={review.src} name={review.user} size="w-9 h-9" fallbackSrc={DEFAULT_AVATAR_SRC} />
           <div>
             <p className="text-(--color-text-primary) text-sm font-bold leading-tight">
               {review.user}

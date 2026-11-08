@@ -19,7 +19,7 @@ import type {
   ReviewsResponse,
   UiReview,
 } from "../types";
-import { formatRelativeTime } from "@/libs/utils";
+import { formatRelativeTime } from "@/libs/date";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/contexts/ToastContext";
@@ -31,7 +31,7 @@ function mapReview(review: MovieReview, locale: "en" | "vn"): UiReview {
     id: review.id,
     userId: review.userId,
     user: review.user.name,
-    src: review.user.avatarUrl ?? undefined,
+    src: review.user.avatarUrl || undefined,
     rating: review.rating,
     time: formatRelativeTime(review.createdAt, locale),
     text: review.comment,
@@ -114,7 +114,7 @@ export function useMovieReviews({
   }, [anchorRef]);
 
   const fetchPage = useCallback(
-    async (targetPage: number, nextSort: ReviewSort): Promise<boolean> => {
+    async (targetPage: number, nextSort: ReviewSort, shouldScroll = true): Promise<boolean> => {
       const result = await loadReviewsAction({
         movieSlug,
         skip: (targetPage - 1) * PAGE_SIZE,
@@ -124,7 +124,7 @@ export function useMovieReviews({
       if (result.success) {
         applyData(result.data);
         setPage(targetPage);
-        scrollToAnchor();
+        if (shouldScroll) scrollToAnchor();
         return true;
       }
       setActionError(result.error);
@@ -153,7 +153,7 @@ export function useMovieReviews({
       setLoadingPage(true);
       setActionError(null);
       try {
-        const loaded = await fetchPage(1, nextSort);
+        const loaded = await fetchPage(1, nextSort, false);
         if (loaded) setSort(nextSort);
       } finally {
         setLoadingPage(false);

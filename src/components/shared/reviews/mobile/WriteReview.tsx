@@ -44,6 +44,7 @@ export default function WriteReview({
       </div>
 
       <textarea
+        name="review-text"
         value={composer.text}
         onChange={(event) => composer.setText(event.target.value)}
         placeholder={translate("movies.detail.review_placeholder")}
