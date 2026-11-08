@@ -3,12 +3,14 @@
 import Link from "next/link";
 import { ChevronDown, Clapperboard, Landmark, Calendar, Clock, RotateCcw } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
+import { getRoomDisplayName } from "@/libs/utils";
 import type { Movie } from "@/features/movies/types";
 import type { ErrorResponse } from "@/libs/api";
 import SectionFallback from "@/components/ui/SectionFallback";
 import { useQuickBookingContext } from "../shared/QuickBookingProvider";
 
 interface SelectColProps {
+  name: string;
   icon: React.ReactNode;
   label: string;
   value: string;
@@ -19,6 +21,7 @@ interface SelectColProps {
 }
 
 const SelectCol: React.FC<SelectColProps> = ({
+  name,
   icon,
   label,
   value,
@@ -33,6 +36,7 @@ const SelectCol: React.FC<SelectColProps> = ({
     </span>
     <div className="relative">
       <select
+        name={name}
         value={value}
         onChange={(event) => onChange(event.target.value)}
         disabled={disabled}
@@ -72,7 +76,7 @@ export default function QuickBookingBar({
   movies: Movie[];
   error?: ErrorResponse["error"] | null;
 }) {
-  const { translate } = useLocale();
+  const { translate, locale } = useLocale();
   const {
     today,
     effectiveMovieSlug,
@@ -110,6 +114,7 @@ export default function QuickBookingBar({
       <div className="relative z-10 rounded-(--radius-lg) border border-(--color-border) bg-(--color-surface) px-7 pb-5 pt-5 shadow-lg">
         <div className="mb-5 grid grid-cols-2 gap-x-6 gap-y-4 lg:flex lg:items-start">
           <SelectCol
+            name="movie"
             icon={<Clapperboard size={14} />}
             label={translate("home.quick_booking.select_movie")}
             value={effectiveMovieSlug}
@@ -119,6 +124,7 @@ export default function QuickBookingBar({
           <Divider />
 
           <SelectCol
+            name="cinema"
             icon={<Landmark size={14} />}
             label={translate("home.quick_booking.cinema")}
             value={selectedCinemaId}
@@ -133,6 +139,7 @@ export default function QuickBookingBar({
           <Divider />
 
           <SelectCol
+            name="date"
             icon={<Calendar size={14} />}
             label={translate("home.quick_booking.date")}
             value={activeDate}
@@ -151,6 +158,7 @@ export default function QuickBookingBar({
           <Divider />
 
           <SelectCol
+            name="showtime"
             icon={<Clock size={14} />}
             label={translate("home.quick_booking.showtime")}
             value={selectedSlotId}
@@ -161,7 +169,10 @@ export default function QuickBookingBar({
                 ? [{ label: "…", value: "" }]
                 : slots.length > 0
                   ? slots.map((slot) => ({
-                      label: `${slot.startTime} (${slot.roomName})${!slot.isAvailable ? ` - ${translate("home.quick_booking.sold_out")}` : ""}`,
+                      label: `${slot.startTime} (${getRoomDisplayName(
+                        { name: slot.roomName, nameVi: slot.roomNameVi },
+                        locale,
+                      )})${!slot.isAvailable ? ` - ${translate("home.quick_booking.sold_out")}` : ""}`,
                       value: slot.id,
                       disabled: !slot.isAvailable,
                     }))

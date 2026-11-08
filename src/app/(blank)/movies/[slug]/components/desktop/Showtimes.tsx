@@ -7,6 +7,7 @@ import { useLocale } from "@/contexts/LocaleContext";
 import { useMovieDetail } from "@/features/movies/contexts/MovieDetailContext";
 import { useMovieSelection } from "@/features/movies/contexts/MovieSelectionContext";
 import { useShowtimes } from "@/features/showtimes/contexts/ShowtimesContext";
+import { getRoomDisplayName } from "@/libs/utils";
 import { DATE_STRIP_DAYS } from "@/features/showtimes/constants";
 import { buildFallbackDateChips, toShowtimeDateChips } from "@/features/showtimes/utils";
 import type { GroupedShowtimeCinema, ShowtimeSlot } from "@/features/showtimes/types";
@@ -170,7 +171,10 @@ export default function Showtimes() {
                             <button
                               key={slot.id}
                               type="button"
-                              title={slot.roomName}
+                              title={getRoomDisplayName(
+                                { name: slot.roomName, nameVi: slot.roomNameVi },
+                                locale,
+                              )}
                               onClick={() => selectTime(cinema, slot.id, slot.startTime)}
                               disabled={!slot.isAvailable}
                               aria-pressed={active}

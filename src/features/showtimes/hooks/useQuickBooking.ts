@@ -6,7 +6,7 @@ import { todayInCinemaZone } from "@/libs/date";
 import type { Movie } from "@/features/movies/types";
 import { getShowtimeDates, getShowtimes } from "../api";
 import { pickDefaultCinemaId, toShowtimeDateChips, type ShowtimeDateChip } from "../utils";
-import type { QuickBookingSeed } from "../api";
+import type { QuickBookingSeed } from "../types";
 import type { GroupedShowtimeCinema, ShowtimeDateOption, ShowtimeSlot } from "../types";
 
 export interface QuickBookingController {

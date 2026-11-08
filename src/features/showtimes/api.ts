@@ -1,7 +1,8 @@
 import { cache } from "react";
 import { apiFetch, settleApiResponse, withLang, type ApiResponse } from "@/libs/api";
 import type {
-  GroupedShowtimeCinema,
+  MovieSchedule,
+  QuickBookingSeed,
   ShowtimesResponse,
   ShowtimeDateOption,
   ShowtimeDetail,
@@ -71,16 +72,6 @@ export function getShowtimeById(id: string): Promise<ApiResponse<ShowtimeDetail>
   return apiFetch<ShowtimeDetail>(`/showtimes/${encodeURIComponent(id)}`);
 }
 
-/** Data needed by a movie schedule block for one resolved date. */
-export interface MovieSchedule {
-  dates: ShowtimeDateOption[];
-  /** True when the dates API answered, even with zero days. */
-  datesAvailable: boolean;
-  date: string;
-  cinemas: GroupedShowtimeCinema[];
-  error: string | null;
-}
-
 function toAvailableDates(records: ShowtimeDateOption[]): string[] {
   return records.filter((record) => record.hasShowtimes).map((record) => record.date);
 }
@@ -118,16 +109,6 @@ export const getMovieSchedule = cache(
     };
   },
 );
-
-/** First-render seed for the home quick-booking widgets. */
-export interface QuickBookingSeed {
-  locale: "en" | "vn";
-  movieSlug: string;
-  dates: ShowtimeDateOption[] | null;
-  activeDate: string;
-  cinemas: GroupedShowtimeCinema[] | null;
-  selectedCinemaId: string;
-}
 
 export const getQuickBookingSeed = cache(
   async (movieSlug: string, locale: "en" | "vn"): Promise<QuickBookingSeed> => {

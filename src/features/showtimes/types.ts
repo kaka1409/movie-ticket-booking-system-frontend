@@ -34,6 +34,7 @@ export interface ShowtimeSlot {
   format: string;
   roomId: string;
   roomName: string;
+  roomNameVi: string | null;
   isAvailable: boolean;
 }
 
@@ -94,5 +95,26 @@ export interface ShowtimeDetail {
   room: {
     id: string;
     name: string;
+    nameVi: string | null;
   };
+}
+
+/** Data needed by a movie schedule block for one resolved date. */
+export interface MovieSchedule {
+  dates: ShowtimeDateOption[];
+  /** True when the dates API answered, even with zero days. */
+  datesAvailable: boolean;
+  date: string;
+  cinemas: GroupedShowtimeCinema[];
+  error: string | null;
+}
+
+/** First-render seed for the home quick-booking widgets. */
+export interface QuickBookingSeed {
+  locale: "en" | "vn";
+  movieSlug: string;
+  dates: ShowtimeDateOption[] | null;
+  activeDate: string;
+  cinemas: GroupedShowtimeCinema[] | null;
+  selectedCinemaId: string;
 }

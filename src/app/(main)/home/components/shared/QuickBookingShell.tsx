@@ -2,7 +2,7 @@
 
 import type { Movie } from "@/features/movies/types";
 import type { ErrorResponse } from "@/libs/api";
-import type { QuickBookingSeed } from "@/features/showtimes/api";
+import type { QuickBookingSeed } from "@/features/showtimes/types";
 import { QuickBookingProvider } from "./QuickBookingProvider";
 import QuickBookingBar from "../desktop/QuickBookingBar";
 import QuickBooking from "../mobile/QuickBooking";

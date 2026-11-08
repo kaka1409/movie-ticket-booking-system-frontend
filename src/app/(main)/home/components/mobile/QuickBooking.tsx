@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { ChevronDown, RotateCcw } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
+import { getRoomDisplayName } from "@/libs/utils";
 import type { Movie } from "@/features/movies/types";
 import type { ErrorResponse } from "@/libs/api";
 import SectionFallback from "@/components/ui/SectionFallback";
@@ -37,7 +38,7 @@ export default function QuickBooking({
   movies: Movie[];
   error?: ErrorResponse["error"] | null;
 }) {
-  const { translate } = useLocale();
+  const { translate, locale } = useLocale();
   const {
     today,
     effectiveMovieSlug,
@@ -222,7 +223,10 @@ export default function QuickBooking({
                       }`}
                       onClick={() => slot.isAvailable && selectSlot(slot.id)}
                       aria-pressed={selectedSlotId === slot.id}
-                      title={slot.roomName}
+                      title={getRoomDisplayName(
+                        { name: slot.roomName, nameVi: slot.roomNameVi },
+                        locale,
+                      )}
                     >
                       {slot.startTime}
                     </button>

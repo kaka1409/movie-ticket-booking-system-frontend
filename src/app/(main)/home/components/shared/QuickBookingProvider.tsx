@@ -2,7 +2,7 @@
 
 import { createContext, useContext, type ReactNode } from "react";
 import type { Movie } from "@/features/movies/types";
-import type { QuickBookingSeed } from "@/features/showtimes/api";
+import type { QuickBookingSeed } from "@/features/showtimes/types";
 import {
   useQuickBooking,
   type QuickBookingController,

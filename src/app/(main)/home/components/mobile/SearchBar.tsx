@@ -4,7 +4,7 @@ import { Search } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 
 /**
- * Home search â€” a native GET form, so it works without JavaScript: submitting
+ * Home search a native GET form, so it works without JavaScript: submitting
  * navigates to `/movies?q=<query>`, which the movies page reads server-side.
  */
 export default function SearchBar() {
