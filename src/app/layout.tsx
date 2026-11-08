@@ -8,6 +8,7 @@ import { DeviceProvider } from "@/contexts/DeviceContext";
 import { ToastProvider } from "@/contexts/ToastContext";
 import ToastViewport from "@/components/ui/ToastViewport";
 import RouteProgressBar from "@/components/ui/RouteProgressBar";
+import WebVitalsReporter from "@/components/ui/WebVitalsReporter";
 import type { Device } from "@/types";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { WishlistProvider } from "@/features/wishlist/contexts/WishlistContext";
@@ -119,6 +120,7 @@ export default async function RootLayout({
     >
       <body className="min-h-dvh flex flex-col">
         <RouteProgressBar />
+        <WebVitalsReporter />
         <ToastProvider>
           <ToastViewport />
           <DeviceProvider initialDevice={initialDevice}>
