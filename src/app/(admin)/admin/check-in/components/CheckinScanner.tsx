@@ -11,6 +11,7 @@ import { ADMIN_INPUT_CLASS, ADMIN_CARD_CLASS } from "@/features/admin/constants"
 import { resolveAdminError } from "@/features/admin/errorMessages";
 import { checkInTicketAction } from "@/features/admin/actions/tickets.action";
 import type { AdminCheckinResult } from "@/features/admin/types";
+import QrCameraScanner from "./QrCameraScanner";
 
 export default function CheckinScanner() {
   const { translate } = useLocale();
@@ -21,19 +22,20 @@ export default function CheckinScanner() {
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  const submit = () => {
+  const submit = (value?: string) => {
     if (!token) {
       setError(translate("admin.common.session_expired"));
       return;
     }
-    if (!payload.trim()) {
+    const raw = (value ?? payload).trim();
+    if (!raw) {
       setError(translate("admin.checkin.invalid"));
       return;
     }
     setError(null);
     setResult(null);
     startTransition(async () => {
-      const res = await checkInTicketAction(token, payload.trim());
+      const res = await checkInTicketAction(token, raw);
       if (!res.success) {
         const message = resolveAdminError(res, translate, {
           NOT_FOUND: "admin.checkin.not_found",
@@ -48,7 +50,14 @@ export default function CheckinScanner() {
     });
   };
 
+  const handleScan = (scanned: string) => {
+    setPayload(scanned);
+    submit(scanned);
+  };
+
   return (
+    <div className="space-y-4">
+    <QrCameraScanner onScan={handleScan} disabled={isPending} />
     <div className={ADMIN_CARD_CLASS + " p-5"}>
       <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
         <AdminFormField labelKey="admin.checkin.payload" hintKey="admin.checkin.payload_hint">
@@ -66,7 +75,7 @@ export default function CheckinScanner() {
             variant="primary"
             size="md"
             disabled={isPending}
-            onClick={submit}
+            onClick={() => submit()}
           >
             {translate("admin.checkin.submit")}
           </AdminButton>
@@ -126,6 +135,7 @@ export default function CheckinScanner() {
           </dl>
         </div>
       )}
+    </div>
     </div>
   );
 }
