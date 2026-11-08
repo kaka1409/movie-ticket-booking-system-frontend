@@ -161,14 +161,23 @@ export interface MovieResearchCandidate {
   discoveredAt: string;
 }
 
+export type MovieResearchRunStatus = "running" | "paused" | "completed" | "failed" | "stopped";
+
 export interface MovieResearchRun {
   id: string;
-  status: string;
+  status: MovieResearchRunStatus | string;
   discovered: number;
   enriched: number;
+  processed: number;
+  model: string | null;
   error: string | null;
   startedAt: string;
   finishedAt: string | null;
+}
+
+export interface MovieResearchModel {
+  id: string;
+  name: string;
 }
 
 export interface AdminMovieCreateInput extends AdminMovieInput {
@@ -316,6 +325,118 @@ export interface AdminShowtimeCreateInput extends AdminShowtimeInput {
   startTime: string;
 }
 
+/* ── Showtime schedule board (day hierarchy) ──────────────────────────────── */
+
+export interface AdminScheduleMovie {
+  id: string;
+  title: string;
+  slug: string;
+  posterUrl: string | null;
+  duration: number | null;
+  ageRating: string | null;
+}
+
+export interface AdminScheduleSlot {
+  id: string;
+  startTime: string;
+  endTime: string;
+  format: string;
+  movie: AdminScheduleMovie;
+  bookedSeats: number;
+  heldSeats: number;
+  totalSeats: number;
+  isPast: boolean;
+}
+
+export interface AdminScheduleRoom {
+  id: string;
+  name: string;
+  totalSeats: number;
+  showtimes: AdminScheduleSlot[];
+}
+
+export interface AdminScheduleCinema {
+  id: string;
+  name: string;
+  address: string;
+  badge: string | null;
+  rooms: AdminScheduleRoom[];
+}
+
+/** `GET /admin/showtimes/schedule?date=` — cinemas → rooms → showtimes. */
+export interface AdminScheduleResult {
+  date: string;
+  cinemas: AdminScheduleCinema[];
+}
+
+/** `GET /admin/showtimes/schedule/summary` row. */
+export interface AdminScheduleDayCount {
+  date: string;
+  count: number;
+}
+
+export interface AdminSlotTemplateSlot {
+  startTime: string;
+  band: "matinee" | "all" | "prime" | "late";
+}
+
+/** `GET /admin/showtimes/slot-templates` row — static preset ladder. */
+export interface AdminSlotTemplate {
+  key: string;
+  weekday: AdminSlotTemplateSlot[];
+  weekend: AdminSlotTemplateSlot[];
+}
+
+export type AdminSeatStatus = "free" | "held" | "booked" | "checked_in";
+
+export interface AdminSeatCell {
+  id: string;
+  seatNumber: number;
+  label: string;
+  kind: string;
+  price: number;
+  status: AdminSeatStatus;
+}
+
+export interface AdminSeatRow {
+  label: string;
+  seats: AdminSeatCell[];
+}
+
+/** `GET /admin/showtimes/:id/seats` — read-only ops seat map. */
+export interface AdminShowtimeSeats {
+  showtimeId: string;
+  roomName: string;
+  rows: AdminSeatRow[];
+}
+
+export interface AdminSeedShowtimesInput {
+  template?: string;
+  horizonDays?: number;
+  runDays?: number;
+  dryRun?: boolean;
+}
+
+export interface AdminSeedSkippedSample {
+  date: string;
+  roomId: string;
+  startTime: string;
+  reason: "exists" | "conflict" | "past";
+}
+
+export interface AdminSeedShowtimesResult {
+  template: string;
+  horizonDays: number;
+  runDays: number;
+  dryRun: boolean;
+  planned: number;
+  created: number;
+  skipped: { exists: number; conflict: number; past: number };
+  moviesScheduled: number;
+  roomsUsed: number;
+  skippedSample: AdminSeedSkippedSample[];
+}
+
 /* ── Snacks ────────────────────────────────────────────────────────────────── */
 
 export interface AdminFoodItemInput {
@@ -369,6 +490,7 @@ export interface AdminUser {
   fullname: string;
   email: string;
   phone?: string;
+  avatarUrl?: string | null;
   role: string;
   status: string;
   createdAt: string;
@@ -455,7 +577,8 @@ export interface AdminKpiDataPoint {
  */
 export interface AdminKpiRangeData {
   value: number;
-  growthPercent: number;
+  /** `null` when no honest previous-period comparison exists (pending payments). */
+  growthPercent: number | null;
   series: AdminKpiDataPoint[];
 }
 
@@ -500,7 +623,8 @@ export interface AdminTopMoviePerformance {
   id: string;
   rank: number;
   title: string;
-  posterUrl: string;
+  slug: string;
+  posterUrl: string | null;
   genre: string;
   revenue: number;
   ticketsSold: number;
@@ -512,11 +636,12 @@ export interface AdminLiveShowtimeItem {
   startTime: string;
   endTime: string;
   movieTitle: string;
-  posterUrl: string;
+  posterUrl: string | null;
   cinemaName: string;
   roomName: string;
   format: string;
   bookedSeats: number;
+  checkedInSeats: number;
   totalSeats: number;
   status: "selling" | "almost_full" | "sold_out" | "in_screen" | "ended";
 }
@@ -525,30 +650,56 @@ export interface AdminLiveBookingItem {
   id: string;
   bookingCode: string;
   customerName: string;
-  customerPhone?: string;
-  isGuest?: boolean;
+  customerPhone: string | null;
+  customerAvatarUrl: string | null;
   movieTitle: string;
+  moviePosterUrl: string | null;
   cinemaName: string;
   roomName: string;
-  showtime: string;
+  /** Cinema wall-clock day + start time of the booked showtime. */
+  showtime: { date: string; startTime: string };
   seatCount: number;
   comboCount: number;
   totalAmount: number;
-  paymentMethod: string;
+  paymentMethod: AdminPaymentMethodCode | null;
+  paymentStatus: AdminPaymentStatus | null;
   status: "paid" | "holding" | "cancelled";
   createdAt: string;
 }
 
-export interface AdminDashboardData {
+/** `GET /admin/dashboard/metrics` payload — KPI windows + chart series. */
+export interface AdminDashboardMetrics {
   kpi: AdminKpiSummary;
   analytics: {
     range7d: AdminAnalyticsDataPoint[];
     range30d: AdminAnalyticsDataPoint[];
     range12m: AdminAnalyticsDataPoint[];
   };
-  topMovies: AdminTopMoviePerformance[];
-  liveShowtimes: AdminLiveShowtimeItem[];
-  liveBookings: AdminLiveBookingItem[];
+}
+
+/** `GET /admin/dashboard/action-queue` — counts of items needing an operator. */
+export interface AdminActionQueue {
+  pendingPayments: number;
+  pendingRefunds: number;
+  awaitingTransfers: number;
+  deletedReviews: number;
+  bannedUsers: number;
+  asOf: string;
+}
+
+export interface AdminPaymentMethodHealth {
+  success: number;
+  failed: number;
+  pending: number;
+  expired: number;
+  /** Successful-charge revenue over the last 30 days, in VND. */
+  revenue: number;
+}
+
+/** `GET /admin/dashboard/payment-health` — per-method stats + gateway state. */
+export interface AdminPaymentHealth {
+  demoMode: boolean;
+  methods: (AdminPaymentMethod & { stats: AdminPaymentMethodHealth })[];
 }
 
 /* ── Transactions (bookings + payments + tickets) ─────────────────────────── */
@@ -573,6 +724,7 @@ export interface AdminTransaction {
     id: string;
     fullname: string | null;
     email: string;
+    avatarUrl?: string | null;
   };
   movie: {
     id: string;
@@ -618,6 +770,7 @@ export interface AdminTransactionDetail {
     id: string;
     fullname: string | null;
     email: string;
+    avatarUrl?: string | null;
   };
   showtime: {
     id: string;
@@ -676,6 +829,7 @@ export interface AdminTransactionDetail {
       id: string;
       fullname: string | null;
       email: string;
+      avatarUrl?: string | null;
     };
     transfers: {
       id: string;
@@ -702,11 +856,13 @@ export interface AdminTicket {
     id: string;
     fullname: string | null;
     email: string;
+    avatarUrl?: string | null;
   };
   buyer: {
     id: string;
     fullname: string | null;
     email: string;
+    avatarUrl?: string | null;
   };
   booking: {
     id: string;
@@ -741,6 +897,7 @@ export interface AdminTicketDetail {
     id: string;
     fullname: string | null;
     email: string;
+    avatarUrl?: string | null;
   };
   /** Same wire shape as the customer-facing booking detail (`toBookingDetail`). */
   booking: {
@@ -783,8 +940,8 @@ export interface AdminTicketDetail {
     amount: number;
     paymentExpiresAt: string | null;
     createdAt: string;
-    sender: { id: string; fullname: string | null; email: string };
-    recipient: { id: string; fullname: string | null; email: string };
+    sender: { id: string; fullname: string | null; email: string; avatarUrl?: string | null };
+    recipient: { id: string; fullname: string | null; email: string; avatarUrl?: string | null };
     payments: {
       id: string;
       kind: string;

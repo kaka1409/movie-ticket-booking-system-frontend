@@ -224,6 +224,9 @@ export default function KpiDetailChart({ kpi, metric, range }: KpiDetailChartPro
   const valueFormat = getKpiValueFormat(metric);
   const accentColor = palette[metricDef.paletteKey];
   const accentAlpha = palette[`${metricDef.paletteKey}Alpha`];
+  const hasData = isOccupancyWindow(window)
+    ? window.totalSeats > 0
+    : window.series.some((point) => point.value > 0);
 
   return (
     <div className="flex h-full flex-col rounded-2xl border border-(--color-border)/70 bg-(--color-surface-2)/30 p-4 sm:p-5">
@@ -246,27 +249,48 @@ export default function KpiDetailChart({ kpi, metric, range }: KpiDetailChartPro
           <span className="text-xl font-bold tracking-tight text-(--color-text-primary)">
             {formatKpiValue(metric, window, locale, translate("admin.dashboard.tickets_suffix"))}
           </span>
-          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-xs font-semibold text-emerald-500">
-            <TrendingUp size={12} aria-hidden />
-            <span>+{growth.percent}%</span>
-            <span className="hidden text-2xs font-normal text-(--color-text-muted) sm:inline">
-              {translate(growth.vsKey)}
+          {growth.percent !== null && (
+            <span
+              className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold ${
+                growth.percent >= 0
+                  ? "bg-emerald-500/10 text-emerald-500"
+                  : "bg-rose-500/10 text-rose-500"
+              }`}
+            >
+              <TrendingUp
+                size={12}
+                aria-hidden
+                className={growth.percent < 0 ? "rotate-180" : undefined}
+              />
+              <span>
+                {growth.percent > 0 ? "+" : ""}
+                {growth.percent}%
+              </span>
+              <span className="hidden text-2xs font-normal text-(--color-text-muted) sm:inline">
+                {translate(growth.vsKey)}
+              </span>
             </span>
-          </span>
+          )}
         </div>
       </div>
 
       <div className="mt-4 h-64 w-full flex-1">
-        {chartKind === "gauge" ? (
-          <OccupancyGauge window={window} />
+        {hasData ? (
+          chartKind === "gauge" ? (
+            <OccupancyGauge window={window} />
+          ) : (
+            <CartesianChart
+              window={window}
+              kind={chartKind}
+              color={accentColor}
+              alpha={accentAlpha}
+              format={valueFormat}
+            />
+          )
         ) : (
-          <CartesianChart
-            window={window}
-            kind={chartKind}
-            color={accentColor}
-            alpha={accentAlpha}
-            format={valueFormat}
-          />
+          <p className="flex h-full items-center justify-center text-2xs text-(--color-text-muted)">
+            {translate("admin.dashboard.no_data")}
+          </p>
         )}
       </div>
     </div>

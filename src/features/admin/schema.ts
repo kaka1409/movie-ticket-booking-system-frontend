@@ -124,9 +124,7 @@ export function createMovieSchema(translate: Translate, isEditing: boolean) {
     featuredLabelVi: z.string().trim().max(120, translate("admin.movies.too_long")),
     featuredDescription: z.string().trim().max(600, translate("admin.movies.too_long")),
     featuredDescriptionVi: z.string().trim().max(600, translate("admin.movies.too_long")),
-    genreIds: z
-      .array(z.string().uuid())
-      .max(20, translate("admin.movies.too_many_genres")),
+    genreIds: z.array(z.string().uuid()).max(20, translate("admin.movies.too_many_genres")),
     isFeatured: z.boolean(),
   });
 }

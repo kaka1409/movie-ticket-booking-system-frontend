@@ -3,7 +3,6 @@
 import { useMemo } from "react";
 import { Chart } from "react-chartjs-2";
 import "@/libs/chartjs";
-import { BarChart3 } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useAdminChartTheme } from "@/features/admin/hooks/useAdminChartTheme";
 import type { AdminAnalyticsDataPoint, AdminAnalyticsTimeRange } from "@/features/admin/types";
@@ -166,24 +165,29 @@ export default function RevenueAttendanceChart({
     };
   }, [palette, locale, translate]);
 
+  const hasData = currentDataPoints.some(
+    (point) => point.ticketRevenue > 0 || point.fnbRevenue > 0 || point.attendance > 0,
+  );
+
   return (
     <div className="flex h-full flex-col rounded-2xl border border-(--color-border) bg-(--color-surface) p-5 shadow-(--shadow-card)">
-      <div className="flex items-center gap-2.5">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-(--color-surface-2) text-(--color-text-secondary)">
-          <BarChart3 size={16} aria-hidden />
-        </div>
-        <div>
-          <h2 className="text-sm font-bold text-(--color-text-primary)">
-            {translate("admin.dashboard.chart_revenue_attendance_title")}
-          </h2>
-          <p className="text-2xs text-(--color-text-muted)">
-            {translate("admin.dashboard.chart_revenue_attendance_subtitle")}
-          </p>
-        </div>
+      <div>
+        <h2 className="text-sm font-bold text-(--color-text-primary)">
+          {translate("admin.dashboard.chart_revenue_attendance_title")}
+        </h2>
+        <p className="text-2xs text-(--color-text-muted)">
+          {translate("admin.dashboard.chart_revenue_attendance_subtitle")}
+        </p>
       </div>
 
       <div className="mt-4 min-h-[300px] flex-1">
-        <Chart type="bar" data={chartData} options={chartOptions} />
+        {hasData ? (
+          <Chart type="bar" data={chartData} options={chartOptions} />
+        ) : (
+          <p className="flex h-full items-center justify-center text-2xs text-(--color-text-muted)">
+            {translate("admin.dashboard.no_data")}
+          </p>
+        )}
       </div>
     </div>
   );

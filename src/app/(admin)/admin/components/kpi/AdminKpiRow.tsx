@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useLocale } from "@/contexts/LocaleContext";
 import type {
   AdminAnalyticsTimeRange,
-  AdminDashboardData,
+  AdminDashboardMetrics,
   AdminKpiSummary,
 } from "@/features/admin/types";
 import KpiDetailChart from "./KpiDetailChart";
@@ -15,7 +15,7 @@ import RevenueAttendanceChart from "../analytics/RevenueAttendanceChart";
 
 interface AdminKpiRowProps {
   kpi: AdminKpiSummary;
-  analytics: AdminDashboardData["analytics"];
+  analytics: AdminDashboardMetrics["analytics"];
 }
 
 /**

@@ -1,8 +1,22 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import AdminPageHeader from "@/app/(admin)/admin/components/shared/AdminPageHeader";
-import AdminDashboardSkeleton from "./components/skeletons/AdminDashboardSkeleton";
-import { AdminDashboardSection } from "./sections";
+import {
+  ActionQueueSkeleton,
+  KpiSectionSkeleton,
+  LiveBookingsSkeleton,
+  LiveShowtimesSkeleton,
+  PaymentHealthSkeleton,
+  TopMoviesSkeleton,
+} from "./components/skeletons/AdminDashboardSkeleton";
+import {
+  ActionQueueSection,
+  KpiSection,
+  LiveBookingsSection,
+  LiveShowtimesSection,
+  PaymentHealthSection,
+  TopMoviesSection,
+} from "./sections";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -10,8 +24,8 @@ export const metadata: Metadata = {
 
 /**
  * PrimeSeat Admin Console Dashboard landing.
- * Streams live KPI mini-charts, dual-axis revenue & attendance analytics,
- * box office rankings, live showtimes monitor, and booking operations.
+ * Each widget streams behind its own Suspense boundary so a slow aggregate
+ * never blanks the rest of the console.
  */
 export default function AdminDashboardPage() {
   return (
@@ -21,8 +35,34 @@ export default function AdminDashboardPage() {
         titleKey="admin.dashboard.title"
         descriptionKey="admin.dashboard.description"
       />
-      <Suspense fallback={<AdminDashboardSkeleton />}>
-        <AdminDashboardSection />
+
+      <Suspense fallback={<ActionQueueSkeleton />}>
+        <ActionQueueSection />
+      </Suspense>
+
+      <Suspense fallback={<KpiSectionSkeleton />}>
+        <KpiSection />
+      </Suspense>
+
+      <Suspense fallback={<TopMoviesSkeleton />}>
+        <TopMoviesSection />
+      </Suspense>
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+        <div className="lg:col-span-7">
+          <Suspense fallback={<LiveShowtimesSkeleton />}>
+            <LiveShowtimesSection />
+          </Suspense>
+        </div>
+        <div className="lg:col-span-5">
+          <Suspense fallback={<LiveBookingsSkeleton />}>
+            <LiveBookingsSection />
+          </Suspense>
+        </div>
+      </div>
+
+      <Suspense fallback={<PaymentHealthSkeleton />}>
+        <PaymentHealthSection />
       </Suspense>
     </div>
   );

@@ -1,10 +1,10 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { Trophy, ChevronRight } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { formatVND, toLocaleTag } from "@/libs/utils";
+import AdminPoster from "../shared/AdminPoster";
 import type { AdminTopMoviePerformance } from "@/features/admin/types";
 
 interface TopBoxOfficeTableProps {
@@ -51,6 +51,11 @@ export default function TopBoxOfficeTable({ movies }: TopBoxOfficeTableProps) {
         </Link>
       </div>
 
+      {movies.length === 0 ? (
+        <p className="mt-4 flex-1 rounded-xl border border-dashed border-(--color-border) px-4 py-8 text-center text-2xs text-(--color-text-muted)">
+          {translate("admin.dashboard.empty_top_movies")}
+        </p>
+      ) : (
       <div className="mt-4 flex-1 space-y-3">
         {movies.map((movie) => (
           <div
@@ -67,15 +72,11 @@ export default function TopBoxOfficeTable({ movies }: TopBoxOfficeTableProps) {
             </span>
 
             {/* Movie Poster */}
-            <div className="relative h-11 w-8 shrink-0 overflow-hidden rounded-md bg-(--color-surface-2)">
-              <Image
-                src={movie.posterUrl}
-                alt={movie.title}
-                fill
-                sizes="32px"
-                className="object-cover"
-              />
-            </div>
+            <AdminPoster
+              src={movie.posterUrl}
+              alt={movie.title}
+              className="h-11 w-20"
+            />
 
             {/* Title & Genre */}
             <div className="min-w-0 flex-1">
@@ -111,6 +112,7 @@ export default function TopBoxOfficeTable({ movies }: TopBoxOfficeTableProps) {
           </div>
         ))}
       </div>
+      )}
     </div>
   );
 }

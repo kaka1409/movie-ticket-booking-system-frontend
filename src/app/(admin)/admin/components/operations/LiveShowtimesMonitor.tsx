@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { Film, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import type { AdminLiveShowtimeItem } from "@/features/admin/types";
+import AdminPoster from "../shared/AdminPoster";
 
 interface LiveShowtimesMonitorProps {
   showtimes: AdminLiveShowtimeItem[];
@@ -14,6 +15,13 @@ interface LiveShowtimesMonitorProps {
  */
 export default function LiveShowtimesMonitor({ showtimes }: LiveShowtimesMonitorProps) {
   const { translate } = useLocale();
+
+  // Board shows the 5 nearest operations: anything not ended outranks ended
+  // rows, and the API's start-time order is kept inside each group.
+  const visibleShowtimes = [
+    ...showtimes.filter((item) => item.status !== "ended"),
+    ...showtimes.filter((item) => item.status === "ended"),
+  ].slice(0, 5);
 
   const getStatusBadge = (status: AdminLiveShowtimeItem["status"]) => {
     switch (status) {
@@ -32,6 +40,11 @@ export default function LiveShowtimesMonitor({ showtimes }: LiveShowtimesMonitor
           label: translate("admin.dashboard.status_sold_out"),
           className: "bg-rose-500/15 text-rose-500 border-rose-500/30",
         };
+      case "ended":
+        return {
+          label: translate("admin.dashboard.status_ended"),
+          className: "bg-(--color-surface-2) text-(--color-text-muted) border-(--color-border)",
+        };
       case "selling":
       default:
         return {
@@ -44,18 +57,13 @@ export default function LiveShowtimesMonitor({ showtimes }: LiveShowtimesMonitor
   return (
     <div className="flex h-full flex-col rounded-2xl border border-(--color-border) bg-(--color-surface) p-5 shadow-(--shadow-card)">
       <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-(--color-surface-2) text-(--color-text-secondary)">
-            <Film size={16} aria-hidden />
-          </div>
-          <div>
-            <h2 className="text-sm font-bold text-(--color-text-primary)">
-              {translate("admin.dashboard.live_showtimes_title")}
-            </h2>
-            <p className="text-2xs text-(--color-text-muted)">
-              {translate("admin.dashboard.live_showtimes_subtitle")}
-            </p>
-          </div>
+        <div>
+          <h2 className="text-sm font-bold text-(--color-text-primary)">
+            {translate("admin.dashboard.live_showtimes_title")}
+          </h2>
+          <p className="text-2xs text-(--color-text-muted)">
+            {translate("admin.dashboard.live_showtimes_subtitle")}
+          </p>
         </div>
 
         <Link
@@ -68,9 +76,14 @@ export default function LiveShowtimesMonitor({ showtimes }: LiveShowtimesMonitor
         </Link>
       </div>
 
+      {visibleShowtimes.length === 0 ? (
+        <p className="mt-4 flex-1 rounded-xl border border-dashed border-(--color-border) px-4 py-8 text-center text-2xs text-(--color-text-muted)">
+          {translate("admin.dashboard.empty_showtimes")}
+        </p>
+      ) : (
       <div className="mt-4 flex-1 space-y-2.5 overflow-x-auto">
-        <div className="min-w-[480px]">
-          {showtimes.map((item) => {
+        <div className="min-w-[560px]">
+          {visibleShowtimes.map((item) => {
             const statusBadge = getStatusBadge(item.status);
             const fillPercent = Math.round((item.bookedSeats / item.totalSeats) * 100);
 
@@ -92,21 +105,28 @@ export default function LiveShowtimesMonitor({ showtimes }: LiveShowtimesMonitor
                   </div>
                 </div>
 
-                {/* Movie title & Hall */}
-                <div className="min-w-0 flex-1 px-2">
-                  <h3 className="truncate text-xs font-bold text-(--color-text-primary)">
-                    {item.movieTitle}
-                  </h3>
-                  <p className="truncate text-3xs text-(--color-text-muted)">
-                    {item.cinemaName} · {item.roomName}
-                  </p>
+                {/* Movie poster & Hall */}
+                <div className="flex min-w-0 flex-1 items-center gap-2 px-2">
+                  <AdminPoster
+                    src={item.posterUrl}
+                    alt={item.movieTitle}
+                    className="h-10 w-16 aspect-video"
+                  />
+                  <div className="min-w-0">
+                    <h3 className="truncate text-xs font-bold text-(--color-text-primary)">
+                      {item.movieTitle}
+                    </h3>
+                    <p className="truncate text-3xs text-(--color-text-muted)">
+                      {item.cinemaName} · {item.roomName}
+                    </p>
+                  </div>
                 </div>
 
-                {/* Booked / Total seats */}
+                {/* Booked / Total seats + check-in progress */}
                 <div className="w-28 shrink-0 text-right">
                   <p className="text-xs font-semibold text-(--color-text-primary)">
                     {item.bookedSeats} / {item.totalSeats}{" "}
-                    <span className="text-3xs text-(--color-text-muted)">ghế</span>
+                    <span className="text-3xs text-(--color-text-muted)">{translate("admin.dashboard.seats_suffix")}</span>
                   </p>
                   <div className="mt-1 flex items-center justify-end gap-1.5">
                     <div className="h-1.5 w-16 overflow-hidden rounded-full bg-(--color-surface-2)">
@@ -117,6 +137,10 @@ export default function LiveShowtimesMonitor({ showtimes }: LiveShowtimesMonitor
                     </div>
                     <span className="text-3xs text-(--color-text-muted)">{fillPercent}%</span>
                   </div>
+                  <p className="mt-0.5 text-3xs text-(--color-text-muted)">
+                    {translate("admin.dashboard.checkin_progress")}:{" "}
+                    {item.checkedInSeats}/{item.bookedSeats}
+                  </p>
                 </div>
 
                 {/* Status Badge */}
@@ -132,6 +156,7 @@ export default function LiveShowtimesMonitor({ showtimes }: LiveShowtimesMonitor
           })}
         </div>
       </div>
+      )}
     </div>
   );
 }

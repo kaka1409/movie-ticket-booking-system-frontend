@@ -1,14 +1,3 @@
-import {
-  Armchair,
-  BadgeCheck,
-  DollarSign,
-  Hourglass,
-  Popcorn,
-  Ticket,
-  UtensilsCrossed,
-  Wallet,
-  type LucideIcon,
-} from "lucide-react";
 import { formatVND, toLocaleTag } from "@/libs/utils";
 import type {
   AdminAnalyticsTimeRange,
@@ -29,7 +18,6 @@ export type KpiMetricKey =
 
 export interface KpiMetricDef {
   key: KpiMetricKey;
-  icon: LucideIcon;
   titleKey: string;
   /** Key into the Chart.js palette returned by `useAdminChartTheme`. */
   paletteKey:
@@ -46,49 +34,41 @@ export interface KpiMetricDef {
 export const KPI_METRICS: KpiMetricDef[] = [
   {
     key: "revenue",
-    icon: DollarSign,
     titleKey: "admin.dashboard.kpi_revenue_title",
     paletteKey: "gold",
   },
   {
     key: "tickets",
-    icon: Ticket,
     titleKey: "admin.dashboard.kpi_tickets_title",
     paletteKey: "cyan",
   },
   {
     key: "concessions",
-    icon: Popcorn,
     titleKey: "admin.dashboard.kpi_fnb_title",
     paletteKey: "emerald",
   },
   {
     key: "occupancy",
-    icon: Armchair,
     titleKey: "admin.dashboard.kpi_occupancy_title",
     paletteKey: "purple",
   },
   {
     key: "avgTicketPrice",
-    icon: Wallet,
     titleKey: "admin.dashboard.kpi_avg_ticket_title",
     paletteKey: "blue",
   },
   {
     key: "attachRate",
-    icon: UtensilsCrossed,
     titleKey: "admin.dashboard.kpi_attach_rate_title",
     paletteKey: "orange",
   },
   {
     key: "checkinRate",
-    icon: BadgeCheck,
     titleKey: "admin.dashboard.kpi_checkin_rate_title",
     paletteKey: "teal",
   },
   {
     key: "pendingPayments",
-    icon: Hourglass,
     titleKey: "admin.dashboard.kpi_pending_payments_title",
     paletteKey: "rose",
   },
@@ -142,9 +122,9 @@ export function formatKpiValue(
   return formatVND(window.value, locale);
 }
 
-/** Growth badge payload: occupancy compares against the room average, others vs the prior window. */
+/** Growth badge payload: occupancy compares against the room average, others vs the prior window. `percent` is null when the backend has no honest baseline. */
 export function getKpiGrowth(window: KpiWindow): {
-  percent: number;
+  percent: number | null;
   vsKey: "admin.dashboard.vs_average" | "admin.dashboard.vs_previous_period";
 } {
   if (isOccupancyWindow(window)) {
