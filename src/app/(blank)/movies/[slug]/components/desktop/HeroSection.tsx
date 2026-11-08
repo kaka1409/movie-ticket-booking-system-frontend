@@ -54,7 +54,6 @@ export default function HeroSection() {
           className="object-cover object-center"
           priority
         />
-        {/* Single dark layer so the text stays readable over the artwork */}
         <div className="absolute inset-0 bg-linear-to-t from-black/85 via-black/40 to-black/15" />
 
         <div className="absolute left-5 top-5 z-20">

@@ -51,11 +51,21 @@ function truncate(text: string, limit: number): string {
  * Build-time pre-render of the catalog (EN default) for the static HTML and
  * build-time metadata path; unknown slugs still render on demand
  * (`dynamicParams` stays on), and a locale-cookie request renders per request.
+ * Pages through the catalog so catalogs beyond one page still pre-render;
+ * `MAX_STATIC_PAGES` caps the build-time work — the rest stay on-demand.
  */
+const STATIC_PARAMS_PAGE_SIZE = 100;
+const MAX_STATIC_PAGES = 10;
+
 export async function generateStaticParams(): Promise<{ slug: string }[]> {
-  const result = await getMovies({ page: 1, limit: 100 });
-  if ("error" in result) return [];
-  return result.data.map((movie) => ({ slug: movie.slug }));
+  const slugs: { slug: string }[] = [];
+  for (let page = 1; page <= MAX_STATIC_PAGES; page += 1) {
+    const result = await getMovies({ page, limit: STATIC_PARAMS_PAGE_SIZE });
+    if ("error" in result) break;
+    slugs.push(...result.data.map((movie) => ({ slug: movie.slug })));
+    if (!result.meta?.hasNextPage) break;
+  }
+  return slugs;
 }
 
 export async function generateMetadata({

@@ -32,7 +32,6 @@ export default function MovieGrid() {
 
   return (
     <>
-      {/* Fetch failed and there is nothing to show */}
       {fetchError && movies.length === 0 && (
         <div className="px-(--space-md)">
           <SectionFallback error={fetchError} />
@@ -46,7 +45,6 @@ export default function MovieGrid() {
         </div>
       )}
 
-      {/* Results count (server total, not the rendered page count) */}
       {showResultsCount && !fetchError && (
         <div className="px-(--space-md)">
           <p className="text-base font-bold text-white">

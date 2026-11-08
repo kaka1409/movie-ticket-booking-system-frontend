@@ -7,7 +7,7 @@ import type { Movie } from "@/features/movies/types";
 
 /**
  * `sizes` tells the browser the rendered width so it doesn't pick the 100vw
- * default candidate â€” pass it whenever the card renders wider than its
+ * default candidate pass it whenever the card renders wider than its
  * intrinsic 130px (e.g. the 2-column /movies grid).
  */
 const MovieCard: React.FC<{

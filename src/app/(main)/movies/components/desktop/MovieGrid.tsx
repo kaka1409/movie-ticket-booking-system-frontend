@@ -115,7 +115,6 @@ export default function MovieGrid() {
         ))}
       </div>
 
-      {/* Next server page of the same query */}
       {hasMore && (
         <div className="mt-10 flex justify-center">
           <Button

@@ -6,7 +6,7 @@ import Image from "next/image";
 import { Star, Clock, Loader2 } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useMounted } from "@/hooks/useMounted";
-import { formatDate } from "@/libs/utils";
+import { formatDate } from "@/libs/date";
 import type { Movie } from "@/features/movies/types";
 
 interface MoviePreviewPopoverProps {
