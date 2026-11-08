@@ -14,6 +14,7 @@ import AdminTable, {
   type AdminTableColumn,
 } from "@/app/(admin)/admin/components/shared/AdminTable";
 import { ADMIN_INPUT_CLASS } from "@/features/admin/constants";
+import { ADMIN_FORM_SAMPLES } from "@/features/admin/samples";
 import { createCinemaSchema, createRoomSchema, toAdminFieldErrors } from "@/features/admin/schema";
 import {
   createCinemaAction,
@@ -34,9 +35,7 @@ export default function CinemasManager({ cinemas }: { cinemas: AdminCinema[] }) 
   const { notify } = useToast();
   const router = useRouter();
 
-  const [selectedCinemaId, setSelectedCinemaId] = useState<string | null>(
-    cinemas[0]?.id ?? null,
-  );
+  const [selectedCinemaId, setSelectedCinemaId] = useState<string | null>(cinemas[0]?.id ?? null);
   const [cinemaFormTarget, setCinemaFormTarget] = useState<AdminCinema | "new" | null>(null);
   const [roomFormTarget, setRoomFormTarget] = useState<AdminRoom | "new" | null>(null);
   const [deleteCinemaTarget, setDeleteCinemaTarget] = useState<AdminCinema | null>(null);
@@ -247,6 +246,13 @@ function CinemaFormDialog({
     });
   };
 
+  /** Prefill a valid test cinema — the operator still reviews and submits. */
+  const fillSample = () => {
+    setValues({ ...ADMIN_FORM_SAMPLES.cinema });
+    setFieldErrors({});
+    setSubmitError(null);
+  };
+
   const handleSubmit = () => {
     const parsed = createCinemaSchema(translate).safeParse(values);
     if (!parsed.success) {
@@ -295,8 +301,9 @@ function CinemaFormDialog({
       error={submitError}
       isPending={isPending}
       size="md"
+      onFillSample={cinema === null ? fillSample : undefined}
     >
-      <AdminFormField labelKey="admin.cinemas.name" error={fieldErrors.name}>
+      <AdminFormField labelKey="admin.cinemas.name" error={fieldErrors.name} required>
         <input
           type="text"
           value={values.name}
@@ -306,7 +313,7 @@ function CinemaFormDialog({
         />
       </AdminFormField>
 
-      <AdminFormField labelKey="admin.cinemas.address" error={fieldErrors.address}>
+      <AdminFormField labelKey="admin.cinemas.address" error={fieldErrors.address} required>
         <input
           type="text"
           value={values.address}
@@ -396,6 +403,13 @@ function RoomFormDialog({
     });
   };
 
+  /** Prefill a valid test room — the operator still reviews and submits. */
+  const fillSample = () => {
+    setValues({ cinemaId: values.cinemaId, name: ADMIN_FORM_SAMPLES.room.name });
+    setFieldErrors({});
+    setSubmitError(null);
+  };
+
   const handleSubmit = () => {
     const parsed = createRoomSchema(translate).safeParse(values);
     if (!parsed.success) {
@@ -443,8 +457,9 @@ function RoomFormDialog({
       error={submitError}
       isPending={isPending}
       size="md"
+      onFillSample={room === null ? fillSample : undefined}
     >
-      <AdminFormField labelKey="admin.rooms.cinema" error={fieldErrors.cinemaId}>
+      <AdminFormField labelKey="admin.rooms.cinema" error={fieldErrors.cinemaId} required>
         <select
           value={values.cinemaId}
           onChange={(event) => updateField("cinemaId", event.target.value)}
@@ -458,7 +473,7 @@ function RoomFormDialog({
         </select>
       </AdminFormField>
 
-      <AdminFormField labelKey="admin.rooms.name" error={fieldErrors.name}>
+      <AdminFormField labelKey="admin.rooms.name" error={fieldErrors.name} required>
         <input
           type="text"
           value={values.name}
