@@ -6,7 +6,7 @@ import Image from "next/image";
 import { Trash2, ArrowUpRight, Loader2, Film } from "lucide-react";
 import type { MyReview } from "@/features/reviews/types";
 import { useLocale } from "@/contexts/LocaleContext";
-import { formatDate } from "@/libs/utils";
+import { formatDate } from "@/libs/date";
 import ExpandableText from "@/components/ui/ExpandableText";
 import RatingBadge from "@/components/ui/RatingBadge";
 import Button from "@/components/ui/Button";
@@ -31,7 +31,6 @@ export default function ReviewRow({
 
   return (
     <article className="group flex h-full flex-col gap-4 rounded-2xl border border-(--color-border) bg-(--color-surface) p-5 shadow-(--shadow-card) transition duration-200 hover:border-(--color-gold)/40 hover:shadow-lg sm:flex-row sm:items-start">
-      {/* Movie Poster */}
       <Link
         href={`/movies/${review.movie.slug}`}
         className="relative aspect-[2/3] w-20 shrink-0 overflow-hidden rounded-xl bg-(--color-surface-2) shadow-sm"
@@ -51,7 +50,6 @@ export default function ReviewRow({
         )}
       </Link>
 
-      {/* Review Body */}
       <div className="flex min-w-0 flex-1 flex-col justify-between gap-3 self-stretch">
         <div>
           <div className="flex flex-wrap items-start justify-between gap-3">
@@ -71,7 +69,6 @@ export default function ReviewRow({
             </div>
           </div>
 
-          {/* Review Text */}
           {review.comment && (
             <ExpandableText
               text={review.comment}
@@ -80,7 +77,6 @@ export default function ReviewRow({
           )}
         </div>
 
-        {/* Footer Actions */}
         <div className="flex items-center justify-between border-t border-(--color-border)/50 pt-3">
           <Link
             href={`/movies/${review.movie.slug}#review-${review.id}`}

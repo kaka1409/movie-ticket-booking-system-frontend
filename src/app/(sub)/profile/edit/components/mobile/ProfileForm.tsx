@@ -40,6 +40,7 @@ export default function ProfileForm() {
         >
           <input
             type="text"
+            name="fullname"
             value={fullName}
             onChange={(event) => setFullName(event.target.value)}
             className="w-full bg-transparent text-(--color-text-primary) outline-none placeholder:text-(--color-text-muted)"
@@ -50,6 +51,7 @@ export default function ProfileForm() {
           <FormField label={translate("profile.edit.email")} icon={Mail} disabled>
             <input
               type="email"
+              name="email"
               value={user.email}
               disabled
               className="w-full bg-transparent text-(--color-text-muted) outline-none"
@@ -68,6 +70,7 @@ export default function ProfileForm() {
         >
           <input
             type="tel"
+            name="phone"
             value={phone}
             onChange={(event) => setPhone(event.target.value)}
             className="w-full bg-transparent text-(--color-text-primary) outline-none placeholder:text-(--color-text-muted)"
@@ -81,6 +84,7 @@ export default function ProfileForm() {
         >
           <input
             type="date"
+            name="dob"
             value={dob}
             onChange={(event) => setDob(event.target.value)}
             className="w-full bg-transparent text-(--color-text-primary) outline-none [&::-webkit-calendar-picker-indicator]:hidden focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-gold)"

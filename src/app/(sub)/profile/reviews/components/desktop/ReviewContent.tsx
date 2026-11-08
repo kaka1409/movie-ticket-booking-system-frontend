@@ -72,46 +72,46 @@ export default function ReviewContent({
 
   return (
     <>
-      {/* Review Stats Summary Banner */}
-      <div className="mb-6 grid gap-4 sm:grid-cols-3">
-        <div className="flex items-center gap-3.5 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 shadow-(--shadow-card)">
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-(--color-gold)/15 text-(--color-gold)">
-            <MessageSquare size={18} />
+      <div className="mb-6 grid grid-cols-3 divide-x divide-(--color-border)/50">
+        <div className="flex items-center gap-3 px-3 py-1 sm:gap-4 sm:px-5">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-(--color-surface-2) text-(--color-gold)">
+            <MessageSquare size={17} />
           </span>
-          <div>
-            <p className="text-xl font-black text-white">{totalCount}</p>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-(--color-text-muted)">
+          <div className="min-w-0">
+            <p className="truncate text-2xl leading-7 font-black text-white">{totalCount}</p>
+            <p className="truncate text-2xs font-bold tracking-wider text-(--color-text-muted) uppercase">
               {translate("profile.stats.reviews")}
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-3.5 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 shadow-(--shadow-card)">
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-(--color-gold)/15 text-(--color-gold)">
-            <Star size={18} fill="currentColor" />
+        <div className="flex items-center gap-3 px-3 py-1 sm:gap-4 sm:px-5">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-(--color-surface-2) text-(--color-gold)">
+            <Star size={17} fill="currentColor" />
           </span>
-          <div>
-            <p className="text-xl font-black text-white">{averageRating} / 10</p>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-(--color-text-muted)">
+          <div className="min-w-0">
+            <p className="truncate text-2xl leading-7 font-black text-white">
+              {averageRating} / 10
+            </p>
+            <p className="truncate text-2xs font-bold tracking-wider text-(--color-text-muted) uppercase">
               {translate("profile.myreviews.average_rating")}
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-3.5 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 shadow-(--shadow-card)">
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-(--color-gold)/15 text-(--color-gold)">
-            <ThumbsUp size={18} />
+        <div className="flex items-center gap-3 px-3 py-1 sm:gap-4 sm:px-5">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-(--color-surface-2) text-(--color-gold)">
+            <ThumbsUp size={17} />
           </span>
-          <div>
-            <p className="text-xl font-black text-white">{positivePercent}%</p>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-(--color-text-muted)">
+          <div className="min-w-0">
+            <p className="truncate text-2xl leading-7 font-black text-white">{positivePercent}%</p>
+            <p className="truncate text-2xs font-bold tracking-wider text-(--color-text-muted) uppercase">
               {translate("profile.myreviews.positive_reviews")}
             </p>
           </div>
         </div>
       </div>
 
-      {/* Filter Toolbar */}
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-(--color-border)/50 pb-4">
         <p className="text-xs text-(--color-text-muted)">
           {translate("profile.myreviews.count_prefix")}{" "}
@@ -128,7 +128,6 @@ export default function ReviewContent({
         />
       </div>
 
-      {/* Review Cards List */}
       <div className="mt-5 grid gap-6 lg:grid-cols-2">
         {reviews.map((review, index) => (
           <div key={review.id} className={index >= animThreshold ? "animate-fade-in" : ""}>

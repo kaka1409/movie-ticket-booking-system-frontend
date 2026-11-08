@@ -31,7 +31,6 @@ export default function AccountNav() {
 
   return (
     <>
-      {/* Tablet strip */}
       <nav
         aria-label={translate("profile.area_label")}
         className="flex gap-1 overflow-x-auto overscroll-x-contain px-3 pb-1 scrollbar-hide lg:hidden"
@@ -56,7 +55,6 @@ export default function AccountNav() {
         })}
       </nav>
 
-      {/* Desktop card */}
       <aside className="hidden lg:block lg:sticky lg:top-24 lg:self-start">
         <div className="rounded-2xl border border-(--color-border) bg-(--color-surface) p-2 shadow-lg">
           {user && (
@@ -118,7 +116,6 @@ export default function AccountNav() {
             ))}
           </div>
 
-          {/* Quick Logout Button */}
           <div className="mt-1 border-t border-(--color-border)/60 p-1.5">
             <button
               type="button"

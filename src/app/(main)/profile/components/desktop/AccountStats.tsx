@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowUpRight, Heart, Star, Ticket } from "lucide-react";
+import { Heart, Star, Ticket } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import type { ReactNode } from "react";
 
@@ -17,8 +17,8 @@ const TILES: Array<{
 ];
 
 /**
- * Interactive summary metric cards for member activity:
- * Tickets, reviews, and wishlist items with responsive hover elevations.
+ * Compact activity counters for member stats: tickets, reviews, and wishlist
+ * items as a divided row inside the overview panel.
  */
 export default function AccountStats({
   stats,
@@ -28,26 +28,24 @@ export default function AccountStats({
   const { translate } = useLocale();
 
   return (
-    <div className="grid gap-4 sm:grid-cols-3">
+    <div className="grid grid-cols-3 divide-x divide-(--color-border)/50">
       {TILES.map(({ key, href, Icon, labelKey }) => (
         <Link
           key={key}
           href={href}
-          className="group relative overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-surface) p-5 transition duration-200 hover:-translate-y-0.5 hover:border-(--color-gold)/50 hover:shadow-lg"
+          className="group flex min-w-0 items-center gap-3 px-3 py-1 transition hover:opacity-80 sm:gap-4 sm:px-5"
         >
-          <div className="flex items-center justify-between">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-(--color-surface-2) text-(--color-gold) transition-colors group-hover:bg-(--color-gold)/15">
-              <Icon size={19} />
-            </span>
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-(--color-surface-2)/60 text-(--color-text-muted) transition duration-200 group-hover:bg-(--color-gold)/20 group-hover:text-(--color-gold)">
-              <ArrowUpRight size={15} />
-            </span>
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-(--color-surface-2) text-(--color-gold) transition-colors group-hover:bg-(--color-gold)/15">
+            <Icon size={17} />
+          </span>
+          <div className="min-w-0">
+            <div className="truncate text-2xl leading-7 font-black tracking-tight text-white">
+              {stats[key]}
+            </div>
+            <p className="truncate text-2xs font-bold tracking-wider text-(--color-text-muted) uppercase">
+              {translate(labelKey)}
+            </p>
           </div>
-
-          <div className="mt-4 text-3xl font-black tracking-tight text-white">{stats[key]}</div>
-          <p className="mt-1 text-xs font-bold uppercase tracking-wider text-(--color-text-muted)">
-            {translate(labelKey)}
-          </p>
         </Link>
       ))}
     </div>

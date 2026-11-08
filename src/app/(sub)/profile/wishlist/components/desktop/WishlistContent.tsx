@@ -54,48 +54,45 @@ export default function WishlistContent({ initialItems }: { initialItems: Wishli
 
   return (
     <AccountShell title={pageTitle} description={translate("profile.pages.wishlist_desc")}>
-      {/* 1. Watchlist Quick Stats Overview Banner */}
-      <div className="mb-6 grid gap-4 sm:grid-cols-3">
-        <div className="flex items-center gap-3.5 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 shadow-(--shadow-card)">
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-(--color-gold)/15 text-(--color-gold)">
-            <Heart size={18} fill="currentColor" />
+      <div className="mb-6 grid grid-cols-3 divide-x divide-(--color-border)/50">
+        <div className="flex items-center gap-3 px-3 py-1 sm:gap-4 sm:px-5">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-(--color-surface-2) text-(--color-gold)">
+            <Heart size={17} fill="currentColor" />
           </span>
-          <div>
-            <p className="text-2xl font-black text-white">{movies.length}</p>
-            <p className="text-xs font-bold uppercase tracking-wider text-(--color-text-muted)">
+          <div className="min-w-0">
+            <p className="truncate text-2xl leading-7 font-black text-white">{movies.length}</p>
+            <p className="truncate text-2xs font-bold tracking-wider text-(--color-text-muted) uppercase">
               {translate("profile.wishlist_label")}
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-3.5 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 shadow-(--shadow-card)">
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-400">
-            <Ticket size={18} />
+        <div className="flex items-center gap-3 px-3 py-1 sm:gap-4 sm:px-5">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-(--color-surface-2) text-emerald-400">
+            <Ticket size={17} />
           </span>
-          <div>
-            <p className="text-2xl font-black text-white">{nowShowingCount}</p>
-            <p className="text-xs font-bold uppercase tracking-wider text-(--color-text-muted)">
+          <div className="min-w-0">
+            <p className="truncate text-2xl leading-7 font-black text-white">{nowShowingCount}</p>
+            <p className="truncate text-2xs font-bold tracking-wider text-(--color-text-muted) uppercase">
               {translate("profile.wishlist.ready_to_watch")}
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-3.5 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 shadow-(--shadow-card)">
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-(--color-gold-light)/15 text-(--color-gold-light)">
-            <Calendar size={18} />
+        <div className="flex items-center gap-3 px-3 py-1 sm:gap-4 sm:px-5">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-(--color-surface-2) text-(--color-gold-light)">
+            <Calendar size={17} />
           </span>
-          <div>
-            <p className="text-2xl font-black text-white">{comingSoonCount}</p>
-            <p className="text-xs font-bold uppercase tracking-wider text-(--color-text-muted)">
+          <div className="min-w-0">
+            <p className="truncate text-2xl leading-7 font-black text-white">{comingSoonCount}</p>
+            <p className="truncate text-2xs font-bold tracking-wider text-(--color-text-muted) uppercase">
               {translate("profile.wishlist.coming_soon_count")}
             </p>
           </div>
         </div>
       </div>
 
-      {/* 2. Integrated Filter & Sort Toolbar */}
       <div className="flex flex-col gap-4 border-b border-(--color-border)/50 pb-5 lg:flex-row lg:items-center lg:justify-between">
-        {/* Status Filter Tabs with Count Badges */}
         <div className="flex items-center gap-2 overflow-x-auto overscroll-x-contain pb-1 scrollbar-hide">
           {TABS.map((tab) => {
             const count =
@@ -131,7 +128,6 @@ export default function WishlistContent({ initialItems }: { initialItems: Wishli
           })}
         </div>
 
-        {/* Search & Sort Controls */}
         <div className="flex flex-wrap items-center gap-3">
           <SearchBar
             value={query}
@@ -140,10 +136,10 @@ export default function WishlistContent({ initialItems }: { initialItems: Wishli
             className="w-full sm:w-60"
           />
 
-          {/* Sort Selector Dropdown */}
           <div className="flex items-center gap-2 rounded-xl border border-(--color-border) bg-(--color-surface-2) px-3 py-2 text-xs font-semibold text-white">
             <ArrowUpDown size={14} className="text-(--color-gold)" />
             <select
+              name="sortBy"
               value={sortBy}
               onChange={(event) => setSortBy(event.target.value as WishlistSortOption)}
               className="cursor-pointer bg-transparent text-xs font-bold text-white outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-gold)"
@@ -166,7 +162,6 @@ export default function WishlistContent({ initialItems }: { initialItems: Wishli
         </div>
       </div>
 
-      {/* Clear Filters Prompt */}
       {isFiltering && (
         <div className="mt-3 flex items-center justify-between text-xs">
           <p className="text-(--color-text-muted)">
@@ -185,7 +180,6 @@ export default function WishlistContent({ initialItems }: { initialItems: Wishli
         </div>
       )}
 
-      {/* 3. Horizontal Movie Cards List or Empty State */}
       {visibleMovies.length === 0 ? (
         <div className="mt-8">
           <EmptyState
@@ -216,7 +210,6 @@ export default function WishlistContent({ initialItems }: { initialItems: Wishli
         </div>
       )}
 
-      {/* Undo Notification Snackbar */}
       {lastRemoved && (
         <UndoSnackbar
           message={translate("profile.wishlist.removed")}

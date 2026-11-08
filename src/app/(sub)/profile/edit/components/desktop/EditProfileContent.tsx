@@ -20,7 +20,22 @@ import AccountShell from "@/components/shared/profile/desktop/AccountShell";
 export default function EditProfileContent() {
   const { translate } = useLocale();
   const profile = useProfileForm();
-  const { user, fullName, phone, dob, setFullName, setPhone, setDob, showErrors, errors, hasChanges, isPending, serverError, submit, cancel } = profile;
+  const {
+    user,
+    fullName,
+    phone,
+    dob,
+    setFullName,
+    setPhone,
+    setDob,
+    showErrors,
+    errors,
+    hasChanges,
+    isPending,
+    serverError,
+    submit,
+    cancel,
+  } = profile;
   const { upload, remove, isPending: isAvatarPending } = useAvatarUpload();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -31,7 +46,7 @@ export default function EditProfileContent() {
       title={translate("profile.edit_profile")}
       description={translate("profile.pages.edit_desc")}
     >
-      <section className="mx-auto max-w-4xl rounded-2xl border border-(--color-border) bg-(--color-surface) p-6 shadow-(--shadow-card) lg:p-8">
+      <div>
         <div className="mb-6 flex items-center gap-5">
           <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-full bg-(--color-surface-2)">
             <Image
@@ -46,6 +61,7 @@ export default function EditProfileContent() {
             <input
               ref={fileInputRef}
               type="file"
+              name="avatar"
               accept="image/*"
               className="hidden"
               onChange={(event) => {
@@ -99,7 +115,6 @@ export default function EditProfileContent() {
           className="min-w-0"
         >
           <div className="grid gap-6 sm:grid-cols-2">
-            {/* Full Name */}
             <FormField
               label={translate("profile.edit.full_name")}
               icon={User}
@@ -107,13 +122,13 @@ export default function EditProfileContent() {
             >
               <input
                 type="text"
+                name="fullname"
                 value={fullName}
                 onChange={(event) => setFullName(event.target.value)}
                 className="w-full bg-transparent text-(--color-text-primary) outline-none placeholder:text-(--color-text-muted)"
               />
             </FormField>
 
-            {/* Phone Number */}
             <div>
               <FormField
                 label={translate("profile.edit.phone")}
@@ -122,6 +137,7 @@ export default function EditProfileContent() {
               >
                 <input
                   type="tel"
+                  name="phone"
                   value={phone}
                   onChange={(event) => setPhone(event.target.value)}
                   className="w-full bg-transparent text-(--color-text-primary) outline-none placeholder:text-(--color-text-muted)"
@@ -132,7 +148,6 @@ export default function EditProfileContent() {
               </p>
             </div>
 
-            {/* Date of Birth with desktop calendar picker */}
             <div>
               <FormField
                 label={translate("profile.edit.dob")}
@@ -141,6 +156,7 @@ export default function EditProfileContent() {
               >
                 <input
                   type="date"
+                  name="dob"
                   value={dob}
                   onChange={(event) => setDob(event.target.value)}
                   className="w-full cursor-pointer bg-transparent text-(--color-text-primary) outline-none"
@@ -148,11 +164,11 @@ export default function EditProfileContent() {
               </FormField>
             </div>
 
-            {/* Readonly Email */}
             <div>
               <FormField label={translate("profile.edit.email")} icon={Mail} disabled>
                 <input
                   type="email"
+                  name="email"
                   value={user.email}
                   disabled
                   className="w-full cursor-not-allowed bg-transparent text-(--color-text-muted) outline-none"
@@ -167,7 +183,6 @@ export default function EditProfileContent() {
 
           {serverError && <ErrorAlert className="mt-5" message={serverError} />}
 
-          {/* Form Actions Footer */}
           <div className="mt-8 flex flex-col-reverse gap-3 border-t border-(--color-border) pt-6 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-xs text-(--color-text-muted)">
               {hasChanges ? translate("profile.edit.unsaved") : ""}
@@ -189,7 +204,7 @@ export default function EditProfileContent() {
             </div>
           </div>
         </form>
-      </section>
+      </div>
     </AccountShell>
   );
 }

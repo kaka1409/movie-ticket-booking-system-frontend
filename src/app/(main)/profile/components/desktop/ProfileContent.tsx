@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { ShieldCheck, KeyRound, ArrowRight, CheckCircle2 } from "lucide-react";
+import { ShieldCheck, KeyRound, ArrowRight } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { formatCalendarDate, toDateInputValue } from "@/libs/date";
@@ -11,7 +11,8 @@ import AccountShell from "@/components/shared/profile/desktop/AccountShell";
 /**
  * Desktop profile overview content:
  * Displays next upcoming screening showcase, activity statistics counters,
- * and a side-by-side Personal Information & Account Security matrix.
+ * and a side-by-side Personal Information & Account Security matrix —
+ * all inside the shell's single full-width panel.
  */
 export default function ProfileContent({
   stats,
@@ -44,18 +45,18 @@ export default function ProfileContent({
       title={translate("profile.overview")}
       description={translate("profile.pages.overview_desc")}
     >
-      <div className="space-y-6">
-        {/* Next Screening Widget Showcase */}
-        {nextTicket}
+      <div className="space-y-4">
+        <div className="rounded-xl border border-(--color-border) bg-(--color-surface-2)/40 p-5">
+          {nextTicket}
+        </div>
 
-        {/* Activity Statistics Counters */}
-        {stats}
+        <div className="rounded-xl border border-(--color-border) bg-(--color-surface-2)/40 px-5 py-4">
+          {stats}
+        </div>
 
-        {/* Personal Details & Account Security Side-by-Side Matrix */}
-        <div className="grid gap-6 lg:grid-cols-2">
-          {/* Personal Information */}
-          <section className="rounded-2xl border border-(--color-border) bg-(--color-surface) p-6 shadow-(--shadow-card)">
-            <div className="mb-4 flex items-center justify-between border-b border-(--color-border)/50 pb-3">
+        <div className="grid gap-4 lg:grid-cols-2">
+          <section className="rounded-xl border border-(--color-border) bg-(--color-surface-2)/40 p-5">
+            <div className="mb-4 flex items-center justify-between">
               <p className="text-xs font-bold tracking-wider text-(--color-gold) uppercase">
                 {translate("profile.personal_info")}
               </p>
@@ -88,17 +89,12 @@ export default function ProfileContent({
             </dl>
           </section>
 
-          {/* Account Security */}
-          <section className="flex flex-col justify-between rounded-2xl border border-(--color-border) bg-(--color-surface) p-6 shadow-(--shadow-card)">
+          <section className="flex flex-col justify-between rounded-xl border border-(--color-border) bg-(--color-surface-2)/40 p-5">
             <div>
-              <div className="mb-4 flex items-center justify-between border-b border-(--color-border)/50 pb-3">
+              <div className="mb-4 flex items-center justify-between">
                 <p className="text-xs font-bold tracking-wider text-(--color-gold) uppercase">
                   {translate("profile.security_title")}
                 </p>
-                <span className="flex items-center gap-1 text-2xs font-bold text-emerald-400">
-                  <CheckCircle2 size={13} />
-                  <span>{translate("profile.password_status")}</span>
-                </span>
               </div>
 
               <div className="flex items-start gap-3.5">

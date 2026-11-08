@@ -17,7 +17,7 @@ export default function NextScreeningWidget({ nextTicket }: { nextTicket: Upcomi
 
   if (!nextTicket) {
     return (
-      <section className="relative overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-surface) p-6">
+      <section>
         <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
           <div className="flex items-center gap-4">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-(--color-gold)/10 text-(--color-gold)">
@@ -48,7 +48,7 @@ export default function NextScreeningWidget({ nextTicket }: { nextTicket: Upcomi
   const snackCount = (nextTicket.foodDrink ?? []).reduce((total, item) => total + item.qty, 0);
 
   return (
-    <section className="overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-surface) p-5 shadow-(--shadow-card)">
+    <section>
       <div className="flex items-center justify-between border-b border-(--color-border)/50 pb-3 mb-4">
         <div className="flex items-center gap-2">
           <span className="flex h-6 w-6 items-center justify-center rounded-md bg-(--color-gold)/15 text-(--color-gold)">
@@ -63,7 +63,6 @@ export default function NextScreeningWidget({ nextTicket }: { nextTicket: Upcomi
       </div>
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-        {/* Movie Poster with Live Countdown */}
         <div className="relative aspect-[2/3] w-24 shrink-0 overflow-hidden rounded-xl bg-(--color-surface-2) shadow-md">
           <Image
             src={nextTicket.poster}
@@ -72,10 +71,13 @@ export default function NextScreeningWidget({ nextTicket }: { nextTicket: Upcomi
             sizes="96px"
             className="object-cover"
           />
-          <TicketCountdown startsAtMs={nextTicket.startsAtMs} endsAtMs={nextTicket.endsAtMs} />
+          <TicketCountdown
+            startsAtMs={nextTicket.startsAtMs}
+            endsAtMs={nextTicket.endsAtMs}
+            tone="gold"
+          />
         </div>
 
-        {/* Screening Details */}
         <div className="flex min-w-0 flex-1 flex-col justify-between gap-2">
           <div>
             <div className="flex flex-wrap items-center gap-2 mb-1">
@@ -98,14 +100,13 @@ export default function NextScreeningWidget({ nextTicket }: { nextTicket: Upcomi
                 <CalendarDays size={13} className="text-(--color-gold)" />
                 {nextTicket.datetime}
               </span>
-              <span className="flex items-center gap-1.5 truncate">
+              <span className="flex items-center gap-1.5 truncate font-medium text-white">
                 <MapPin size={13} className="text-(--color-gold)" />
                 {nextTicket.cinema} {nextTicket.room ? `· ${nextTicket.room}` : ""}
               </span>
             </div>
           </div>
 
-          {/* Badges: Seats and Combos */}
           <div className="mt-2 flex flex-wrap items-center gap-2 pt-2 border-t border-(--color-border)/40 text-xs">
             <span className="rounded-lg border border-(--color-border) bg-(--color-surface-2) px-2.5 py-1 font-semibold text-(--color-text-secondary)">
               {translate("tickets.seats_label")}
@@ -125,7 +126,6 @@ export default function NextScreeningWidget({ nextTicket }: { nextTicket: Upcomi
           </div>
         </div>
 
-        {/* Action Button */}
         <div className="sm:pl-4 sm:border-l sm:border-(--color-border)/40 shrink-0">
           <Link
             href={`/tickets/${nextTicket.id}`}

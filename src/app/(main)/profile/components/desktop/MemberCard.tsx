@@ -17,14 +17,12 @@ export default function MemberCard({ user }: { user: User }) {
 
   return (
     <article className="relative overflow-hidden rounded-2xl border border-(--color-gold)/30 bg-gradient-to-br from-(--color-surface) via-(--color-surface-2) to-(--color-surface) p-6 shadow-xl">
-      {/* Decorative Golden Glow & Watermark */}
       <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-(--color-gold)/10 blur-3xl" />
       <div className="pointer-events-none absolute right-6 top-6 text-white/5">
         <Crown size={120} strokeWidth={1} />
       </div>
 
       <div className="relative z-10 flex flex-col justify-between gap-6 md:flex-row md:items-center">
-        {/* Left Side: Avatar and Identity */}
         <div className="flex items-center gap-5">
           <AvatarRing src={user.avatarUrl} name={user.name} size="h-20 w-20" />
 
@@ -52,7 +50,6 @@ export default function MemberCard({ user }: { user: User }) {
           </div>
         </div>
 
-        {/* Right Side: Status Badge & Quick Shortcuts */}
         <div className="flex flex-col items-start gap-3 sm:items-end">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-bold text-emerald-400">
             <ShieldCheck size={14} />

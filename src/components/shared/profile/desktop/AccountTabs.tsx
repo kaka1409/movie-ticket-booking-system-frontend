@@ -43,7 +43,6 @@ export default function AccountTabs() {
             />
             <span>{translate(section.labelKey)}</span>
 
-            {/* Golden Active Underline Bar */}
             {isActive && (
               <span className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full bg-(--color-gold)" />
             )}

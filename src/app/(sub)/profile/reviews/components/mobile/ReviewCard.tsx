@@ -6,7 +6,7 @@ import Image from "next/image";
 import { Trash2, ArrowUpRight } from "lucide-react";
 import type { MyReview } from "@/features/reviews/types";
 import { useLocale } from "@/contexts/LocaleContext";
-import { formatDate } from "@/libs/utils";
+import { formatDate } from "@/libs/date";
 import ExpandableText from "@/components/ui/ExpandableText";
 import RatingBadge from "@/components/ui/RatingBadge";
 

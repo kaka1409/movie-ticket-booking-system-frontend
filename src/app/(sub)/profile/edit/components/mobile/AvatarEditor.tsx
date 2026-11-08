@@ -46,6 +46,7 @@ export default function AvatarEditor() {
       <input
         ref={fileInputRef}
         type="file"
+        name="avatar"
         accept="image/*"
         className="hidden"
         onChange={(event) => {

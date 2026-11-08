@@ -8,7 +8,7 @@ import { Skeleton } from "@/components/ui/Skeleton";
 /** Desktop edit form layout beneath the shared account chrome. */
 export function EditProfileDesktopSkeleton() {
   return (
-    <section className="mx-auto max-w-4xl rounded-2xl border border-(--color-border) bg-(--color-surface) p-6 shadow-(--shadow-card) lg:p-8">
+    <div>
       <div className="mb-6 border-b border-(--color-border)/50 pb-4">
         <Skeleton className="h-7 w-52 rounded-md" />
         <Skeleton className="mt-2 h-3.5 w-72 max-w-full rounded-full" />
@@ -38,42 +38,40 @@ export function EditProfileDesktopSkeleton() {
           <Skeleton className="h-10 w-32 rounded-xl" />
         </div>
       </div>
-    </section>
+    </div>
   );
 }
 
 /** Desktop password form and guidance column beneath the shared account chrome. */
 export function PasswordDesktopSkeleton() {
   return (
-    <div className="mx-auto max-w-5xl">
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
-        <section className="rounded-2xl border border-(--color-border) bg-(--color-surface) p-6 shadow-(--shadow-card) lg:p-8">
-          <div className="mb-6 border-b border-(--color-border)/50 pb-4">
-            <Skeleton className="h-7 w-48 rounded-md" />
-            <Skeleton className="mt-2 h-3.5 w-72 max-w-full rounded-full" />
-          </div>
+    <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
+      <div>
+        <div className="mb-6 border-b border-(--color-border)/50 pb-4">
+          <Skeleton className="h-7 w-48 rounded-md" />
+          <Skeleton className="mt-2 h-3.5 w-72 max-w-full rounded-full" />
+        </div>
 
-          <div className="flex flex-col gap-5">
-            {Array.from({ length: 3 }).map((_, index) => (
-              <div key={index}>
-                <Skeleton className="mb-1.5 h-[11px] w-28 rounded-full" />
-                <Skeleton className="h-[42px] w-full rounded-xl" />
-              </div>
-            ))}
-          </div>
+        <div className="flex flex-col gap-5">
+          {Array.from({ length: 3 }).map((_, index) => (
+            <div key={index}>
+              <Skeleton className="mb-1.5 h-[11px] w-28 rounded-full" />
+              <Skeleton className="h-[42px] w-full rounded-xl" />
+            </div>
+          ))}
+        </div>
 
-          <div className="mt-8 flex flex-col gap-3 border-t border-(--color-border) pt-6 sm:flex-row sm:justify-end">
-            <Skeleton className="h-10 w-24 rounded-xl" />
-            <Skeleton className="h-10 w-32 rounded-xl" />
-          </div>
-        </section>
-
-        <aside className="space-y-5">
-          <Skeleton className="h-28 rounded-2xl" />
-          <Skeleton className="h-56 rounded-2xl" />
-          <Skeleton className="h-28 rounded-2xl" />
-        </aside>
+        <div className="mt-8 flex flex-col gap-3 border-t border-(--color-border) pt-6 sm:flex-row sm:justify-end">
+          <Skeleton className="h-10 w-24 rounded-xl" />
+          <Skeleton className="h-10 w-32 rounded-xl" />
+        </div>
       </div>
+
+      <aside className="space-y-5">
+        <Skeleton className="h-28 rounded-2xl" />
+        <Skeleton className="h-56 rounded-2xl" />
+        <Skeleton className="h-28 rounded-2xl" />
+      </aside>
     </div>
   );
 }
@@ -82,9 +80,15 @@ export function PasswordDesktopSkeleton() {
 export function WishlistDesktopSkeleton() {
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid grid-cols-3 divide-x divide-(--color-border)/50">
         {Array.from({ length: 3 }).map((_, index) => (
-          <Skeleton key={index} className="h-20 rounded-2xl" />
+          <div key={index} className="flex items-center gap-3 px-3 py-1 sm:gap-4 sm:px-5">
+            <Skeleton className="h-9 w-9 shrink-0 rounded-xl" />
+            <div className="min-w-0 flex-1 space-y-1.5">
+              <Skeleton className="h-6 w-12 rounded-md" />
+              <Skeleton className="h-2.5 w-16 rounded-full" />
+            </div>
+          </div>
         ))}
       </div>
       <div className="flex flex-col gap-4 border-b border-(--color-border)/50 pb-5 lg:flex-row lg:justify-between">

@@ -32,7 +32,6 @@ export default function WishlistMovieRow({
       data-wishlist-card
       className="group flex flex-col gap-5 rounded-2xl border border-(--color-border) bg-(--color-surface) p-5 shadow-(--shadow-card) transition duration-200 hover:border-(--color-gold)/40 hover:shadow-lg sm:flex-row sm:items-center"
     >
-      {/* 1. Movie Poster */}
       <Link
         href={`/movies/${movie.slug}`}
         className="relative aspect-[2/3] w-24 shrink-0 overflow-hidden rounded-xl bg-(--color-surface-2) shadow-sm lg:w-28"
@@ -51,7 +50,6 @@ export default function WishlistMovieRow({
           </div>
         )}
 
-        {/* Age Rating Badge Over Poster */}
         {movie.ageRating && (
           <div className="absolute left-1.5 top-1.5">
             <Badge
@@ -65,7 +63,6 @@ export default function WishlistMovieRow({
         )}
       </Link>
 
-      {/* 2. Middle Movie Metadata */}
       <div className="flex min-w-0 flex-1 flex-col justify-between gap-3">
         <div>
           <div className="flex flex-wrap items-center gap-2.5">
@@ -90,7 +87,6 @@ export default function WishlistMovieRow({
             )}
           </div>
 
-          {/* Details Row: Genre, Duration, Rating */}
           <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-(--color-text-muted)">
             <span className="text-white">{movie.genre}</span>
 
@@ -108,7 +104,6 @@ export default function WishlistMovieRow({
             )}
           </div>
 
-          {/* Release Date Info for Upcoming Movies */}
           {!isBookable && movie.releaseDate && (
             <p className="mt-2.5 flex items-center gap-1.5 text-xs font-semibold text-(--color-gold-light)">
               <Calendar size={13} />
@@ -119,7 +114,6 @@ export default function WishlistMovieRow({
           )}
         </div>
 
-        {/* Action Link to Details */}
         <div>
           <Link
             href={`/movies/${movie.slug}`}
@@ -131,9 +125,7 @@ export default function WishlistMovieRow({
         </div>
       </div>
 
-      {/* 3. Right Action Column */}
       <div className="flex shrink-0 flex-row items-center gap-2.5 border-t border-(--color-border)/50 pt-3 sm:flex-col sm:items-end sm:justify-center sm:border-0 sm:pt-0">
-        {/* Book Now or View Details CTA */}
         {isBookable ? (
           <Link
             href={`/booking/${movie.slug}/cinema`}
@@ -152,7 +144,6 @@ export default function WishlistMovieRow({
           </Link>
         )}
 
-        {/* Remove from Wishlist Toggle Button */}
         <button
           type="button"
           onClick={() => onToggleWishlist(movie)}

@@ -20,9 +20,15 @@ export function MobileReviewListSkeleton() {
 export function DesktopReviewsSkeleton() {
   return (
     <div className="space-y-4">
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid grid-cols-3 divide-x divide-(--color-border)/50">
         {Array.from({ length: 3 }).map((_, index) => (
-          <SurfaceSkeleton key={index} raised className="h-24 rounded-xl" />
+          <div key={index} className="flex items-center gap-3 px-3 py-1 sm:gap-4 sm:px-5">
+            <SurfaceSkeleton raised className="h-9 w-9 shrink-0 rounded-xl" />
+            <div className="min-w-0 flex-1 space-y-1.5">
+              <SurfaceSkeleton raised className="h-6 w-12 rounded-md" />
+              <SurfaceSkeleton raised className="h-2.5 w-16 rounded-full" />
+            </div>
+          </div>
         ))}
       </div>
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-(--color-border)/50 pb-4">

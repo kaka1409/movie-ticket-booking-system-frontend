@@ -29,7 +29,9 @@ export default function AccountShell({
 
       <div className="mt-8 min-w-0">
         <DesktopPageHeader className="mb-6" title={title} subtitle={description} action={action} />
-        {children}
+        <div className="rounded-2xl border border-(--color-border) bg-(--color-surface) p-6 shadow-(--shadow-card)">
+          {children}
+        </div>
       </div>
     </div>
   );
