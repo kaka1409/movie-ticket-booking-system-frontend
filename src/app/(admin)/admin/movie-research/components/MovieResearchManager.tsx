@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { ExternalLink, Play, RotateCcw, Sparkles } from "lucide-react";
+import { ExternalLink, Loader2, Pause, Play, RotateCcw, Sparkles, Square } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useToast } from "@/contexts/ToastContext";
@@ -10,20 +10,42 @@ import AdminButton from "@/app/(admin)/admin/components/shared/AdminButton";
 import type {
   AdminActionResult,
   MovieResearchCandidate,
+  MovieResearchModel,
   MovieResearchRun,
 } from "@/features/admin/types";
 import {
+  controlMovieResearchRunAction,
   importMovieResearchCandidateAction,
   runMovieResearchAction,
   updateMovieResearchCandidateAction,
 } from "@/features/admin/actions/movie-research.action";
+import ModelPicker from "./ModelPicker";
+
+const ACTIVE_STATUSES = new Set(["running", "paused"]);
+
+type ResearchRunProgress = { processed: number; discovered: number; enriched: number };
+
+type ResearchStreamEvent =
+  | { type: "candidate"; runId: string; candidate: MovieResearchCandidate }
+  | ({ type: "progress"; runId: string } & ResearchRunProgress)
+  | { type: "done"; runId: string; status: string };
+
+const STATUS_BADGE_CLASS: Record<string, string> = {
+  running: "bg-(--color-gold)/15 text-(--color-gold)",
+  paused: "bg-amber-400/15 text-amber-400",
+  completed: "bg-emerald-400/15 text-emerald-400",
+  failed: "bg-red-500/15 text-red-400",
+  stopped: "bg-(--color-text-muted)/15 text-(--color-text-muted)",
+};
 
 export default function MovieResearchManager({
   candidates,
   runs,
+  models,
 }: {
   candidates: MovieResearchCandidate[];
   runs: MovieResearchRun[];
+  models: MovieResearchModel[];
 }) {
   const { token } = useAuth();
   const { translate, locale } = useLocale();
@@ -31,20 +53,136 @@ export default function MovieResearchManager({
   const router = useRouter();
   const [busy, startTransition] = useTransition();
   const [filter, setFilter] = useState("pending");
-  const visible =
-    filter === "all" ? candidates : candidates.filter((candidate) => candidate.status === filter);
+  const [selectedModel, setSelectedModel] = useState("");
+  // The run row is created inside the async job, a beat after POST /runs
+  // answers — without this grace window the poll never starts and the page
+  // looks frozen until a manual refresh.
+  const [awaitingRun, setAwaitingRun] = useState(false);
+  const [runClickAt, setRunClickAt] = useState(0);
+  // SSE payloads keyed by run id so a stale stream never bleeds into the
+  // next run's list; only applied while that run is the active one.
+  const [liveRun, setLiveRun] = useState<{
+    runId: string;
+    candidates: MovieResearchCandidate[];
+    progress: ResearchRunProgress | null;
+  } | null>(null);
   const dateLocale = locale === "vn" ? "vi-VN" : "en-US";
 
-  const execute = <T,>(operation: () => Promise<AdminActionResult<T>>, successText: string) => {
+  const latestRun = runs[0] ?? null;
+  const isRunActive = !!latestRun && ACTIVE_STATUSES.has(latestRun.status);
+  const effectiveModel = selectedModel || models[0]?.id || "";
+  const liveData =
+    liveRun && latestRun && liveRun.runId === latestRun.id && isRunActive ? liveRun : null;
+
+  // Awaiting ends once a run row newer than the click shows up (any status —
+  // a fast failure must not leave "Starting…" stuck). The poll counter below
+  // covers the case where no row ever appears.
+  // 15s buffer absorbs client/server clock skew on startedAt.
+  const runStartedAfterClick =
+    awaitingRun && !!latestRun && new Date(latestRun.startedAt).getTime() >= runClickAt - 15_000;
+  const isAwaitingRun = awaitingRun && !runStartedAfterClick;
+
+  // SSE pushes each candidate/progress update the moment the run writes it;
+  // the slow refresh below is only a reconcile for events missed mid-reconnect.
+  useEffect(() => {
+    if (!isRunActive || !latestRun) return;
+    const source = new EventSource(
+      `/api/v1/admin/movie-research/runs/${latestRun.id}/events`,
+    );
+    source.onmessage = (message) => {
+      let event: ResearchStreamEvent;
+      try {
+        event = JSON.parse(message.data) as ResearchStreamEvent;
+      } catch {
+        return;
+      }
+      if (event.type === "candidate") {
+        setLiveRun((previous) => {
+          const base =
+            previous?.runId === event.runId
+              ? previous
+              : { runId: event.runId, candidates: [], progress: null };
+          return base.candidates.some((item) => item.id === event.candidate.id)
+            ? base
+            : { ...base, candidates: [...base.candidates, event.candidate] };
+        });
+      } else if (event.type === "progress") {
+        setLiveRun((previous) => ({
+          runId: event.runId,
+          candidates: previous?.runId === event.runId ? previous.candidates : [],
+          progress: {
+            processed: event.processed,
+            discovered: event.discovered,
+            enriched: event.enriched,
+          },
+        }));
+      } else if (event.type === "done") {
+        source.close();
+        router.refresh();
+      }
+    };
+    return () => source.close();
+  }, [isRunActive, latestRun, router]);
+
+  // Awaiting needs a fast poll for the run row to appear; once active, SSE
+  // carries the updates and this is just a 15s safety reconcile.
+  useEffect(() => {
+    if (!isAwaitingRun && !isRunActive) return;
+    let polls = 0;
+    const interval = setInterval(() => {
+      polls += 1;
+      // ~60s grace for the run row to appear, then stop fast-polling.
+      if (isAwaitingRun && !isRunActive && polls >= 15) setAwaitingRun(false);
+      router.refresh();
+    }, isAwaitingRun ? 4000 : 15000);
+    return () => clearInterval(interval);
+  }, [isAwaitingRun, isRunActive, router]);
+
+  // Fresh SSE candidates lead the list (they are the ones just discovered);
+  // anything already server-rendered keeps its slot and gets live-overridden.
+  const mergedCandidates = useMemo(() => {
+    if (!liveData) return candidates;
+    const byId = new Map(candidates.map((candidate) => [candidate.id, candidate]));
+    const fresh: MovieResearchCandidate[] = [];
+    for (const live of liveData.candidates) {
+      if (byId.has(live.id)) byId.set(live.id, live);
+      else fresh.push(live);
+    }
+    return [...fresh, ...byId.values()];
+  }, [candidates, liveData]);
+
+  const visible =
+    filter === "all"
+      ? mergedCandidates
+      : mergedCandidates.filter((candidate) => candidate.status === filter);
+
+  const shownProgress: ResearchRunProgress | null = latestRun
+    ? (liveData?.progress ?? {
+        processed: latestRun.processed,
+        discovered: latestRun.discovered,
+        enriched: latestRun.enriched,
+      })
+    : null;
+
+  const execute = <T,>(
+    operation: () => Promise<AdminActionResult<T>>,
+    onSuccess?: () => void,
+  ) => {
     startTransition(async () => {
       const result = await operation();
       if (!result.success) {
         notify(result.error, { variant: "error" });
         return;
       }
-      notify(successText);
+      onSuccess?.();
       router.refresh();
     });
+  };
+
+  const runStatusLabel = (status: string) => {
+    const key = `admin.research.status_${status}`;
+    const label = translate(key);
+    return label === key ? status : label;
   };
 
   return (
@@ -57,22 +195,104 @@ export default function MovieResearchManager({
               {translate("admin.research.schedule")}
             </p>
           </div>
-          <AdminButton
-            icon={Play}
-            variant="primary"
-            disabled={busy || !token}
-            onClick={() =>
-              execute(() => runMovieResearchAction(token!), translate("admin.research.run_started"))
-            }
-          >
-            {translate("admin.research.run_now")}
-          </AdminButton>
+          <div className="flex flex-wrap items-center gap-2">
+            <ModelPicker
+              models={models}
+              value={effectiveModel}
+              onChange={setSelectedModel}
+              disabled={busy || isRunActive || !token}
+            />
+            {latestRun && isRunActive && latestRun.status === "running" && (
+              <AdminButton
+                icon={Pause}
+                disabled={busy || !token}
+                onClick={() =>
+                  execute(() =>
+                    controlMovieResearchRunAction(token!, latestRun.id, "pause"),
+                  )
+                }
+              >
+                {translate("admin.research.pause")}
+              </AdminButton>
+            )}
+            {latestRun && latestRun.status === "paused" && (
+              <AdminButton
+                icon={Play}
+                variant="primary"
+                disabled={busy || !token}
+                onClick={() =>
+                  execute(() =>
+                    controlMovieResearchRunAction(token!, latestRun.id, "resume"),
+                  )
+                }
+              >
+                {translate("admin.research.resume")}
+              </AdminButton>
+            )}
+            {latestRun && isRunActive && (
+              <AdminButton
+                icon={Square}
+                variant="danger"
+                disabled={busy || !token}
+                onClick={() =>
+                  execute(() =>
+                    controlMovieResearchRunAction(token!, latestRun.id, "stop"),
+                  )
+                }
+              >
+                {translate("admin.research.stop")}
+              </AdminButton>
+            )}
+            <AdminButton
+              icon={Play}
+              variant="primary"
+              disabled={busy || !token || isRunActive || !effectiveModel}
+              onClick={() =>
+                execute(
+                  () => runMovieResearchAction(token!, effectiveModel),
+                  () => {
+                    setRunClickAt(Date.now());
+                    setAwaitingRun(true);
+                  },
+                )
+              }
+            >
+              {translate("admin.research.run_now")}
+            </AdminButton>
+          </div>
         </div>
-        {runs[0] ? (
-          <p className="mt-4 text-xs text-(--color-text-muted)">
-            {new Date(runs[0].startedAt).toLocaleString(dateLocale)} · {runs[0].status} ·{" "}
-            {runs[0].discovered} {translate("admin.research.found")} · {runs[0].error ?? ""}
+        {isAwaitingRun && (
+          <p className="mt-4 flex items-center gap-2 text-xs text-(--color-text-muted)">
+            <Loader2 size={12} className="animate-spin text-(--color-gold)" aria-hidden />
+            {translate("admin.research.starting")}
           </p>
+        )}
+        {latestRun ? (
+          <div className="mt-4 space-y-1.5 text-xs text-(--color-text-muted)">
+            <p className="flex flex-wrap items-center gap-2">
+              <span
+                className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-2xs font-bold ${STATUS_BADGE_CLASS[latestRun.status] ?? "bg-(--color-surface-2) text-(--color-text-muted)"}`}
+              >
+                {latestRun.status === "running" && (
+                  <Loader2 size={11} className="animate-spin" aria-hidden />
+                )}
+                {runStatusLabel(latestRun.status)}
+              </span>
+              <span>
+                {new Date(latestRun.startedAt).toLocaleString(dateLocale)}
+                {latestRun.finishedAt &&
+                  ` → ${new Date(latestRun.finishedAt).toLocaleString(dateLocale)}`}
+              </span>
+              {latestRun.model && <span>· {latestRun.model}</span>}
+            </p>
+            <p>
+              {shownProgress && shownProgress.processed > 0 &&
+                `${translate("admin.research.processed")}: ${shownProgress.processed} · `}
+              {shownProgress?.discovered ?? 0} {translate("admin.research.found")} ·{" "}
+              {translate("admin.research.enriched")}: {shownProgress?.enriched ?? 0}
+              {latestRun.error ? ` · ${latestRun.error}` : ""}
+            </p>
+          </div>
         ) : (
           <p className="mt-4 text-sm text-(--color-text-muted)">
             {translate("admin.research.no_runs")}
@@ -110,11 +330,12 @@ export default function MovieResearchManager({
             >
               <div className="flex gap-4 p-4">
                 {candidate.posterUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element -- external poster hosts are outside the next/image allowlist
                   <img
                     src={candidate.posterUrl}
                     alt=""
                     loading="lazy"
-                    className="h-36 w-24 shrink-0 rounded-lg object-cover"
+                    className="h-20 w-32 shrink-0 rounded-lg object-cover"
                   />
                 ) : null}
                 <div className="min-w-0 flex-1">
@@ -177,10 +398,12 @@ export default function MovieResearchManager({
                     <AdminButton
                       disabled={busy || !token}
                       onClick={() =>
-                        execute(
-                          () =>
-                            updateMovieResearchCandidateAction(token!, candidate.id, "rejected"),
-                          translate("admin.research.rejected_toast"),
+                        execute(() =>
+                          updateMovieResearchCandidateAction(
+                            token!,
+                            candidate.id,
+                            "rejected",
+                          ),
                         )
                       }
                     >
@@ -191,10 +414,7 @@ export default function MovieResearchManager({
                       variant="primary"
                       disabled={busy || !token}
                       onClick={() =>
-                        execute(
-                          () => importMovieResearchCandidateAction(token!, candidate.id),
-                          translate("admin.research.imported_toast"),
-                        )
+                        execute(() => importMovieResearchCandidateAction(token!, candidate.id))
                       }
                     >
                       {translate("admin.research.create_draft")}
@@ -206,9 +426,8 @@ export default function MovieResearchManager({
                     icon={RotateCcw}
                     disabled={busy || !token}
                     onClick={() =>
-                      execute(
-                        () => updateMovieResearchCandidateAction(token!, candidate.id, "pending"),
-                        translate("admin.research.reopened_toast"),
+                      execute(() =>
+                        updateMovieResearchCandidateAction(token!, candidate.id, "pending"),
                       )
                     }
                   >

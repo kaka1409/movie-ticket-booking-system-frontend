@@ -3,10 +3,25 @@
 import { mutateAdmin } from "../mutation";
 import type { AdminActionResult, AdminMovie, MovieResearchCandidate } from "../types";
 
-export async function runMovieResearchAction(token: string) {
+export async function runMovieResearchAction(token: string, model?: string) {
   return mutateAdmin<{ id: string; status: string; discovered: number; enriched: number }>(
     "POST",
     "/admin/movie-research/runs",
+    token,
+    model ? { model } : {},
+  );
+}
+
+export type MovieResearchRunControl = "pause" | "resume" | "stop";
+
+export async function controlMovieResearchRunAction(
+  token: string,
+  runId: string,
+  action: MovieResearchRunControl,
+) {
+  return mutateAdmin<{ status: string }>(
+    "POST",
+    `/admin/movie-research/runs/${runId}/${action}`,
     token,
   );
 }

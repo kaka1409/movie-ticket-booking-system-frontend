@@ -2,7 +2,11 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import AdminPageHeader from "@/app/(admin)/admin/components/shared/AdminPageHeader";
 import MovieResearchSkeleton from "../components/skeletons/MovieResearchSkeleton";
-import { getMovieResearchCandidates, getMovieResearchRuns } from "@/features/admin/api";
+import {
+  getMovieResearchCandidates,
+  getMovieResearchModels,
+  getMovieResearchRuns,
+} from "@/features/admin/api";
 import { isUnauthorizedResult } from "@/libs/session";
 import AdminDataError from "@/app/(admin)/admin/components/shared/AdminDataError";
 import MovieResearchManager from "./components/MovieResearchManager";
@@ -10,14 +14,19 @@ import MovieResearchManager from "./components/MovieResearchManager";
 export const metadata: Metadata = { title: "AI movie research" };
 
 async function ResearchSection() {
-  const [candidateResult, runResult] = await Promise.all([
+  const [candidateResult, runResult, modelResult] = await Promise.all([
     getMovieResearchCandidates(),
     getMovieResearchRuns(),
+    getMovieResearchModels(),
   ]);
   if (isUnauthorizedResult(candidateResult) || isUnauthorizedResult(runResult)) return null;
   if ("error" in candidateResult) return <AdminDataError message={candidateResult.error.message} />;
   if ("error" in runResult) return <AdminDataError message={runResult.error.message} />;
-  return <MovieResearchManager candidates={candidateResult.data} runs={runResult.data} />;
+  // Models feed the picker only — a provider outage must not blank the page.
+  const models = "error" in modelResult ? [] : modelResult.data;
+  return (
+    <MovieResearchManager candidates={candidateResult.data} runs={runResult.data} models={models} />
+  );
 }
 
 export default function MovieResearchPage() {
