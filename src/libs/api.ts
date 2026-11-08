@@ -129,7 +129,14 @@ function parseApiError(status: number, body: unknown): ErrorResponse["error"] {
  */
 export function toErrorResponse(reason: unknown): ErrorResponse {
   const message = reason instanceof Error ? reason.message : String(reason);
-  return { error: { status: 0, code: "UNKNOWN_ERROR", message } };
+  const failure = reason as { status?: number; code?: string } | null;
+  return {
+    error: {
+      status: failure?.status ?? 0,
+      code: failure?.code ?? "UNKNOWN_ERROR",
+      message,
+    },
+  };
 }
 
 /**
