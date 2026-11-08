@@ -28,6 +28,7 @@ export default function AdminFormModal({
   size = "lg",
   onFillSample,
   sampleLabelKey = "admin.common.fill_sample",
+  hideFooter = false,
   children,
 }: {
   isOpen: boolean;
@@ -43,6 +44,8 @@ export default function AdminFormModal({
   /** Create-mode only: prefills the form with a valid sample record. */
   onFillSample?: () => void;
   sampleLabelKey?: string;
+  /** Multi-stage flows render their own footer inside `children`. */
+  hideFooter?: boolean;
   children: ReactNode;
 }) {
   const { translate } = useLocale();
@@ -129,18 +132,20 @@ export default function AdminFormModal({
 
         <div className="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-3.5">{children}</div>
 
-        <footer className="shrink-0 space-y-3 border-t border-(--color-border) px-4 py-3">
-          {error && <ErrorAlert message={error} />}
+        {!hideFooter && (
+          <footer className="shrink-0 space-y-3 border-t border-(--color-border) px-4 py-3">
+            {error && <ErrorAlert message={error} />}
 
-          <div className="flex items-center justify-end gap-2">
-            <AdminButton size="md" variant="ghost" onClick={onClose} disabled={isPending}>
-              {translate("admin.common.cancel")}
-            </AdminButton>
-            <AdminButton size="md" type="submit" variant="primary" isLoading={isPending}>
-              {translate(submitLabelKey)}
-            </AdminButton>
-          </div>
-        </footer>
+            <div className="flex items-center justify-end gap-2">
+              <AdminButton size="md" variant="ghost" onClick={onClose} disabled={isPending}>
+                {translate("admin.common.cancel")}
+              </AdminButton>
+              <AdminButton size="md" type="submit" variant="primary" isLoading={isPending}>
+                {translate(submitLabelKey)}
+              </AdminButton>
+            </div>
+          </footer>
+        )}
       </form>
     </dialog>
   );

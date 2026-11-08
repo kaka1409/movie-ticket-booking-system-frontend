@@ -1,14 +1,24 @@
 import AdminDataError from "@/app/(admin)/admin/components/shared/AdminDataError";
 import {
   getAdminMovies,
-  getAdminShowtimeBoard,
   getAdminCinemas,
   getAdminCatalog,
+  getAdminSchedule,
+  getAdminScheduleSummary,
+  getAdminSlotTemplates,
 } from "@/features/admin/api";
-import { isUnauthorizedResult } from "@/libs/session";
 import { todayInCinemaZone } from "@/libs/date";
 import type { AdminCatalogEntry } from "@/features/admin/types";
 import ShowtimesManager from "./components/ShowtimesManager";
+
+/** Days the date strip covers — one summary read feeds every badge. */
+const STRIP_DAYS = 14;
+
+function addDays(date: string, days: number): string {
+  const value = new Date(`${date}T00:00:00.000Z`);
+  value.setUTCDate(value.getUTCDate() + days);
+  return value.toISOString().slice(0, 10);
+}
 
 export interface AdminShowtimesQuery {
   movie: string;
@@ -16,49 +26,56 @@ export interface AdminShowtimesQuery {
 }
 
 export async function ShowtimesManagerSection({ movie, date }: AdminShowtimesQuery) {
-  const [moviesResult, cinemasResult, formatsResult] = await Promise.all([
-    getAdminMovies({ page: 1, limit: 100 }),
-    getAdminCinemas(),
-    getAdminCatalog("formats"),
-  ]);
+  const today = todayInCinemaZone();
+  const resolvedDate = date || today;
+  const from = today < resolvedDate ? today : resolvedDate;
+  const stripDates = Array.from({ length: STRIP_DAYS }, (_, index) => addDays(today, index));
+  const to = stripDates[stripDates.length - 1];
 
-  if (
-    isUnauthorizedResult(moviesResult) ||
-    isUnauthorizedResult(cinemasResult) ||
-    isUnauthorizedResult(formatsResult)
-  ) {
-    return null;
+  const [moviesResult, cinemasResult, formatsResult, templatesResult, scheduleResult, summaryResult] =
+    await Promise.all([
+      getAdminMovies({ page: 1, limit: 100 }),
+      getAdminCinemas(),
+      getAdminCatalog("formats"),
+      getAdminSlotTemplates(),
+      getAdminSchedule(resolvedDate),
+      getAdminScheduleSummary(from, to),
+    ]);
+
+  // Each read narrows individually — a single failure fails the whole section.
+  for (const result of [
+    moviesResult,
+    cinemasResult,
+    formatsResult,
+    templatesResult,
+    scheduleResult,
+    summaryResult,
+  ]) {
+    if ("error" in result) {
+      if (result.error.status === 401) return null;
+      return <AdminDataError message={result.error.message} />;
+    }
   }
-  if ("error" in moviesResult) return <AdminDataError message={moviesResult.error.message} />;
-  if ("error" in cinemasResult) return <AdminDataError message={cinemasResult.error.message} />;
-  if ("error" in formatsResult) return <AdminDataError message={formatsResult.error.message} />;
-
-  const movies = moviesResult.data.movies;
-  const resolvedMovie = movie || movies[0]?.slug || "";
-  // Showtime `date` is cinema wall clock, so the default day must be too.
-  const resolvedDate = date || todayInCinemaZone();
-
-  let board = null;
-  if (resolvedMovie) {
-    const boardResult = await getAdminShowtimeBoard({
-      movieSlug: resolvedMovie,
-      date: resolvedDate,
-    });
-    if (isUnauthorizedResult(boardResult)) return null;
-    if ("error" in boardResult) return <AdminDataError message={boardResult.error.message} />;
-    board = boardResult.data;
-  }
+  if ("error" in moviesResult) return null;
+  if ("error" in cinemasResult) return null;
+  if ("error" in formatsResult) return null;
+  if ("error" in templatesResult) return null;
+  if ("error" in scheduleResult) return null;
+  if ("error" in summaryResult) return null;
 
   const formats: AdminCatalogEntry[] = formatsResult.data;
 
   return (
     <ShowtimesManager
-      movies={movies}
+      movies={moviesResult.data.movies}
       cinemas={cinemasResult.data}
       formats={formats}
-      board={board}
-      movie={resolvedMovie}
+      templates={templatesResult.data}
+      schedule={scheduleResult.data}
+      dayCounts={summaryResult.data}
+      stripDates={stripDates}
       date={resolvedDate}
+      movie={movie}
     />
   );
 }
