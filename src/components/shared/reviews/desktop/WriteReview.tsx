@@ -48,9 +48,9 @@ export default function WriteReview({
           </button>
         ))}
 
-        {composer.rating > 0 && (
-          <span className="self-center text-sm font-bold text-(--color-gold)">
-            {composer.rating} / {REVIEW_RATING_MAX}
+        {(composer.hoveredRating > 0 || composer.rating > 0) && (
+          <span className="self-center text-sm font-bold text-(--color-text-muted)">
+            {composer.hoveredRating || composer.rating} / {REVIEW_RATING_MAX}
           </span>
         )}
       </div>

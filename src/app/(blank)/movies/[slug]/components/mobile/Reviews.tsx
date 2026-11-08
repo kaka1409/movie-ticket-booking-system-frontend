@@ -1,10 +1,9 @@
 ﻿"use client";
 
 import { useState, useRef, useEffect } from "react";
-import { X, LogIn, RotateCcw, ChevronLeft, ChevronRight } from "lucide-react";
+import { X, LogIn, RotateCcw, ChevronLeft, ChevronRight, Star } from "lucide-react";
 import { useRouter } from "next/navigation";
 import SectionHeader from "@/components/ui/SectionHeader";
-import Stars from "@/components/ui/Stars";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useMovieDetail } from "@/features/movies/contexts/MovieDetailContext";
 import { useMovieReviews, formatReviewCount } from "@/features/reviews/hooks/useMovieReviews";
@@ -13,17 +12,6 @@ import type { ReviewFilter, ReviewVoteMap, ReviewsResponse } from "@/features/re
 import WriteReview from "@/components/shared/reviews/mobile/WriteReview";
 import ReviewCard from "@/components/shared/reviews/mobile/ReviewCard";
 import ReviewSortBar from "./ReviewSortBar";
-
-function RatingBar({ stars, pct }: { stars: number; pct: number }) {
-  return (
-    <div className="flex items-center gap-2">
-      <span className="text-(--color-text-muted) text-xs w-4 text-right">{stars}</span>
-      <div className="flex-1 h-1 rounded-full bg-(--color-border) overflow-hidden">
-        <div className="h-full rounded-full bg-(--color-gold)" style={{ width: `${pct}%` }} />
-      </div>
-    </div>
-  );
-}
 
 interface ReviewsProps {
   initialData: ReviewsResponse | null;
@@ -92,27 +80,53 @@ export default function Reviews({
     goToPage,
   });
 
+  const chartColumns = [...breakdown].sort((left, right) => left.stars - right.stars);
+  const busiestRating = Math.max(1, ...chartColumns.map((column) => column.count));
+
   return (
     <section className="px-4 space-y-4">
       <SectionHeader variant="goldBar">{translate("movies.detail.reviews")}</SectionHeader>
 
-      <div className="flex items-center gap-5 py-1">
-        <div className="flex flex-col items-center gap-1 shrink-0">
+      <div className="rounded-2xl border border-(--color-border) bg-(--color-surface) px-4 py-4">
+        <div className="mb-3 flex items-center gap-2">
+          <Star size={22} className="text-(--color-gold) fill-(--color-gold)" aria-hidden />
           <span className="flex items-baseline gap-0.5">
-            <span className="text-5xl font-extrabold text-(--color-gold) leading-none">
+            <span className="text-4xl leading-none font-extrabold text-(--color-gold)">
               {average.toFixed(1)}
             </span>
             <span className="text-sm font-bold text-(--color-text-muted)">/10</span>
           </span>
-          <Stars rating={average} size={13} />
-          <span className="text-(--color-text-muted) text-2xs mt-0.5">
+          <span className="ml-auto text-2xs text-(--color-text-muted)">
             {formatReviewCount(ratingCount)} {translate("movies.detail.ratings")}
           </span>
         </div>
 
-        <div className="flex-1 space-y-1">
-          {breakdown.map((bar) => (
-            <RatingBar key={bar.stars} stars={bar.stars} pct={bar.pct} />
+        <div className="mb-3 border-t border-(--color-border)" />
+
+        <div className="flex h-16 items-end gap-1 border-b border-(--color-border)">
+          {chartColumns.map((column) => {
+            const height = column.count > 0 ? Math.max((column.count / busiestRating) * 100, 8) : 0;
+
+            return (
+              <div key={column.stars} className="flex h-full flex-1 items-end justify-center">
+                {column.count > 0 && (
+                  <div
+                    className="w-full rounded-t-sm bg-(--color-gold)"
+                    style={{ height: `${height}%` }}
+                  />
+                )}
+              </div>
+            );
+          })}
+        </div>
+        <div className="mt-1 flex gap-1">
+          {chartColumns.map((column) => (
+            <span
+              key={column.stars}
+              className="flex-1 text-center text-3xs font-semibold text-(--color-text-muted)"
+            >
+              {column.stars}
+            </span>
           ))}
         </div>
       </div>
@@ -214,7 +228,7 @@ export default function Reviews({
             onClick={() => void goToPage(page - 1)}
             disabled={page === 1 || loadingPage}
             aria-label={translate("movies.detail.prev_page")}
-            className="flex h-9 w-9 items-center justify-center rounded-xl border border-(--color-border) text-(--color-gold) transition-colors hover:bg-(--color-surface) disabled:cursor-not-allowed disabled:opacity-40"
+            className="flex h-9 w-9 items-center justify-center rounded-xl border border-(--color-border) text-(--color-text-muted) transition-colors hover:bg-(--color-surface) disabled:cursor-not-allowed disabled:opacity-40"
           >
             <ChevronLeft size={16} />
           </button>
@@ -229,7 +243,7 @@ export default function Reviews({
               className={`flex h-9 min-w-9 items-center justify-center rounded-xl border px-2 text-sm font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
                 pageNumber === page
                   ? "border-(--color-gold) bg-(--color-gold) text-(--color-bg)"
-                  : "border-(--color-border) text-(--color-gold) hover:bg-(--color-surface)"
+                  : "border-(--color-border) text-(--color-text-muted) hover:bg-(--color-surface)"
               }`}
             >
               {pageNumber}
@@ -241,7 +255,7 @@ export default function Reviews({
             onClick={() => void goToPage(page + 1)}
             disabled={page === totalPages || loadingPage}
             aria-label={translate("movies.detail.next_page")}
-            className="flex h-9 w-9 items-center justify-center rounded-xl border border-(--color-border) text-(--color-gold) transition-colors hover:bg-(--color-surface) disabled:cursor-not-allowed disabled:opacity-40"
+            className="flex h-9 w-9 items-center justify-center rounded-xl border border-(--color-border) text-(--color-text-muted) transition-colors hover:bg-(--color-surface) disabled:cursor-not-allowed disabled:opacity-40"
           >
             <ChevronRight size={16} />
           </button>

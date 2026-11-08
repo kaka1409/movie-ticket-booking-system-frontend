@@ -1,5 +1,6 @@
 "use client";
 
+import { useLocale } from "@/contexts/LocaleContext";
 import type { RatingBreakdown } from "@/features/reviews/types";
 
 /**
@@ -8,6 +9,7 @@ import type { RatingBreakdown } from "@/features/reviews/types";
  * a handful of reviews still reads as a shape instead of ten slivers.
  */
 export default function RatingChart({ breakdown }: { breakdown: RatingBreakdown[] }) {
+  const { translate } = useLocale();
   const columns = [...breakdown].sort((left, right) => left.stars - right.stars);
   const busiest = Math.max(1, ...columns.map((column) => column.count));
 
@@ -19,16 +21,20 @@ export default function RatingChart({ breakdown }: { breakdown: RatingBreakdown[
 
           return (
             <div key={column.stars} className="group flex h-full flex-1 items-end justify-center">
-              <div
-                className="relative w-full rounded-t-sm bg-(--color-gold) transition-colors duration-150 group-hover:bg-(--color-gold-light)"
-                style={{ height: `${height}%` }}
-              >
-                {column.count > 0 && (
+              {column.count > 0 ? (
+                <div
+                  className="relative w-full rounded-t-sm bg-(--color-gold) transition-colors duration-150 group-hover:bg-(--color-gold-light)"
+                  style={{ height: `${height}%` }}
+                >
                   <span className="pointer-events-none absolute -top-5 left-1/2 -translate-x-1/2 text-3xs font-bold whitespace-nowrap tabular-nums text-(--color-text-primary) opacity-0 transition-opacity duration-150 group-hover:opacity-100">
                     {column.count}
                   </span>
-                )}
-              </div>
+                </div>
+              ) : (
+                <span className="pb-1 text-center text-3xs leading-tight font-semibold text-(--color-text-muted)">
+                  {translate("movies.detail.chart_no_rating")}
+                </span>
+              )}
             </div>
           );
         })}

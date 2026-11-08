@@ -19,9 +19,8 @@ export default function RatingBadge({
   return (
     <span className={`inline-flex items-center gap-1 ${className}`}>
       <Star size={size} className="text-(--color-gold) fill-(--color-gold)" aria-hidden />
-      <span className="text-xs font-bold text-(--color-gold) tabular-nums">
-        {rating}
-        <span className="text-(--color-text-muted)">/{max}</span>
+      <span className="text-xs font-bold text-(--color-text-muted) tabular-nums">
+        {rating}/{max}
       </span>
     </span>
   );

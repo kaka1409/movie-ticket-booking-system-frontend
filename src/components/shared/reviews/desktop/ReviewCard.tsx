@@ -124,7 +124,7 @@ export default function ReviewCard({
                 className="h-full w-full object-cover"
               />
             ) : (
-              <span className="text-xs font-bold text-(--color-gold)">
+              <span className="text-xs font-bold text-(--color-text-muted)">
                 {getInitials(review.user)}
               </span>
             )}
@@ -181,6 +181,7 @@ export default function ReviewCard({
         canVote={canVote}
         isVoting={isVoting}
         onVote={onVote}
+        prominent
         className="mt-3 justify-end"
       />
     </article>

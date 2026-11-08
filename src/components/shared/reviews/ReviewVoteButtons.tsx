@@ -9,6 +9,7 @@ import type { ReviewVote } from "@/features/reviews/types";
  * Helpfulness control shared by both device trees. Clicking the active side
  * clears the vote, clicking the other side switches it — the caller receives
  * the desired end state, never a toggle, so a retry is idempotent.
+ * `prominent` is the desktop presentation: larger hit area with text labels.
  */
 export default function ReviewVoteButtons({
   upvoteCount,
@@ -17,6 +18,7 @@ export default function ReviewVoteButtons({
   canVote,
   isVoting,
   onVote,
+  prominent = false,
   className = "",
 }: {
   upvoteCount: number;
@@ -26,6 +28,7 @@ export default function ReviewVoteButtons({
   canVote: boolean;
   isVoting: boolean;
   onVote: (next: ReviewVote | null) => void;
+  prominent?: boolean;
   className?: string;
 }) {
   const { translate } = useLocale();
@@ -47,7 +50,10 @@ export default function ReviewVoteButtons({
     );
   }
 
-  const baseClass = `flex cursor-pointer items-center gap-1 rounded-full border px-2 py-0.5 text-2xs font-bold tabular-nums ${PRESS_CLASS} disabled:cursor-not-allowed disabled:opacity-50`;
+  const iconSize = prominent ? 14 : 12;
+  const baseClass = `flex cursor-pointer items-center rounded-full border font-bold tabular-nums ${PRESS_CLASS} disabled:cursor-not-allowed disabled:opacity-50 ${
+    prominent ? "gap-1.5 px-3.5 py-1.5 text-xs" : "gap-1 px-2 py-0.5 text-2xs"
+  }`;
   const idleClass =
     "border-(--color-border) text-(--color-text-muted) hover:border-(--color-gold)/40 hover:text-(--color-gold)";
 
@@ -65,7 +71,8 @@ export default function ReviewVoteButtons({
             : idleClass
         }`}
       >
-        <ThumbsUp size={12} aria-hidden />
+        <ThumbsUp size={iconSize} aria-hidden />
+        {prominent && <span>{translate("movies.detail.vote_up")}</span>}
         {upvoteCount}
       </button>
       <button
@@ -78,7 +85,8 @@ export default function ReviewVoteButtons({
           myVote === "down" ? "border-red-500/50 bg-red-500/10 text-red-400" : idleClass
         }`}
       >
-        <ThumbsDown size={12} aria-hidden />
+        <ThumbsDown size={iconSize} aria-hidden />
+        {prominent && <span>{translate("movies.detail.vote_down")}</span>}
         {downvoteCount}
       </button>
     </div>

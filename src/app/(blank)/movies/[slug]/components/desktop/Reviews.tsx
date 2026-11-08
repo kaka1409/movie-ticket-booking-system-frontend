@@ -2,8 +2,7 @@
 
 import { useRef } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, ChevronRight, LogIn, RotateCcw, X } from "lucide-react";
-import Stars from "@/components/ui/Stars";
+import { ChevronLeft, ChevronRight, LogIn, RotateCcw, Star, X } from "lucide-react";
 import ReviewCard from "@/components/shared/reviews/desktop/ReviewCard";
 import WriteReview from "@/components/shared/reviews/desktop/WriteReview";
 import ReviewSortBar from "./ReviewSortBar";
@@ -80,13 +79,15 @@ export default function Reviews({
 
       <div className="mt-5 mb-6 flex items-center gap-8 rounded-(--radius-lg) border border-(--color-border) bg-(--color-surface) p-5">
         <div className="flex shrink-0 flex-col items-center gap-1 border-r border-(--color-border) pr-8">
-          <span className="flex items-baseline gap-0.5">
-            <span className="text-5xl leading-none font-extrabold text-(--color-gold)">
-              {average.toFixed(1)}
+          <span className="flex items-center gap-1.5">
+            <Star size={22} className="text-(--color-gold) fill-(--color-gold)" aria-hidden />
+            <span className="flex items-baseline gap-0.5">
+              <span className="text-5xl leading-none font-extrabold text-(--color-gold)">
+                {average.toFixed(1)}
+              </span>
+              <span className="text-sm font-bold text-(--color-text-muted)">/10</span>
             </span>
-            <span className="text-sm font-bold text-(--color-text-muted)">/10</span>
           </span>
-          <Stars rating={average} size={13} />
           <span className="mt-0.5 text-2xs text-(--color-text-muted)">
             {formatReviewCount(ratingCount)} {translate("movies.detail.ratings")}
           </span>
@@ -157,31 +158,31 @@ export default function Reviews({
 
       {!error && hasReviews && (
         <>
-          <ReviewSortBar
-            filters={filters}
-            active={sort}
-            disabled={loadingPage}
-            onChange={(next) => void changeSort(next)}
-            className="mb-3 justify-end"
-          />
-
-          <div
-            ref={listRef}
-            className="divide-y divide-(--color-border) rounded-(--radius-lg) border border-(--color-border) bg-(--color-surface) px-5"
-          >
-            {reviews.map((review) => (
-              <ReviewCard
-                key={review.id}
-                review={review}
-                isOwner={currentUserId === review.userId}
-                canVote={currentUserId !== review.userId}
-                isVoting={isVoting(review.id)}
-                highlighted={highlightedId === review.id}
-                onVote={(next) => void vote(review, next)}
-                onSave={(rating, text) => save(review.id, rating, text)}
-                onDelete={() => remove(review.id)}
+          <div className="rounded-(--radius-lg) border border-(--color-border) bg-(--color-surface)">
+            <div className="border-b border-(--color-border) px-5 py-3">
+              <ReviewSortBar
+                filters={filters}
+                active={sort}
+                disabled={loadingPage}
+                onChange={(next) => void changeSort(next)}
               />
-            ))}
+            </div>
+
+            <div ref={listRef} className="divide-y divide-(--color-border) px-5">
+              {reviews.map((review) => (
+                <ReviewCard
+                  key={review.id}
+                  review={review}
+                  isOwner={currentUserId === review.userId}
+                  canVote={currentUserId !== review.userId}
+                  isVoting={isVoting(review.id)}
+                  highlighted={highlightedId === review.id}
+                  onVote={(next) => void vote(review, next)}
+                  onSave={(rating, text) => save(review.id, rating, text)}
+                  onDelete={() => remove(review.id)}
+                />
+              ))}
+            </div>
           </div>
 
           {totalPages > 1 && (
