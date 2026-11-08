@@ -3,6 +3,7 @@
 import { Search } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useMovieList } from "@/features/movies/contexts/MovieListContext";
+import { useMoviePreview } from "@/features/movies/contexts/MoviePreviewContext";
 import { useAppendFade } from "@/hooks/useAppendFade";
 import Button from "@/components/ui/Button";
 import SectionFallback from "@/components/ui/SectionFallback";
@@ -16,6 +17,7 @@ import MoviePosterCard from "@/components/shared/movies/MoviePosterCard";
  */
 export default function MovieGrid() {
   const { translate } = useLocale();
+  const { handleCardMouseEnter, handleCardMouseMove, handleCardMouseLeave } = useMoviePreview();
   const {
     activeTab,
     movies,
@@ -101,7 +103,13 @@ export default function MovieGrid() {
         }`}
       >
         {movies.map((movie, index) => (
-          <div key={movie.id} className={index >= animThreshold ? "animate-fade-in" : ""}>
+          <div
+            key={movie.id}
+            className={index >= animThreshold ? "animate-fade-in" : ""}
+            onMouseEnter={(event) => handleCardMouseEnter(movie, event)}
+            onMouseMove={handleCardMouseMove}
+            onMouseLeave={handleCardMouseLeave}
+          >
             <MoviePosterCard movie={movie} isBookable={isBookable} />
           </div>
         ))}

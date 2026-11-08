@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { MoviePreviewProvider } from "@/features/movies/contexts/MoviePreviewContext";
-import MoviePreviewLayer from "./components/desktop/MoviePreviewLayer";
+import MoviePreviewLayer from "@/components/shared/movies/MoviePreviewLayer";
 import { getRequestLocale } from "@/libs/session";
 import { SITE_NAME } from "@/libs/site";
 import {

@@ -1,5 +1,7 @@
 import { Suspense } from "react";
 import { MovieListProvider } from "@/features/movies/contexts/MovieListContext";
+import { MoviePreviewProvider } from "@/features/movies/contexts/MoviePreviewContext";
+import MoviePreviewLayer from "@/components/shared/movies/MoviePreviewLayer";
 import type { getAgeRatings, getFormats, getGenres, getMovies } from "@/features/movies/api";
 import { resolveFilterCatalog } from "@/features/movies/utils/filterOptions";
 import type { FilterOptions, Filters, Tab } from "@/features/movies/types";
@@ -88,30 +90,33 @@ export function MoviesPageSections({
         </div>
       </div>
 
-      {/* Desktop */}
+      {/* Desktop — hover popover works like the home cards. */}
       <div className="hidden md:block">
-        <div className="mx-auto w-full max-w-7xl px-6 py-8 lg:px-8">
-          <MoviesHeader />
+        <MoviePreviewProvider>
+          <MoviePreviewLayer />
+          <div className="mx-auto w-full max-w-7xl px-6 py-8 lg:px-8">
+            <MoviesHeader />
 
-          {/* One column at 740–1023px (the filter card stacks above the grid);
+            {/* One column at 740–1023px (the filter card stacks above the grid);
                 sidebar + content from `lg:`. */}
-          <div className="mt-8 grid items-start gap-8 lg:grid-cols-[300px_minmax(0,1fr)]">
-            <FilterSidebar />
+            <div className="mt-8 grid items-start gap-8 lg:grid-cols-[300px_minmax(0,1fr)]">
+              <FilterSidebar />
 
-            {/* The movie container: toolbar (tabs + search) over the grid, in
+              {/* The movie container: toolbar (tabs + search) over the grid, in
                   one panel so the controls sit with the list they act on.
                   `surface-raised` lifts the nested cards — and the search field —
                   to `--color-surface-2` so they read on the panel. */}
-            <div className="min-w-0 rounded-2xl border border-(--color-border) bg-(--color-surface) p-5 lg:p-6">
-              <div className="surface-raised">
-                <MovieToolbar />
-                <div className="mt-6">
-                  <DesktopMovieGrid />
+              <div className="min-w-0 rounded-2xl border border-(--color-border) bg-(--color-surface) p-5 lg:p-6">
+                <div className="surface-raised">
+                  <MovieToolbar />
+                  <div className="mt-6">
+                    <DesktopMovieGrid />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </MoviePreviewProvider>
       </div>
     </MovieListProvider>
   );
