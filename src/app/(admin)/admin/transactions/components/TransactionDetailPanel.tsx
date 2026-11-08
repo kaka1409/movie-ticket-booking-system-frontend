@@ -9,6 +9,8 @@ import Badge from "@/components/ui/Badge";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import ErrorAlert from "@/components/ui/ErrorAlert";
 import AdminButton from "@/app/(admin)/admin/components/shared/AdminButton";
+import AdminAvatar from "../../components/shared/AdminAvatar";
+import AdminPoster from "../../components/shared/AdminPoster";
 import { formatVND } from "@/libs/utils";
 import { formatCalendarDate } from "@/libs/date";
 import { resolveAdminError } from "@/features/admin/errorMessages";
@@ -92,7 +94,12 @@ export default function TransactionDetailPanel({
           <h4 className="text-[10px] font-bold tracking-[0.14em] text-(--color-text-muted) uppercase">
             {translate("admin.transactions.detail_customer")}
           </h4>
-          <p className="mt-1 font-semibold text-(--color-text-primary)">
+          <p className="mt-1 flex items-center gap-2 font-semibold text-(--color-text-primary)">
+            <AdminAvatar
+              name={detail.customer.fullname ?? detail.customer.email}
+              avatarUrl={detail.customer.avatarUrl}
+              size={22}
+            />
             {detail.customer.fullname ?? detail.customer.email}
           </p>
           <p className="text-(--color-text-muted)">{detail.customer.email}</p>
@@ -109,8 +116,13 @@ export default function TransactionDetailPanel({
           <h4 className="text-[10px] font-bold tracking-[0.14em] text-(--color-text-muted) uppercase">
             {translate("admin.transactions.detail_showtime")}
           </h4>
-          <p className="mt-1 font-semibold text-(--color-text-primary)">
-            {detail.showtime.movie.title}
+          <p className="mt-1 flex items-center gap-2 font-semibold text-(--color-text-primary)">
+            <AdminPoster
+              src={detail.showtime.movie.posterUrl}
+              alt={detail.showtime.movie.title}
+              className="h-9 w-14"
+            />
+            <span className="min-w-0 truncate">{detail.showtime.movie.title}</span>
           </p>
           <p className="text-(--color-text-muted)">
             {formatCalendarDate(detail.showtime.date.slice(0, 10), locale)} ·{" "}
@@ -217,7 +229,12 @@ export default function TransactionDetailPanel({
             >
               {translate(`admin.tickets.status_${detail.ticket.status}`)}
             </Badge>
-            <span className="text-(--color-text-muted)">
+            <span className="flex items-center gap-1.5 text-(--color-text-muted)">
+              <AdminAvatar
+                name={detail.ticket.owner.fullname ?? detail.ticket.owner.email}
+                avatarUrl={detail.ticket.owner.avatarUrl}
+                size={18}
+              />
               {translate("admin.transactions.ticket_owner")}:{" "}
               {detail.ticket.owner.fullname ?? detail.ticket.owner.email}
             </span>

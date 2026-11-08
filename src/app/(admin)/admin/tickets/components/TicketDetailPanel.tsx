@@ -10,6 +10,8 @@ import Badge from "@/components/ui/Badge";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import ErrorAlert from "@/components/ui/ErrorAlert";
 import AdminButton from "@/app/(admin)/admin/components/shared/AdminButton";
+import AdminAvatar from "../../components/shared/AdminAvatar";
+import AdminPoster from "../../components/shared/AdminPoster";
 import { formatVND } from "@/libs/utils";
 import { formatCalendarDate } from "@/libs/date";
 import { resolveAdminError } from "@/features/admin/errorMessages";
@@ -105,7 +107,12 @@ export default function TicketDetailPanel({ ticket }: { ticket: AdminTicket }) {
           <h4 className="text-[10px] font-bold tracking-[0.14em] text-(--color-text-muted) uppercase">
             {translate("admin.tickets.detail_owner")}
           </h4>
-          <p className="mt-1 font-semibold text-(--color-text-primary)">
+          <p className="mt-1 flex items-center gap-2 font-semibold text-(--color-text-primary)">
+            <AdminAvatar
+              name={detail.owner.fullname ?? detail.owner.email}
+              avatarUrl={detail.owner.avatarUrl}
+              size={22}
+            />
             {detail.owner.fullname ?? detail.owner.email}
           </p>
           <p className="text-(--color-text-muted)">{detail.owner.email}</p>
@@ -119,8 +126,13 @@ export default function TicketDetailPanel({ ticket }: { ticket: AdminTicket }) {
           <h4 className="text-[10px] font-bold tracking-[0.14em] text-(--color-text-muted) uppercase">
             {translate("admin.tickets.detail_showtime")}
           </h4>
-          <p className="mt-1 font-semibold text-(--color-text-primary)">
-            {detail.booking.showtime.movie.title}
+          <p className="mt-1 flex items-center gap-2 font-semibold text-(--color-text-primary)">
+            <AdminPoster
+              src={detail.booking.showtime.movie.posterUrl}
+              alt={detail.booking.showtime.movie.title}
+              className="h-9 w-14"
+            />
+            <span className="min-w-0 truncate">{detail.booking.showtime.movie.title}</span>
           </p>
           <p className="text-(--color-text-muted)">
             {formatCalendarDate(detail.booking.showtime.date.slice(0, 10), locale)} ·{" "}
@@ -200,8 +212,18 @@ export default function TicketDetailPanel({ ticket }: { ticket: AdminTicket }) {
                   <Badge variant="neutral" size="xs">
                     {transfer.status}
                   </Badge>
-                  <span className="text-(--color-text-primary)">
+                  <span className="flex items-center gap-1.5 text-(--color-text-primary)">
+                    <AdminAvatar
+                      name={transfer.sender.fullname ?? transfer.sender.email}
+                      avatarUrl={transfer.sender.avatarUrl}
+                      size={16}
+                    />
                     {transfer.sender.fullname ?? transfer.sender.email} →{" "}
+                    <AdminAvatar
+                      name={transfer.recipient.fullname ?? transfer.recipient.email}
+                      avatarUrl={transfer.recipient.avatarUrl}
+                      size={16}
+                    />
                     {transfer.recipient.fullname ?? transfer.recipient.email}
                   </span>
                   <span className="tabular-nums text-(--color-text-muted)">

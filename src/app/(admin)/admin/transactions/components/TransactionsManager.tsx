@@ -18,6 +18,8 @@ import TransactionsFiltersCard, {
   type TransactionFilterDraft,
 } from "./TransactionsFiltersCard";
 import TransactionDetailPanel from "./TransactionDetailPanel";
+import AdminAvatar from "../../components/shared/AdminAvatar";
+import AdminPoster from "../../components/shared/AdminPoster";
 
 interface TransactionsManagerProps {
   transactions: AdminTransaction[];
@@ -72,16 +74,28 @@ export default function TransactionsManager({
       id: "transaction",
       headerKey: "admin.transactions.column_transaction",
       cell: (row) => (
-        <div className="min-w-0">
-          <p className="truncate font-semibold text-(--color-text-primary)">
-            {row.movie.title}
-          </p>
-          <p className="truncate text-[11px] text-(--color-text-muted)">
-            {row.showtime.date} · {row.showtime.startTime} · {row.showtime.cinemaName}
-          </p>
-          <p className="truncate text-[11px] text-(--color-text-muted)">
-            {row.customer.fullname ?? row.customer.email}
-          </p>
+        <div className="flex min-w-0 items-center gap-2.5">
+          <AdminPoster
+            src={row.movie.posterUrl}
+            alt={row.movie.title}
+            className="h-10 w-16"
+          />
+          <div className="min-w-0">
+            <p className="truncate font-semibold text-(--color-text-primary)">
+              {row.movie.title}
+            </p>
+            <p className="truncate text-[11px] text-(--color-text-muted)">
+              {row.showtime.date} · {row.showtime.startTime} · {row.showtime.cinemaName}
+            </p>
+            <p className="flex items-center gap-1.5 truncate text-[11px] text-(--color-text-muted)">
+              <AdminAvatar
+                name={row.customer.fullname ?? row.customer.email}
+                avatarUrl={row.customer.avatarUrl}
+                size={16}
+              />
+              {row.customer.fullname ?? row.customer.email}
+            </p>
+          </div>
         </div>
       ),
     },

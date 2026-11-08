@@ -10,6 +10,7 @@ import AdminTable, {
   type AdminTableColumn,
 } from "@/app/(admin)/admin/components/shared/AdminTable";
 import type { AdminPaginationMeta, AdminUser } from "@/features/admin/types";
+import AdminAvatar from "../../components/shared/AdminAvatar";
 import UserInlineEdit from "./UserInlineEdit";
 import UsersFiltersCard, { type UserFilterDraft } from "./UsersFiltersCard";
 
@@ -60,10 +61,13 @@ export default function UsersManager({
       id: "user",
       headerKey: "admin.users.column_user",
       cell: (u) => (
-        <div className="min-w-0">
-          <p className="truncate font-semibold text-(--color-text-primary)">{u.fullname}</p>
-          <p className="truncate text-[11px] text-(--color-text-muted)">{u.email}</p>
-          {u.phone && <p className="truncate text-[11px] text-(--color-text-muted)">{u.phone}</p>}
+        <div className="flex min-w-0 items-center gap-2">
+          <AdminAvatar name={u.fullname} avatarUrl={u.avatarUrl} size={28} />
+          <div className="min-w-0">
+            <p className="truncate font-semibold text-(--color-text-primary)">{u.fullname}</p>
+            <p className="truncate text-[11px] text-(--color-text-muted)">{u.email}</p>
+            {u.phone && <p className="truncate text-[11px] text-(--color-text-muted)">{u.phone}</p>}
+          </div>
         </div>
       ),
     },

@@ -12,6 +12,8 @@ import AdminTable, {
 import type { AdminPaginationMeta, AdminReview } from "@/features/admin/types";
 import type { AdminReviewStatusFilter } from "@/features/admin/api";
 import { formatCalendarDate } from "@/libs/date";
+import AdminAvatar from "../../components/shared/AdminAvatar";
+import AdminPoster from "../../components/shared/AdminPoster";
 import ReviewInlineEdit from "./ReviewInlineEdit";
 import ReviewsFiltersCard, { type ReviewFilterDraft } from "./ReviewsFiltersCard";
 
@@ -79,9 +81,16 @@ export default function ReviewsManager({
       id: "user",
       headerKey: "admin.reviews.column_user",
       cell: (r) => (
-        <div className="min-w-0">
-          <p className="truncate font-semibold text-(--color-text-primary)">{r.user.fullname}</p>
-          <p className="truncate text-[11px] text-(--color-text-muted)">{r.user.email}</p>
+        <div className="flex min-w-0 items-center gap-2">
+          <AdminAvatar
+            name={r.user.fullname}
+            avatarUrl={r.user.avatarUrl}
+            size={26}
+          />
+          <div className="min-w-0">
+            <p className="truncate font-semibold text-(--color-text-primary)">{r.user.fullname}</p>
+            <p className="truncate text-[11px] text-(--color-text-muted)">{r.user.email}</p>
+          </div>
         </div>
       ),
     },
@@ -89,9 +98,12 @@ export default function ReviewsManager({
       id: "movie",
       headerKey: "admin.reviews.column_movie",
       cell: (r) => (
-        <div className="min-w-0">
-          <p className="truncate font-semibold text-(--color-text-primary)">{r.movie.title}</p>
-          <p className="truncate text-[11px] text-(--color-text-muted)">{r.movie.genre}</p>
+        <div className="flex min-w-0 items-center gap-2">
+          <AdminPoster src={r.movie.posterUrl} alt={r.movie.title} className="h-9 w-14" />
+          <div className="min-w-0">
+            <p className="truncate font-semibold text-(--color-text-primary)">{r.movie.title}</p>
+            <p className="truncate text-[11px] text-(--color-text-muted)">{r.movie.genre}</p>
+          </div>
         </div>
       ),
     },

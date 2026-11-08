@@ -89,7 +89,12 @@ export async function updateMovieCastAction(
   castId: string,
   input: AdminCastInput,
 ): Promise<AdminActionResult<AdminMovieCastItem>> {
-  return mutateAdmin<AdminMovieCastItem>("PATCH", `/admin/movies/${slug}/cast/${castId}`, token, input);
+  return mutateAdmin<AdminMovieCastItem>(
+    "PATCH",
+    `/admin/movies/${slug}/cast/${castId}`,
+    token,
+    input,
+  );
 }
 
 export async function deleteMovieCastAction(

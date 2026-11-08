@@ -15,6 +15,8 @@ import TicketsFiltersCard, {
   type TicketFilterDraft,
 } from "./TicketsFiltersCard";
 import TicketDetailPanel from "./TicketDetailPanel";
+import AdminAvatar from "../../components/shared/AdminAvatar";
+import AdminPoster from "../../components/shared/AdminPoster";
 
 interface TicketsManagerProps {
   tickets: AdminTicket[];
@@ -61,13 +63,20 @@ export default function TicketsManager({
       id: "ticket",
       headerKey: "admin.tickets.column_ticket",
       cell: (row) => (
-        <div className="min-w-0">
-          <p className="truncate font-semibold text-(--color-text-primary)">
-            {row.showtime.movie.title}
-          </p>
-          <p className="truncate text-[11px] text-(--color-text-muted)">
-            {row.showtime.date} · {row.showtime.startTime} · {row.showtime.cinemaName}
-          </p>
+        <div className="flex min-w-0 items-center gap-2.5">
+          <AdminPoster
+            src={row.showtime.movie.posterUrl}
+            alt={row.showtime.movie.title}
+            className="h-10 w-16"
+          />
+          <div className="min-w-0">
+            <p className="truncate font-semibold text-(--color-text-primary)">
+              {row.showtime.movie.title}
+            </p>
+            <p className="truncate text-[11px] text-(--color-text-muted)">
+              {row.showtime.date} · {row.showtime.startTime} · {row.showtime.cinemaName}
+            </p>
+          </div>
         </div>
       ),
     },
@@ -76,7 +85,12 @@ export default function TicketsManager({
       headerKey: "admin.tickets.column_owner",
       cell: (row) => (
         <div className="min-w-0">
-          <p className="truncate text-(--color-text-primary)">
+          <p className="flex items-center gap-1.5 truncate text-(--color-text-primary)">
+            <AdminAvatar
+              name={row.owner.fullname ?? row.owner.email}
+              avatarUrl={row.owner.avatarUrl}
+              size={18}
+            />
             {row.owner.fullname ?? row.owner.email}
           </p>
           <p className="truncate text-[11px] text-(--color-text-muted)">

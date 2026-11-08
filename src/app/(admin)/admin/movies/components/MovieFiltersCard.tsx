@@ -249,7 +249,7 @@ export default function MovieFiltersCard({
       </div>
 
       <div className="mt-3 flex items-center gap-2 border-t border-(--color-border) pt-3">
-        <AdminButton type="submit" variant="outline" size="md">
+        <AdminButton type="submit" variant="primary" size="md">
           {translate("admin.common.apply")}
         </AdminButton>
         {isFiltered && (
