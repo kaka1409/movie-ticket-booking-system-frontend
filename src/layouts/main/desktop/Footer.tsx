@@ -13,18 +13,18 @@ function isAuthRoute(pathname: string): boolean {
   return AUTH_ROUTES.some((route) => pathname === route || pathname.startsWith(`${route}/`));
 }
 
-const CINEMA_LINKS = [
-  { labelKey: "layout.footer.find_cinema", href: "#" },
-  { labelKey: "layout.footer.movie_grids", href: "#" },
-  { labelKey: "layout.footer.cinematic_tech", href: "#" },
-  { labelKey: "layout.footer.sitemap", href: "#" },
+const EXPLORE_LINKS = [
+  { labelKey: "layout.footer.now_showing", href: "/movies?status=now_showing" },
+  { labelKey: "layout.footer.coming_soon", href: "/movies?status=coming_soon" },
+  { labelKey: "layout.footer.all_movies", href: "/movies" },
+  { labelKey: "layout.footer.my_tickets", href: "/tickets" },
 ] as const;
 
 const SUPPORT_LINKS = [
   { labelKey: "layout.footer.help_center", href: "#" },
-  { labelKey: "layout.footer.contact_us", href: "#" },
-  { labelKey: "layout.footer.gift_cards", href: "#" },
-  { labelKey: "layout.footer.refunds", href: "#" },
+  { labelKey: "layout.footer.contact_us", href: "mailto:support@primeseat.vn" },
+  { labelKey: "layout.footer.faqs", href: "#" },
+  { labelKey: "layout.footer.refund_policy", href: "#" },
 ] as const;
 
 const BOTTOM_LINKS = [
@@ -79,10 +79,10 @@ export default function Footer() {
 
           <div>
             <h4 className="mb-4 text-[11px] font-bold tracking-widest uppercase text-white">
-              {translate("layout.footer.cinema")}
+              {translate("layout.footer.explore")}
             </h4>
             <ul className="flex list-none flex-col gap-2.5">
-              {CINEMA_LINKS.map(({ labelKey, href }) => (
+              {EXPLORE_LINKS.map(({ labelKey, href }) => (
                 <li key={labelKey}>
                   <a
                     href={href}
@@ -123,6 +123,7 @@ export default function Footer() {
             <div className="flex">
               <input
                 type="email"
+                name="email"
                 placeholder={translate("layout.footer.email_placeholder")}
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
