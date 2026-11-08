@@ -54,6 +54,7 @@ export default function MovieFormFields({
           <AdminFormField labelKey="admin.movies.field_title" error={fieldErrors.title} required>
             <input
               type="text"
+              name="title"
               value={values.title}
               onChange={(event) => updateField("title", event.target.value)}
               className={ADMIN_INPUT_CLASS}
@@ -69,6 +70,7 @@ export default function MovieFormFields({
           >
             <input
               type="text"
+              name="slug"
               value={values.slug}
               onChange={(event) => updateField("slug", event.target.value)}
               className={ADMIN_INPUT_CLASS}
@@ -133,6 +135,7 @@ export default function MovieFormFields({
           <AdminFormField labelKey="admin.movies.director" error={fieldErrors.director}>
             <input
               type="text"
+              name="director"
               value={values.director}
               onChange={(event) => updateField("director", event.target.value)}
               className={ADMIN_INPUT_CLASS}
@@ -142,6 +145,7 @@ export default function MovieFormFields({
           <AdminFormField labelKey="admin.movies.language" error={fieldErrors.language}>
             <input
               type="text"
+              name="language"
               value={values.language}
               onChange={(event) => updateField("language", event.target.value)}
               className={ADMIN_INPUT_CLASS}
@@ -151,6 +155,7 @@ export default function MovieFormFields({
           <AdminFormField labelKey="admin.movies.runtime" error={fieldErrors.duration}>
             <input
               type="number"
+              name="duration"
               min={1}
               max={600}
               value={values.duration}
@@ -162,6 +167,7 @@ export default function MovieFormFields({
           <AdminFormField labelKey="admin.movies.release_date" error={fieldErrors.releaseDate}>
             <input
               type="date"
+              name="releaseDate"
               value={values.releaseDate}
               onChange={(event) => updateField("releaseDate", event.target.value)}
               className={ADMIN_INPUT_CLASS}
@@ -173,6 +179,7 @@ export default function MovieFormFields({
       <FormSection titleKey="admin.movies.section_story">
         <AdminFormField labelKey="admin.movies.synopsis_en" error={fieldErrors.synopsis}>
           <textarea
+            name="synopsis"
             rows={3}
             value={values.synopsis}
             onChange={(event) => updateField("synopsis", event.target.value)}
@@ -182,6 +189,7 @@ export default function MovieFormFields({
 
         <AdminFormField labelKey="admin.movies.synopsis_vi" error={fieldErrors.synopsisVi}>
           <textarea
+            name="synopsisVi"
             rows={3}
             value={values.synopsisVi}
             onChange={(event) => updateField("synopsisVi", event.target.value)}
@@ -192,6 +200,7 @@ export default function MovieFormFields({
         <AdminFormField labelKey="admin.movies.poster_url" error={fieldErrors.posterUrl}>
           <input
             type="url"
+            name="posterUrl"
             value={values.posterUrl}
             onChange={(event) => updateField("posterUrl", event.target.value)}
             className={ADMIN_INPUT_CLASS}
@@ -200,6 +209,7 @@ export default function MovieFormFields({
         <AdminFormField labelKey="admin.movies.trailer_url" error={fieldErrors.trailerUrl}>
           <input
             type="url"
+            name="trailerUrl"
             value={values.trailerUrl}
             onChange={(event) => updateField("trailerUrl", event.target.value)}
             className={ADMIN_INPUT_CLASS}
@@ -244,6 +254,7 @@ export default function MovieFormFields({
             <AdminFormField labelKey="admin.movies.featured_label" error={fieldErrors.featuredLabel}>
               <input
                 type="text"
+                name="featuredLabel"
                 value={values.featuredLabel}
                 onChange={(event) => updateField("featuredLabel", event.target.value)}
                 className={ADMIN_INPUT_CLASS}
@@ -256,6 +267,7 @@ export default function MovieFormFields({
             >
               <input
                 type="text"
+                name="featuredLabelVi"
                 value={values.featuredLabelVi}
                 onChange={(event) => updateField("featuredLabelVi", event.target.value)}
                 className={ADMIN_INPUT_CLASS}
@@ -268,6 +280,7 @@ export default function MovieFormFields({
             >
               <input
                 type="text"
+                name="featuredDescription"
                 value={values.featuredDescription}
                 onChange={(event) => updateField("featuredDescription", event.target.value)}
                 className={ADMIN_INPUT_CLASS}
@@ -280,6 +293,7 @@ export default function MovieFormFields({
             >
               <input
                 type="text"
+                name="featuredDescriptionVi"
                 value={values.featuredDescriptionVi}
                 onChange={(event) => updateField("featuredDescriptionVi", event.target.value)}
                 className={ADMIN_INPUT_CLASS}
@@ -289,6 +303,7 @@ export default function MovieFormFields({
             <AdminFormField labelKey="admin.movies.featured_from" error={fieldErrors.featuredFrom}>
               <input
                 type="date"
+                name="featuredFrom"
                 value={values.featuredFrom}
                 onChange={(event) => updateField("featuredFrom", event.target.value)}
                 className={ADMIN_INPUT_CLASS}
@@ -298,6 +313,7 @@ export default function MovieFormFields({
             <AdminFormField labelKey="admin.movies.featured_to" error={fieldErrors.featuredTo}>
               <input
                 type="date"
+                name="featuredTo"
                 value={values.featuredTo}
                 onChange={(event) => updateField("featuredTo", event.target.value)}
                 className={ADMIN_INPUT_CLASS}
@@ -307,6 +323,7 @@ export default function MovieFormFields({
             <AdminFormField labelKey="admin.movies.featured_order" error={fieldErrors.featuredOrder}>
               <input
                 type="number"
+                name="featuredOrder"
                 min={0}
                 value={values.featuredOrder}
                 onChange={(event) => updateField("featuredOrder", event.target.value)}

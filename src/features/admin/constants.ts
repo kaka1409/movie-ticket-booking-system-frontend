@@ -33,3 +33,9 @@ export const ADMIN_FIELD_GRID_CLASS = "grid gap-3 sm:grid-cols-2";
 
 /** Rows per page in the console tables. */
 export const ADMIN_PAGE_SIZE = 10;
+
+/**
+ * Seat-type names the public seat map understands (kind + SweetBox pairing are
+ * derived from `name`). Mirrors the backend's canonical set — keep in sync.
+ */
+export const CANONICAL_SEAT_TYPE_NAMES = ["Standard", "VIP", "SweetBox"] as const;

@@ -72,6 +72,7 @@ export function AdminCheckbox({
     <label className="flex cursor-pointer items-start gap-2.5 rounded-xl border border-(--color-border) bg-(--color-surface-2) px-3 py-2.5">
       <input
         type="checkbox"
+        name={labelKey}
         checked={checked}
         disabled={disabled}
         onChange={(event) => onChange(event.target.checked)}

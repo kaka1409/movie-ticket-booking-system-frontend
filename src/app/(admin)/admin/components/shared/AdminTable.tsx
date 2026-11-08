@@ -1,10 +1,18 @@
 "use client";
 
 import { Fragment, useState, type ReactNode } from "react";
-import { ChevronDown, type LucideIcon } from "lucide-react";
+import { ArrowUpDown, ChevronDown, ChevronUp, type LucideIcon } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import EmptyState from "@/components/ui/EmptyState";
 import { ADMIN_CARD_CLASS } from "@/features/admin/constants";
+
+export type AdminSortDirection = "asc" | "desc";
+
+/** The active header sort, reported upward so the owner can re-fetch or re-sort. */
+export interface AdminTableSort {
+  key: string;
+  direction: AdminSortDirection;
+}
 
 export interface AdminTableColumn<TRow> {
   /** Stable identity for the header cell and the row cells. */
@@ -16,6 +24,10 @@ export interface AdminTableColumn<TRow> {
   /** Extra classes on the desktop `<th>`/`<td>` (widths, colours). */
   className?: string;
   align?: "left" | "right";
+  /** Marks the column sortable: the header becomes a button reporting this key
+   * through `onSort`. The key is opaque to the table — the owner maps it to a
+   * wire field (server-paginated lists) or a comparator (in-memory lists). */
+  sortKey?: string;
 }
 
 /**
@@ -43,6 +55,8 @@ export default function AdminTable<TRow>({
   renderExpanded,
   expandLabelKey = "admin.common.view_detail",
   collapseLabelKey = "admin.common.collapse",
+  sort = null,
+  onSort,
 }: {
   columns: AdminTableColumn<TRow>[];
   rows: TRow[];
@@ -63,6 +77,11 @@ export default function AdminTable<TRow>({
   renderExpanded?: (row: TRow, closePanel: () => void) => ReactNode;
   expandLabelKey?: string;
   collapseLabelKey?: string;
+  /** Active sort — `null` means the owner's default order. Only rendered on
+   * columns that declare `sortKey`. */
+  sort?: AdminTableSort | null;
+  /** Header click handler; receives the column's `sortKey`. */
+  onSort?: (key: string) => void;
 }) {
   const { translate } = useLocale();
   // Expansion state lives here so a toggle re-renders only the table, not the
@@ -107,19 +126,46 @@ export default function AdminTable<TRow>({
 
         <thead>
           <tr>
-            {columns.map((column) => (
-              <th
-                key={column.id}
-                scope="col"
-                className={`${column.align === "right" ? "admin-table-right" : ""} ${column.className ?? ""}`}
-              >
-                {column.headerKey ? (
-                  translate(column.headerKey)
-                ) : (
-                  <span className="sr-only">—</span>
-                )}
-              </th>
-            ))}
+            {columns.map((column) => {
+              const isSortable = Boolean(column.sortKey && onSort && column.headerKey);
+              const isSorted = isSortable && sort?.key === column.sortKey;
+              const SortIcon = !isSorted
+                ? ArrowUpDown
+                : sort?.direction === "asc"
+                  ? ChevronUp
+                  : ChevronDown;
+              return (
+                <th
+                  key={column.id}
+                  scope="col"
+                  aria-sort={
+                    isSorted ? (sort?.direction === "asc" ? "ascending" : "descending") : undefined
+                  }
+                  className={`${column.align === "right" ? "admin-table-right" : ""} ${column.className ?? ""}`}
+                >
+                  {column.headerKey ? (
+                    isSortable ? (
+                      <button
+                        type="button"
+                        onClick={() => onSort?.(column.sortKey!)}
+                        className="admin-table-sort"
+                      >
+                        {translate(column.headerKey)}
+                        <SortIcon
+                          size={12}
+                          aria-hidden
+                          className={isSorted ? "text-(--admin-accent-ink)" : "opacity-50"}
+                        />
+                      </button>
+                    ) : (
+                      translate(column.headerKey)
+                    )
+                  ) : (
+                    <span className="sr-only">—</span>
+                  )}
+                </th>
+              );
+            })}
           </tr>
         </thead>
 

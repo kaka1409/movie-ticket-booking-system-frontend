@@ -77,6 +77,7 @@ export default function ModelPicker({
             <Search size={14} className="shrink-0 text-(--color-text-muted)" />
             <input
               type="text"
+              name="model-search"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder={translate("admin.research.model_search")}

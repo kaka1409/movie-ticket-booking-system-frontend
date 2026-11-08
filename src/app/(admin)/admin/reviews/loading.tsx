@@ -4,7 +4,7 @@ export default function AdminReviewsLoading() {
   return (
     <>
       <AdminHeaderSkeleton />
-      <AdminListSkeleton search={false} total={false} action={false} columns={5} />
+      <AdminListSkeleton filtersCard filterCardStyle="chips" columns={7} />
     </>
   );
 }

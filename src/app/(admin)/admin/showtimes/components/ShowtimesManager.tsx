@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { CalendarClock, Plus, Sparkles } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import AdminButton from "@/app/(admin)/admin/components/shared/AdminButton";
-import { ADMIN_INPUT_CLASS, ADMIN_LABEL_CLASS } from "@/features/admin/constants";
 import type {
   AdminCatalogEntry,
   AdminCinema,
@@ -17,13 +16,20 @@ import type {
 } from "@/features/admin/types";
 import ScheduleDateStrip from "./ScheduleDateStrip";
 import ScheduleHierarchy from "./ScheduleHierarchy";
+import MovieFilterGrid from "./MovieFilterGrid";
 import ShowtimeDetailDrawer from "./ShowtimeDetailDrawer";
 import ShowtimeFormDialog from "./ShowtimeFormDialog";
 import SeedScheduleModal from "./SeedScheduleModal";
 import type { ShowtimeFormState } from "./useShowtimeForm";
 
 interface ShowtimesManagerProps {
-  movies: { id: string; title: string; slug: string }[];
+  movies: {
+    id: string;
+    title: string;
+    slug: string;
+    posterUrl?: string | null;
+    duration?: number | null;
+  }[];
   cinemas: AdminCinema[];
   formats: AdminCatalogEntry[];
   templates: AdminSlotTemplate[];
@@ -38,6 +44,7 @@ interface DetailTarget {
   slot: AdminScheduleSlot;
   roomId: string;
   roomName: string;
+  roomNameVi: string | null;
   cinemaName: string;
 }
 
@@ -68,10 +75,7 @@ export default function ShowtimesManager({
   const [editDefaults, setEditDefaults] = useState({ movieSlug: "", date });
   const [seedOpen, setSeedOpen] = useState(false);
 
-  const counts = useMemo(
-    () => new Map(dayCounts.map((row) => [row.date, row.count])),
-    [dayCounts],
-  );
+  const counts = useMemo(() => new Map(dayCounts.map((row) => [row.date, row.count])), [dayCounts]);
 
   const selectDate = (next: string) => {
     startNavigation(() => router.push(`/admin/showtimes?date=${next}`));
@@ -81,9 +85,10 @@ export default function ShowtimesManager({
     slot: AdminScheduleSlot,
     roomId: string,
     roomName: string,
+    roomNameVi: string | null,
     cinemaName: string,
   ) => {
-    setDetail({ slot, roomId, roomName, cinemaName });
+    setDetail({ slot, roomId, roomName, roomNameVi, cinemaName });
   };
 
   const openEdit = (target: DetailTarget) => {
@@ -95,6 +100,7 @@ export default function ShowtimesManager({
       format: target.slot.format,
       roomId: target.roomId,
       roomName: target.roomName,
+      roomNameVi: target.roomNameVi,
       isAvailable: !target.slot.isPast,
     });
     setDetail(null);
@@ -110,14 +116,20 @@ export default function ShowtimesManager({
 
   return (
     <div className={isNavigating ? "pointer-events-none opacity-60 transition-opacity" : ""}>
-      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+      <div className="mb-4 space-y-4 rounded-2xl border border-(--color-border) bg-(--color-surface) p-4">
         <ScheduleDateStrip
           dates={stripDates}
           counts={counts}
           selected={schedule.date}
           onSelect={selectDate}
         />
-        <div className="flex shrink-0 items-center gap-2">
+
+        <MovieFilterGrid movies={movies} value={movieFilter} onChange={setMovieFilter} />
+
+        <div className="flex items-center justify-start gap-2 border-t border-(--color-border) pt-3">
+          <AdminButton size="sm" variant="primary" icon={Plus} onClick={() => setCreateOpen(true)}>
+            {translate("admin.showtimes.new")}
+          </AdminButton>
           <AdminButton
             size="sm"
             variant="outline"
@@ -126,44 +138,14 @@ export default function ShowtimesManager({
           >
             {translate("admin.showtimes.seed")}
           </AdminButton>
-          <AdminButton size="sm" variant="primary" icon={Plus} onClick={() => setCreateOpen(true)}>
-            {translate("admin.showtimes.new")}
-          </AdminButton>
         </div>
-      </div>
-
-      <div className="mb-3 flex items-center gap-2">
-        <label className="flex items-center gap-2">
-          <span className={ADMIN_LABEL_CLASS}>{translate("admin.showtimes.movie")}</span>
-          <select
-            value={movieFilter}
-            onChange={(event) => setMovieFilter(event.target.value)}
-            className={`${ADMIN_INPUT_CLASS} w-64`}
-          >
-            <option value="">{translate("admin.common.all")}</option>
-            {movies.map((item) => (
-              <option key={item.slug} value={item.slug}>
-                {item.title}
-              </option>
-            ))}
-          </select>
-        </label>
-        {movieFilter !== "" && (
-          <button
-            type="button"
-            onClick={() => setMovieFilter("")}
-            className="text-[11px] font-bold text-(--color-gold) hover:underline"
-          >
-            {translate("admin.common.clear_filters")}
-          </button>
-        )}
       </div>
 
       <ScheduleHierarchy
         schedule={schedule}
         movieFilter={movieFilter}
-        onSlotClick={(slot, roomId, roomName, cinemaName) =>
-          openSlot(slot, roomId, roomName, cinemaName)
+        onSlotClick={(slot, roomId, roomName, roomNameVi, cinemaName) =>
+          openSlot(slot, roomId, roomName, roomNameVi, cinemaName)
         }
       />
 
@@ -180,6 +162,7 @@ export default function ShowtimesManager({
         <ShowtimeDetailDrawer
           slot={detail.slot}
           roomName={detail.roomName}
+          roomNameVi={detail.roomNameVi}
           cinemaName={detail.cinemaName}
           onClose={() => setDetail(null)}
           onEdit={() => openEdit(detail)}

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
+import { getRoomDisplayName } from "@/libs/utils";
 import type { AdminLiveShowtimeItem } from "@/features/admin/types";
 import AdminPoster from "../shared/AdminPoster";
 
@@ -14,7 +15,7 @@ interface LiveShowtimesMonitorProps {
  * Live showtime operations monitor reporting active screens and seat fill rates.
  */
 export default function LiveShowtimesMonitor({ showtimes }: LiveShowtimesMonitorProps) {
-  const { translate } = useLocale();
+  const { translate, locale } = useLocale();
 
   // Board shows the 5 nearest operations: anything not ended outranks ended
   // rows, and the API's start-time order is kept inside each group.
@@ -92,7 +93,6 @@ export default function LiveShowtimesMonitor({ showtimes }: LiveShowtimesMonitor
                 key={item.id}
                 className="flex items-center justify-between gap-3 border-b border-(--color-border)/50 py-2.5 last:border-b-0 hover:bg-(--color-surface-2)/30 px-2 rounded-lg transition-colors"
               >
-                {/* Time & format */}
                 <div className="w-24 shrink-0">
                   <span className="text-xs font-bold text-(--color-text-primary)">
                     {item.startTime}
@@ -105,24 +105,23 @@ export default function LiveShowtimesMonitor({ showtimes }: LiveShowtimesMonitor
                   </div>
                 </div>
 
-                {/* Movie poster & Hall */}
                 <div className="flex min-w-0 flex-1 items-center gap-2 px-2">
                   <AdminPoster
                     src={item.posterUrl}
                     alt={item.movieTitle}
-                    className="h-10 w-16 aspect-video"
+                    className="h-10 aspect-[3/2]"
                   />
                   <div className="min-w-0">
                     <h3 className="truncate text-xs font-bold text-(--color-text-primary)">
                       {item.movieTitle}
                     </h3>
                     <p className="truncate text-3xs text-(--color-text-muted)">
-                      {item.cinemaName} · {item.roomName}
+                      {item.cinemaName} ·{" "}
+                      {getRoomDisplayName({ name: item.roomName, nameVi: item.roomNameVi }, locale)}
                     </p>
                   </div>
                 </div>
 
-                {/* Booked / Total seats + check-in progress */}
                 <div className="w-28 shrink-0 text-right">
                   <p className="text-xs font-semibold text-(--color-text-primary)">
                     {item.bookedSeats} / {item.totalSeats}{" "}
@@ -143,7 +142,6 @@ export default function LiveShowtimesMonitor({ showtimes }: LiveShowtimesMonitor
                   </p>
                 </div>
 
-                {/* Status Badge */}
                 <div className="w-24 shrink-0 text-right">
                   <span
                     className={`inline-block rounded-md border px-2 py-0.5 text-3xs font-semibold ${statusBadge.className}`}

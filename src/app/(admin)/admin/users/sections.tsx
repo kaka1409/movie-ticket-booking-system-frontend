@@ -8,10 +8,19 @@ export interface AdminUsersQuery {
   search: string;
   role: string;
   status: string;
+  sort: string;
+  dir: string;
   page: number;
 }
 
-export async function UsersManagerSection({ search, role, status, page }: AdminUsersQuery) {
+export async function UsersManagerSection({
+  search,
+  role,
+  status,
+  sort,
+  dir,
+  page,
+}: AdminUsersQuery) {
   const validRole = role === "USER" || role === "ADMIN" ? role : "";
   const validStatus = status === "active" || status === "banned" ? status : "";
   const result = await getAdminUsers({
@@ -20,6 +29,8 @@ export async function UsersManagerSection({ search, role, status, page }: AdminU
     search,
     role: validRole as AdminUserRole,
     status: validStatus as AdminUserStatus,
+    sort,
+    dir: dir === "asc" ? "asc" : "desc",
   });
   if (isUnauthorizedResult(result)) return null;
   if ("error" in result) return <AdminDataError message={result.error.message} />;
@@ -30,6 +41,8 @@ export async function UsersManagerSection({ search, role, status, page }: AdminU
       search={search}
       role={validRole}
       status={validStatus}
+      sort={sort}
+      dir={dir}
     />
   );
 }

@@ -4,7 +4,7 @@ export default function AdminUsersLoading() {
   return (
     <>
       <AdminHeaderSkeleton />
-      <AdminListSkeleton search select apply total action columns={5} />
+      <AdminListSkeleton filtersCard filterCardStyle="chips" columns={5} />
     </>
   );
 }

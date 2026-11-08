@@ -28,6 +28,7 @@ export default function ComboFormFields({
         <AdminFormField labelKey="admin.combos.name" error={fieldErrors.name} required>
           <input
             type="text"
+            name="name"
             value={values.name}
             onChange={(event) => updateField("name", event.target.value)}
             className={ADMIN_INPUT_CLASS}
@@ -37,6 +38,7 @@ export default function ComboFormFields({
         <AdminFormField labelKey="admin.combos.name_vi" error={fieldErrors.nameVi}>
           <input
             type="text"
+            name="nameVi"
             value={values.nameVi}
             onChange={(event) => updateField("nameVi", event.target.value)}
             className={ADMIN_INPUT_CLASS}
@@ -46,6 +48,7 @@ export default function ComboFormFields({
         <AdminFormField labelKey="admin.combos.price" error={fieldErrors.price} required>
           <input
             type="number"
+            name="price"
             min={0}
             step={1000}
             value={values.price}
@@ -61,6 +64,7 @@ export default function ComboFormFields({
         >
           <input
             type="text"
+            name="tag"
             value={values.tag}
             onChange={(event) => updateField("tag", event.target.value)}
             className={ADMIN_INPUT_CLASS}
@@ -70,6 +74,7 @@ export default function ComboFormFields({
 
       <AdminFormField labelKey="admin.combos.description" error={fieldErrors.description}>
         <textarea
+          name="description"
           rows={2}
           value={values.description}
           onChange={(event) => updateField("description", event.target.value)}
@@ -79,6 +84,7 @@ export default function ComboFormFields({
 
       <AdminFormField labelKey="admin.combos.description_vi" error={fieldErrors.descriptionVi}>
         <textarea
+          name="descriptionVi"
           rows={2}
           value={values.descriptionVi}
           onChange={(event) => updateField("descriptionVi", event.target.value)}
@@ -89,6 +95,7 @@ export default function ComboFormFields({
       <AdminFormField labelKey="admin.combos.image" error={fieldErrors.image}>
         <input
           type="url"
+          name="image"
           value={values.image}
           onChange={(event) => updateField("image", event.target.value)}
           className={ADMIN_INPUT_CLASS}

@@ -27,6 +27,23 @@ const matchesPaymentMethodFilters = (method: AdminPaymentMethod, filters: Paymen
   (filters.isActive === "" || String(method.isActive) === filters.isActive) &&
   (filters.adapterEnabled === "" || String(method.adapterEnabled) === filters.adapterEnabled);
 
+const getPaymentMethodSortValue = (method: AdminPaymentMethod, key: string) => {
+  switch (key) {
+    case "method":
+      return method.nameVi ?? method.nameEn;
+    case "sortOrder":
+      return method.sortOrder;
+    case "adapter":
+      return method.adapterEnabled;
+    case "isActive":
+      return method.isActive;
+    case "sellable":
+      return method.isActive && method.adapterEnabled;
+    default:
+      return null;
+  }
+};
+
 /**
  * The catalog rows are seeded by migrations — the console edits labels, order and
  * the sales switch, but never creates or deletes a gateway. Whether a method is
@@ -36,14 +53,18 @@ const matchesPaymentMethodFilters = (method: AdminPaymentMethod, filters: Paymen
 export default function PaymentMethodsManager({ methods }: { methods: AdminPaymentMethod[] }) {
   const { translate } = useLocale();
 
-  const { filters, setFilters, visibleRows } = useAdminTableState<
-    AdminPaymentMethod,
-    PaymentMethodFilters
-  >({
+  const {
+    filters,
+    setFilters,
+    sort,
+    toggleSort,
+    visibleRows,
+  } = useAdminTableState<AdminPaymentMethod, PaymentMethodFilters>({
     rows: methods,
     getSearchText: getPaymentMethodSearchText,
     matches: matchesPaymentMethodFilters,
     initialFilters: EMPTY_FILTERS,
+    getSortValue: getPaymentMethodSortValue,
   });
 
   const isFiltered = filters.isActive !== "" || filters.adapterEnabled !== "";
@@ -56,6 +77,7 @@ export default function PaymentMethodsManager({ methods }: { methods: AdminPayme
     {
       id: "method",
       headerKey: "admin.paymentMethods.column_method",
+      sortKey: "method",
       cell: (method) => (
         <div className="flex items-center gap-2.5">
           <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-(--color-surface-2) text-(--color-gold)">
@@ -77,6 +99,7 @@ export default function PaymentMethodsManager({ methods }: { methods: AdminPayme
     {
       id: "sortOrder",
       headerKey: "admin.paymentMethods.column_order",
+      sortKey: "sortOrder",
       className: "w-20",
       align: "right",
       cell: (method) => <span className="tabular-nums">{method.sortOrder}</span>,
@@ -84,6 +107,7 @@ export default function PaymentMethodsManager({ methods }: { methods: AdminPayme
     {
       id: "adapter",
       headerKey: "admin.paymentMethods.column_adapter",
+      sortKey: "adapter",
       className: "w-32",
       cell: (method) => (
         <Badge variant={method.adapterEnabled ? "success" : "neutral"} size="xs">
@@ -98,6 +122,7 @@ export default function PaymentMethodsManager({ methods }: { methods: AdminPayme
     {
       id: "isActive",
       headerKey: "admin.paymentMethods.column_sale",
+      sortKey: "isActive",
       className: "w-28",
       cell: (method) => (
         <Badge variant={method.isActive ? "success" : "neutral"} size="xs">
@@ -108,6 +133,7 @@ export default function PaymentMethodsManager({ methods }: { methods: AdminPayme
     {
       id: "sellable",
       headerKey: "admin.paymentMethods.column_catalog",
+      sortKey: "sellable",
       className: "w-32",
       cell: (method) => {
         const isSellable = method.isActive && method.adapterEnabled;
@@ -148,6 +174,8 @@ export default function PaymentMethodsManager({ methods }: { methods: AdminPayme
           isFiltered ? "admin.common.no_results_body" : "admin.paymentMethods.empty_body"
         }
         captionKey="admin.paymentMethods.title"
+        sort={sort}
+        onSort={toggleSort}
         renderExpanded={(method, closePanel) => (
           <PaymentMethodInlineEdit key={method.id} method={method} onClose={closePanel} />
         )}

@@ -23,7 +23,7 @@ import {
   type KpiMetricKey,
   type KpiValueFormat,
   type KpiWindow,
-} from "./kpiMetrics";
+} from "@/features/admin/utils/kpiMetrics";
 
 interface KpiDetailChartProps {
   kpi: AdminKpiSummary;

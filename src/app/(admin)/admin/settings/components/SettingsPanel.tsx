@@ -4,7 +4,7 @@ import { useTransition } from "react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useToast } from "@/contexts/ToastContext";
 import { useAdminTheme } from "@/features/admin/hooks/useAdminTheme";
-import { useAdminSidebar } from "@/features/admin/context";
+import { useAdminSidebar } from "@/features/admin/contexts/AdminSidebarContext";
 import AdminButton from "@/app/(admin)/admin/components/shared/AdminButton";
 import { ADMIN_CARD_CLASS } from "@/features/admin/constants";
 import { setAdminThemeAction } from "@/features/admin/actions/preferences.action";

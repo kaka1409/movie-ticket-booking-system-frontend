@@ -11,9 +11,9 @@ import ErrorAlert from "@/components/ui/ErrorAlert";
 import AdminButton from "@/app/(admin)/admin/components/shared/AdminButton";
 import AdminAvatar from "../../components/shared/AdminAvatar";
 import AdminPoster from "../../components/shared/AdminPoster";
-import { formatVND } from "@/libs/utils";
+import { formatVND, getRoomDisplayName } from "@/libs/utils";
 import { formatCalendarDate } from "@/libs/date";
-import { resolveAdminError } from "@/features/admin/errorMessages";
+import { resolveAdminError } from "@/features/admin/utils/errorMessages";
 import {
   cancelAdminTransactionAction,
   getAdminTransactionDetailAction,
@@ -120,7 +120,7 @@ export default function TransactionDetailPanel({
             <AdminPoster
               src={detail.showtime.movie.posterUrl}
               alt={detail.showtime.movie.title}
-              className="h-9 w-14"
+              className="h-10 aspect-[3/2]"
             />
             <span className="min-w-0 truncate">{detail.showtime.movie.title}</span>
           </p>
@@ -129,7 +129,7 @@ export default function TransactionDetailPanel({
             {detail.showtime.startTime}–{detail.showtime.endTime} · {detail.showtime.format}
           </p>
           <p className="text-(--color-text-muted)">
-            {detail.showtime.cinema.name} — {detail.showtime.room.name}
+            {detail.showtime.cinema.name} — {getRoomDisplayName(detail.showtime.room, locale)}
           </p>
         </section>
 

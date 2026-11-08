@@ -4,7 +4,7 @@ export default function AdminCatalogsLoading() {
   return (
     <>
       <AdminHeaderSkeleton />
-      <AdminListSkeleton tabs={3} columns={4} />
+      <AdminListSkeleton filtersCard filterCardStyle="chips" columns={5} />
     </>
   );
 }

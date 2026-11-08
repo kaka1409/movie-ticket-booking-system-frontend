@@ -10,6 +10,7 @@ import { ADMIN_CARD_CLASS } from "@/features/admin/constants";
 
 /** Draft the card hands to `onApply` — committed filter state, not URL params. */
 export interface CatalogFilterDraft {
+  kind: string;
   search: string;
   isActive: string;
 }
@@ -20,6 +21,7 @@ export interface CatalogFilterDraft {
  * footer. Edits stay local until Apply — one state commit per apply.
  */
 export default function CatalogsFiltersCard({
+  kind,
   search,
   isActive,
   isFiltered,
@@ -29,6 +31,7 @@ export default function CatalogsFiltersCard({
   createLabelKey,
   searchPlaceholderKey,
 }: {
+  kind: string;
   search: string;
   isActive: string;
   isFiltered: boolean;
@@ -40,15 +43,17 @@ export default function CatalogsFiltersCard({
 }) {
   const { translate } = useLocale();
 
+  const [kindValue, setKindValue] = useState(kind);
   const [searchInput, setSearchInput] = useState(search);
   const [isActiveValue, setIsActiveValue] = useState(isActive);
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    onApply({ search: searchInput, isActive: isActiveValue });
+    onApply({ kind: kindValue, search: searchInput, isActive: isActiveValue });
   };
 
   const handleClear = () => {
+    setKindValue("genres");
     setSearchInput("");
     setIsActiveValue("");
     onClear();
@@ -69,6 +74,17 @@ export default function CatalogsFiltersCard({
       </div>
 
       <div className="mt-3 grid grid-cols-2 gap-3 border-t border-(--color-border) pt-3 sm:grid-cols-3">
+        <AdminFilterChipGroup
+          labelKey="admin.catalogs.kind"
+          showAll={false}
+          options={[
+            { value: "genres", labelKey: "admin.catalogs.tab_genres" },
+            { value: "formats", labelKey: "admin.catalogs.tab_formats" },
+            { value: "age-ratings", labelKey: "admin.catalogs.tab_age_ratings" },
+          ]}
+          value={kindValue}
+          onChange={setKindValue}
+        />
         <AdminFilterChipGroup
           labelKey="admin.common.status"
           options={[

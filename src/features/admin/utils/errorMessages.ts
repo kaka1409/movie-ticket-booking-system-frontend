@@ -1,4 +1,4 @@
-import type { AdminActionResult } from "./types";
+import type { AdminActionResult } from "../types";
 
 type Translate = (key: string) => string;
 

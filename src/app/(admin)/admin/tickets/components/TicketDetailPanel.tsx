@@ -12,9 +12,9 @@ import ErrorAlert from "@/components/ui/ErrorAlert";
 import AdminButton from "@/app/(admin)/admin/components/shared/AdminButton";
 import AdminAvatar from "../../components/shared/AdminAvatar";
 import AdminPoster from "../../components/shared/AdminPoster";
-import { formatVND } from "@/libs/utils";
+import { formatVND, getRoomDisplayName } from "@/libs/utils";
 import { formatCalendarDate } from "@/libs/date";
-import { resolveAdminError } from "@/features/admin/errorMessages";
+import { resolveAdminError } from "@/features/admin/utils/errorMessages";
 import {
   cancelAdminTicketAction,
   checkInAdminTicketAction,
@@ -130,7 +130,7 @@ export default function TicketDetailPanel({ ticket }: { ticket: AdminTicket }) {
             <AdminPoster
               src={detail.booking.showtime.movie.posterUrl}
               alt={detail.booking.showtime.movie.title}
-              className="h-9 w-14"
+              className="h-10 aspect-[3/2]"
             />
             <span className="min-w-0 truncate">{detail.booking.showtime.movie.title}</span>
           </p>
@@ -140,7 +140,8 @@ export default function TicketDetailPanel({ ticket }: { ticket: AdminTicket }) {
             {detail.booking.showtime.format}
           </p>
           <p className="text-(--color-text-muted)">
-            {detail.booking.showtime.cinema.name} — {detail.booking.showtime.room.name}
+            {detail.booking.showtime.cinema.name} —{" "}
+            {getRoomDisplayName(detail.booking.showtime.room, locale)}
           </p>
         </section>
 

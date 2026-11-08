@@ -4,7 +4,7 @@ export default function AdminCombosLoading() {
   return (
     <>
       <AdminHeaderSkeleton />
-      <AdminListSkeleton columns={5} />
+      <AdminListSkeleton filtersCard filterCardStyle="chips" columns={5} />
     </>
   );
 }

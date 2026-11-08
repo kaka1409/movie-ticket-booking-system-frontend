@@ -10,7 +10,7 @@ import AdminTable, {
   type AdminTableColumn,
 } from "@/app/(admin)/admin/components/shared/AdminTable";
 import type { AdminPaginationMeta, AdminReview } from "@/features/admin/types";
-import type { AdminReviewStatusFilter } from "@/features/admin/api";
+import type { AdminReviewStatusFilter } from "@/features/admin/types";
 import { formatCalendarDate } from "@/libs/date";
 import AdminAvatar from "../../components/shared/AdminAvatar";
 import AdminPoster from "../../components/shared/AdminPoster";
@@ -27,6 +27,9 @@ interface ReviewsManagerProps {
   rating: number;
   status: AdminReviewStatusFilter;
   sort: string;
+  /** Header-column sort (`sortBy` wire param) — overrides the preset `sort`. */
+  sortBy: string;
+  dir: string;
 }
 
 /**
@@ -44,6 +47,8 @@ export default function ReviewsManager({
   rating,
   status,
   sort,
+  sortBy,
+  dir,
 }: ReviewsManagerProps) {
   const { translate, locale } = useLocale();
   const router = useRouter();
@@ -59,7 +64,13 @@ export default function ReviewsManager({
     sort,
   };
 
-  const buildHref = (filters: ReviewFilterDraft, page = 1) => {
+  const buildHref = (
+    filters: ReviewFilterDraft,
+    page = 1,
+    sortState: { sortBy: string; dir: string } | null = sortBy
+      ? { sortBy, dir }
+      : null,
+  ) => {
     const params = new URLSearchParams();
 
     if (filters.search !== "") params.set("search", filters.search);
@@ -68,6 +79,10 @@ export default function ReviewsManager({
     if (filters.rating > 0) params.set("rating", String(filters.rating));
     if (filters.status !== "all") params.set("status", filters.status);
     if (filters.sort !== "recent") params.set("sort", filters.sort);
+    if (sortState?.sortBy) {
+      params.set("sortBy", sortState.sortBy);
+      params.set("dir", sortState.dir === "asc" ? "asc" : "desc");
+    }
     if (page > 1) params.set("page", String(page));
 
     const query = params.toString();
@@ -76,10 +91,18 @@ export default function ReviewsManager({
 
   const navigate = (href: string) => startNavigation(() => router.push(href));
 
+  /** First click on a column sorts ascending; clicking it again flips. */
+  const handleSort = (key: string) => {
+    const currentDir = dir === "asc" ? "asc" : "desc";
+    const nextDir = sortBy === key ? (currentDir === "asc" ? "desc" : "asc") : "asc";
+    navigate(buildHref(appliedFilters, 1, { sortBy: key, dir: nextDir }));
+  };
+
   const columns: AdminTableColumn<AdminReview>[] = [
     {
       id: "user",
       headerKey: "admin.reviews.column_user",
+      sortKey: "author",
       cell: (r) => (
         <div className="flex min-w-0 items-center gap-2">
           <AdminAvatar
@@ -97,9 +120,10 @@ export default function ReviewsManager({
     {
       id: "movie",
       headerKey: "admin.reviews.column_movie",
+      sortKey: "movie",
       cell: (r) => (
         <div className="flex min-w-0 items-center gap-2">
-          <AdminPoster src={r.movie.posterUrl} alt={r.movie.title} className="h-9 w-14" />
+          <AdminPoster src={r.movie.posterUrl} alt={r.movie.title} className="h-10 aspect-[3/2]" />
           <div className="min-w-0">
             <p className="truncate font-semibold text-(--color-text-primary)">{r.movie.title}</p>
             <p className="truncate text-[11px] text-(--color-text-muted)">{r.movie.genre}</p>
@@ -110,6 +134,7 @@ export default function ReviewsManager({
     {
       id: "rating",
       headerKey: "admin.reviews.column_rating",
+      sortKey: "rating",
       className: "w-20",
       cell: (r) => <span className="tabular-nums">{r.rating}/10</span>,
     },
@@ -121,6 +146,7 @@ export default function ReviewsManager({
     {
       id: "votes",
       headerKey: "admin.reviews.column_votes",
+      sortKey: "votes",
       className: "w-24",
       cell: (r) => (
         <span className="text-[11px] tabular-nums">
@@ -142,6 +168,7 @@ export default function ReviewsManager({
     {
       id: "created",
       headerKey: "admin.reviews.column_created",
+      sortKey: "createdAt",
       className: "w-32",
       cell: (r) => (
         <span className="text-[11px]">{formatCalendarDate(r.createdAt.slice(0, 10), locale)}</span>
@@ -184,6 +211,8 @@ export default function ReviewsManager({
             isFiltered ? "admin.common.no_results_body" : "admin.reviews.empty_body"
           }
           captionKey="admin.reviews.title"
+          sort={sortBy ? { key: sortBy, direction: dir === "asc" ? "asc" : "desc" } : null}
+          onSort={handleSort}
           renderExpanded={(review) => <ReviewInlineEdit key={review.id} review={review} />}
         />
 

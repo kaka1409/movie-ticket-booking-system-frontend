@@ -1,6 +1,6 @@
 "use server";
 
-import { mutateAdmin } from "../mutation";
+import { mutateAdmin } from "../api/mutation";
 import type {
   AdminActionResult,
   AdminCombo,

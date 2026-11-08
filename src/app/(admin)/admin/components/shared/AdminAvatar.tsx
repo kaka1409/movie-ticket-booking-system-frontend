@@ -18,8 +18,9 @@ export default function AdminAvatar({ name, avatarUrl, size = 28 }: AdminAvatarP
     <img
       src={avatarUrl ?? DEFAULT_AVATAR_SRC}
       alt={name ?? ""}
+      width={size}
+      height={size}
       loading="lazy"
-      style={{ width: size, height: size }}
       className="shrink-0 rounded-full border border-(--color-border) object-cover"
     />
   );

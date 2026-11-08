@@ -6,7 +6,7 @@ import AdminButton from "@/app/(admin)/admin/components/shared/AdminButton";
 import AdminFilterChipGroup from "@/app/(admin)/admin/components/shared/AdminFilterChips";
 import AdminSearchInput from "@/app/(admin)/admin/components/shared/AdminSearchInput";
 import { ADMIN_CARD_CLASS, ADMIN_INPUT_CLASS, ADMIN_LABEL_CLASS } from "@/features/admin/constants";
-import type { AdminReviewStatusFilter } from "@/features/admin/api";
+import type { AdminReviewStatusFilter } from "@/features/admin/types";
 
 /** Draft the card hands to `onApply` — wire param names for the URL commit. */
 export interface ReviewFilterDraft {
@@ -92,6 +92,7 @@ export default function ReviewsFiltersCard({
         <label className="block">
           <span className={ADMIN_LABEL_CLASS}>{translate("admin.reviews.column_movie")}</span>
           <select
+            name="movie"
             value={movieValue}
             onChange={(event) => setMovieValue(event.target.value)}
             className={`${ADMIN_INPUT_CLASS} mt-1.5`}
@@ -108,6 +109,7 @@ export default function ReviewsFiltersCard({
         <label className="block">
           <span className={ADMIN_LABEL_CLASS}>{translate("admin.reviews.column_rating")}</span>
           <select
+            name="rating"
             value={ratingValue}
             onChange={(event) => setRatingValue(event.target.value)}
             className={`${ADMIN_INPUT_CLASS} mt-1.5`}
@@ -124,6 +126,7 @@ export default function ReviewsFiltersCard({
         <label className="block">
           <span className={ADMIN_LABEL_CLASS}>{translate("admin.reviews.column_sort")}</span>
           <select
+            name="sort"
             value={sortValue}
             onChange={(event) => setSortValue(event.target.value)}
             className={`${ADMIN_INPUT_CLASS} mt-1.5`}

@@ -2,7 +2,7 @@
 
 import { actionFailureFromApiError, apiFetch, toActionFailure } from "@/libs/api";
 import { getRequestCookie } from "@/libs/session";
-import { mutateAdmin } from "../mutation";
+import { mutateAdmin } from "../api/mutation";
 import type {
   AdminActionResult,
   AdminTicketCancelResult,

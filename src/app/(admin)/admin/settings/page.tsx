@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import AdminPageHeader from "@/app/(admin)/admin/components/shared/AdminPageHeader";
-import { getAdminTheme } from "@/features/admin/preferences";
+import { getAdminTheme } from "@/features/admin/utils/preferences";
 import SettingsPanel from "./components/SettingsPanel";
 
 export const metadata: Metadata = { title: "Settings" };

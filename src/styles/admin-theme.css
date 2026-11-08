@@ -130,6 +130,24 @@
   text-align: right;
 }
 
+/* Sortable header: a button inside the uppercase muted `th`, so it inherits
+   the label styling and only adds the pointer + hover affordance. */
+.admin-table-sort {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.admin-table-sort:hover {
+  color: var(--color-text-primary);
+}
+
 /* Expandable rows: the toggle is a slim centred bar between the data row and
    its detail panel; the panel cell carries the full-width form. Selectors
    repeat `.admin-table` because `.admin-table tbody td` (0,1,2) would

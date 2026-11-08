@@ -10,7 +10,7 @@ import Badge from "@/components/ui/Badge";
 import AdminButton from "@/app/(admin)/admin/components/shared/AdminButton";
 import AdminDeleteDialog from "@/app/(admin)/admin/components/shared/AdminDeleteDialog";
 import { ADMIN_LABEL_CLASS } from "@/features/admin/constants";
-import { resolveAdminError } from "@/features/admin/errorMessages";
+import { resolveAdminError } from "@/features/admin/utils/errorMessages";
 import {
   deleteAdminReviewAction,
   restoreAdminReviewAction,

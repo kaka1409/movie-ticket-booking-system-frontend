@@ -13,7 +13,7 @@ import {
   getKpiWindow,
   KPI_METRICS,
   type KpiMetricKey,
-} from "./kpiMetrics";
+} from "@/features/admin/utils/kpiMetrics";
 
 interface KpiMetricGridProps {
   kpi: AdminKpiSummary;

@@ -18,6 +18,8 @@ export interface AdminTicketsQuery {
   status: string;
   dateFrom: string;
   dateTo: string;
+  sort: string;
+  dir: string;
   page: number;
 }
 
@@ -26,6 +28,8 @@ export async function TicketsManagerSection({
   status,
   dateFrom,
   dateTo,
+  sort,
+  dir,
   page,
 }: AdminTicketsQuery) {
   const validStatus = TICKET_STATUSES.includes(status as AdminTicketStatus)
@@ -41,6 +45,8 @@ export async function TicketsManagerSection({
     status: validStatus,
     dateFrom: validDateFrom,
     dateTo: validDateTo,
+    sort,
+    dir: dir === "asc" ? "asc" : "desc",
   });
   if (isUnauthorizedResult(result)) return null;
   if ("error" in result) return <AdminDataError message={result.error.message} />;
@@ -55,6 +61,8 @@ export async function TicketsManagerSection({
         dateFrom: validDateFrom,
         dateTo: validDateTo,
       }}
+      sort={sort}
+      dir={dir}
     />
   );
 }

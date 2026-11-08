@@ -17,6 +17,8 @@ export interface AdminMoviesQuery {
   releaseFrom: string;
   releaseTo: string;
   featuredState: AdminMovieFeaturedState | "";
+  sort: string;
+  dir: string;
   page: number;
 }
 
@@ -32,6 +34,8 @@ export async function MoviesManagerSection({
   releaseFrom,
   releaseTo,
   featuredState,
+  sort,
+  dir,
   page,
 }: AdminMoviesQuery) {
   const [moviesResult, genresResult, ageRatingsResult] = await Promise.all([
@@ -44,6 +48,8 @@ export async function MoviesManagerSection({
       releaseFrom,
       releaseTo,
       featuredState,
+      sort,
+      dir: dir === "asc" ? "asc" : "desc",
     }),
     getAdminCatalog("genres"),
     getAdminCatalog("age-ratings"),
@@ -72,7 +78,17 @@ export async function MoviesManagerSection({
     // Client state (unapplied filter edits, open dialogs) must not survive a
     // committed-filter navigation, so the manager remounts when they change.
     <MoviesManager
-      key={[search, status, genreFilter, ageRating, releaseFrom, releaseTo, featuredState].join("|")}
+      key={[
+        search,
+        status,
+        genreFilter,
+        ageRating,
+        releaseFrom,
+        releaseTo,
+        featuredState,
+        sort,
+        dir,
+      ].join("|")}
       movies={moviesResult.data.movies}
       pagination={moviesResult.meta}
       genres={genres}
@@ -84,6 +100,8 @@ export async function MoviesManagerSection({
       releaseFrom={releaseFrom}
       releaseTo={releaseTo}
       featuredState={featuredState}
+      sort={sort}
+      dir={dir}
     />
   );
 }

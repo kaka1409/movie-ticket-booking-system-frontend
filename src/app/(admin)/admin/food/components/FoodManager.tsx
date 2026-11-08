@@ -37,6 +37,23 @@ const matchesFoodFilters = (item: AdminFoodItem, filters: FoodFilters) =>
   (filters.isActive === "" || String(item.isActive) === filters.isActive) &&
   (filters.category === "" || item.category === filters.category);
 
+const getFoodSortValue = (item: AdminFoodItem, key: string) => {
+  switch (key) {
+    case "item":
+      return item.nameVi ?? item.name;
+    case "category":
+      return item.category;
+    case "price":
+      return item.price;
+    case "usage":
+      return item.bookingCount;
+    case "status":
+      return item.isActive;
+    default:
+      return null;
+  }
+};
+
 export default function FoodManager({ items }: { items: AdminFoodItem[] }) {
   const { translate, locale } = useLocale();
   const { token } = useAuth();
@@ -51,13 +68,24 @@ export default function FoodManager({ items }: { items: AdminFoodItem[] }) {
     [items],
   );
 
-  const { search, setSearch, filters, setFilters, page, setPage, visibleRows, totalPages } =
-    useAdminTableState<AdminFoodItem, FoodFilters>({
-      rows: items,
-      getSearchText: getFoodSearchText,
-      matches: matchesFoodFilters,
-      initialFilters: EMPTY_FILTERS,
-    });
+  const {
+    search,
+    setSearch,
+    filters,
+    setFilters,
+    sort,
+    toggleSort,
+    page,
+    setPage,
+    visibleRows,
+    totalPages,
+  } = useAdminTableState<AdminFoodItem, FoodFilters>({
+    rows: items,
+    getSearchText: getFoodSearchText,
+    matches: matchesFoodFilters,
+    initialFilters: EMPTY_FILTERS,
+    getSortValue: getFoodSortValue,
+  });
 
   const isFiltered = search.trim() !== "" || filters.isActive !== "" || filters.category !== "";
 
@@ -75,6 +103,7 @@ export default function FoodManager({ items }: { items: AdminFoodItem[] }) {
     {
       id: "item",
       headerKey: "admin.food.column_item",
+      sortKey: "item",
       cell: (item) => (
         <div className="flex items-center gap-2.5">
           {item.image ? (
@@ -83,6 +112,8 @@ export default function FoodManager({ items }: { items: AdminFoodItem[] }) {
             <img
               src={item.image}
               alt=""
+              width={36}
+              height={36}
               loading="lazy"
               className="h-9 w-9 shrink-0 rounded-lg border border-(--color-border) object-cover"
             />
@@ -103,12 +134,14 @@ export default function FoodManager({ items }: { items: AdminFoodItem[] }) {
     {
       id: "category",
       headerKey: "admin.food.column_category",
+      sortKey: "category",
       className: "w-28",
       cell: (item) => <span className="text-[12px]">{item.category}</span>,
     },
     {
       id: "price",
       headerKey: "admin.food.column_price",
+      sortKey: "price",
       className: "w-28",
       align: "right",
       cell: (item) => <span className="tabular-nums">{formatVND(item.price, locale)}</span>,
@@ -116,6 +149,7 @@ export default function FoodManager({ items }: { items: AdminFoodItem[] }) {
     {
       id: "usage",
       headerKey: "admin.food.column_usage",
+      sortKey: "usage",
       className: "w-24",
       align: "right",
       cell: (item) => <span className="tabular-nums">{item.bookingCount}</span>,
@@ -123,6 +157,7 @@ export default function FoodManager({ items }: { items: AdminFoodItem[] }) {
     {
       id: "status",
       headerKey: "admin.food.column_status",
+      sortKey: "status",
       className: "w-28",
       cell: (item) => (
         <Badge variant={item.isActive ? "success" : "neutral"} size="xs">
@@ -167,6 +202,8 @@ export default function FoodManager({ items }: { items: AdminFoodItem[] }) {
         emptyTitleKey={isFiltered ? "admin.common.no_results" : "admin.food.empty_title"}
         emptyDescriptionKey={isFiltered ? "admin.common.no_results_body" : "admin.food.empty_body"}
         captionKey="admin.food.title"
+        sort={sort}
+        onSort={toggleSort}
         renderExpanded={(item, closePanel) => (
           <FoodInlineEdit key={item.id} item={item} onClose={closePanel} />
         )}

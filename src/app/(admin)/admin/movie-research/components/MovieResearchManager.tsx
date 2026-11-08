@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { ExternalLink, Loader2, Pause, Play, RotateCcw, Sparkles, Square } from "lucide-react";
+import { Loader2, Pause, Play, Square } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useToast } from "@/contexts/ToastContext";
@@ -15,11 +15,13 @@ import type {
 } from "@/features/admin/types";
 import {
   controlMovieResearchRunAction,
+  deleteMovieResearchCandidateAction,
   importMovieResearchCandidateAction,
   runMovieResearchAction,
   updateMovieResearchCandidateAction,
 } from "@/features/admin/actions/movie-research.action";
 import ModelPicker from "./ModelPicker";
+import ResearchCandidateCard from "./ResearchCandidateCard";
 
 const ACTIVE_STATUSES = new Set(["running", "paused"]);
 
@@ -324,118 +326,27 @@ export default function MovieResearchManager({
       ) : (
         <div className="grid gap-4 xl:grid-cols-2">
           {visible.map((candidate) => (
-            <article
+            <ResearchCandidateCard
               key={candidate.id}
-              className="overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-surface)"
-            >
-              <div className="flex gap-4 p-4">
-                {candidate.posterUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element -- external poster hosts are outside the next/image allowlist
-                  <img
-                    src={candidate.posterUrl}
-                    alt=""
-                    loading="lazy"
-                    className="h-20 w-32 shrink-0 rounded-lg object-cover"
-                  />
-                ) : null}
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-start justify-between gap-2">
-                    <div>
-                      <h3 className="font-semibold">{candidate.title}</h3>
-                      {candidate.originalTitle && candidate.originalTitle !== candidate.title && (
-                        <p className="text-xs text-(--color-text-muted)">
-                          {candidate.originalTitle}
-                        </p>
-                      )}
-                    </div>
-                    <span className="rounded-full bg-(--color-surface-2) px-2 py-1 text-xs">
-                      {translate(
-                        `admin.research.${candidate.status === "pending" ? "pending" : candidate.status === "rejected" ? "rejected" : "imported"}`,
-                      )}
-                    </span>
-                  </div>
-                  <p className="mt-2 text-xs text-(--color-text-muted)">
-                    {candidate.releaseDate ?? translate("admin.research.date_unknown")} ·{" "}
-                    {candidate.duration ? `${candidate.duration}′` : "—"} ·{" "}
-                    {candidate.language ?? "—"}
-                  </p>
-                  <p className="mt-1 text-xs text-(--color-text-muted)">
-                    {candidate.genres.join(", ") || "—"} ·{" "}
-                    {candidate.markets
-                      .map((market) => market.split(":")[0])
-                      .filter((value, index, values) => values.indexOf(value) === index)
-                      .join(", ")}
-                  </p>
-                  {candidate.aiReason && (
-                    <p className="mt-3 flex gap-2 text-sm">
-                      <Sparkles size={15} className="mt-0.5 shrink-0 text-(--color-gold)" />
-                      {candidate.aiReason}
-                    </p>
-                  )}
-                  {candidate.aiConfidence !== null && (
-                    <p className="mt-1 text-xs text-(--color-text-muted)">
-                      {translate("admin.research.confidence")}: {candidate.aiConfidence}%
-                    </p>
-                  )}
-                </div>
-              </div>
-              {candidate.synopsisVi && (
-                <p className="px-4 pb-3 text-sm text-(--color-text-secondary)">
-                  {candidate.synopsisVi}
-                </p>
-              )}
-              <div className="flex flex-wrap items-center gap-2 border-t border-(--color-border) p-3">
-                <a
-                  href={candidate.sourceUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="mr-auto inline-flex items-center gap-1 text-xs text-(--color-text-muted) hover:text-(--color-text-primary)"
-                >
-                  {translate("admin.research.source")} <ExternalLink size={13} />
-                </a>
-                {candidate.status === "pending" && (
-                  <>
-                    <AdminButton
-                      disabled={busy || !token}
-                      onClick={() =>
-                        execute(() =>
-                          updateMovieResearchCandidateAction(
-                            token!,
-                            candidate.id,
-                            "rejected",
-                          ),
-                        )
-                      }
-                    >
-                      {translate("admin.research.reject")}
-                    </AdminButton>
-                    <AdminButton
-                      icon={Sparkles}
-                      variant="primary"
-                      disabled={busy || !token}
-                      onClick={() =>
-                        execute(() => importMovieResearchCandidateAction(token!, candidate.id))
-                      }
-                    >
-                      {translate("admin.research.create_draft")}
-                    </AdminButton>
-                  </>
-                )}
-                {candidate.status === "rejected" && (
-                  <AdminButton
-                    icon={RotateCcw}
-                    disabled={busy || !token}
-                    onClick={() =>
-                      execute(() =>
-                        updateMovieResearchCandidateAction(token!, candidate.id, "pending"),
-                      )
-                    }
-                  >
-                    {translate("admin.research.reopen")}
-                  </AdminButton>
-                )}
-              </div>
-            </article>
+              candidate={candidate}
+              actionsDisabled={busy || !token}
+              onReject={() =>
+                execute(() =>
+                  updateMovieResearchCandidateAction(token!, candidate.id, "rejected"),
+                )
+              }
+              onImport={() =>
+                execute(() => importMovieResearchCandidateAction(token!, candidate.id))
+              }
+              onReopen={() =>
+                execute(() =>
+                  updateMovieResearchCandidateAction(token!, candidate.id, "pending"),
+                )
+              }
+              onDelete={() =>
+                execute(() => deleteMovieResearchCandidateAction(token!, candidate.id))
+              }
+            />
           ))}
         </div>
       )}

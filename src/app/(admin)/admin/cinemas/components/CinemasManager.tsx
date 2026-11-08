@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Building2, MapPin, Plus } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -11,6 +11,7 @@ import AdminDeleteDialog from "@/app/(admin)/admin/components/shared/AdminDelete
 import AdminFormField from "@/app/(admin)/admin/components/shared/AdminFormField";
 import AdminFormModal from "@/app/(admin)/admin/components/shared/AdminFormModal";
 import AdminTable, {
+  type AdminSortDirection,
   type AdminTableColumn,
 } from "@/app/(admin)/admin/components/shared/AdminTable";
 import { ADMIN_INPUT_CLASS } from "@/features/admin/constants";
@@ -21,13 +22,13 @@ import {
   createRoomAction,
   deleteCinemaAction,
   deleteRoomAction,
-  updateCinemaAction,
   updateRoomAction,
 } from "@/features/admin/actions/cinemas.action";
 import type { AdminCinema, AdminCinemaRoom, AdminRoom } from "@/features/admin/types";
 import CinemaDetailPanel from "./CinemaDetailPanel";
 import CinemaMap from "./CinemaMap";
 import SeatLayoutEditor from "./SeatLayoutEditor";
+import SeatTypesManager from "./SeatTypesManager";
 
 export default function CinemasManager({ cinemas }: { cinemas: AdminCinema[] }) {
   const { translate } = useLocale();
@@ -36,12 +37,33 @@ export default function CinemasManager({ cinemas }: { cinemas: AdminCinema[] }) 
   const router = useRouter();
 
   const [selectedCinemaId, setSelectedCinemaId] = useState<string | null>(cinemas[0]?.id ?? null);
-  const [cinemaFormTarget, setCinemaFormTarget] = useState<AdminCinema | "new" | null>(null);
+  const [isCinemaFormOpen, setIsCinemaFormOpen] = useState(false);
   const [roomFormTarget, setRoomFormTarget] = useState<AdminRoom | "new" | null>(null);
   const [deleteCinemaTarget, setDeleteCinemaTarget] = useState<AdminCinema | null>(null);
   const [deleteRoomTarget, setDeleteRoomTarget] = useState<AdminCinemaRoom | null>(null);
   const [layoutRoom, setLayoutRoom] = useState<AdminCinemaRoom | null>(null);
+  const [isSeatTypesOpen, setIsSeatTypesOpen] = useState(false);
   const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
+  const [sort, setSort] = useState<{ key: string; direction: AdminSortDirection } | null>(null);
+
+  const sortedCinemas = useMemo(() => {
+    if (!sort) return cinemas;
+    const direction = sort.direction === "asc" ? 1 : -1;
+    return [...cinemas].sort((left, right) => {
+      const compared =
+        sort.key === "rooms"
+          ? left.rooms.length - right.rooms.length
+          : left.name.localeCompare(right.name);
+      return compared * direction;
+    });
+  }, [cinemas, sort]);
+
+  const toggleSort = (key: string) =>
+    setSort((current) =>
+      current?.key === key
+        ? { key, direction: current.direction === "asc" ? "desc" : "asc" }
+        : { key, direction: "asc" },
+    );
 
   const selectedCinema = cinemas.find((cinema) => cinema.id === selectedCinemaId) ?? null;
 
@@ -55,6 +77,7 @@ export default function CinemasManager({ cinemas }: { cinemas: AdminCinema[] }) 
     {
       id: "cinema",
       headerKey: "admin.cinemas.column_cinema",
+      sortKey: "cinema",
       cell: (cinema) => (
         <div className="flex items-center gap-2.5">
           <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-(--color-surface-2) text-(--color-gold)">
@@ -73,6 +96,7 @@ export default function CinemasManager({ cinemas }: { cinemas: AdminCinema[] }) 
     {
       id: "rooms",
       headerKey: "admin.cinemas.column_rooms",
+      sortKey: "rooms",
       className: "w-20",
       align: "right",
       cell: (cinema) => <span className="tabular-nums">{cinema.rooms.length}</span>,
@@ -86,7 +110,7 @@ export default function CinemasManager({ cinemas }: { cinemas: AdminCinema[] }) 
           icon={Plus}
           variant="primary"
           size="md"
-          onClick={() => setCinemaFormTarget("new")}
+          onClick={() => setIsCinemaFormOpen(true)}
         >
           {translate("admin.cinemas.new")}
         </AdminButton>
@@ -100,7 +124,9 @@ export default function CinemasManager({ cinemas }: { cinemas: AdminCinema[] }) 
         <div className="min-w-0 lg:col-span-2">
           <AdminTable
             columns={cinemaColumns}
-            rows={cinemas}
+            rows={sortedCinemas}
+            sort={sort}
+            onSort={toggleSort}
             getRowId={(cinema) => cinema.id}
             emptyIcon={Building2}
             emptyTitleKey="admin.cinemas.empty_title"
@@ -117,7 +143,6 @@ export default function CinemasManager({ cinemas }: { cinemas: AdminCinema[] }) 
           cinema={selectedCinema}
           selectedRoomId={selectedRoomId}
           onSelectRoom={setSelectedRoomId}
-          onEditCinema={() => setCinemaFormTarget(selectedCinema)}
           onDeleteCinema={() => setDeleteCinemaTarget(selectedCinema)}
           onAddRoom={() => setRoomFormTarget("new")}
           onEditRoom={(room) =>
@@ -129,14 +154,11 @@ export default function CinemasManager({ cinemas }: { cinemas: AdminCinema[] }) 
           }
           onDeleteRoom={setDeleteRoomTarget}
           onEditLayout={setLayoutRoom}
+          onOpenSeatTypes={() => setIsSeatTypesOpen(true)}
         />
       )}
 
-      <CinemaFormDialog
-        isOpen={cinemaFormTarget !== null}
-        cinema={cinemaFormTarget === "new" ? null : cinemaFormTarget}
-        onClose={() => setCinemaFormTarget(null)}
-      />
+      <CinemaFormDialog isOpen={isCinemaFormOpen} onClose={() => setIsCinemaFormOpen(false)} />
 
       <RoomFormDialog
         isOpen={roomFormTarget !== null}
@@ -175,62 +197,37 @@ export default function CinemasManager({ cinemas }: { cinemas: AdminCinema[] }) 
         room={layoutRoom}
         onClose={() => setLayoutRoom(null)}
       />
+
+      <SeatTypesManager isOpen={isSeatTypesOpen} onClose={() => setIsSeatTypesOpen(false)} />
     </>
   );
 }
 
-function CinemaFormDialog({
-  isOpen,
-  cinema,
-  onClose,
-}: {
-  isOpen: boolean;
-  cinema: AdminCinema | null;
-  onClose: () => void;
-}) {
+function CinemaFormDialog({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const { translate } = useLocale();
   const { token } = useAuth();
   const { notify } = useToast();
   const router = useRouter();
 
-  const [values, setValues] = useState<{
-    name: string;
-    address: string;
-    badge: string;
-    latitude: string;
-    longitude: string;
-  }>(() =>
-    cinema
-      ? {
-          name: cinema.name,
-          address: cinema.address,
-          badge: cinema.badge ?? "",
-          latitude: cinema.latitude?.toString() ?? "",
-          longitude: cinema.longitude?.toString() ?? "",
-        }
-      : { name: "", address: "", badge: "", latitude: "", longitude: "" },
-  );
+  const [values, setValues] = useState({
+    name: "",
+    address: "",
+    badge: "",
+    latitude: "",
+    longitude: "",
+  });
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  const formSignature = `${isOpen}-${cinema?.id ?? "new"}`;
-  const [syncedFormSignature, setSyncedFormSignature] = useState(formSignature);
-  if (formSignature !== syncedFormSignature) {
-    setSyncedFormSignature(formSignature);
-    setValues(
-      cinema
-        ? {
-            name: cinema.name,
-            address: cinema.address,
-            badge: cinema.badge ?? "",
-            latitude: cinema.latitude?.toString() ?? "",
-            longitude: cinema.longitude?.toString() ?? "",
-          }
-        : { name: "", address: "", badge: "", latitude: "", longitude: "" },
-    );
-    setFieldErrors({});
-    setSubmitError(null);
+  const [syncedOpen, setSyncedOpen] = useState(isOpen);
+  if (isOpen !== syncedOpen) {
+    setSyncedOpen(isOpen);
+    if (isOpen) {
+      setValues({ name: "", address: "", badge: "", latitude: "", longitude: "" });
+      setFieldErrors({});
+      setSubmitError(null);
+    }
   }
 
   const updateField = <TField extends keyof typeof values>(
@@ -274,18 +271,14 @@ function CinemaFormDialog({
     };
 
     startTransition(async () => {
-      const result = cinema
-        ? await updateCinemaAction(token, cinema.id, payload)
-        : await createCinemaAction(token, payload);
+      const result = await createCinemaAction(token, payload);
 
       if (!result.success) {
         setSubmitError(result.error);
         return;
       }
 
-      notify(translate(cinema ? "admin.common.saved" : "admin.common.created"), {
-        variant: "success",
-      });
+      notify(translate("admin.common.created"), { variant: "success" });
       onClose();
       router.refresh();
     });
@@ -296,16 +289,17 @@ function CinemaFormDialog({
       isOpen={isOpen}
       onClose={onClose}
       onSubmit={handleSubmit}
-      titleKey={cinema ? "admin.cinemas.edit_title" : "admin.cinemas.new"}
-      submitLabelKey={cinema ? "admin.common.save" : "admin.common.create"}
+      titleKey="admin.cinemas.create_title"
+      submitLabelKey="admin.common.create"
       error={submitError}
       isPending={isPending}
       size="md"
-      onFillSample={cinema === null ? fillSample : undefined}
+      onFillSample={fillSample}
     >
       <AdminFormField labelKey="admin.cinemas.name" error={fieldErrors.name} required>
         <input
           type="text"
+          name="name"
           value={values.name}
           onChange={(event) => updateField("name", event.target.value)}
           className={ADMIN_INPUT_CLASS}
@@ -316,6 +310,7 @@ function CinemaFormDialog({
       <AdminFormField labelKey="admin.cinemas.address" error={fieldErrors.address} required>
         <input
           type="text"
+          name="address"
           value={values.address}
           onChange={(event) => updateField("address", event.target.value)}
           className={ADMIN_INPUT_CLASS}
@@ -325,6 +320,7 @@ function CinemaFormDialog({
       <AdminFormField labelKey="admin.cinemas.badge" error={fieldErrors.badge}>
         <input
           type="text"
+          name="badge"
           value={values.badge}
           onChange={(event) => updateField("badge", event.target.value)}
           className={ADMIN_INPUT_CLASS}
@@ -335,6 +331,7 @@ function CinemaFormDialog({
         <AdminFormField labelKey="admin.cinemas.latitude" error={fieldErrors.latitude}>
           <input
             type="number"
+            name="latitude"
             step="any"
             value={values.latitude}
             onChange={(event) => updateField("latitude", event.target.value)}
@@ -344,6 +341,7 @@ function CinemaFormDialog({
         <AdminFormField labelKey="admin.cinemas.longitude" error={fieldErrors.longitude}>
           <input
             type="number"
+            name="longitude"
             step="any"
             value={values.longitude}
             onChange={(event) => updateField("longitude", event.target.value)}
@@ -373,9 +371,10 @@ function RoomFormDialog({
   const { notify } = useToast();
   const router = useRouter();
 
-  const [values, setValues] = useState<{ cinemaId: string; name: string }>(() => ({
+  const [values, setValues] = useState<{ cinemaId: string; name: string; nameVi: string }>(() => ({
     cinemaId: room?.cinemaId ?? defaultCinemaId,
     name: room?.name ?? "",
+    nameVi: room?.nameVi ?? "",
   }));
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -385,7 +384,11 @@ function RoomFormDialog({
   const [syncedFormSignature, setSyncedFormSignature] = useState(formSignature);
   if (formSignature !== syncedFormSignature) {
     setSyncedFormSignature(formSignature);
-    setValues({ cinemaId: room?.cinemaId ?? defaultCinemaId, name: room?.name ?? "" });
+    setValues({
+      cinemaId: room?.cinemaId ?? defaultCinemaId,
+      name: room?.name ?? "",
+      nameVi: room?.nameVi ?? "",
+    });
     setFieldErrors({});
     setSubmitError(null);
   }
@@ -405,7 +408,11 @@ function RoomFormDialog({
 
   /** Prefill a valid test room — the operator still reviews and submits. */
   const fillSample = () => {
-    setValues({ cinemaId: values.cinemaId, name: ADMIN_FORM_SAMPLES.room.name });
+    setValues({
+      cinemaId: values.cinemaId,
+      name: ADMIN_FORM_SAMPLES.room.name,
+      nameVi: ADMIN_FORM_SAMPLES.room.nameVi,
+    });
     setFieldErrors({});
     setSubmitError(null);
   };
@@ -423,15 +430,19 @@ function RoomFormDialog({
 
     const form = parsed.data;
 
+    const nameVi = form.nameVi === "" ? null : form.nameVi;
+
     startTransition(async () => {
       const result = room
         ? await updateRoomAction(token, room.id, {
             name: form.name,
+            nameVi,
             cinemaId: form.cinemaId,
           })
         : await createRoomAction(token, {
             cinemaId: form.cinemaId,
             name: form.name,
+            nameVi,
           });
 
       if (!result.success) {
@@ -461,6 +472,7 @@ function RoomFormDialog({
     >
       <AdminFormField labelKey="admin.rooms.cinema" error={fieldErrors.cinemaId} required>
         <select
+          name="cinemaId"
           value={values.cinemaId}
           onChange={(event) => updateField("cinemaId", event.target.value)}
           className={ADMIN_INPUT_CLASS}
@@ -476,10 +488,22 @@ function RoomFormDialog({
       <AdminFormField labelKey="admin.rooms.name" error={fieldErrors.name} required>
         <input
           type="text"
+          name="name"
           value={values.name}
           onChange={(event) => updateField("name", event.target.value)}
           className={ADMIN_INPUT_CLASS}
           autoFocus
+        />
+      </AdminFormField>
+
+      <AdminFormField labelKey="admin.rooms.name_vi" error={fieldErrors.nameVi}>
+        <input
+          type="text"
+          name="nameVi"
+          value={values.nameVi}
+          onChange={(event) => updateField("nameVi", event.target.value)}
+          className={ADMIN_INPUT_CLASS}
+          placeholder={translate("admin.rooms.name_vi_hint")}
         />
       </AdminFormField>
     </AdminFormModal>

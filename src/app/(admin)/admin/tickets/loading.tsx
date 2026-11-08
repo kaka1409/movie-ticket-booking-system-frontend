@@ -1,5 +1,10 @@
-import { AdminListSkeleton } from "@/app/(admin)/admin/components/shared/AdminSkeletons";
+import { AdminHeaderSkeleton, AdminListSkeleton } from "@/app/(admin)/admin/components/shared/AdminSkeletons";
 
 export default function Loading() {
-  return <AdminListSkeleton search select apply total action columns={6} />;
+  return (
+    <>
+      <AdminHeaderSkeleton />
+      <AdminListSkeleton filtersCard filterCardStyle="chips" columns={6} />
+    </>
+  );
 }

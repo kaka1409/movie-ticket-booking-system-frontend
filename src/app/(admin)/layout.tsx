@@ -3,7 +3,7 @@ import "@/styles/admin-theme.css";
 import AdminLayout from "@/layouts/AdminLayout";
 import LoginPrompt from "@/components/shared/LoginPrompt";
 import { hasSession } from "@/libs/session";
-import { getAdminSidebarMode, getAdminTheme } from "@/features/admin/preferences";
+import { getAdminSidebarMode, getAdminTheme } from "@/features/admin/utils/preferences";
 
 // The console renders live admin data with the visitor's refresh cookie, so
 // nothing here may be prerendered or cached.

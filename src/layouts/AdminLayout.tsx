@@ -23,7 +23,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useLogout } from "@/features/auth/hooks/useLogout";
 import { ADMIN_NAV_GROUPS, isAdminNavActive } from "@/features/admin/adminSections";
-import { AdminSidebarProvider, useAdminSidebar } from "@/features/admin/context";
+import { AdminSidebarProvider, useAdminSidebar } from "@/features/admin/contexts/AdminSidebarContext";
 import { ADMIN_SIDEBAR_COLLAPSED_PX, ADMIN_SIDEBAR_EXPANDED_PX } from "@/features/admin/constants";
 import { useAdminTheme } from "@/features/admin/hooks/useAdminTheme";
 import type { AdminSidebarMode, AdminTheme } from "@/features/admin/types";
@@ -89,7 +89,7 @@ function AdminShell({ initialTheme, children }: { initialTheme: AdminTheme; chil
   }, [toggleSidebar]);
 
   // Drawer: focus the close control on open, trap Tab inside, Escape closes,
-  // and the trigger gets focus back â€” the same contract as `ui/Dropdown`.
+  // and the trigger gets focus back the same contract as `ui/Dropdown`.
   useEffect(() => {
     if (!isDrawerOpen) return;
 

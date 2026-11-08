@@ -22,6 +22,9 @@ interface TicketsManagerProps {
   tickets: AdminTicket[];
   pagination: AdminPaginationMeta;
   filters: TicketFilterDraft;
+  /** Committed header sort — `sort` is the wire field, `dir` its direction. */
+  sort: string;
+  dir: string;
 }
 
 function ticketBadgeVariant(status: string) {
@@ -40,20 +43,39 @@ export default function TicketsManager({
   tickets,
   pagination,
   filters,
+  sort,
+  dir,
 }: TicketsManagerProps) {
   const { translate, locale } = useLocale();
   const router = useRouter();
   const [isNavigating, startNavigation] = useTransition();
 
-  const buildHref = (draft: TicketFilterDraft, page = 1) => {
+  const buildHref = (
+    draft: TicketFilterDraft,
+    page = 1,
+    sortState: { sort: string; dir: string } | null = sort ? { sort, dir } : null,
+  ) => {
     const params = new URLSearchParams();
     if (draft.search !== "") params.set("search", draft.search);
     if (draft.status !== "") params.set("status", draft.status);
     if (draft.dateFrom !== "") params.set("dateFrom", draft.dateFrom);
     if (draft.dateTo !== "") params.set("dateTo", draft.dateTo);
+    if (sortState?.sort) {
+      params.set("sort", sortState.sort);
+      params.set("dir", sortState.dir === "asc" ? "asc" : "desc");
+    }
     if (page > 1) params.set("page", String(page));
     const query = params.toString();
     return query === "" ? "/admin/tickets" : `/admin/tickets?${query}`;
+  };
+
+  /** First click on a column sorts ascending; clicking it again flips. */
+  const handleSort = (key: string) => {
+    const currentDir = dir === "asc" ? "asc" : "desc";
+    const nextDir = sort === key ? (currentDir === "asc" ? "desc" : "asc") : "asc";
+    startNavigation(() =>
+      router.push(buildHref(filters, 1, { sort: key, dir: nextDir })),
+    );
   };
 
   const isFiltered = Object.values(filters).some((value) => value !== "");
@@ -62,12 +84,13 @@ export default function TicketsManager({
     {
       id: "ticket",
       headerKey: "admin.tickets.column_ticket",
+      sortKey: "showtimeDate",
       cell: (row) => (
         <div className="flex min-w-0 items-center gap-2.5">
           <AdminPoster
             src={row.showtime.movie.posterUrl}
             alt={row.showtime.movie.title}
-            className="h-10 w-16"
+            className="h-10 aspect-[3/2]"
           />
           <div className="min-w-0">
             <p className="truncate font-semibold text-(--color-text-primary)">
@@ -103,6 +126,7 @@ export default function TicketsManager({
     {
       id: "status",
       headerKey: "admin.tickets.column_status",
+      sortKey: "status",
       className: "w-28",
       cell: (row) => (
         <Badge variant={ticketBadgeVariant(row.status)} size="xs">
@@ -144,6 +168,7 @@ export default function TicketsManager({
     {
       id: "issued",
       headerKey: "admin.tickets.column_issued",
+      sortKey: "issuedAt",
       className: "w-32",
       cell: (row) => (
         <span className="text-[11px]">
@@ -176,6 +201,8 @@ export default function TicketsManager({
             isFiltered ? "admin.common.no_results_body" : "admin.tickets.empty_body"
           }
           captionKey="admin.tickets.title"
+          sort={sort ? { key: sort, direction: dir === "asc" ? "asc" : "desc" } : null}
+          onSort={handleSort}
           renderExpanded={(row) => <TicketDetailPanel key={row.id} ticket={row} />}
         />
 

@@ -65,7 +65,7 @@ export const ADMIN_FORM_SAMPLES = {
     latitude: "10.7769",
     longitude: "106.7009",
   },
-  room: { name: "Test Room" },
+  room: { name: "Test Room", nameVi: "Phòng thử" },
   cast: {
     name: "Test Actor",
     roleName: "Protagonist",

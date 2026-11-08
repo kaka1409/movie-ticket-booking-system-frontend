@@ -27,6 +27,7 @@ export default function AdminSearchInput({
       />
       <input
         type="search"
+        name="search"
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder={translate(placeholderKey)}

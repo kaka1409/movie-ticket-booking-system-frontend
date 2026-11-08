@@ -30,6 +30,8 @@ export interface AdminTransactionsQuery {
   paymentMethod: string;
   dateFrom: string;
   dateTo: string;
+  sort: string;
+  dir: string;
   page: number;
 }
 
@@ -40,6 +42,8 @@ export async function TransactionsManagerSection({
   paymentMethod,
   dateFrom,
   dateTo,
+  sort,
+  dir,
   page,
 }: AdminTransactionsQuery) {
   const validStatus = BOOKING_STATUSES.includes(status as AdminBookingStatus)
@@ -67,6 +71,8 @@ export async function TransactionsManagerSection({
     paymentMethod: validPaymentMethod,
     dateFrom: validDateFrom,
     dateTo: validDateTo,
+    sort,
+    dir: dir === "asc" ? "asc" : "desc",
   });
   if (isUnauthorizedResult(result)) return null;
   if ("error" in result) return <AdminDataError message={result.error.message} />;
@@ -83,6 +89,8 @@ export async function TransactionsManagerSection({
         dateFrom: validDateFrom,
         dateTo: validDateTo,
       }}
+      sort={sort}
+      dir={dir}
     />
   );
 }

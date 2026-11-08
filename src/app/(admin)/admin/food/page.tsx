@@ -14,7 +14,7 @@ export default function AdminFoodPage() {
         titleKey="admin.food.title"
         descriptionKey="admin.food.description"
       />
-      <Suspense fallback={<AdminListSkeleton columns={5} />}>
+      <Suspense fallback={<AdminListSkeleton filtersCard filterCardStyle="chips" columns={6} />}>
         <FoodManagerSection />
       </Suspense>
     </>

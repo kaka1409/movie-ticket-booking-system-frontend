@@ -20,6 +20,9 @@ interface UsersManagerProps {
   search: string;
   role: string;
   status: string;
+  /** Committed header sort — `sort` is the wire field, `dir` its direction. */
+  sort: string;
+  dir: string;
 }
 
 /**
@@ -34,6 +37,8 @@ export default function UsersManager({
   search,
   role,
   status,
+  sort,
+  dir,
 }: UsersManagerProps) {
   const { translate } = useLocale();
   const router = useRouter();
@@ -42,12 +47,20 @@ export default function UsersManager({
   /** Filters as committed in the URL — tab links and pagination build on these. */
   const appliedFilters: UserFilterDraft = { search, role, status };
 
-  const buildHref = (filters: UserFilterDraft, page = 1) => {
+  const buildHref = (
+    filters: UserFilterDraft,
+    page = 1,
+    sortState: { sort: string; dir: string } | null = sort ? { sort, dir } : null,
+  ) => {
     const params = new URLSearchParams();
 
     if (filters.search !== "") params.set("search", filters.search);
     if (filters.role !== "") params.set("role", filters.role);
     if (filters.status !== "") params.set("status", filters.status);
+    if (sortState?.sort) {
+      params.set("sort", sortState.sort);
+      params.set("dir", sortState.dir === "asc" ? "asc" : "desc");
+    }
     if (page > 1) params.set("page", String(page));
 
     const query = params.toString();
@@ -56,10 +69,18 @@ export default function UsersManager({
 
   const navigate = (href: string) => startNavigation(() => router.push(href));
 
+  /** First click on a column sorts ascending; clicking it again flips. */
+  const handleSort = (key: string) => {
+    const currentDir = dir === "asc" ? "asc" : "desc";
+    const nextDir = sort === key ? (currentDir === "asc" ? "desc" : "asc") : "asc";
+    navigate(buildHref(appliedFilters, 1, { sort: key, dir: nextDir }));
+  };
+
   const columns: AdminTableColumn<AdminUser>[] = [
     {
       id: "user",
       headerKey: "admin.users.column_user",
+      sortKey: "fullname",
       cell: (u) => (
         <div className="flex min-w-0 items-center gap-2">
           <AdminAvatar name={u.fullname} avatarUrl={u.avatarUrl} size={28} />
@@ -74,6 +95,7 @@ export default function UsersManager({
     {
       id: "role",
       headerKey: "admin.users.column_role",
+      sortKey: "role",
       className: "w-28",
       cell: (u) => (
         <Badge variant={u.role === "ADMIN" ? "gold" : "neutral"} size="xs">
@@ -84,6 +106,7 @@ export default function UsersManager({
     {
       id: "status",
       headerKey: "admin.users.column_status",
+      sortKey: "status",
       className: "w-28",
       cell: (u) => (
         <Badge variant={u.status === "active" ? "success" : "error"} size="xs">
@@ -103,6 +126,7 @@ export default function UsersManager({
     {
       id: "created",
       headerKey: "admin.users.column_created",
+      sortKey: "createdAt",
       className: "w-32",
       cell: (u) => (
         <span className="text-[11px]">{new Date(u.createdAt).toLocaleDateString()}</span>
@@ -135,6 +159,8 @@ export default function UsersManager({
             isFiltered ? "admin.common.no_results_body" : "admin.users.empty_body"
           }
           captionKey="admin.users.title"
+          sort={sort ? { key: sort, direction: dir === "asc" ? "asc" : "desc" } : null}
+          onSort={handleSort}
           renderExpanded={(user) => <UserInlineEdit key={user.id} user={user} />}
         />
 

@@ -229,6 +229,7 @@ export default function MovieFiltersCard({
           </span>
           <input
             type="date"
+            name="releaseFrom"
             value={releaseFromValue}
             onChange={(event) => setReleaseFromValue(event.target.value)}
             className={`${ADMIN_INPUT_CLASS} mt-1.5`}
@@ -241,6 +242,7 @@ export default function MovieFiltersCard({
           </span>
           <input
             type="date"
+            name="releaseTo"
             value={releaseToValue}
             onChange={(event) => setReleaseToValue(event.target.value)}
             className={`${ADMIN_INPUT_CLASS} mt-1.5`}

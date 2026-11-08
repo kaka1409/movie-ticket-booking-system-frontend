@@ -22,6 +22,7 @@ export default function AdminFilterChipGroup({
   value,
   onChange,
   className = "",
+  showAll = true,
 }: {
   labelKey: string;
   allLabelKey?: string;
@@ -29,6 +30,7 @@ export default function AdminFilterChipGroup({
   value: string;
   onChange: (value: string) => void;
   className?: string;
+  showAll?: boolean;
 }) {
   const { translate } = useLocale();
 
@@ -36,12 +38,14 @@ export default function AdminFilterChipGroup({
     <div className={className}>
       <span className={ADMIN_LABEL_CLASS}>{translate(labelKey)}</span>
       <div className="mt-1.5 flex flex-wrap gap-1.5">
-        <Chip
-          label={translate(allLabelKey)}
-          active={value === ""}
-          onClick={() => onChange("")}
-          variant="selectable"
-        />
+        {showAll && (
+          <Chip
+            label={translate(allLabelKey)}
+            active={value === ""}
+            onClick={() => onChange("")}
+            variant="selectable"
+          />
+        )}
         {options.map((option) => (
           <Chip
             key={option.value}

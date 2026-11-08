@@ -2,7 +2,7 @@
 
 import { actionFailureFromApiError, apiFetch, toActionFailure } from "@/libs/api";
 import { getRequestCookie } from "@/libs/session";
-import { mutateAdmin } from "../mutation";
+import { mutateAdmin } from "../api/mutation";
 import type {
   AdminActionResult,
   AdminCinema,
@@ -73,6 +73,30 @@ export async function setRoomSeatLayoutAction(
   input: AdminSeatLayoutInput,
 ): Promise<AdminActionResult<AdminSeatLayout>> {
   return mutateAdmin<AdminSeatLayout>("POST", `/admin/rooms/${id}/seat-layout`, token, input);
+}
+
+/* ── Seat types ────────────────────────────────────────────────────────────── */
+
+export async function createSeatTypeAction(
+  token: string,
+  input: { name: string; basePrice: number },
+): Promise<AdminActionResult<AdminSeatType>> {
+  return mutateAdmin<AdminSeatType>("POST", "/admin/seat-types", token, input);
+}
+
+export async function updateSeatTypeAction(
+  token: string,
+  id: string,
+  input: { name?: string; basePrice?: number },
+): Promise<AdminActionResult<AdminSeatType>> {
+  return mutateAdmin<AdminSeatType>("PATCH", `/admin/seat-types/${id}`, token, input);
+}
+
+export async function deleteSeatTypeAction(
+  token: string,
+  id: string,
+): Promise<AdminActionResult<{ id: string }>> {
+  return mutateAdmin<{ id: string }>("DELETE", `/admin/seat-types/${id}`, token);
 }
 
 /* ── Reads used by the seat-layout editor (on demand) ─────────────────────── */

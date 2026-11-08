@@ -10,7 +10,7 @@ import { useToast } from "@/contexts/ToastContext";
 import Badge from "@/components/ui/Badge";
 import AdminButton from "@/app/(admin)/admin/components/shared/AdminButton";
 import { ADMIN_INPUT_CLASS } from "@/features/admin/constants";
-import { resolveAdminError } from "@/features/admin/errorMessages";
+import { resolveAdminError } from "@/features/admin/utils/errorMessages";
 import {
   updateUserRoleAction,
   updateUserStatusAction,
@@ -93,6 +93,7 @@ export default function UserInlineEdit({ user }: { user: AdminUser }) {
 
       <div className="flex flex-wrap items-center gap-2 border-t border-(--color-border) pt-3">
         <select
+          name="role"
           disabled={isSelf || isPending}
           value={user.role}
           onChange={(event) =>

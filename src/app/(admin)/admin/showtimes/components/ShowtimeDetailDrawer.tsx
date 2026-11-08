@@ -10,6 +10,7 @@ import Badge from "@/components/ui/Badge";
 import AdminButton from "@/app/(admin)/admin/components/shared/AdminButton";
 import AdminDeleteDialog from "@/app/(admin)/admin/components/shared/AdminDeleteDialog";
 import { getAdminShowtimeSeatsAction, deleteShowtimeAction } from "@/features/admin/actions/showtimes.action";
+import { getRoomDisplayName } from "@/libs/utils";
 import type { AdminScheduleSlot, AdminShowtimeSeats } from "@/features/admin/types";
 
 const SEAT_COLORS: Record<string, string> = {
@@ -23,17 +24,20 @@ const SEAT_COLORS: Record<string, string> = {
 export default function ShowtimeDetailDrawer({
   slot,
   roomName,
+  roomNameVi,
   cinemaName,
   onClose,
   onEdit,
 }: {
   slot: AdminScheduleSlot;
   roomName: string;
+  roomNameVi: string | null;
   cinemaName: string;
   onClose: () => void;
   onEdit: () => void;
 }) {
-  const { translate } = useLocale();
+  const { translate, locale } = useLocale();
+  const roomDisplayName = getRoomDisplayName({ name: roomName, nameVi: roomNameVi }, locale);
   const { token } = useAuth();
   const { notify } = useToast();
   const router = useRouter();
@@ -67,7 +71,7 @@ export default function ShowtimeDetailDrawer({
               {slot.movie.title}
             </h3>
             <p className="mt-0.5 text-[11px] text-(--color-text-muted)">
-              {slot.startTime}–{slot.endTime} · {cinemaName} · {roomName} · {slot.format}
+              {slot.startTime}–{slot.endTime} · {cinemaName} · {roomDisplayName} · {slot.format}
             </p>
           </div>
           <button
@@ -160,7 +164,7 @@ export default function ShowtimeDetailDrawer({
 
       <AdminDeleteDialog
         isOpen={isDeleteOpen}
-        entityName={`${slot.startTime} · ${slot.movie.title} · ${roomName}`}
+        entityName={`${slot.startTime} · ${slot.movie.title} · ${roomDisplayName}`}
         onClose={() => setIsDeleteOpen(false)}
         onDelete={() =>
           token

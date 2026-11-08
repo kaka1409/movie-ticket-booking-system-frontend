@@ -25,6 +25,9 @@ interface TransactionsManagerProps {
   transactions: AdminTransaction[];
   pagination: AdminPaginationMeta;
   filters: TransactionFilterDraft;
+  /** Committed header sort — `sort` is the wire field, `dir` its direction. */
+  sort: string;
+  dir: string;
 }
 
 function bookingBadgeVariant(status: string) {
@@ -49,12 +52,18 @@ export default function TransactionsManager({
   transactions,
   pagination,
   filters,
+  sort,
+  dir,
 }: TransactionsManagerProps) {
   const { translate, locale } = useLocale();
   const router = useRouter();
   const [isNavigating, startNavigation] = useTransition();
 
-  const buildHref = (draft: TransactionFilterDraft, page = 1) => {
+  const buildHref = (
+    draft: TransactionFilterDraft,
+    page = 1,
+    sortState: { sort: string; dir: string } | null = sort ? { sort, dir } : null,
+  ) => {
     const params = new URLSearchParams();
     if (draft.search !== "") params.set("search", draft.search);
     if (draft.status !== "") params.set("status", draft.status);
@@ -62,9 +71,22 @@ export default function TransactionsManager({
     if (draft.paymentMethod !== "") params.set("paymentMethod", draft.paymentMethod);
     if (draft.dateFrom !== "") params.set("dateFrom", draft.dateFrom);
     if (draft.dateTo !== "") params.set("dateTo", draft.dateTo);
+    if (sortState?.sort) {
+      params.set("sort", sortState.sort);
+      params.set("dir", sortState.dir === "asc" ? "asc" : "desc");
+    }
     if (page > 1) params.set("page", String(page));
     const query = params.toString();
     return query === "" ? "/admin/transactions" : `/admin/transactions?${query}`;
+  };
+
+  /** First click on a column sorts ascending; clicking it again flips. */
+  const handleSort = (key: string) => {
+    const currentDir = dir === "asc" ? "asc" : "desc";
+    const nextDir = sort === key ? (currentDir === "asc" ? "desc" : "asc") : "asc";
+    startNavigation(() =>
+      router.push(buildHref(filters, 1, { sort: key, dir: nextDir })),
+    );
   };
 
   const isFiltered = Object.values(filters).some((value) => value !== "");
@@ -73,12 +95,13 @@ export default function TransactionsManager({
     {
       id: "transaction",
       headerKey: "admin.transactions.column_transaction",
+      sortKey: "showtimeDate",
       cell: (row) => (
         <div className="flex min-w-0 items-center gap-2.5">
           <AdminPoster
             src={row.movie.posterUrl}
             alt={row.movie.title}
-            className="h-10 w-16"
+            className="h-10 aspect-[3/2]"
           />
           <div className="min-w-0">
             <p className="truncate font-semibold text-(--color-text-primary)">
@@ -102,6 +125,7 @@ export default function TransactionsManager({
     {
       id: "booking_status",
       headerKey: "admin.transactions.column_booking_status",
+      sortKey: "status",
       className: "w-28",
       cell: (row) => (
         <Badge variant={bookingBadgeVariant(row.status)} size="xs">
@@ -115,14 +139,22 @@ export default function TransactionsManager({
       className: "w-32",
       cell: (row) =>
         row.payment ? (
-          <div className="min-w-0">
-            <Badge variant={paymentBadgeVariant(row.payment.status)} size="xs">
-              {translate(`admin.transactions.pay_${row.payment.status}`)}
-            </Badge>
-            <p className="mt-1 truncate text-[11px] text-(--color-text-muted)">
-              {translate(`admin.transactions.method_${row.payment.method}`)}
-            </p>
-          </div>
+          <Badge variant={paymentBadgeVariant(row.payment.status)} size="xs">
+            {translate(`admin.transactions.pay_${row.payment.status}`)}
+          </Badge>
+        ) : (
+          <span className="text-[11px] text-(--color-text-muted)">—</span>
+        ),
+    },
+    {
+      id: "payment_method",
+      headerKey: "admin.transactions.column_payment_method",
+      className: "w-28",
+      cell: (row) =>
+        row.payment ? (
+          <span className="text-[11px]">
+            {translate(`admin.transactions.method_${row.payment.method}`)}
+          </span>
         ) : (
           <span className="text-[11px] text-(--color-text-muted)">—</span>
         ),
@@ -159,6 +191,7 @@ export default function TransactionsManager({
     {
       id: "total",
       headerKey: "admin.transactions.column_total",
+      sortKey: "totalPrice",
       className: "w-28",
       align: "right",
       cell: (row) => (
@@ -170,6 +203,7 @@ export default function TransactionsManager({
     {
       id: "created",
       headerKey: "admin.transactions.column_created",
+      sortKey: "createdAt",
       className: "w-32",
       cell: (row) => (
         <span className="text-[11px]">
@@ -202,6 +236,8 @@ export default function TransactionsManager({
             isFiltered ? "admin.common.no_results_body" : "admin.transactions.empty_body"
           }
           captionKey="admin.transactions.title"
+          sort={sort ? { key: sort, direction: dir === "asc" ? "asc" : "desc" } : null}
+          onSort={handleSort}
           renderExpanded={(row) => <TransactionDetailPanel key={row.id} transactionId={row.id} />}
         />
 

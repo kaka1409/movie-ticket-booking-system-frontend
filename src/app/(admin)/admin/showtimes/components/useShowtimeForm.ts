@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useToast } from "@/contexts/ToastContext";
 import { createShowtimeSchema, toAdminFieldErrors } from "@/features/admin/schema";
-import { resolveAdminError } from "@/features/admin/errorMessages";
+import { resolveAdminError } from "@/features/admin/utils/errorMessages";
 import {
   createShowtimeAction,
   updateShowtimeAction,

@@ -4,8 +4,8 @@ import {
   ADMIN_THEME_COOKIE,
   DEFAULT_ADMIN_SIDEBAR_MODE,
   DEFAULT_ADMIN_THEME,
-} from "./constants";
-import type { AdminSidebarMode, AdminTheme } from "./types";
+} from "../constants";
+import type { AdminSidebarMode, AdminTheme } from "../types";
 
 /**
  * Server reads for the console preference cookies. They live here rather than

@@ -4,7 +4,7 @@ export default function AdminMoviesLoading() {
   return (
     <>
       <AdminHeaderSkeleton />
-      <AdminListSkeleton tabs={4} filtersCard columns={6} />
+      <AdminListSkeleton filtersCard columns={8} />
     </>
   );
 }

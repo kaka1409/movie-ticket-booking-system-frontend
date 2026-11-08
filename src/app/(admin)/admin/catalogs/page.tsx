@@ -15,7 +15,7 @@ export default function AdminCatalogsPage() {
         titleKey="admin.catalogs.title"
         descriptionKey="admin.catalogs.description"
       />
-      <Suspense fallback={<AdminListSkeleton tabs={3} columns={4} />}>
+      <Suspense fallback={<AdminListSkeleton filtersCard filterCardStyle="chips" columns={5} />}>
         <CatalogsManagerSection />
       </Suspense>
     </>

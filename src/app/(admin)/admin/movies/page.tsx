@@ -15,6 +15,8 @@ const FEATURED_STATES: AdminMovieFeaturedState[] = [
   "expired",
 ];
 const DATE_PARAM = /^\d{4}-\d{2}-\d{2}$/;
+/** Mirrors the BE `ADMIN_MOVIE_SORT_FIELDS` whitelist. */
+const MOVIE_SORT_FIELDS = ["title", "status", "releaseDate", "duration", "rating", "createdAt"];
 
 /**
  * Awaits `searchParams` only (the query IS the page's identity), so the header
@@ -31,6 +33,8 @@ export default async function AdminMoviesPage({
     releaseFrom?: string;
     releaseTo?: string;
     featuredState?: string;
+    sort?: string;
+    dir?: string;
     page?: string;
   }>;
 }) {
@@ -45,6 +49,8 @@ export default async function AdminMoviesPage({
   const releaseToParam = params.releaseTo ?? "";
   const releaseFrom = DATE_PARAM.test(releaseFromParam) ? releaseFromParam : "";
   const releaseTo = DATE_PARAM.test(releaseToParam) ? releaseToParam : "";
+  const sort = MOVIE_SORT_FIELDS.find((candidate) => candidate === params.sort) ?? "";
+  const dir = params.dir === "asc" || params.dir === "desc" ? params.dir : "";
   const page = Math.max(1, Number(params.page ?? "1") || 1);
 
   return (
@@ -54,7 +60,7 @@ export default async function AdminMoviesPage({
         titleKey="admin.movies.title"
         descriptionKey="admin.movies.description"
       />
-      <Suspense fallback={<AdminListSkeleton tabs={4} filtersCard columns={6} />}>
+      <Suspense fallback={<AdminListSkeleton filtersCard columns={8} />}>
         <MoviesManagerSection
           search={search}
           status={status}
@@ -63,6 +69,8 @@ export default async function AdminMoviesPage({
           releaseFrom={releaseFrom}
           releaseTo={releaseTo}
           featuredState={featuredState}
+          sort={sort}
+          dir={dir}
           page={page}
         />
       </Suspense>

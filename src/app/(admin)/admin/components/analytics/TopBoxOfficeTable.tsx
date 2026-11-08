@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Trophy, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { formatVND, toLocaleTag } from "@/libs/utils";
 import AdminPoster from "../shared/AdminPoster";
@@ -27,18 +27,13 @@ export default function TopBoxOfficeTable({ movies }: TopBoxOfficeTableProps) {
   return (
     <div className="flex h-full flex-col rounded-2xl border border-(--color-border) bg-(--color-surface) p-5 shadow-(--shadow-card)">
       <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-(--color-gold)/15 text-(--admin-accent-ink)">
-            <Trophy size={16} aria-hidden />
-          </div>
-          <div>
-            <h2 className="text-sm font-bold text-(--color-text-primary)">
-              {translate("admin.dashboard.top_movies_title")}
-            </h2>
-            <p className="text-2xs text-(--color-text-muted)">
-              {translate("admin.dashboard.top_movies_subtitle")}
-            </p>
-          </div>
+        <div>
+          <h2 className="text-sm font-bold text-(--color-text-primary)">
+            {translate("admin.dashboard.top_movies_title")}
+          </h2>
+          <p className="text-2xs text-(--color-text-muted)">
+            {translate("admin.dashboard.top_movies_subtitle")}
+          </p>
         </div>
 
         <Link
@@ -62,7 +57,6 @@ export default function TopBoxOfficeTable({ movies }: TopBoxOfficeTableProps) {
             key={movie.id}
             className="flex items-center gap-3 rounded-xl border border-(--color-border)/50 bg-(--color-surface-2)/40 p-2.5 transition-colors hover:bg-(--color-surface-2)"
           >
-            {/* Rank badge */}
             <span
               className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md border text-xs font-bold ${getRankBadgeClass(
                 movie.rank,
@@ -71,14 +65,12 @@ export default function TopBoxOfficeTable({ movies }: TopBoxOfficeTableProps) {
               {movie.rank}
             </span>
 
-            {/* Movie Poster */}
             <AdminPoster
               src={movie.posterUrl}
               alt={movie.title}
-              className="h-11 w-20"
+              className="h-12 aspect-[3/2]"
             />
 
-            {/* Title & Genre */}
             <div className="min-w-0 flex-1">
               <h3 className="truncate text-xs font-bold text-(--color-text-primary)">
                 {movie.title}
@@ -86,7 +78,6 @@ export default function TopBoxOfficeTable({ movies }: TopBoxOfficeTableProps) {
               <p className="truncate text-3xs text-(--color-text-muted)">{movie.genre}</p>
             </div>
 
-            {/* Revenue & Tickets */}
             <div className="shrink-0 text-right">
               <p className="text-xs font-bold text-(--color-text-primary)">
                 {formatVND(movie.revenue, locale)}
@@ -97,7 +88,6 @@ export default function TopBoxOfficeTable({ movies }: TopBoxOfficeTableProps) {
               </p>
             </div>
 
-            {/* Occupancy Progress Mini Bar */}
             <div className="hidden w-16 shrink-0 sm:block">
               <div className="flex items-center justify-between text-3xs font-medium text-(--color-text-muted)">
                 <span>{movie.occupancyRate}%</span>

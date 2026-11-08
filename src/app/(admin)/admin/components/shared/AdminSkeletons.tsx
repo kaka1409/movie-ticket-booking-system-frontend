@@ -135,6 +135,40 @@ export function AdminFilterCardSkeleton() {
   );
 }
 
+/** Filter card matching chip-based filters (CatalogsFiltersCard, UsersFiltersCard, etc.). */
+export function AdminChipFilterCardSkeleton({ chipRows = 2 }: { chipRows?: number }) {
+  return (
+    <div
+      className="mb-3 animate-pulse rounded-2xl border border-(--color-border) bg-(--color-surface) p-3"
+      aria-hidden
+    >
+      <div className="flex items-center gap-2">
+        <div className="h-9 flex-1 rounded-xl border border-(--color-border) bg-(--color-surface-2)" />
+        <div className="h-9 w-24 rounded-xl border border-(--color-border) bg-(--color-surface-2)" />
+      </div>
+      <div className="mt-3 space-y-2 border-t border-(--color-border) pt-3">
+        {Array.from({ length: chipRows }).map((_, rowIndex) => (
+          <div key={rowIndex} className="space-y-1.5">
+            <div className="h-2.5 w-16 rounded bg-(--color-surface-2)" />
+            <div className="flex flex-wrap gap-1.5">
+              {Array.from({ length: 4 }).map((__, chipIndex) => (
+                <div
+                  key={chipIndex}
+                  className="h-8 w-20 rounded-xl border border-(--color-border) bg-(--color-surface-2)"
+                />
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="mt-3 flex gap-2 border-t border-(--color-border) pt-3">
+        <div className="h-9 w-20 rounded-xl border border-(--color-border) bg-(--color-surface-2)" />
+        <div className="h-9 w-24 rounded-xl border border-(--color-border) bg-(--color-surface-2)" />
+      </div>
+    </div>
+  );
+}
+
 /**
  * Parameterised list-page skeleton: toolbar shape + optional tabs/filter card +
  * table + optional pager. Used by catalogs/food/combos/users/reviews/movies.
@@ -147,6 +181,7 @@ export function AdminListSkeleton({
   apply = false,
   action = true,
   filtersCard = false,
+  filterCardStyle = "fields",
   columns = 5,
   rows = ADMIN_PAGE_SIZE,
   pager = true,
@@ -158,6 +193,7 @@ export function AdminListSkeleton({
   apply?: boolean;
   action?: boolean;
   filtersCard?: boolean;
+  filterCardStyle?: "fields" | "chips";
   columns?: number;
   rows?: number;
   pager?: boolean;
@@ -167,7 +203,11 @@ export function AdminListSkeleton({
       {tabs ? <AdminSkeletonTabs count={tabs} /> : null}
 
       {filtersCard ? (
-        <AdminFilterCardSkeleton />
+        filterCardStyle === "chips" ? (
+          <AdminChipFilterCardSkeleton />
+        ) : (
+          <AdminFilterCardSkeleton />
+        )
       ) : (
         <div className="mb-3 flex flex-wrap items-center gap-2">
           {search ? <AdminSkeletonSearch className="w-full sm:max-w-xs" /> : null}

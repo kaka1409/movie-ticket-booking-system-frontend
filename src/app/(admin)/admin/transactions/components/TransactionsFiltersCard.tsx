@@ -127,6 +127,7 @@ export default function TransactionsFiltersCard({
           </span>
           <input
             type="date"
+            name="dateFrom"
             value={dateFromValue}
             onChange={(event) => setDateFromValue(event.target.value)}
             className={`${ADMIN_INPUT_CLASS} mt-1.5`}
@@ -138,6 +139,7 @@ export default function TransactionsFiltersCard({
           </span>
           <input
             type="date"
+            name="dateTo"
             value={dateToValue}
             onChange={(event) => setDateToValue(event.target.value)}
             className={`${ADMIN_INPUT_CLASS} mt-1.5`}

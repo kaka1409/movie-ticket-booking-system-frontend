@@ -14,7 +14,7 @@ export default function AdminCombosPage() {
         titleKey="admin.combos.title"
         descriptionKey="admin.combos.description"
       />
-      <Suspense fallback={<AdminListSkeleton columns={5} />}>
+      <Suspense fallback={<AdminListSkeleton filtersCard filterCardStyle="chips" columns={5} />}>
         <CombosManagerSection />
       </Suspense>
     </>

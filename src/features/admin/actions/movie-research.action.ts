@@ -1,6 +1,6 @@
 "use server";
 
-import { mutateAdmin } from "../mutation";
+import { mutateAdmin } from "../api/mutation";
 import type { AdminActionResult, AdminMovie, MovieResearchCandidate } from "../types";
 
 export async function runMovieResearchAction(token: string, model?: string) {
@@ -39,4 +39,11 @@ export async function importMovieResearchCandidateAction(
   id: string,
 ): Promise<AdminActionResult<AdminMovie>> {
   return mutateAdmin("POST", `/admin/movie-research/candidates/${id}/import`, token);
+}
+
+export async function deleteMovieResearchCandidateAction(
+  token: string,
+  id: string,
+): Promise<AdminActionResult<{ id: string }>> {
+  return mutateAdmin("DELETE", `/admin/movie-research/candidates/${id}`, token);
 }

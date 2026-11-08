@@ -1,7 +1,7 @@
 "use server";
 
 import { apiFetch } from "@/libs/api";
-import { mutateAdmin } from "../mutation";
+import { mutateAdmin } from "../api/mutation";
 import type {
   AdminActionResult,
   AdminSeedShowtimesInput,

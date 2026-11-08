@@ -189,6 +189,7 @@ export default function SeedScheduleModal({
                 </span>
                 <input
                   type="number"
+                  name="horizonDays"
                   min={1}
                   max={14}
                   value={horizonDays}
@@ -202,6 +203,7 @@ export default function SeedScheduleModal({
                 <span className={ADMIN_LABEL_CLASS}>{translate("admin.showtimes.seed_run")}</span>
                 <input
                   type="number"
+                  name="runDays"
                   min={1}
                   max={7}
                   value={runDays}
@@ -216,6 +218,7 @@ export default function SeedScheduleModal({
             <label className="flex cursor-pointer items-center gap-2 text-[12px] text-(--color-text-primary)">
               <input
                 type="checkbox"
+                name="dryRun"
                 checked={dryRun}
                 onChange={(event) => setDryRun(event.target.checked)}
                 className="accent-(--color-gold)"

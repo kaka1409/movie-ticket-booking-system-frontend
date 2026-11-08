@@ -28,6 +28,7 @@ export default function FoodFormFields({
         <AdminFormField labelKey="admin.food.name" error={fieldErrors.name} required>
           <input
             type="text"
+            name="name"
             value={values.name}
             onChange={(event) => updateField("name", event.target.value)}
             className={ADMIN_INPUT_CLASS}
@@ -37,6 +38,7 @@ export default function FoodFormFields({
         <AdminFormField labelKey="admin.food.name_vi" error={fieldErrors.nameVi}>
           <input
             type="text"
+            name="nameVi"
             value={values.nameVi}
             onChange={(event) => updateField("nameVi", event.target.value)}
             className={ADMIN_INPUT_CLASS}
@@ -51,6 +53,7 @@ export default function FoodFormFields({
         >
           <input
             type="text"
+            name="category"
             value={values.category}
             onChange={(event) => updateField("category", event.target.value)}
             className={ADMIN_INPUT_CLASS}
@@ -60,6 +63,7 @@ export default function FoodFormFields({
         <AdminFormField labelKey="admin.food.price" error={fieldErrors.price} required>
           <input
             type="number"
+            name="price"
             min={0}
             step={1000}
             value={values.price}
@@ -72,6 +76,7 @@ export default function FoodFormFields({
       <AdminFormField labelKey="admin.food.image" error={fieldErrors.image}>
         <input
           type="url"
+          name="image"
           value={values.image}
           onChange={(event) => updateField("image", event.target.value)}
           className={ADMIN_INPUT_CLASS}

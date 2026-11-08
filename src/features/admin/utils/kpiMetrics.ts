@@ -4,7 +4,7 @@ import type {
   AdminKpiOccupancyRange,
   AdminKpiRangeData,
   AdminKpiSummary,
-} from "@/features/admin/types";
+} from "../types";
 
 export type KpiMetricKey =
   | "revenue"

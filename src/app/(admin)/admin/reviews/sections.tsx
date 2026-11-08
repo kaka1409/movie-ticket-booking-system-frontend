@@ -1,6 +1,6 @@
 import AdminDataError from "@/app/(admin)/admin/components/shared/AdminDataError";
 import { getAdminMovies, getAdminReviews } from "@/features/admin/api";
-import type { AdminReviewStatusFilter } from "@/features/admin/api";
+import type { AdminReviewStatusFilter } from "@/features/admin/types";
 import { isUnauthorizedResult, getRequestLocale } from "@/libs/session";
 import ReviewsManager from "./components/ReviewsManager";
 
@@ -12,6 +12,8 @@ export interface AdminReviewsQuery {
   rating: number;
   status: AdminReviewStatusFilter;
   sort: string;
+  sortBy: string;
+  dir: string;
   page: number;
 }
 
@@ -22,6 +24,8 @@ export async function ReviewsManagerSection({
   rating,
   status,
   sort,
+  sortBy,
+  dir,
   page,
 }: AdminReviewsQuery) {
   const locale = await getRequestLocale();
@@ -34,6 +38,8 @@ export async function ReviewsManagerSection({
       rating: rating === 0 ? "" : rating,
       status,
       sort,
+      sortBy,
+      dir: dir === "asc" ? "asc" : "desc",
       lang: locale,
     }),
     getAdminMovies({ page: 1, limit: 100 }),
@@ -49,7 +55,7 @@ export async function ReviewsManagerSection({
     // Remount on committed-filter change so unapplied draft edits cannot leak
     // into the new result set (same convention as MoviesManager).
     <ReviewsManager
-      key={[search, movieSlug, userId, rating, status, sort].join("|")}
+      key={[search, movieSlug, userId, rating, status, sort, sortBy, dir].join("|")}
       reviews={reviewsResult.data.reviews}
       pagination={reviewsResult.meta!}
       movies={moviesResult.data.movies}
@@ -59,6 +65,8 @@ export async function ReviewsManagerSection({
       rating={rating}
       status={status}
       sort={sort}
+      sortBy={sortBy}
+      dir={dir}
     />
   );
 }

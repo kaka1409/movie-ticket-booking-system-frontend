@@ -1,8 +1,9 @@
 "use client";
 
-import { Clapperboard, Pencil, Plus, Trash2, type LucideIcon } from "lucide-react";
+import { Pencil, Plus, Trash2, type LucideIcon } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import AdminButton from "@/app/(admin)/admin/components/shared/AdminButton";
+import { getRoomDisplayName } from "@/libs/utils";
 import type { AdminCinema, AdminCinemaRoom } from "@/features/admin/types";
 
 /**
@@ -25,13 +26,14 @@ export default function CinemaFloorPlan({
   onEditRoom: (room: AdminCinemaRoom) => void;
   onDeleteRoom: (room: AdminCinemaRoom) => void;
 }) {
-  const { translate } = useLocale();
-  const rooms = [...cinema.rooms].sort((first, second) => first.name.localeCompare(second.name));
+  const { translate, locale } = useLocale();
+  const rooms = [...cinema.rooms].sort((first, second) =>
+    getRoomDisplayName(first, locale).localeCompare(getRoomDisplayName(second, locale)),
+  );
 
   return (
     <div>
       <div className="flex flex-wrap items-center gap-2 px-4 py-3">
-        <Clapperboard size={15} className="text-(--color-gold)" aria-hidden />
         <h3 className="text-xs font-extrabold tracking-tight text-(--color-text-primary)">
           {translate("admin.cinemas.floor_plan")}
         </h3>
@@ -78,7 +80,7 @@ export default function CinemaFloorPlan({
               >
                 <div className="flex-1 px-3.5 py-3 text-left">
                   <p className="truncate text-[13px] font-bold text-(--color-text-primary)">
-                    {room.name}
+                    {getRoomDisplayName(room, locale)}
                   </p>
                   <p className="mt-1 text-[11px] text-(--color-text-muted)">
                     {translate("admin.rooms.column_seats")}: {room.seats} ·{" "}

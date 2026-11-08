@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import dynamic from "next/dynamic";
 import { ScanLine, CheckCircle2, AlertCircle } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/contexts/LocaleContext";
@@ -8,13 +9,17 @@ import { useToast } from "@/contexts/ToastContext";
 import AdminButton from "@/app/(admin)/admin/components/shared/AdminButton";
 import AdminFormField from "@/app/(admin)/admin/components/shared/AdminFormField";
 import { ADMIN_INPUT_CLASS, ADMIN_CARD_CLASS } from "@/features/admin/constants";
-import { resolveAdminError } from "@/features/admin/errorMessages";
+import { resolveAdminError } from "@/features/admin/utils/errorMessages";
+import { getRoomDisplayName } from "@/libs/utils";
 import { checkInTicketAction } from "@/features/admin/actions/tickets.action";
 import type { AdminCheckinResult } from "@/features/admin/types";
-import QrCameraScanner from "./QrCameraScanner";
+
+// `qr-scanner` is heavy and only needed once an admin opens the camera — keep
+// it out of the check-in chunk; the payload field works without it.
+const QrCameraScanner = dynamic(() => import("./QrCameraScanner"), { ssr: false });
 
 export default function CheckinScanner() {
-  const { translate } = useLocale();
+  const { translate, locale } = useLocale();
   const { token } = useAuth();
   const { notify } = useToast();
   const [payload, setPayload] = useState("");
@@ -63,6 +68,7 @@ export default function CheckinScanner() {
         <AdminFormField labelKey="admin.checkin.payload" hintKey="admin.checkin.payload_hint">
           <input
             type="text"
+            name="payload"
             value={payload}
             onChange={(e) => setPayload(e.target.value)}
             className={ADMIN_INPUT_CLASS}
@@ -111,7 +117,8 @@ export default function CheckinScanner() {
             <div className="flex justify-between gap-2">
               <dt className="text-(--color-text-muted)">Cinema</dt>
               <dd>
-                {result.cinemaName} · {result.roomName}
+                {result.cinemaName} ·{" "}
+                {getRoomDisplayName({ name: result.roomName, nameVi: result.roomNameVi }, locale)}
               </dd>
             </div>
             <div className="flex justify-between gap-2">

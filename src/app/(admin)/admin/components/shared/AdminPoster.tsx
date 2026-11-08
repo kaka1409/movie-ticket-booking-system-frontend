@@ -3,7 +3,7 @@ import { POSTER_FALLBACK } from "@/features/tickets/constants";
 interface AdminPosterProps {
   src?: string | null;
   alt?: string;
-  /** Tailwind size/aspect classes, e.g. `h-11 w-20 aspect-video`. */
+  /** Tailwind size/aspect classes, e.g. `h-10 aspect-[3/2]`. */
   className?: string;
 }
 

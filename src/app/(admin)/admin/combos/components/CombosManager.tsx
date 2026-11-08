@@ -37,6 +37,21 @@ const matchesComboFilters = (combo: AdminCombo, filters: ComboFilters) =>
   (filters.isActive === "" || String(combo.isActive) === filters.isActive) &&
   (filters.tag === "" || (combo.tag ?? "") === filters.tag);
 
+const getComboSortValue = (combo: AdminCombo, key: string) => {
+  switch (key) {
+    case "combo":
+      return combo.nameVi ?? combo.name;
+    case "price":
+      return combo.price;
+    case "usage":
+      return combo.bookingCount;
+    case "status":
+      return combo.isActive;
+    default:
+      return null;
+  }
+};
+
 export default function CombosManager({ combos }: { combos: AdminCombo[] }) {
   const { translate, locale } = useLocale();
   const { token } = useAuth();
@@ -52,13 +67,24 @@ export default function CombosManager({ combos }: { combos: AdminCombo[] }) {
     [combos],
   );
 
-  const { search, setSearch, filters, setFilters, page, setPage, visibleRows, totalPages } =
-    useAdminTableState<AdminCombo, ComboFilters>({
-      rows: combos,
-      getSearchText: getComboSearchText,
-      matches: matchesComboFilters,
-      initialFilters: EMPTY_FILTERS,
-    });
+  const {
+    search,
+    setSearch,
+    filters,
+    setFilters,
+    sort,
+    toggleSort,
+    page,
+    setPage,
+    visibleRows,
+    totalPages,
+  } = useAdminTableState<AdminCombo, ComboFilters>({
+    rows: combos,
+    getSearchText: getComboSearchText,
+    matches: matchesComboFilters,
+    initialFilters: EMPTY_FILTERS,
+    getSortValue: getComboSortValue,
+  });
 
   const isFiltered = search.trim() !== "" || filters.isActive !== "" || filters.tag !== "";
 
@@ -76,6 +102,7 @@ export default function CombosManager({ combos }: { combos: AdminCombo[] }) {
     {
       id: "combo",
       headerKey: "admin.combos.column_combo",
+      sortKey: "combo",
       cell: (combo) => (
         <div className="flex items-center gap-2.5">
           {combo.image ? (
@@ -84,6 +111,8 @@ export default function CombosManager({ combos }: { combos: AdminCombo[] }) {
             <img
               src={combo.image}
               alt=""
+              width={36}
+              height={36}
               loading="lazy"
               className="h-9 w-9 shrink-0 rounded-lg border border-(--color-border) object-cover"
             />
@@ -111,6 +140,7 @@ export default function CombosManager({ combos }: { combos: AdminCombo[] }) {
     {
       id: "price",
       headerKey: "admin.combos.column_price",
+      sortKey: "price",
       className: "w-28",
       align: "right",
       cell: (combo) => <span className="tabular-nums">{formatVND(combo.price, locale)}</span>,
@@ -118,6 +148,7 @@ export default function CombosManager({ combos }: { combos: AdminCombo[] }) {
     {
       id: "usage",
       headerKey: "admin.combos.column_usage",
+      sortKey: "usage",
       className: "w-24",
       align: "right",
       cell: (combo) => <span className="tabular-nums">{combo.bookingCount}</span>,
@@ -125,6 +156,7 @@ export default function CombosManager({ combos }: { combos: AdminCombo[] }) {
     {
       id: "status",
       headerKey: "admin.combos.column_status",
+      sortKey: "status",
       className: "w-28",
       cell: (combo) => (
         <Badge variant={combo.isActive ? "success" : "neutral"} size="xs">
@@ -171,6 +203,8 @@ export default function CombosManager({ combos }: { combos: AdminCombo[] }) {
           isFiltered ? "admin.common.no_results_body" : "admin.combos.empty_body"
         }
         captionKey="admin.combos.title"
+        sort={sort}
+        onSort={toggleSort}
         renderExpanded={(combo, closePanel) => (
           <ComboInlineEdit key={combo.id} combo={combo} onClose={closePanel} />
         )}

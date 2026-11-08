@@ -1,17 +1,30 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { useLocale } from "@/contexts/LocaleContext";
 import type {
   AdminAnalyticsTimeRange,
   AdminDashboardMetrics,
   AdminKpiSummary,
 } from "@/features/admin/types";
-import KpiDetailChart from "./KpiDetailChart";
 import KpiMetricGrid from "./KpiMetricGrid";
 import KpiRangeFilter from "./KpiRangeFilter";
-import type { KpiMetricKey } from "./kpiMetrics";
-import RevenueAttendanceChart from "../analytics/RevenueAttendanceChart";
+import type { KpiMetricKey } from "@/features/admin/utils/kpiMetrics";
+
+// Chart.js is ~200KB of canvas code the metric grid does not need — split it
+// into on-demand chunks so the KPI tiles paint without waiting for it.
+const chartLoading = () => (
+  <div className="h-72 animate-pulse rounded-xl bg-(--color-surface-2)" />
+);
+const KpiDetailChart = dynamic(() => import("./KpiDetailChart"), {
+  ssr: false,
+  loading: chartLoading,
+});
+const RevenueAttendanceChart = dynamic(() => import("../analytics/RevenueAttendanceChart"), {
+  ssr: false,
+  loading: chartLoading,
+});
 
 interface AdminKpiRowProps {
   kpi: AdminKpiSummary;

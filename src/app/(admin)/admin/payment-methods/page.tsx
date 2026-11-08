@@ -14,7 +14,7 @@ export default function AdminPaymentMethodsPage() {
         titleKey="admin.paymentMethods.title"
         descriptionKey="admin.paymentMethods.description"
       />
-      <Suspense fallback={<AdminListSkeleton search={false} total={false} action={false} pager={false} columns={5} />}>
+      <Suspense fallback={<AdminListSkeleton filtersCard filterCardStyle="chips" columns={5} pager={false} />}>
         <PaymentMethodsManagerSection />
       </Suspense>
     </>

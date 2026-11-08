@@ -28,6 +28,7 @@ export default function PaymentMethodFormFields({
         <AdminFormField labelKey="admin.paymentMethods.name_en" error={fieldErrors.nameEn} required>
           <input
             type="text"
+            name="nameEn"
             value={values.nameEn}
             onChange={(event) => updateField("nameEn", event.target.value)}
             className={ADMIN_INPUT_CLASS}
@@ -37,6 +38,7 @@ export default function PaymentMethodFormFields({
         <AdminFormField labelKey="admin.paymentMethods.name_vi" error={fieldErrors.nameVi}>
           <input
             type="text"
+            name="nameVi"
             value={values.nameVi}
             onChange={(event) => updateField("nameVi", event.target.value)}
             className={ADMIN_INPUT_CLASS}
@@ -49,6 +51,7 @@ export default function PaymentMethodFormFields({
         >
           <input
             type="text"
+            name="descriptionEn"
             value={values.descriptionEn}
             onChange={(event) => updateField("descriptionEn", event.target.value)}
             className={ADMIN_INPUT_CLASS}
@@ -61,6 +64,7 @@ export default function PaymentMethodFormFields({
         >
           <input
             type="text"
+            name="descriptionVi"
             value={values.descriptionVi}
             onChange={(event) => updateField("descriptionVi", event.target.value)}
             className={ADMIN_INPUT_CLASS}
@@ -76,6 +80,7 @@ export default function PaymentMethodFormFields({
       >
         <input
           type="number"
+          name="sortOrder"
           min={0}
           max={99}
           value={values.sortOrder}

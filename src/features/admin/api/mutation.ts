@@ -1,12 +1,13 @@
 import { apiMutation, toActionFailure } from "@/libs/api";
-import type { AdminActionResult } from "./types";
+import type { AdminActionResult } from "../types";
 
 type AdminEnvelope<TData> = { data?: TData } | TData | null;
 
 /**
- * Single write path for the console. Kept out of `api.ts` (GET only) and out of
- * the `"use server"` files (which may export nothing but actions), so all ~30
- * admin mutations share one error contract instead of repeating the try/catch.
+ * Single write path for the console. Kept out of the `api/` read modules (GET
+ * only) and out of the `"use server"` files (which may export nothing but
+ * actions), so all ~30 admin mutations share one error contract instead of
+ * repeating the try/catch.
  *
  * The bearer token is the caller's RAM copy (`useAuth().token`); a 401 therefore
  * surfaces as a normal failure message rather than a silent refresh.

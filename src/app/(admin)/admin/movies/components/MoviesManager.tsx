@@ -13,7 +13,7 @@ import AdminPagination from "@/app/(admin)/admin/components/shared/AdminPaginati
 import AdminTable, {
   type AdminTableColumn,
 } from "@/app/(admin)/admin/components/shared/AdminTable";
-import { resolveAdminError } from "@/features/admin/errorMessages";
+import { resolveAdminError } from "@/features/admin/utils/errorMessages";
 import { formatCalendarDate } from "@/libs/date";
 import {
   deleteMovieAction,
@@ -91,6 +91,8 @@ export default function MoviesManager({
   releaseFrom,
   releaseTo,
   featuredState,
+  sort,
+  dir,
 }: {
   movies: AdminMovie[];
   pagination?: AdminPaginationMeta;
@@ -104,6 +106,9 @@ export default function MoviesManager({
   releaseFrom: string;
   releaseTo: string;
   featuredState: AdminMovieFeaturedState | "";
+  /** Committed header sort — `sort` is the wire field, `dir` its direction. */
+  sort: string;
+  dir: string;
 }) {
   const { translate, locale } = useLocale();
   const { token } = useAuth();
@@ -127,7 +132,13 @@ export default function MoviesManager({
     featuredState,
   };
 
-  const buildHref = (filters: MovieFilters, page = 1) => {
+  const buildHref = (
+    filters: MovieFilters,
+    page = 1,
+    sortState: { sort: string; dir: string } | null = sort
+      ? { sort, dir }
+      : null,
+  ) => {
     const params = new URLSearchParams();
 
     if (filters.search !== "") params.set("search", filters.search);
@@ -137,6 +148,10 @@ export default function MoviesManager({
     if (filters.releaseFrom !== "") params.set("releaseFrom", filters.releaseFrom);
     if (filters.releaseTo !== "") params.set("releaseTo", filters.releaseTo);
     if (filters.featuredState !== "") params.set("featuredState", filters.featuredState);
+    if (sortState?.sort) {
+      params.set("sort", sortState.sort);
+      params.set("dir", sortState.dir === "asc" ? "asc" : "desc");
+    }
     if (page > 1) params.set("page", String(page));
 
     const query = params.toString();
@@ -145,10 +160,18 @@ export default function MoviesManager({
 
   const navigate = (href: string) => startNavigation(() => router.push(href));
 
+  /** First click on a column sorts ascending; clicking it again flips. */
+  const handleSort = (key: string) => {
+    const currentDir = dir === "asc" ? "asc" : "desc";
+    const nextDir = sort === key ? (currentDir === "asc" ? "desc" : "asc") : "asc";
+    navigate(buildHref(appliedFilters, 1, { sort: key, dir: nextDir }));
+  };
+
   const columns: AdminTableColumn<AdminMovie>[] = [
     {
       id: "movie",
       headerKey: "admin.movies.column_movie",
+      sortKey: "title",
       cell: (movie) => (
         <div className="flex items-center gap-2.5">
           {movie.posterUrl ? (
@@ -159,10 +182,10 @@ export default function MoviesManager({
               src={movie.posterUrl}
               alt=""
               loading="lazy"
-              className="h-11 aspect-video shrink-0 rounded-md border border-(--color-border) object-cover"
+              className="h-12 aspect-[3/2] shrink-0 rounded-md border border-(--color-border) object-cover"
             />
           ) : (
-            <span className="flex h-11 aspect-video shrink-0 items-center justify-center rounded-md bg-(--color-surface-2) text-(--color-text-muted)">
+            <span className="flex h-12 aspect-[3/2] shrink-0 items-center justify-center rounded-md bg-(--color-surface-2) text-(--color-text-muted)">
               <Clapperboard size={14} aria-hidden />
             </span>
           )}
@@ -176,6 +199,7 @@ export default function MoviesManager({
     {
       id: "status",
       headerKey: "admin.movies.column_status",
+      sortKey: "status",
       className: "w-32",
       cell: (movie) => {
         const badge = STATUS_BADGE[movie.status];
@@ -206,6 +230,7 @@ export default function MoviesManager({
     {
       id: "release",
       headerKey: "admin.movies.release_date",
+      sortKey: "releaseDate",
       className: "w-28",
       cell: (movie) => (
         <span className="whitespace-nowrap text-[12px] tabular-nums">
@@ -231,6 +256,7 @@ export default function MoviesManager({
     {
       id: "runtime",
       headerKey: "admin.movies.column_runtime",
+      sortKey: "duration",
       className: "w-24",
       align: "right",
       cell: (movie) => (
@@ -242,6 +268,7 @@ export default function MoviesManager({
     {
       id: "rating",
       headerKey: "admin.movies.column_rating",
+      sortKey: "rating",
       className: "w-24",
       align: "right",
       cell: (movie) =>
@@ -337,6 +364,8 @@ export default function MoviesManager({
             isFiltered ? "admin.common.no_results_body" : "admin.movies.empty_body"
           }
           captionKey="admin.movies.title"
+          sort={sort ? { key: sort, direction: dir === "asc" ? "asc" : "desc" } : null}
+          onSort={handleSort}
           renderExpanded={(movie, closePanel) => (
             <MovieInlineEdit
               key={movie.id}

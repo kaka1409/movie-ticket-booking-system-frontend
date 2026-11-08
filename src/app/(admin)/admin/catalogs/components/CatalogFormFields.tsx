@@ -28,6 +28,7 @@ export default function CatalogFormFields({
         <AdminFormField labelKey="admin.catalogs.name" error={fieldErrors.name} required>
           <input
             type="text"
+            name="name"
             value={values.name}
             onChange={(event) => updateField("name", event.target.value)}
             className={ADMIN_INPUT_CLASS}
@@ -37,6 +38,7 @@ export default function CatalogFormFields({
         <AdminFormField labelKey="admin.catalogs.name_vi" error={fieldErrors.nameVi}>
           <input
             type="text"
+            name="nameVi"
             value={values.nameVi}
             onChange={(event) => updateField("nameVi", event.target.value)}
             className={ADMIN_INPUT_CLASS}
@@ -52,6 +54,7 @@ export default function CatalogFormFields({
       >
         <input
           type="number"
+          name="sortOrder"
           min={0}
           max={999}
           value={values.sortOrder}

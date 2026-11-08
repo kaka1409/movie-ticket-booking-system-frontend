@@ -7,7 +7,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useToast } from "@/contexts/ToastContext";
 import Badge from "@/components/ui/Badge";
-import Tabs, { tabId, tabPanelId } from "@/components/ui/Tabs";
 import AdminButton from "@/app/(admin)/admin/components/shared/AdminButton";
 import AdminDeleteDialog from "@/app/(admin)/admin/components/shared/AdminDeleteDialog";
 import AdminFormModal from "@/app/(admin)/admin/components/shared/AdminFormModal";
@@ -25,8 +24,6 @@ import CatalogFormFields from "./CatalogFormFields";
 import CatalogInlineEdit from "./CatalogInlineEdit";
 import CatalogsFiltersCard, { type CatalogFilterDraft } from "./CatalogsFiltersCard";
 import { useCatalogForm } from "./useCatalogForm";
-
-const TAB_ID_BASE = "admin-catalogs";
 
 const KIND_META: Record<
   AdminCatalogKind,
@@ -67,6 +64,21 @@ const getCatalogSearchText = (entry: AdminCatalogEntry) =>
 const matchesCatalogFilters = (entry: AdminCatalogEntry, filters: CatalogFilters) =>
   filters.isActive === "" || String(entry.isActive) === filters.isActive;
 
+const getCatalogSortValue = (entry: AdminCatalogEntry, key: string) => {
+  switch (key) {
+    case "name":
+      return entry.nameVi ?? entry.name;
+    case "usage":
+      return entry.usageCount;
+    case "sortOrder":
+      return entry.sortOrder;
+    case "isActive":
+      return entry.isActive;
+    default:
+      return null;
+  }
+};
+
 /**
  * Genres, formats and age ratings carry the same payload on the backend, so one
  * screen edits all three behind a tab strip — the tab only changes the endpoint
@@ -86,23 +98,36 @@ export default function CatalogsManager({
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<AdminCatalogEntry | null>(null);
 
-  const { search, setSearch, filters, setFilters, page, setPage, visibleRows, totalPages } =
-    useAdminTableState<AdminCatalogEntry, CatalogFilters>({
-      rows: entriesByKind[kind],
-      getSearchText: getCatalogSearchText,
-      matches: matchesCatalogFilters,
-      initialFilters: EMPTY_FILTERS,
-    });
+  const {
+    search,
+    setSearch,
+    filters,
+    setFilters,
+    sort,
+    toggleSort,
+    page,
+    setPage,
+    visibleRows,
+    totalPages,
+  } = useAdminTableState<AdminCatalogEntry, CatalogFilters>({
+    rows: entriesByKind[kind],
+    getSearchText: getCatalogSearchText,
+    matches: matchesCatalogFilters,
+    initialFilters: EMPTY_FILTERS,
+    getSortValue: getCatalogSortValue,
+  });
 
   const meta = KIND_META[kind];
-  const isFiltered = search.trim() !== "" || filters.isActive !== "";
+  const isFiltered = kind !== "genres" || search.trim() !== "" || filters.isActive !== "";
 
   const applyFilters = (draft: CatalogFilterDraft) => {
+    setKind(draft.kind as AdminCatalogKind);
     setSearch(draft.search);
     setFilters({ isActive: draft.isActive });
   };
 
   const clearFilters = () => {
+    setKind("genres");
     setSearch("");
     setFilters(EMPTY_FILTERS);
   };
@@ -111,6 +136,7 @@ export default function CatalogsManager({
     {
       id: "name",
       headerKey: "admin.catalogs.name",
+      sortKey: "name",
       cell: (entry) => (
         <div className="min-w-0">
           <p className="truncate font-semibold text-(--color-text-primary)">{entry.name}</p>
@@ -123,6 +149,7 @@ export default function CatalogsManager({
     {
       id: "usage",
       headerKey: meta.usageKey,
+      sortKey: "usage",
       className: "w-24",
       align: "right",
       cell: (entry) => <span className="tabular-nums">{entry.usageCount}</span>,
@@ -130,6 +157,7 @@ export default function CatalogsManager({
     {
       id: "sortOrder",
       headerKey: "admin.catalogs.sort_order",
+      sortKey: "sortOrder",
       className: "w-20",
       align: "right",
       cell: (entry) => <span className="tabular-nums">{entry.sortOrder}</span>,
@@ -137,6 +165,7 @@ export default function CatalogsManager({
     {
       id: "isActive",
       headerKey: "admin.catalogs.status",
+      sortKey: "isActive",
       className: "w-28",
       cell: (entry) => (
         <Badge variant={entry.isActive ? "success" : "neutral"} size="xs">
@@ -162,60 +191,41 @@ export default function CatalogsManager({
 
   return (
     <>
-      <Tabs
-        tabs={(Object.keys(KIND_META) as AdminCatalogKind[]).map((tabKind) => ({
-          key: tabKind,
-          label: translate(KIND_META[tabKind].tabKey),
-        }))}
-        activeTab={kind}
-        onTabChange={(nextKind) => {
-          setKind(nextKind as AdminCatalogKind);
-          clearFilters();
-        }}
-        ariaLabel={translate("admin.catalogs.title")}
-        idBase={TAB_ID_BASE}
+      <CatalogsFiltersCard
+        kind={kind}
+        search={search}
+        isActive={filters.isActive}
+        isFiltered={isFiltered}
+        onApply={applyFilters}
+        onClear={clearFilters}
+        onCreate={() => setIsCreateOpen(true)}
+        createLabelKey={meta.newKey}
+        searchPlaceholderKey={meta.searchKey}
       />
 
-      <div
-        role="tabpanel"
-        id={tabPanelId(TAB_ID_BASE, kind)}
-        aria-labelledby={tabId(TAB_ID_BASE, kind)}
-        tabIndex={0}
-        className="pt-4 outline-none"
-      >
-        <CatalogsFiltersCard
-          search={search}
-          isActive={filters.isActive}
-          isFiltered={isFiltered}
-          onApply={applyFilters}
-          onClear={clearFilters}
-          onCreate={() => setIsCreateOpen(true)}
-          createLabelKey={meta.newKey}
-          searchPlaceholderKey={meta.searchKey}
-        />
+      <AdminTable
+        columns={columns}
+        rows={visibleRows}
+        getRowId={(entry) => entry.id}
+        emptyIcon={Tags}
+        emptyTitleKey={isFiltered ? "admin.common.no_results" : "admin.catalogs.empty_title"}
+        emptyDescriptionKey={
+          isFiltered ? "admin.common.no_results_body" : "admin.catalogs.empty_body"
+        }
+        captionKey="admin.catalogs.title"
+        sort={sort}
+        onSort={toggleSort}
+        renderExpanded={(entry, closePanel) => (
+          <CatalogInlineEdit
+            key={`${kind}-${entry.id}`}
+            kind={kind}
+            entry={entry}
+            onClose={closePanel}
+          />
+        )}
+      />
 
-        <AdminTable
-          columns={columns}
-          rows={visibleRows}
-          getRowId={(entry) => entry.id}
-          emptyIcon={Tags}
-          emptyTitleKey={isFiltered ? "admin.common.no_results" : "admin.catalogs.empty_title"}
-          emptyDescriptionKey={
-            isFiltered ? "admin.common.no_results_body" : "admin.catalogs.empty_body"
-          }
-          captionKey="admin.catalogs.title"
-          renderExpanded={(entry, closePanel) => (
-            <CatalogInlineEdit
-              key={`${kind}-${entry.id}`}
-              kind={kind}
-              entry={entry}
-              onClose={closePanel}
-            />
-          )}
-        />
-
-        <AdminPagination page={page} totalPages={totalPages} onPageChange={setPage} />
-      </div>
+      <AdminPagination page={page} totalPages={totalPages} onPageChange={setPage} />
 
       <CatalogFormDialog
         isOpen={isCreateOpen}

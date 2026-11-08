@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { useLocale } from "@/contexts/LocaleContext";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import ErrorAlert from "@/components/ui/ErrorAlert";
-import { resolveAdminError } from "@/features/admin/errorMessages";
+import { resolveAdminError } from "@/features/admin/utils/errorMessages";
 import type { AdminActionResult } from "@/features/admin/types";
 
 /**
