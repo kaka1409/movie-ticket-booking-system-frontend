@@ -3,7 +3,9 @@
 import { useEffect, useRef } from "react";
 import { useBooking } from "@/features/booking/contexts/BookingContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLocale } from "@/contexts/LocaleContext";
 import { useSeatHolds } from "@/features/booking/hooks/useSeatHolds";
+import { getRoomDisplayName } from "@/libs/utils";
 import type { SeatRow } from "@/features/booking/types";
 import type { ShowtimeDetail } from "@/features/showtimes/types";
 
@@ -27,6 +29,7 @@ export default function SeatMapAdopter({
   initialShowtime?: ShowtimeDetail | null;
 }) {
   const { token } = useAuth();
+  const { locale } = useLocale();
   const {
     seatGrid,
     showtimeId: bookingShowtimeId,
@@ -51,11 +54,11 @@ export default function SeatMapAdopter({
       cinemaName: initialShowtime.cinema.name,
       time: initialShowtime.startTime,
       date: initialShowtime.date,
-      room: initialShowtime.room.name,
+      room: getRoomDisplayName(initialShowtime.room, locale),
       location: initialShowtime.cinema.address,
       showtimeId: initialShowtime.id,
     });
-  }, [initialShowtime, bookingShowtimeId, setCinema]);
+  }, [initialShowtime, bookingShowtimeId, setCinema, locale]);
 
   // One-time adoption of the server map (with the draft's saved seats
   // re-marked) into the booking state.

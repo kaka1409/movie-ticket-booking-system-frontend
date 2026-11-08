@@ -1,4 +1,10 @@
-import { apiFetch, apiMutation, withLang, type ApiResponse, type ErrorResponse } from "@/libs/api";
+import {
+  apiFetch,
+  apiMutation,
+  toErrorResponse,
+  withLang,
+  type ApiResponse,
+} from "@/libs/api";
 import type {
   ComboItem,
   FoodItem,
@@ -10,6 +16,8 @@ import type {
   CurrentSeatHoldResponse,
   SeatHoldResponse,
   BookingDetail,
+  WireCombo,
+  WireFoodItem,
 } from "./types";
 
 /* ─── Booking catalogs (LIVE) ──────────────────────────────── */
@@ -43,17 +51,6 @@ export function getSeatMap(
     identity.token,
     identity.cookie,
   );
-}
-
-/** Wire shape allows nulls that the FE cards render as non-null strings. */
-interface WireCombo extends Omit<ComboItem, "description" | "image" | "tag"> {
-  description: string | null;
-  image: string | null;
-  tag: string | null;
-}
-
-interface WireFoodItem extends Omit<FoodItem, "image"> {
-  image: string | null;
 }
 
 /** Static-ish catalogs (prices/names change rarely) — served for 60s. */
@@ -186,18 +183,6 @@ export function getSeatHolds(
   );
 }
 
-/** Convert an `apiMutation` throw into the `{ error }` union arm. */
-function toErrorUnion(error: unknown): ErrorResponse {
-  const failure = error as Error & { status?: number; code?: string };
-  return {
-    error: {
-      status: failure.status ?? 0,
-      code: failure.code ?? "UNKNOWN_ERROR",
-      message: failure.message,
-    },
-  };
-}
-
 /** LIVE - `PUT /seat-holds` (contract §4.6) — set-replacement created at the seats-step CTA, TTL 600s. */
 export async function saveSeatHolds(
   showtimeId: string,
@@ -211,7 +196,7 @@ export async function saveSeatHolds(
       token,
     );
   } catch (error) {
-    return toErrorUnion(error);
+    return toErrorResponse(error);
   }
 }
 
@@ -227,6 +212,6 @@ export async function releaseSeatHolds(
       token,
     );
   } catch (error) {
-    return toErrorUnion(error);
+    return toErrorResponse(error);
   }
 }

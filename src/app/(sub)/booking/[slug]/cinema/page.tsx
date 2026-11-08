@@ -90,7 +90,7 @@ export default async function CinemaShowtimePage({
             <CinemaDatesSection datesPromise={datesPromise} today={today} locale={locale} />
           </Suspense>
           <Suspense fallback={<MobileCinemaSlotsSkeleton />}>
-            <CinemaSlotsSection schedulePromise={schedulePromise} />
+            <CinemaSlotsSection schedulePromise={schedulePromise} locale={locale} />
           </Suspense>
         </div>
         <BottomBar movieSlug={slug} />
@@ -107,7 +107,7 @@ export default async function CinemaShowtimePage({
                 <CinemaDatesSection datesPromise={datesPromise} today={today} locale={locale} />
               </Suspense>
               <Suspense fallback={<DesktopCinemaSlotsSkeleton />}>
-                <CinemaSlotsSection schedulePromise={schedulePromise} />
+                <CinemaSlotsSection schedulePromise={schedulePromise} locale={locale} />
               </Suspense>
             </>
           }

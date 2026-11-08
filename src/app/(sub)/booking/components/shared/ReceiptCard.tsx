@@ -39,9 +39,9 @@ export default function ReceiptCard({
     total,
   } = useBooking();
   const mounted = useMounted();
-  const { translate } = useLocale();
+  const { translate, locale } = useLocale();
 
-  const cardData = booking ? bookingCardData(booking, paymentMethods) : null;
+  const cardData = booking ? bookingCardData(booking, paymentMethods, locale) : null;
   const { posterSrc, title, ageRating } = resolveTicketIdentity(movie, booking);
 
   return (

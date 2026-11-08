@@ -1,4 +1,5 @@
 import type { Movie } from "@/features/movies/types";
+import { getRoomDisplayName } from "@/libs/utils";
 import { getPaymentLabel } from "./paymentBrand";
 import type { BookingDetail, PaymentMethodOption, SelectedCombo, SelectedSeat } from "../types";
 
@@ -21,6 +22,7 @@ interface BookingCardData {
 export function bookingCardData(
   booking: BookingDetail,
   paymentMethods: PaymentMethodOption[],
+  locale: "en" | "vn",
 ): BookingCardData {
   const seatsByLabel = new Map<string, SelectedSeat>();
   for (const seat of booking.seats) {
@@ -62,7 +64,7 @@ export function bookingCardData(
     total: booking.totalPrice,
     theater: [
       booking.showtime.cinema.name,
-      booking.showtime.room.name,
+      getRoomDisplayName(booking.showtime.room, locale),
       booking.showtime.cinema.address,
     ]
       .filter(Boolean)

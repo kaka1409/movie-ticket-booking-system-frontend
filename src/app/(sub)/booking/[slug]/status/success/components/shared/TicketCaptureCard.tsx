@@ -41,9 +41,9 @@ export default function TicketCaptureCard({
     foods,
     total,
   } = useBooking();
-  const { translate } = useLocale();
+  const { translate, locale } = useLocale();
 
-  const cardData = booking ? bookingCardData(booking, paymentMethods) : null;
+  const cardData = booking ? bookingCardData(booking, paymentMethods, locale) : null;
   const { posterSrc, title, ageRating } = resolveTicketIdentity(movie, booking);
   const format = booking?.showtime.format;
   const qrRef = booking?.id ?? transactionId;

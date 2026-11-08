@@ -43,6 +43,7 @@ export default function PhoneField({
       >
         <div className="relative flex items-center gap-1.5 flex-shrink-0 cursor-pointer">
           <select
+            name="countryCode"
             value={countryCode}
             onChange={(event) => onCountryChange(event.target.value)}
             aria-label={translate("booking.credentials.country_code")}

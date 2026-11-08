@@ -36,8 +36,10 @@ export async function CinemaDatesSection({ datesPromise, today, locale }: Cinema
 /** Streams the selected day's cinema and showtime groups. */
 export async function CinemaSlotsSection({
   schedulePromise,
+  locale,
 }: {
   schedulePromise: Promise<ResolvedSchedule>;
+  locale: "en" | "vn";
 }) {
   const { showtimesResult } = await schedulePromise;
   if ("error" in showtimesResult) {
@@ -48,7 +50,7 @@ export async function CinemaSlotsSection({
   return (
     <>
       <SearchBar />
-      <CinemaList cinemas={toCinemas(showtimesResult.data.cinemas)} />
+      <CinemaList cinemas={toCinemas(showtimesResult.data.cinemas, locale)} />
     </>
   );
 }
@@ -79,7 +81,7 @@ export async function CinemaAdoptSection({
   return (
     <CinemaAdopt
       movie={movie}
-      cinemas={toCinemas(cinemas)}
+      cinemas={toCinemas(cinemas, locale)}
       dates={toDateOptions(dates, today, locale)}
       initialCinemaId={initialCinemaId}
       initialTime={initialTime}

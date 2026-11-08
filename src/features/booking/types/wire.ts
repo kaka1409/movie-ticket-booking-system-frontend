@@ -1,3 +1,4 @@
+import type { ComboItem, FoodItem } from "./combos";
 import type { PaymentMethodId } from "./payment";
 
 /* ─── Backend wire shapes (docs/booking-api-contract.md §4) ─ */
@@ -151,10 +152,21 @@ export interface BookingDetail {
       ageRating: string | null;
     };
     cinema: { id: string; name: string; address: string };
-    room: { id: string; name: string };
+    room: { id: string; name: string; nameVi: string | null };
   };
   seats: { id: string; label: string; type: string; price: number }[];
   combos: { id: string; name: string; quantity: number; price: number }[];
   foods: { id: string; name: string; quantity: number; price: number }[];
   contact: { name: string; email: string; phone: string } | null;
+}
+
+/** Wire shape allows nulls that the FE cards render as non-null strings. */
+export interface WireCombo extends Omit<ComboItem, "description" | "image" | "tag"> {
+  description: string | null;
+  image: string | null;
+  tag: string | null;
+}
+
+export interface WireFoodItem extends Omit<FoodItem, "image"> {
+  image: string | null;
 }

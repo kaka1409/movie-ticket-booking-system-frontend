@@ -1,6 +1,7 @@
 import enMessages from "@/locales/en.json";
 import vnMessages from "@/locales/vn.json";
 import { toShowtimeDateChips } from "@/features/showtimes/utils";
+import { getRoomDisplayName } from "@/libs/utils";
 import type { ShowtimeDateOption, ShowtimesResponse } from "@/features/showtimes/types";
 /** Showtime `date` params are plain `YYYY-MM-DD` wall-clock days. */
 export const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
@@ -145,7 +146,10 @@ export function toDateOptions(
 }
 
 /** Showtimes arrive already grouped by cinema — reshape them for the step's cards. */
-export function toCinemas(groups: ShowtimesResponse["cinemas"]): Cinema[] {
+export function toCinemas(
+  groups: ShowtimesResponse["cinemas"],
+  locale: "en" | "vn",
+): Cinema[] {
   return groups.map((group) => ({
     id: group.id,
     name: group.name,
@@ -157,7 +161,10 @@ export function toCinemas(groups: ShowtimesResponse["cinemas"]): Cinema[] {
     showtimes: group.showtimes.map((slot) => ({
       id: slot.id,
       time: slot.startTime,
-      room: slot.roomName,
+      room: getRoomDisplayName(
+        { name: slot.roomName, nameVi: slot.roomNameVi },
+        locale,
+      ),
       available: slot.isAvailable,
       format: slot.format,
     })),
