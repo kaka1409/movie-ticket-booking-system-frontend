@@ -8,7 +8,7 @@ import Button from "@/components/ui/Button";
 import AuthGateShell from "@/components/shared/AuthGateShell";
 import LoginPromptArt from "@/components/shared/LoginPromptArt";
 import { useLocale } from "@/contexts/LocaleContext";
-import { buildLoginUrl, buildRegisterUrl } from "@/libs/utils";
+import { buildLoginUrl, buildRegisterUrl } from "@/features/auth/utils";
 
 /**
  * Responsive LoginPrompt:
@@ -46,7 +46,6 @@ export default function LoginPrompt() {
 
   return (
     <AuthGateShell>
-      {/* ─── MOBILE VIEW (< md): Y chang như cũ (Không container, không viền) ─── */}
       <div className="surface-raised flex w-full max-w-xs flex-col items-center gap-4 text-center md:hidden">
         <div className="flex h-16 w-16 items-center justify-center rounded-full bg-(--color-surface)">
           <LogIn size={28} className="text-(--color-text-muted)" />
@@ -73,15 +72,12 @@ export default function LoginPrompt() {
         </p>
       </div>
 
-      {/* ─── TABLET & DESKTOP VIEW (>= md): 50/50 Split Showcase (max-w-7xl) ─── */}
       <div className="surface-raised mx-auto hidden w-full max-w-7xl overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-surface) shadow-(--shadow-card) md:block md:rounded-3xl">
         <div className="grid min-h-[580px] grid-cols-2 lg:min-h-[640px]">
-          {/* Left Column (50%): Abstract Interactive Cinema Art */}
           <div className="border-r border-(--color-border)">
             <LoginPromptArt />
           </div>
 
-          {/* Right Column (50%): Authentication & 3 Expandable Privileges */}
           <div className="flex flex-col justify-between p-6 sm:p-10 lg:p-14">
             <div>
               <span className="text-2xs font-bold uppercase tracking-[0.25em] text-(--color-gold)">
@@ -96,7 +92,6 @@ export default function LoginPrompt() {
                 {translate("auth.protected.description")}
               </p>
 
-              {/* Desktop-refined inline CTA pair with LogIn icon */}
               <div className="mt-8 flex flex-wrap items-center gap-3">
                 <Button
                   href={buildLoginUrl(pathname)}
@@ -123,7 +118,6 @@ export default function LoginPrompt() {
               </div>
             </div>
 
-            {/* 3 Individual Expandable Privileges Accordion */}
             <div className="mt-10 border-t border-(--color-border) pt-6">
               <p className="mb-3 text-2xs font-bold uppercase tracking-[0.2em] text-(--color-text-muted)">
                 {translate("auth.protected.privilege_toggle_show")}
@@ -179,7 +173,6 @@ export default function LoginPrompt() {
                 })}
               </div>
 
-              {/* Security Guarantee Note */}
               <div className="mt-6 flex items-center gap-2 text-3xs text-(--color-text-muted)">
                 <ShieldCheck size={14} className="shrink-0 text-(--color-gold)" />
                 <span>{translate("auth.protected.security_note")}</span>

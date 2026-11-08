@@ -4,7 +4,7 @@ import { useCallback, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useAuth } from "@/contexts/AuthContext";
-import { buildLoginUrl } from "@/libs/utils";
+import { buildLoginUrl } from "../utils";
 import { loginAction, registerAction } from "../action";
 import { createRegisterSchema } from "../schema";
 import { fieldErrorsFromDetails } from "@/libs/api";
@@ -14,6 +14,8 @@ export interface RegisterFormController {
   setName: (value: string) => void;
   email: string;
   setEmail: (value: string) => void;
+  phone: string;
+  setPhone: (value: string) => void;
   password: string;
   setPassword: (value: string) => void;
   confirmPassword: string;
@@ -23,8 +25,11 @@ export interface RegisterFormController {
   /** Field errors — only populated once the form has been submitted once. */
   nameError?: string;
   emailError?: string;
+  phoneError?: string;
   passwordError?: string;
   confirmError?: string;
+  /** Shown after a submit attempt that left the terms box unticked. */
+  termsError?: string;
   /** Server-side failure message (email taken, transport error). */
   serverError: string;
   isSubmitting: boolean;
@@ -50,6 +55,7 @@ export function useRegisterForm({
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [termsAccepted, setTermsAccepted] = useState(false);
@@ -59,7 +65,7 @@ export function useRegisterForm({
   const [serverFieldErrors, setServerFieldErrors] = useState<Record<string, string>>({});
 
   const schema = useMemo(() => createRegisterSchema(translate), [translate]);
-  const validation = schema.safeParse({ name, email, password, confirmPassword });
+  const validation = schema.safeParse({ name, email, phone, password, confirmPassword });
   const isValid = validation.success;
   const fieldErrors = validation.success ? {} : validation.error.flatten().fieldErrors;
 
@@ -69,13 +75,13 @@ export function useRegisterForm({
       setTouched(true);
       setServerError("");
       setServerFieldErrors({});
-      if (!isValid) return;
+      if (!isValid || !termsAccepted) return;
 
       setIsSubmitting(true);
       try {
         const registerResult = await registerAction(
           { success: false, error: "" },
-          { fullname: name, email, password },
+          { fullname: name.trim(), email: email.trim(), phone: phone.trim(), password },
         );
 
         if (!registerResult.success) {
@@ -93,7 +99,10 @@ export function useRegisterForm({
           return;
         }
 
-        const session = await loginAction({ success: false, error: "" }, { email, password });
+        const session = await loginAction(
+          { success: false, error: "" },
+          { email: email.trim(), password },
+        );
         if (session.success) {
           setAuth(session.data.user, session.data.accessToken);
           router.push(returnUrl ?? "/");
@@ -106,7 +115,7 @@ export function useRegisterForm({
         setIsSubmitting(false);
       }
     },
-    [isValid, name, email, password, router, setAuth, translate, returnUrl],
+    [isValid, termsAccepted, name, email, phone, password, router, setAuth, translate, returnUrl],
   );
 
   return {
@@ -114,6 +123,8 @@ export function useRegisterForm({
     setName,
     email,
     setEmail,
+    phone,
+    setPhone,
     password,
     setPassword,
     confirmPassword,
@@ -122,10 +133,12 @@ export function useRegisterForm({
     toggleTermsAccepted: () => setTermsAccepted((accepted) => !accepted),
     nameError: touched ? (serverFieldErrors.name ?? fieldErrors.name?.[0]) : undefined,
     emailError: touched ? (serverFieldErrors.email ?? fieldErrors.email?.[0]) : undefined,
+    phoneError: touched ? (serverFieldErrors.phone ?? fieldErrors.phone?.[0]) : undefined,
     passwordError: touched ? (serverFieldErrors.password ?? fieldErrors.password?.[0]) : undefined,
     confirmError: touched
       ? (serverFieldErrors.confirmPassword ?? fieldErrors.confirmPassword?.[0])
       : undefined,
+    termsError: touched && !termsAccepted ? translate("auth.register.error_terms_required") : undefined,
     serverError,
     isSubmitting,
     handleSubmit,

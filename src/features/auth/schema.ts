@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { PASSWORD_UPPERCASE, PASSWORD_NUMBER, PASSWORD_SPECIAL } from "@/libs/zod";
+import {
+  PASSWORD_UPPERCASE,
+  PASSWORD_NUMBER,
+  PASSWORD_SPECIAL,
+  isValidVnPhone,
+} from "@/libs/validation";
 
 /** Login fields; messages come from i18n. */
 export function createLoginSchema(translate: (key: string) => string) {
@@ -14,8 +19,9 @@ export function createLoginSchema(translate: (key: string) => string) {
 }
 
 /**
- * Register fields. The accepted-terms checkbox is **not** validated here — the
- * form checks it separately, so this schema alone does not gate submission.
+ * Register fields. The accepted-terms checkbox is **not** part of this schema —
+ * `useRegisterForm` gates submission on it separately and surfaces its own
+ * error, so this schema alone does not cover the whole form.
  */
 export function createRegisterSchema(translate: (key: string) => string) {
   return z
@@ -30,6 +36,11 @@ export function createRegisterSchema(translate: (key: string) => string) {
         .trim()
         .min(1, translate("auth.register.error_email_required"))
         .email(translate("auth.register.error_email_invalid")),
+      phone: z
+        .string()
+        .trim()
+        .min(1, translate("auth.register.error_phone_required"))
+        .refine(isValidVnPhone, translate("auth.register.error_phone_invalid")),
       password: z
         .string()
         .min(1, translate("auth.register.error_password_required"))

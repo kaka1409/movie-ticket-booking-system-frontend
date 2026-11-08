@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Mail } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useLoginForm } from "@/features/auth/hooks/useLoginForm";
-import { buildLoginUrl, buildRegisterUrl } from "@/libs/utils";
+import { buildLoginUrl, buildRegisterUrl } from "@/features/auth/utils";
 
 import Logo from "@/components/ui/Logo";
 import InputField from "@/components/ui/InputField";

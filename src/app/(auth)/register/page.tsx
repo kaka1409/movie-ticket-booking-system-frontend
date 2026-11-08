@@ -1,6 +1,6 @@
 import MobileRegisterForm from "./components/mobile/RegisterForm";
 import DesktopRegisterForm from "./components/desktop/RegisterForm";
-import { authReturnTarget } from "@/libs/utils";
+import { authReturnTarget } from "@/features/auth/utils";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {

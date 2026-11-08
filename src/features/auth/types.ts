@@ -25,6 +25,7 @@ export interface LoginResponse {
 export interface RegisterRequest {
   fullname: string;
   email: string;
+  phone: string;
   password: string;
 }
 

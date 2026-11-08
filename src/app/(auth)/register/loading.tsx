@@ -14,6 +14,7 @@ export default function RegisterLoading() {
               <Skeleton className="h-12 w-full rounded-xl" />
               <Skeleton className="h-12 w-full rounded-xl" />
               <Skeleton className="h-12 w-full rounded-xl" />
+              <Skeleton className="h-12 w-full rounded-xl" />
               <Skeleton className="h-5 w-48 rounded-full" />
               <Skeleton className="h-12 w-full rounded-2xl" />
             </div>
@@ -23,7 +24,7 @@ export default function RegisterLoading() {
 
       {/*
         Desktop: the auth layout owns the card, so this mirrors the register body
-        — four fields, the always-visible password checklist, the terms row and
+        — five fields, the always-visible password checklist, the terms row and
         the submit. `SkeletonBar` because the form column is `.surface-raised`.
       */}
       <div className="hidden md:block">
@@ -41,6 +42,7 @@ export default function RegisterLoading() {
           </div>
 
           <div className="mt-5 space-y-3.5">
+            <SkeletonBar className="h-[54px] rounded-xl" />
             <SkeletonBar className="h-[54px] rounded-xl" />
             <SkeletonBar className="h-[54px] rounded-xl" />
             <SkeletonBar className="h-[54px] rounded-xl" />

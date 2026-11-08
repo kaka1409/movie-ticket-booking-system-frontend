@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { Mail, User } from "lucide-react";
+import { Mail, Phone, User } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useRegisterForm } from "@/features/auth/hooks/useRegisterForm";
-import { buildLoginUrl, buildRegisterUrl } from "@/libs/utils";
+import { buildLoginUrl, buildRegisterUrl } from "@/features/auth/utils";
 
 import InputField from "@/components/ui/InputField";
 import PasswordField from "@/components/ui/PasswordField";
@@ -29,6 +29,8 @@ export default function RegisterForm({ returnUrl }: { returnUrl?: string }) {
     setName,
     email,
     setEmail,
+    phone,
+    setPhone,
     password,
     setPassword,
     confirmPassword,
@@ -37,8 +39,10 @@ export default function RegisterForm({ returnUrl }: { returnUrl?: string }) {
     toggleTermsAccepted,
     nameError,
     emailError,
+    phoneError,
     passwordError,
     confirmError,
+    termsError,
     serverError,
     isSubmitting,
     handleSubmit,
@@ -87,6 +91,17 @@ export default function RegisterForm({ returnUrl }: { returnUrl?: string }) {
           error={emailError}
         />
 
+        <InputField
+          type="tel"
+          value={phone}
+          onChange={setPhone}
+          placeholder={translate("auth.register.phone")}
+          icon={Phone}
+          autoComplete="tel"
+          inputMode="tel"
+          error={phoneError}
+        />
+
         <PasswordField
           value={password}
           onChange={setPassword}
@@ -110,6 +125,7 @@ export default function RegisterForm({ returnUrl }: { returnUrl?: string }) {
         <TermsCheckbox
           checked={termsAccepted}
           onChange={toggleTermsAccepted}
+          error={termsError}
           translate={translate}
         />
 

@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { Search, LogIn } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useAuth } from "@/contexts/AuthContext";
-import { buildLoginUrl } from "@/libs/utils";
+import { buildLoginUrl } from "@/features/auth/utils";
 import Logo from "@/components/ui/Logo";
 import LanguageToggle from "@/layouts/components/LanguageToggle";
 import { HEADER_PRESS_CLASS } from "@/layouts/components/constants";

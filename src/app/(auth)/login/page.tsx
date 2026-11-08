@@ -1,6 +1,6 @@
 import MobileLoginForm from "./components/mobile/LoginForm";
 import DesktopLoginForm from "./components/desktop/LoginForm";
-import { authReturnTarget } from "@/libs/utils";
+import { authReturnTarget } from "@/features/auth/utils";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {

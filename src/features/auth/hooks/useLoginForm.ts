@@ -56,7 +56,10 @@ export function useLoginForm({ returnUrl }: { returnUrl?: string } = {}): LoginF
 
       setIsSubmitting(true);
       try {
-        const loginResult = await loginAction({ success: false, error: "" }, { email, password });
+        const loginResult = await loginAction(
+          { success: false, error: "" },
+          { email: email.trim(), password },
+        );
         if (loginResult.success) {
           setAuth(loginResult.data.user, loginResult.data.accessToken);
           router.push(returnUrl ?? "/");
