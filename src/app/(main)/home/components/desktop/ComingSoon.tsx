@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Bell, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Heart } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useWishlist, type WishlistFeedback } from "@/features/wishlist/contexts/WishlistContext";
 import { formatDate } from "@/libs/utils";
@@ -105,6 +105,9 @@ export default function ComingSoon({
               onMouseLeave={handleCardMouseLeave}
               className="group relative overflow-hidden rounded-(--radius-lg) border border-(--color-border) bg-(--color-surface) transition duration-300 hover:-translate-y-1 hover:border-(--color-gold)/40"
             >
+              {/* Stretched link makes the whole card clickable; the wishlist
+                  button and "More info" sit above it with z-10. It must be the
+                  last child so it paints over the positioned poster box. */}
               <div className="relative aspect-[16/10] w-full overflow-hidden bg-(--color-surface-2)">
                 <Image
                   src={movie.src || "/images/movie-poster-placeholder.jpg"}
@@ -124,38 +127,40 @@ export default function ComingSoon({
                   </div>
                 )}
 
-                <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between gap-3">
+                <div className="absolute right-16 bottom-3 left-3 flex items-end">
                   <div className="min-w-0 flex-1">
                     <p className="mb-0.5 text-2xs font-bold tracking-widest uppercase text-(--color-gold)">
                       {movie.genre}
                     </p>
-                    <Link href={`/movies/${movie.slug}`}>
-                      <h3 className="truncate text-base font-extrabold tracking-tight text-white transition-colors group-hover:text-(--color-gold)">
-                        {movie.title}
-                      </h3>
-                    </Link>
+                    <h3 className="truncate text-base font-extrabold tracking-tight text-white transition-colors group-hover:text-(--color-gold)">
+                      {movie.title}
+                    </h3>
                   </div>
-
-                  <button
-                    type="button"
-                    onClick={() =>
-                      toggleWishlist(movie.id, {
-                        added: translate("profile.wishlist.toast_added"),
-                        addFailed: translate("profile.wishlist.toast_add_failed"),
-                        removeFailed: translate("profile.wishlist.toast_remove_failed"),
-                      } satisfies WishlistFeedback)
-                    }
-                    className={`flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full border transition ${
-                      wished
-                        ? "border-(--color-gold) bg-(--color-gold) text-black shadow-md"
-                        : "border-white/20 bg-black/60 text-white backdrop-blur-xs hover:border-(--color-gold) hover:text-(--color-gold)"
-                    }`}
-                    aria-label={`${translate("home.desktop.notify_me")} ${movie.title}`}
-                    title={wished ? "Saved to Wishlist" : "Remind Me"}
-                  >
-                    <Bell size={16} fill={wished ? "currentColor" : "none"} />
-                  </button>
                 </div>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    toggleWishlist(movie.id, {
+                      added: translate("profile.wishlist.toast_added"),
+                      addFailed: translate("profile.wishlist.toast_add_failed"),
+                      removeFailed: translate("profile.wishlist.toast_remove_failed"),
+                    } satisfies WishlistFeedback)
+                  }
+                  className={`absolute right-3 bottom-3 z-10 flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full border transition ${
+                    wished
+                      ? "border-(--color-gold) bg-(--color-gold) text-black shadow-md"
+                      : "border-white/20 bg-black/60 text-white backdrop-blur-xs hover:border-(--color-gold) hover:text-(--color-gold)"
+                  }`}
+                  aria-label={`${translate("home.desktop.toggle_wishlist")} ${movie.title}`}
+                  title={
+                    wished
+                      ? translate("profile.wishlist.remove_wishlist")
+                      : translate("profile.wishlist.add_wishlist")
+                  }
+                >
+                  <Heart size={16} fill={wished ? "currentColor" : "none"} />
+                </button>
               </div>
 
               <div className="flex items-center justify-between p-3.5 text-xs">
@@ -164,11 +169,17 @@ export default function ComingSoon({
                 </span>
                 <Link
                   href={`/movies/${movie.slug}`}
-                  className="shrink-0 font-bold text-(--color-gold) hover:underline"
+                  className="relative z-10 shrink-0 font-bold text-(--color-gold) hover:underline"
                 >
                   {translate("common.more_info")} →
                 </Link>
               </div>
+
+              <Link
+                href={`/movies/${movie.slug}`}
+                aria-label={movie.title}
+                className="absolute inset-0 z-0"
+              />
             </article>
           );
         })}
