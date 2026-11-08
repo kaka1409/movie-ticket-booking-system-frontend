@@ -7,27 +7,31 @@ export function useDownloadTicket() {
   const [isDownloading, setIsDownloading] = useState(false);
   const ticketRef = useRef<HTMLDivElement>(null);
 
-  const downloadTicket = useCallback(async (filename: string = "ticket.png") => {
-    if (!ticketRef.current) return;
+  const downloadTicket = useCallback(
+    async (filename: string = "ticket.png", target?: HTMLElement | null) => {
+      const element = target ?? ticketRef.current;
+      if (!element) return;
 
-    setIsDownloading(true);
-    try {
-      const dataUrl = await toPng(ticketRef.current, {
-        quality: 0.95,
-        cacheBust: true,
-        pixelRatio: 2,
-      });
+      setIsDownloading(true);
+      try {
+        const dataUrl = await toPng(element, {
+          quality: 0.95,
+          cacheBust: true,
+          pixelRatio: 2,
+        });
 
-      const link = document.createElement("a");
-      link.download = filename;
-      link.href = dataUrl;
-      link.click();
-    } catch (error) {
-      console.error("Failed to download ticket:", error);
-    } finally {
-      setIsDownloading(false);
-    }
-  }, []);
+        const link = document.createElement("a");
+        link.download = filename;
+        link.href = dataUrl;
+        link.click();
+      } catch (error) {
+        console.error("Failed to download ticket:", error);
+      } finally {
+        setIsDownloading(false);
+      }
+    },
+    [],
+  );
 
   return { ticketRef, downloadTicket, isDownloading };
 }

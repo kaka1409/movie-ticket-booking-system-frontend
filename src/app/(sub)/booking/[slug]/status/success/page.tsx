@@ -7,7 +7,7 @@ import LoginPrompt from "@/components/shared/LoginPrompt";
 
 // Mobile components
 import SuccessIcon from "@/components/shared/SuccessIcon";
-import SuccessActions from "./components/mobile/SuccessActions";
+import MobileSuccessBody from "./components/mobile/MobileSuccessBody";
 
 // Desktop components
 import DesktopSuccessContent from "./components/desktop/SuccessContent";
@@ -49,15 +49,20 @@ export default async function SuccessPage({
               titleKey="booking.status.success.title"
               messageKey="booking.status.success.message"
             />
-            <Suspense fallback={<StatusReceiptSkeleton />}>
-              <SuccessReceiptSection
-                moviePromise={moviePromise}
-                catalogPromise={catalogPromise}
-                booking={booking}
-                transactionId={transactionId}
-              />
-            </Suspense>
-            <SuccessActions />
+            <MobileSuccessBody
+              booking={booking}
+              transactionId={transactionId}
+              receipt={
+                <Suspense fallback={<StatusReceiptSkeleton />}>
+                  <SuccessReceiptSection
+                    moviePromise={moviePromise}
+                    catalogPromise={catalogPromise}
+                    booking={booking}
+                    transactionId={transactionId}
+                  />
+                </Suspense>
+              }
+            />
           </main>
         </div>
       </div>
@@ -74,6 +79,7 @@ export default async function SuccessPage({
                 catalogPromise={catalogPromise}
                 booking={booking}
                 transactionId={transactionId}
+                withCapture
               />
             </Suspense>
           }

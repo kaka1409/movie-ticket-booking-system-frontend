@@ -15,9 +15,13 @@ import type { BookingDetail } from "@/features/booking/types";
 export default function SuccessSidePanel({
   booking,
   transactionId,
+  onDownload,
+  isDownloading,
 }: {
   booking: BookingDetail | null;
   transactionId: string;
+  onDownload: () => void;
+  isDownloading: boolean;
 }) {
   const mounted = useMounted();
   const { translate } = useLocale();
@@ -45,7 +49,9 @@ export default function SuccessSidePanel({
         </p>
 
         <div className="mt-5 space-y-3">
-          <Button icon={Download}>{translate("booking.status.success.download")}</Button>
+          <Button icon={Download} onClick={onDownload} loading={isDownloading}>
+            {translate("booking.status.success.download")}
+          </Button>
           <Button variant="outline" icon={Home} href="/">
             {translate("booking.common.back_to_home")}
           </Button>

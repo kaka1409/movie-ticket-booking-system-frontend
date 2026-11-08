@@ -6,7 +6,13 @@ import { useMounted } from "@/hooks/useMounted";
 import { useLocale } from "@/contexts/LocaleContext";
 import Button from "@/components/ui/Button";
 
-export default function SuccessActions() {
+export default function SuccessActions({
+  onDownload,
+  isDownloading,
+}: {
+  onDownload: () => void;
+  isDownloading: boolean;
+}) {
   const mounted = useMounted();
   const { translate } = useLocale();
 
@@ -16,7 +22,9 @@ export default function SuccessActions() {
         mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
       }`}
     >
-      <Button icon={Download}>{translate("booking.status.success.download")}</Button>
+      <Button icon={Download} onClick={onDownload} loading={isDownloading}>
+        {translate("booking.status.success.download")}
+      </Button>
 
       <Link
         href="/"

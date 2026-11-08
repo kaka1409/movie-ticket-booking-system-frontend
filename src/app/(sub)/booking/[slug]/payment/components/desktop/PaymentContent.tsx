@@ -9,6 +9,7 @@ import BookingStepLayout from "@/app/(sub)/booking/components/desktop/BookingSte
 import CountdownRow from "@/app/(sub)/booking/components/desktop/CountdownRow";
 import RailSummary from "@/app/(sub)/booking/components/desktop/RailSummary";
 import PaymentHeader from "../shared/PaymentHeader";
+import CustomerInfoCard from "../shared/CustomerInfoCard";
 import SecureBadge from "../shared/SecureBadge";
 import TermsNote from "../shared/TermsNote";
 
@@ -44,6 +45,7 @@ export default function PaymentContent({ slots }: { slots: ReactNode }) {
     >
       <div className="space-y-6">
         <PaymentHeader />
+        <CustomerInfoCard />
         <div className="grid gap-3 xl:grid-cols-2">{slots}</div>
         <SecureBadge />
         <TermsNote />
