@@ -1,14 +1,20 @@
 import { cache } from "react";
 import type { ApiResponse } from "@/libs/api";
-import { apiFetch, settleApiResponse, withLang, type ErrorResponse } from "@/libs/api";
+import { apiFetch, settleApiResponse, withLang } from "@/libs/api";
 import { getPaymentMethods } from "@/features/booking/api";
-import type { UpcomingTicket, PastTicket, Recipient, EligibleShowtime } from "./types";
+import { DEFAULT_TICKET_META } from "./constants";
 import type {
+  EligibleShowtime,
   EligibleShowtimeWire,
+  PastTicket,
+  Recipient,
   SearchRecipientWire,
   TicketDetailWire,
+  TicketListData,
   TicketPageMeta,
   TicketSummaryWire,
+  TicketTab,
+  UpcomingTicket,
 } from "./types";
 import {
   toDetailTicket,
@@ -138,25 +144,7 @@ export async function getEligibleShowtimes(
     cookie,
   );
   if ("error" in result) return result;
-  return { data: result.data.map(toEligibleShowtime) };
-}
-
-export type TicketTab = "upcoming" | "past";
-
-export const DEFAULT_TICKET_META: TicketPageMeta = {
-  total: 0,
-  totalPages: 1,
-  page: 1,
-  limit: 12,
-  hasNextPage: false,
-};
-
-export interface TicketListData {
-  upcoming: UpcomingTicket[];
-  past: PastTicket[];
-  meta: TicketPageMeta;
-  error: ErrorResponse["error"] | null;
-  isUnauthorized: boolean;
+  return { data: result.data.map((row) => toEligibleShowtime(row, locale)) };
 }
 
 /** Cached visible-tab list shared by both ticket-list device trees. */

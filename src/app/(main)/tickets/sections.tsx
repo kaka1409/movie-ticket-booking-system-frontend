@@ -1,4 +1,5 @@
-import { getTicketsForTab, type TicketTab } from "@/features/tickets/api";
+import { getTicketsForTab } from "@/features/tickets/api";
+import type { TicketTab } from "@/features/tickets/types";
 
 import UpcomingTicketList from "./components/mobile/UpcomingTicketList";
 import PastTicketList from "./components/mobile/PastTicketList";

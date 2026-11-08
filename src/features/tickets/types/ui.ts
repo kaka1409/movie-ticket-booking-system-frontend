@@ -1,5 +1,7 @@
 import type { LucideIcon } from "lucide-react";
+import type { ErrorResponse } from "@/libs/api";
 import type { TicketStatus } from "../constants";
+import type { TicketPageMeta } from "./wire";
 
 export interface SeatTicket {
   /** Backend seat UUID — present on detail payloads, absent on list summaries. */
@@ -169,3 +171,13 @@ export type ShowtimeLoadStatus = "loading" | "ready" | "empty" | "error";
 
 /** Load lifecycle of the seat map painted for the modify flow's target showtime. */
 export type SeatMapLoadStatus = "loading" | "ready" | "error";
+
+export type TicketTab = "upcoming" | "past";
+
+export interface TicketListData {
+  upcoming: UpcomingTicket[];
+  past: PastTicket[];
+  meta: TicketPageMeta;
+  error: ErrorResponse["error"] | null;
+  isUnauthorized: boolean;
+}

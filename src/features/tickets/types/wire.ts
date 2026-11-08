@@ -11,6 +11,7 @@ export interface TicketSummaryWire {
   posterUrl: string | null;
   cinemaName: string;
   roomName: string;
+  roomNameVi: string | null;
   showtimeDate: string;
   showtimeStart: string;
   showtimeEnd: string;
@@ -99,7 +100,7 @@ export interface EligibleShowtimeWire {
   endTime: string;
   format: string;
   cinema: { id: string; name: string };
-  room: { id: string; name: string };
+  room: { id: string; name: string; nameVi: string | null };
   /** The server knows both rooms, so it decides whether new seats are needed. */
   requiresSeatSelection: boolean;
 }

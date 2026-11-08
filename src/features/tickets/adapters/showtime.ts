@@ -1,14 +1,17 @@
-import { toLocaleTag } from "@/libs/utils";
+import { getRoomDisplayName, toLocaleTag } from "@/libs/utils";
 import type { DateOption } from "@/features/booking/types";
 import type { EligibleShowtime, EligibleShowtimeWire } from "../types";
 
 /** Wire row → the modification UI shape (no address/distance in the source payload). */
-export function toEligibleShowtime(row: EligibleShowtimeWire): EligibleShowtime {
+export function toEligibleShowtime(
+  row: EligibleShowtimeWire,
+  locale: "en" | "vn",
+): EligibleShowtime {
   return {
     showtimeId: row.showtimeId,
     date: row.date,
     time: row.startTime,
-    room: row.room.name,
+    room: getRoomDisplayName(row.room, locale),
     cinemaId: row.cinema.id,
     cinemaName: row.cinema.name,
     address: "",

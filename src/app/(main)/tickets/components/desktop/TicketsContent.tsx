@@ -12,8 +12,7 @@ import PastTicketCard from "./PastTicketCard";
 import UpcomingTicketCard from "./UpcomingTicketCard";
 import LocaleTransition from "@/components/ui/LocaleTransition";
 import DesktopPageHeader from "@/components/shared/DesktopPageHeader";
-
-type TicketTab = "upcoming" | "past";
+import type { TicketTab } from "@/features/tickets/types";
 
 /**
  * Desktop ticket listing:
@@ -53,7 +52,6 @@ export default function TicketsContent({
         }
       />
 
-      {/* Main Listing Section */}
       <section className="mt-8 rounded-2xl border border-(--color-border) bg-(--color-surface) p-5 lg:p-7 shadow-(--shadow-card)">
         <div className="surface-raised">
           {isEmpty ? (

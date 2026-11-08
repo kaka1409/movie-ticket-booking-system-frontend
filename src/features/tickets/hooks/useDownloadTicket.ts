@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
-import { toPng } from "html-to-image";
 
 export function useDownloadTicket() {
   const [isDownloading, setIsDownloading] = useState(false);
@@ -14,6 +13,9 @@ export function useDownloadTicket() {
 
       setIsDownloading(true);
       try {
+        // html-to-image is only needed at click time — defer the download so
+        // ticket pages do not ship it in the initial bundle.
+        const { toPng } = await import("html-to-image");
         const dataUrl = await toPng(element, {
           quality: 0.95,
           cacheBust: true,

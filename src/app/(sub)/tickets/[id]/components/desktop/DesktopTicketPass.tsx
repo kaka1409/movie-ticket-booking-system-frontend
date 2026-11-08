@@ -27,9 +27,7 @@ export default function DesktopTicketPass() {
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Cinematic Pass Container */}
       <section className="overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-surface) shadow-xl">
-        {/* Pass Top Branding Bar */}
         <div className="flex items-center justify-between border-b border-(--color-border)/60 bg-(--color-surface-2)/60 px-6 py-3.5">
           <div className="flex items-center gap-2">
             <span className="flex h-5 w-5 items-center justify-center rounded-md bg-(--color-gold)/20 text-(--color-gold)">
@@ -46,7 +44,6 @@ export default function DesktopTicketPass() {
           </div>
         </div>
 
-        {/* Hero Movie Presentation */}
         <div className="flex flex-col gap-6 p-6 sm:flex-row">
           <div className="relative aspect-[2/3] w-36 shrink-0 overflow-hidden rounded-xl bg-(--color-surface-2) shadow-lg">
             <Image
@@ -116,7 +113,6 @@ export default function DesktopTicketPass() {
               </div>
             </div>
 
-            {/* Booked Seats Section */}
             <div className="mt-4 pt-4 border-t border-(--color-border)/50">
               <div className="flex items-center gap-1.5 text-xs font-bold text-(--color-gold) uppercase tracking-wider mb-2">
                 <Armchair size={14} />
@@ -137,7 +133,6 @@ export default function DesktopTicketPass() {
           </div>
         </div>
 
-        {/* Concessions / Snack Add-ons */}
         {foodDrinks.length > 0 && (
           <div className="border-t border-(--color-border)/60 bg-(--color-surface-2)/30 px-6 py-4">
             <div className="flex items-center gap-2 text-xs font-bold text-(--color-gold) uppercase tracking-wider mb-2">
@@ -165,10 +160,8 @@ export default function DesktopTicketPass() {
           </div>
         )}
 
-        {/* Perforated Tear Line */}
         <TearLine className="my-0 px-6" />
 
-        {/* Payment Summary Section */}
         <div className="p-6">
           <p className="text-xs font-bold text-(--color-gold) uppercase tracking-wider mb-3">
             {translate("tickets.payment_summary")}

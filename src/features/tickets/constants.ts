@@ -1,5 +1,5 @@
 import { Armchair, ArrowUpRight, CalendarDays } from "lucide-react";
-import type { ModifyTypeOption, PastTicket } from "./types";
+import type { ModifyTypeOption, PastTicket, TicketPageMeta } from "./types";
 
 export const TICKET_STATUS = {
   SUCCESS: "success",
@@ -63,6 +63,14 @@ export const PAST_STATUS_META: Record<PastStatus, { labelKey: string }> = {
 export function isPastStatus(status: string): status is PastStatus {
   return status in PAST_STATUS_META;
 }
+
+export const DEFAULT_TICKET_META: TicketPageMeta = {
+  total: 0,
+  totalPages: 1,
+  page: 1,
+  limit: 12,
+  hasNextPage: false,
+};
 
 /** Artwork fallbacks the ticket adapters substitute for a missing backend asset. */
 export const POSTER_FALLBACK = "/images/movie-poster-placeholder.jpg";

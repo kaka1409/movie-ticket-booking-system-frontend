@@ -28,9 +28,7 @@ export default function UpcomingTicketCard({ ticket }: { ticket: UpcomingTicket 
   return (
     <>
       <article className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-(--color-gold)/20 bg-(--color-surface) transition duration-200 hover:border-(--color-gold)/40 hover:shadow-xl">
-        {/* Main Ticket Area */}
         <div className="flex gap-5 p-5">
-          {/* Movie Poster & Status Ribbon */}
           <div className="relative aspect-[2/3] w-32 shrink-0 overflow-hidden rounded-xl bg-(--color-surface-2) shadow-md">
             <Image
               src={ticket.poster}
@@ -55,7 +53,6 @@ export default function UpcomingTicketCard({ ticket }: { ticket: UpcomingTicket 
             </span>
           </div>
 
-          {/* Ticket Information */}
           <div className="flex min-w-0 flex-1 flex-col justify-between">
             <div>
               <div className="flex flex-wrap items-center gap-2 mb-1.5">
@@ -80,7 +77,7 @@ export default function UpcomingTicketCard({ ticket }: { ticket: UpcomingTicket 
                 </p>
                 <p className="flex items-center gap-2">
                   <MapPin size={14} className="shrink-0 text-(--color-gold)" />
-                  <span className="truncate">
+                  <span className="truncate font-medium text-white">
                     {ticket.cinema}
                     {ticket.room ? ` · ${ticket.room}` : ""}
                   </span>
@@ -88,7 +85,6 @@ export default function UpcomingTicketCard({ ticket }: { ticket: UpcomingTicket 
               </div>
             </div>
 
-            {/* Badges & Accessories */}
             <div className="mt-3 flex flex-wrap items-center gap-2 pt-2 border-t border-(--color-border)/50">
               <span className="rounded-lg border border-(--color-border) bg-(--color-surface-2) px-2.5 py-1 text-xs font-semibold text-(--color-text-secondary)">
                 {translate("tickets.seats_label")}
@@ -107,10 +103,8 @@ export default function UpcomingTicketCard({ ticket }: { ticket: UpcomingTicket 
           </div>
         </div>
 
-        {/* Perforated Tear Line */}
         <TearLine className="my-0 px-4" />
 
-        {/* Ticket Stub Footer & Quick Actions */}
         <div className="flex items-center justify-between gap-4 bg-(--color-surface-2)/40 px-5 py-3.5">
           <div className="min-w-0">
             <p className="text-2xs font-bold tracking-widest text-(--color-gold)/80 uppercase">
@@ -143,7 +137,6 @@ export default function UpcomingTicketCard({ ticket }: { ticket: UpcomingTicket 
         </div>
       </article>
 
-      {/* Quick QR Lightbox Dialog */}
       <QuickQrModal
         ticket={ticket}
         isOpen={isQuickQrOpen}

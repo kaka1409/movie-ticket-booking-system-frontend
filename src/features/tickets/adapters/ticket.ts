@@ -10,6 +10,7 @@ import type {
   UpcomingTicket,
 } from "../types";
 import { formatShowtimeWallClock } from "@/libs/date";
+import { getRoomDisplayName } from "@/libs/utils";
 import { buildShowtimeEnd, buildShowtimeStart } from "./time";
 import { toIncomingTransfer, toTransfer } from "./transfer";
 
@@ -67,7 +68,10 @@ export function toUpcomingTicket(summary: TicketSummaryWire, locale: "en" | "vn"
     format: summary.format,
     seatItems: summary.seatLabels.map((label): SeatTicket => ({ label, type: "", price: 0 })),
     poster: summary.posterUrl ?? POSTER_FALLBACK,
-    room: summary.roomName,
+    room: getRoomDisplayName(
+      { name: summary.roomName, nameVi: summary.roomNameVi },
+      locale,
+    ),
     totalPrice: summary.totalPrice,
     isTransferring: summary.pendingTransfer !== null,
   };
@@ -86,7 +90,10 @@ export function toPastTicket(summary: TicketSummaryWire, locale: "en" | "vn"): P
     cinema: summary.cinemaName,
     seatItems: summary.seatLabels.map((label): SeatTicket => ({ label, type: "", price: 0 })),
     transferProvenance,
-    room: summary.roomName,
+    room: getRoomDisplayName(
+      { name: summary.roomName, nameVi: summary.roomNameVi },
+      locale,
+    ),
     totalPrice: summary.totalPrice,
   };
 }
@@ -135,7 +142,7 @@ export function toDetailTicket(
     cinema: detail.showtime.cinema.name,
     location: detail.showtime.cinema.address,
     format: detail.showtime.format,
-    room: detail.showtime.room.name,
+    room: getRoomDisplayName(detail.showtime.room, locale),
     ageRating: detail.showtime.movie.ageRating ?? undefined,
     poster: detail.showtime.movie.posterUrl ?? POSTER_FALLBACK,
     seatItems,
