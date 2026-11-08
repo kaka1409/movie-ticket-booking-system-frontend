@@ -60,6 +60,7 @@ export default function RangeSlider({
 
       <input
         type="range"
+        name="range-min"
         min={min}
         max={max}
         step={step}
@@ -71,6 +72,7 @@ export default function RangeSlider({
       />
       <input
         type="range"
+        name="range-max"
         min={min}
         max={max}
         step={step}

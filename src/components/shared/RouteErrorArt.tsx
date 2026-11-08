@@ -204,10 +204,8 @@ export default function RouteErrorArt() {
         xmlns="http://www.w3.org/2000/svg"
         aria-hidden="true"
       >
-        {/* Ambient Warning Glow in Center */}
         <circle cx="260" cy="300" r="140" fill="#ef4444" fillOpacity="0.06" />
 
-        {/* Background Interrupted Projector Waves (Staggered Arcs) */}
         <g stroke="#ffffff" strokeOpacity="0.08" strokeWidth="1.5">
           <circle cx="260" cy="300" r="240" strokeDasharray="6 8" />
           <circle cx="260" cy="300" r="180" strokeDasharray="12 6" />
@@ -231,7 +229,6 @@ export default function RouteErrorArt() {
           <line x1="260" y1="60" x2="260" y2="540" strokeDasharray="8 6" />
         </g>
 
-        {/* Diagonal Disrupted Ray Beams (Red & Gold) */}
         <line
           x1="60"
           y1="520"
@@ -253,7 +250,6 @@ export default function RouteErrorArt() {
           strokeDasharray="8 8"
         />
 
-        {/* ─── UNWINDING FILM STRIP RIBBON (Alert Red & Gold) ─── */}
         <path
           d="M 120 180 C 180 140, 260 200, 320 170 C 380 140, 420 180, 410 240 C 400 300, 310 320, 240 370 C 170 420, 150 480, 220 520"
           stroke="#ef4444"
@@ -263,14 +259,12 @@ export default function RouteErrorArt() {
           fill="none"
         />
 
-        {/* ─── INTERACTIVE TICKET HALF A (Split Top-Left Fragment) ─── */}
         <g
           ref={(element) => {
             elementsRef.current["ticket-half-a"] = element;
           }}
           transform="translate(230, 285) rotate(-18)"
         >
-          {/* Half Ticket Shell with Red Warning Border */}
           <path
             d="M -130 -80 L 10 -80 L -15 80 L -130 80 Q -145 80 -145 65 L -145 15 Q -130 15 -130 0 Q -130 -15 -145 -15 L -145 -65 Q -145 -80 -130 -80 Z"
             fill="#ef4444"
@@ -278,7 +272,6 @@ export default function RouteErrorArt() {
             stroke="#ef4444"
             strokeWidth="3"
           />
-          {/* Tear Line Notch */}
           <line
             x1="-35"
             y1="-80"
@@ -288,12 +281,10 @@ export default function RouteErrorArt() {
             strokeWidth="2.5"
             strokeDasharray="6 6"
           />
-          {/* Abstract Detail Lines */}
           <rect x="-115" y="-55" width="50" height="8" rx="2" fill="#ef4444" />
           <rect x="-115" y="-38" width="35" height="4" rx="2" fill="#ffffff" fillOpacity="0.8" />
           <rect x="-115" y="-24" width="45" height="4" rx="2" fill="#ffcc4d" fillOpacity="0.8" />
 
-          {/* Cinema Alert Stamp: PLEASE TRY AGAIN LATER */}
           <g transform="translate(-80, 12)">
             <rect
               x="-56"
@@ -323,14 +314,12 @@ export default function RouteErrorArt() {
           <circle cx="-95" cy="50" r="5" fill="#ffffff" fillOpacity="0.9" />
         </g>
 
-        {/* ─── INTERACTIVE TICKET HALF B (Split Bottom-Right Fragment with Glitch Gap) ─── */}
         <g
           ref={(element) => {
             elementsRef.current["ticket-half-b"] = element;
           }}
           transform="translate(295, 345) rotate(-12)"
         >
-          {/* Half Ticket Shell */}
           <path
             d="M -15 -80 L 130 -80 Q 145 -80 145 -65 L 145 -15 Q 130 -15 130 0 Q 130 15 145 15 L 145 65 Q 145 80 130 80 L -40 80 Z"
             fill="#ffffff"
@@ -339,7 +328,6 @@ export default function RouteErrorArt() {
             strokeWidth="2.5"
             strokeDasharray="10 4"
           />
-          {/* Glowing Red Fracture Seam on the Break Line */}
           <line
             x1="-15"
             y1="-80"
@@ -350,7 +338,6 @@ export default function RouteErrorArt() {
             strokeDasharray="4 4"
           />
 
-          {/* Barcode Fragments on Right Stub */}
           <g transform="translate(0, -50)">
             <line x1="0" y1="0" x2="0" y2="90" stroke="#ef4444" strokeWidth="3" />
             <line
@@ -393,12 +380,10 @@ export default function RouteErrorArt() {
               strokeOpacity="0.7"
             />
           </g>
-          {/* Geometric Accent Circle */}
           <circle cx="50" cy="50" r="5" fill="#ef4444" />
           <circle cx="70" cy="50" r="5" fill="#ffffff" fillOpacity="0.8" />
         </g>
 
-        {/* ─── INTERACTIVE REEL HUB (Top Right Spool with Red Alert Ring) ─── */}
         <g
           ref={(element) => {
             elementsRef.current["reel-hub"] = element;
@@ -421,8 +406,6 @@ export default function RouteErrorArt() {
           <circle cx="-15" cy="9" r="5" fill="#151515" stroke="#ef4444" strokeWidth="1.5" />
         </g>
 
-        {/* ─── INTERACTIVE RED & GOLD WARNING SPARK EMBERS ─── */}
-        {/* Spark 1 (Top Left, Warning Red) */}
         <g
           ref={(element) => {
             elementsRef.current["spark-1"] = element;
@@ -435,7 +418,6 @@ export default function RouteErrorArt() {
           <circle cx="-5" cy="12" r="9" fill="#ef4444" fillOpacity="0.85" />
         </g>
 
-        {/* Spark 2 (Left Mid, Red & White) */}
         <g
           ref={(element) => {
             elementsRef.current["spark-2"] = element;
@@ -447,7 +429,6 @@ export default function RouteErrorArt() {
           <circle cx="2" cy="14" r="10" fill="#ffcc4d" fillOpacity="0.85" />
         </g>
 
-        {/* Spark 3 (Bottom Center Burst, Crimson & Gold) */}
         <g
           ref={(element) => {
             elementsRef.current["spark-3"] = element;
@@ -460,7 +441,6 @@ export default function RouteErrorArt() {
           <circle cx="-8" cy="10" r="10" fill="#ef4444" fillOpacity="0.9" />
         </g>
 
-        {/* Ambient Subtle Geometric Embers (Red, Gold & White Dots) */}
         <circle cx="190" cy="90" r="4.5" fill="#ef4444" />
         <circle cx="220" cy="105" r="3" fill="#ffffff" />
         <circle cx="310" cy="85" r="3.5" fill="#ffcc4d" />

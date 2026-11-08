@@ -2,7 +2,7 @@
 
 import { CheckCircle2, Circle } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
-import { PASSWORD_RULES } from "@/libs/zod";
+import { PASSWORD_RULES } from "@/libs/validation";
 
 const SIZE_CLASSES = {
   sm: { gap: "gap-1.5", icon: "h-4 w-4", label: "text-xs" },
@@ -10,7 +10,7 @@ const SIZE_CLASSES = {
 } as const;
 
 /**
- * Live "your password needs…" checklist: every rule from `libs/zod.ts` — the
+ * Live "your password needs…" checklist: every rule from `libs/validation.ts` — the
  * same source the register/change-password schemas validate with — ticked off
  * as the value satisfies it.
  *

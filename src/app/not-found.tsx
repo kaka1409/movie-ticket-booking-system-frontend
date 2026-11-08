@@ -57,7 +57,6 @@ export default function NotFound() {
 
   return (
     <StatusPageShell layout="centered">
-      {/* ─── MOBILE VIEW (< md): Original Container-less Stack ─── */}
       <div className="flex w-full max-w-xs flex-col items-center text-center md:hidden">
         <Logo size="lg" />
 
@@ -110,15 +109,12 @@ export default function NotFound() {
         </div>
       </div>
 
-      {/* ─── TABLET & DESKTOP VIEW (>= md): 50/50 Split Showcase (max-w-7xl) ─── */}
       <div className="surface-raised mx-auto hidden w-full max-w-7xl overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-surface) shadow-(--shadow-card) md:block md:rounded-3xl">
         <div className="grid min-h-[580px] grid-cols-2 lg:min-h-[640px]">
-          {/* Left Column (50%): Abstract Cinema 404 Art */}
           <div className="border-r border-(--color-border)">
             <NotFoundArt />
           </div>
 
-          {/* Right Column (50%): Information & Interactive Destination Accordions */}
           <div className="flex flex-col justify-between p-6 sm:p-10 lg:p-14">
             <div>
               <h1 className="text-2xl font-black tracking-tight text-(--color-text-primary) sm:text-3xl lg:text-4xl">
@@ -129,7 +125,6 @@ export default function NotFound() {
                 {translate("not_found.desktop_desc")}
               </p>
 
-              {/* Desktop-refined inline CTA pair */}
               <div className="mt-8 flex flex-wrap items-center gap-3">
                 <Button
                   variant="primary"
@@ -158,7 +153,6 @@ export default function NotFound() {
               </div>
             </div>
 
-            {/* 3 Destination Accordions with Navigation Links */}
             <div className="mt-10 border-t border-(--color-border) pt-6">
               <p className="mb-3 text-2xs font-bold uppercase tracking-[0.2em] text-(--color-text-muted)">
                 {translate("not_found.heading_suggestions")}
@@ -227,7 +221,6 @@ export default function NotFound() {
                 })}
               </div>
 
-              {/* Bottom Back & Cinema Brand Line */}
               <div className="mt-6 flex flex-wrap items-center justify-between gap-2 text-3xs text-(--color-text-muted)">
                 <button
                   type="button"

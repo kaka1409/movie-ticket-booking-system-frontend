@@ -218,7 +218,6 @@ export default function LoginPromptArt() {
         xmlns="http://www.w3.org/2000/svg"
         aria-hidden="true"
       >
-        {/* Background Ambient Concentric Projector Rings */}
         <g stroke="#ffffff" strokeOpacity="0.08" strokeWidth="1.5">
           <circle cx="260" cy="300" r="240" strokeDasharray="4 6" />
           <circle cx="260" cy="300" r="180" />
@@ -228,7 +227,6 @@ export default function LoginPromptArt() {
           <line x1="260" y1="60" x2="260" y2="540" />
         </g>
 
-        {/* Diagonal Projector Ray Beam Lines */}
         <line
           x1="60"
           y1="520"
@@ -249,7 +247,6 @@ export default function LoginPromptArt() {
           strokeDasharray="6 6"
         />
 
-        {/* ─── TICKET 2 (White Minimalist Ticket - layered behind) ─── */}
         <g
           ref={(element) => {
             elementsRef.current["ticket-2"] = element;
@@ -268,10 +265,8 @@ export default function LoginPromptArt() {
             strokeWidth="2"
             strokeDasharray="8 4"
           />
-          {/* Ticket 2 Notches */}
           <circle cx="-130" cy="0" r="14" fill="#151515" stroke="#ffffff" strokeWidth="2" />
           <circle cx="130" cy="0" r="14" fill="#151515" stroke="#ffffff" strokeWidth="2" />
-          {/* Minimal Perforation */}
           <line
             x1="45"
             y1="-75"
@@ -284,14 +279,12 @@ export default function LoginPromptArt() {
           />
         </g>
 
-        {/* ─── TICKET 1 (Primary Gold Geometric Ticket) ─── */}
         <g
           ref={(element) => {
             elementsRef.current["ticket-1"] = element;
           }}
           transform="translate(260, 310) rotate(-14)"
         >
-          {/* Ticket Base Outline & Subtle Gold Fill */}
           <rect
             x="-140"
             y="-85"
@@ -304,11 +297,9 @@ export default function LoginPromptArt() {
             strokeWidth="3"
           />
 
-          {/* Ticket Edge Notches */}
           <circle cx="-140" cy="0" r="16" fill="#151515" stroke="#ffcc4d" strokeWidth="3" />
           <circle cx="140" cy="0" r="16" fill="#151515" stroke="#ffcc4d" strokeWidth="3" />
 
-          {/* Perforated Stub Tear-Line */}
           <line
             x1="-35"
             y1="-85"
@@ -319,12 +310,10 @@ export default function LoginPromptArt() {
             strokeDasharray="6 6"
           />
 
-          {/* Abstract Ticket Blocks */}
           <rect x="-115" y="-60" width="60" height="8" rx="2" fill="#ffcc4d" />
           <rect x="-115" y="-42" width="40" height="4" rx="2" fill="#ffffff" fillOpacity="0.8" />
           <rect x="-115" y="-28" width="50" height="4" rx="2" fill="#ffffff" fillOpacity="0.6" />
 
-          {/* Cinema Admit Pass Stamp: LOGIN NOW */}
           <g transform="translate(-85, 12)">
             <rect
               x="-46"
@@ -351,7 +340,6 @@ export default function LoginPromptArt() {
             </text>
           </g>
 
-          {/* Abstract Barcode Lines on the Right Stub */}
           <g transform="translate(0, -50)">
             <line x1="0" y1="0" x2="0" y2="100" stroke="#ffcc4d" strokeWidth="3" />
             <line
@@ -415,14 +403,11 @@ export default function LoginPromptArt() {
             />
           </g>
 
-          {/* Geometric Perforated Corner Dots */}
           <circle cx="-115" cy="55" r="5" fill="#ffcc4d" />
           <circle cx="-95" cy="55" r="5" fill="#ffffff" fillOpacity="0.9" />
           <circle cx="-75" cy="55" r="5" fill="#ffcc4d" fillOpacity="0.6" />
         </g>
 
-        {/* ─── INTERACTIVE POPCORN CLUSTERS ─── */}
-        {/* Popcorn Cluster 1 (Top Left, Center ~135, 135) */}
         <g
           ref={(element) => {
             elementsRef.current["popcorn-1"] = element;
@@ -436,7 +421,6 @@ export default function LoginPromptArt() {
           <path d="M -13 0 Q -1 6 7 -4" stroke="#151515" strokeWidth="2.5" fill="none" />
         </g>
 
-        {/* Popcorn Cluster 2 (Top Right, Center ~365, 115) */}
         <g
           ref={(element) => {
             elementsRef.current["popcorn-2"] = element;
@@ -450,7 +434,6 @@ export default function LoginPromptArt() {
           <path d="M -12 -3 Q 0 2 10 -5" stroke="#151515" strokeWidth="2.5" fill="none" />
         </g>
 
-        {/* Popcorn Cluster 3 (Left Mid, Center ~85, 280) */}
         <g
           ref={(element) => {
             elementsRef.current["popcorn-3"] = element;
@@ -462,7 +445,6 @@ export default function LoginPromptArt() {
           <circle cx="-2" cy="8" r="10" fill="#ffffff" fillOpacity="0.7" />
         </g>
 
-        {/* Popcorn Cluster 4 (Right Mid, Center ~410, 250) */}
         <g
           ref={(element) => {
             elementsRef.current["popcorn-4"] = element;
@@ -476,7 +458,6 @@ export default function LoginPromptArt() {
           <path d="M -14 -3 Q -4 3 6 -5" stroke="#151515" strokeWidth="2.5" fill="none" />
         </g>
 
-        {/* Popcorn Burst 5 (Bottom Center, Center ~250, 485) */}
         <g
           ref={(element) => {
             elementsRef.current["popcorn-5"] = element;
@@ -489,7 +470,6 @@ export default function LoginPromptArt() {
           <circle cx="-20" cy="2" r="10" fill="#ffcc4d" fillOpacity="0.9" />
         </g>
 
-        {/* Ambient Subtle Sparkle Embers (Tiny Floating Specks) */}
         <circle cx="180" cy="70" r="4" fill="#ffcc4d" />
         <circle cx="210" cy="85" r="3" fill="#ffffff" />
         <circle cx="310" cy="65" r="3.5" fill="#ffcc4d" />

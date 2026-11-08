@@ -34,7 +34,6 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <div className="relative min-h-dvh">
-      {/* Full-screen blurred promo backdrop. */}
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
         {AUTH_PROMO_SLIDES.map((slide, slideIndex) => (
           <Image
@@ -61,7 +60,6 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
                 onMouseEnter={() => setIsPaused(true)}
                 onMouseLeave={() => setIsPaused(false)}
               >
-                {/* Tablet / Small banner (< lg): Static first slide image */}
                 <div className="absolute inset-0 lg:hidden">
                   <Image
                     src={AUTH_PROMO_SLIDES[0].src}
@@ -74,7 +72,6 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
                   />
                 </div>
 
-                {/* Desktop slideshow (>= lg): Stacked crossfade slides */}
                 <div className="absolute inset-0 hidden lg:block">
                   {AUTH_PROMO_SLIDES.map((slide, slideIndex) => (
                     <Image
@@ -103,7 +100,6 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
 
                 <div className="absolute inset-0 flex flex-col justify-between gap-3 p-6 lg:p-8">
                   <div className="flex flex-col gap-4">
-                    {/* Tablet / Small banner (< lg): Static slogan */}
                     <div className="flex flex-col gap-2.5 lg:hidden">
                       <p className="text-xl font-black text-white">
                         {translate(AUTH_PROMO_SLIDES[0].titleKey)}
@@ -113,7 +109,6 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
                       </p>
                     </div>
 
-                    {/* Desktop view (>= lg): Animated slogan according to active slide */}
                     <div className="hidden min-h-[120px] lg:block">
                       <div key={activeSlideIndex} className="animate-fade-in flex flex-col gap-2.5">
                         <p className="text-xl font-black text-white lg:text-[26px] xl:text-[30px] xl:leading-[1.15]">

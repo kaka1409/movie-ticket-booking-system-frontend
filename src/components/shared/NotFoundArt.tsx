@@ -228,16 +228,13 @@ export default function NotFoundArt() {
       className="relative flex h-full min-h-[580px] w-full items-center justify-center overflow-hidden bg-[#151515] p-6 select-none lg:min-h-[640px] lg:p-10"
       aria-hidden="true"
     >
-      {/* Ambient background glow */}
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(255,204,77,0.08),transparent_70%)]" />
 
-      {/* SVG Canvas (500x620) */}
       <svg
         viewBox="0 0 500 620"
         className="relative h-full max-h-[560px] w-full max-w-[460px] overflow-visible"
       >
         <defs>
-          {/* Subtle Projector Cone Gradient */}
           <linearGradient id="nf-projector-beam" x1="0%" y1="0%" x2="0%" y2="100%">
             <stop offset="0%" stopColor="#ffffff" stopOpacity="0.22" />
             <stop offset="30%" stopColor="#ffcc4d" stopOpacity="0.08" />
@@ -245,47 +242,38 @@ export default function NotFoundArt() {
             <stop offset="100%" stopColor="#ffcc4d" stopOpacity="0" />
           </linearGradient>
 
-          {/* Ticket Gradient Gold */}
           <linearGradient id="nf-ticket-gold" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#252420" />
             <stop offset="50%" stopColor="#1e1d1a" />
             <stop offset="100%" stopColor="#161513" />
           </linearGradient>
 
-          {/* Ticket Gradient White */}
           <linearGradient id="nf-ticket-white" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#2a2927" />
             <stop offset="100%" stopColor="#191919" />
           </linearGradient>
 
-          {/* Popcorn Butter Gold Gradient */}
           <linearGradient id="nf-popcorn-gold" x1="30%" y1="10%" x2="80%" y2="90%">
             <stop offset="0%" stopColor="#fff8e1" />
             <stop offset="45%" stopColor="#ffcc4d" />
             <stop offset="100%" stopColor="#e5a920" />
           </linearGradient>
 
-          {/* Popcorn Crisp White Gradient */}
           <linearGradient id="nf-popcorn-white" x1="20%" y1="15%" x2="85%" y2="85%">
             <stop offset="0%" stopColor="#ffffff" />
             <stop offset="55%" stopColor="#f5f0e6" />
             <stop offset="100%" stopColor="#ded7c8" />
           </linearGradient>
 
-          {/* Perforated Hole Mask */}
           <pattern id="nf-sprocket-pattern" width="12" height="12" patternUnits="userSpaceOnUse">
             <rect x="2" y="2" width="8" height="8" rx="2" fill="#ffcc4d" opacity="0.35" />
           </pattern>
         </defs>
 
-        {/* ─── STATIC BACKGROUND: Atmospheric Projector Beam ─── */}
         <g opacity="0.85">
-          {/* Projector Origin Aperture */}
           <ellipse cx="250" cy="40" rx="36" ry="6" fill="#ffffff" opacity="0.3" />
           <ellipse cx="250" cy="40" rx="20" ry="3.5" fill="#ffcc4d" opacity="0.6" />
-          {/* Conical Light Beam */}
           <polygon points="230,40 270,40 430,560 70,560" fill="url(#nf-projector-beam)" />
-          {/* Dust orbs glistening inside beam */}
           <circle cx="210" cy="180" r="1.5" fill="#ffffff" opacity="0.4" />
           <circle cx="290" cy="220" r="2" fill="#ffcc4d" opacity="0.45" />
           <circle cx="180" cy="310" r="1.5" fill="#ffffff" opacity="0.35" />
@@ -293,14 +281,12 @@ export default function NotFoundArt() {
           <circle cx="230" cy="440" r="1.8" fill="#ffffff" opacity="0.4" />
         </g>
 
-        {/* ─── DYNAMIC ITEM: Film Spool Hub (Rotating/Floating) ─── */}
         <g
           ref={(element) => {
             elementsReference.current["spool-hub"] = element;
           }}
           className="cursor-pointer"
         >
-          {/* Outer Spool Rings */}
           <circle
             cx="0"
             cy="0"
@@ -329,7 +315,6 @@ export default function NotFoundArt() {
             strokeWidth="1.5"
             strokeOpacity="0.6"
           />
-          {/* 3 Spool Cutouts */}
           <circle
             cx="-16"
             cy="-10"
@@ -357,19 +342,16 @@ export default function NotFoundArt() {
             strokeWidth="0.8"
             strokeOpacity="0.4"
           />
-          {/* Spool Center Axle */}
           <circle cx="0" cy="0" r="9" fill="#ffcc4d" opacity="0.8" />
           <circle cx="0" cy="0" r="3" fill="#151515" />
         </g>
 
-        {/* ─── DYNAMIC ITEM: Secondary Curving Film Strip / Ribbon ─── */}
         <g
           ref={(element) => {
             elementsReference.current["film-ribbon"] = element;
           }}
           className="cursor-pointer"
         >
-          {/* Curved film strip body */}
           <path
             d="M -110,-75 C -50,-100 50,-50 110,-80 L 115,-30 C 55,0 -45,-50 -105,-25 Z"
             fill="url(#nf-ticket-white)"
@@ -377,7 +359,6 @@ export default function NotFoundArt() {
             strokeWidth="1"
             strokeOpacity="0.4"
           />
-          {/* Perforations top & bottom */}
           <line
             x1="-100"
             y1="-70"
@@ -400,14 +381,12 @@ export default function NotFoundArt() {
           />
         </g>
 
-        {/* ─── DYNAMIC ITEM: Primary Cinema Ticket (Empty Center Aperture Frame) ─── */}
         <g
           ref={(element) => {
             elementsReference.current["ticket-empty"] = element;
           }}
           className="cursor-pointer"
         >
-          {/* Outer Ticket Card with Notches */}
           <path
             d="
               M -95,-130
@@ -427,7 +406,6 @@ export default function NotFoundArt() {
             strokeOpacity="0.75"
           />
 
-          {/* Dotted Perforation Cut Line */}
           <line
             x1="-95"
             y1="-40"
@@ -439,7 +417,6 @@ export default function NotFoundArt() {
             strokeOpacity="0.5"
           />
 
-          {/* Top Ticket Stub Accent: Cinema Projector Arc */}
           <circle
             cx="0"
             cy="-85"
@@ -469,7 +446,6 @@ export default function NotFoundArt() {
             strokeOpacity="0.4"
           />
 
-          {/* 404 Visual Metaphor: Empty Center Frame Aperture (Looking through to dark space) */}
           <rect
             x="-65"
             y="-15"
@@ -483,7 +459,6 @@ export default function NotFoundArt() {
             strokeOpacity="0.6"
           />
 
-          {/* Abstract Empty Frame Crosshair / Aperture Corners */}
           <path
             d="M -55,-5 L -45,-5 M -55,-5 L -55,5"
             stroke="#ffffff"
@@ -509,7 +484,6 @@ export default function NotFoundArt() {
             strokeOpacity="0.7"
           />
 
-          {/* 404 Typography Integrated Into Cinema Projector Aperture */}
           <g transform="translate(0, 36)">
             <text
               x="0"
@@ -538,7 +512,6 @@ export default function NotFoundArt() {
             </text>
           </g>
 
-          {/* Side Sprocket Perforations */}
           <circle cx="-80" cy="-10" r="3" fill="#ffcc4d" opacity="0.35" />
           <circle cx="-80" cy="15" r="3" fill="#ffcc4d" opacity="0.35" />
           <circle cx="-80" cy="40" r="3" fill="#ffcc4d" opacity="0.35" />
@@ -550,7 +523,6 @@ export default function NotFoundArt() {
           <circle cx="80" cy="65" r="3" fill="#ffcc4d" opacity="0.35" />
         </g>
 
-        {/* ─── DYNAMIC ITEM: Popcorn Kernel 1 (Top Left) ─── */}
         <g
           ref={(element) => {
             elementsReference.current["popcorn-1"] = element;
@@ -565,7 +537,6 @@ export default function NotFoundArt() {
           <circle cx="6" cy="4" r="4.5" fill="url(#nf-popcorn-white)" opacity="0.85" />
         </g>
 
-        {/* ─── DYNAMIC ITEM: Popcorn Kernel 2 (Top Right) ─── */}
         <g
           ref={(element) => {
             elementsReference.current["popcorn-2"] = element;
@@ -580,7 +551,6 @@ export default function NotFoundArt() {
           <circle cx="5" cy="5" r="4" fill="#ffffff" opacity="0.9" />
         </g>
 
-        {/* ─── DYNAMIC ITEM: Popcorn Kernel 3 (Mid Left) ─── */}
         <g
           ref={(element) => {
             elementsReference.current["popcorn-3"] = element;
@@ -594,7 +564,6 @@ export default function NotFoundArt() {
           <circle cx="-1" cy="-2" r="4.5" fill="url(#nf-popcorn-white)" opacity="0.9" />
         </g>
 
-        {/* ─── DYNAMIC ITEM: Popcorn Kernel 4 (Mid Right) ─── */}
         <g
           ref={(element) => {
             elementsReference.current["popcorn-4"] = element;
@@ -608,7 +577,6 @@ export default function NotFoundArt() {
           <circle cx="2" cy="-2" r="5" fill="url(#nf-popcorn-gold)" opacity="0.8" />
         </g>
 
-        {/* ─── DYNAMIC ITEM: Popcorn Cluster 5 (Bottom) ─── */}
         <g
           ref={(element) => {
             elementsReference.current["popcorn-5"] = element;
@@ -621,7 +589,6 @@ export default function NotFoundArt() {
           />
           <circle cx="-3" cy="-4" r="7" fill="url(#nf-popcorn-white)" opacity="0.95" />
           <circle cx="7" cy="4" r="5.5" fill="url(#nf-popcorn-white)" opacity="0.9" />
-          {/* Small companion popped flake */}
           <circle cx="22" cy="-14" r="4" fill="url(#nf-popcorn-white)" opacity="0.75" />
         </g>
       </svg>

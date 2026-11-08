@@ -28,6 +28,7 @@ export default function SearchBar({
       <Search size={16} className="shrink-0 text-(--color-text-muted)" />
       <input
         type="search"
+        name="search"
         placeholder={placeholder}
         value={value}
         onChange={(event) => onChange(event.target.value)}

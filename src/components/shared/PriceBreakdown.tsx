@@ -121,7 +121,6 @@ export default function PriceBreakdown({
         </div>
       )}
 
-      {/* Payment method + total, or total alone */}
       {!hideTotal &&
         (paymentMethod !== undefined ? (
           <div className="flex justify-between items-end gap-4">

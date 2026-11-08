@@ -156,7 +156,6 @@ export default function RouteError({
 
   return (
     <StatusPageShell layout="centered">
-      {/* ─── MOBILE VIEW (< md): Original Chrome-less Stack with Glitch Decode ─── */}
       <div className="flex w-full max-w-xs flex-col items-center text-center md:hidden">
         <div className="flex h-20 w-20 items-center justify-center rounded-full bg-red-500/10">
           <AlertTriangle className="h-9 w-9 text-red-500" strokeWidth={2} />
@@ -201,15 +200,12 @@ export default function RouteError({
         </div>
       </div>
 
-      {/* ─── TABLET & DESKTOP VIEW (>= md): 50/50 Split Showcase (max-w-7xl) ─── */}
       <div className="surface-raised mx-auto hidden w-full max-w-7xl overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-surface) shadow-(--shadow-card) md:block md:rounded-3xl">
         <div className="grid min-h-[580px] grid-cols-2 lg:min-h-[640px]">
-          {/* Left Column (50%): Abstract Cinema Error Art (Red & Gold) */}
           <div className="border-r border-(--color-border)">
             <RouteErrorArt />
           </div>
 
-          {/* Right Column (50%): Information & Red-Accented Troubleshooting Accordions */}
           <div className="flex flex-col justify-between p-6 sm:p-10 lg:p-14">
             <div>
               <h1 className="mt-3 text-2xl font-black tracking-tight text-(--color-text-primary) sm:text-3xl lg:text-4xl">
@@ -220,7 +216,6 @@ export default function RouteError({
                 {translate("error.description")}
               </p>
 
-              {/* Reference Error Digest Box with Red Accent */}
               {error?.digest ? (
                 <div className="mt-5 flex max-w-lg items-center justify-between rounded-xl border border-red-500/25 bg-red-500/5 px-3.5 py-2.5">
                   <div className="flex flex-col gap-0.5">
@@ -251,7 +246,6 @@ export default function RouteError({
                 </div>
               ) : null}
 
-              {/* Desktop-refined inline CTA pair with RotateCcw icon */}
               <div className="mt-8 flex flex-wrap items-center gap-3">
                 <Button
                   variant="primary"
@@ -278,7 +272,6 @@ export default function RouteError({
               </div>
             </div>
 
-            {/* 3 Troubleshooting Accordions with Red Highlights */}
             <div className="mt-10 border-t border-(--color-border) pt-6">
               <p className="mb-3 text-2xs font-bold uppercase tracking-[0.2em] text-(--color-text-muted)">
                 {translate("error.troubleshoot_heading")}
@@ -334,7 +327,6 @@ export default function RouteError({
                 })}
               </div>
 
-              {/* Bottom Back & Support Link Bar */}
               <div className="mt-6 flex flex-wrap items-center justify-between gap-2 text-3xs text-(--color-text-muted)">
                 <button
                   type="button"

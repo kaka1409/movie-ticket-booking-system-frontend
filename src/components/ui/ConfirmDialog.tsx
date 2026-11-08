@@ -5,8 +5,8 @@ import { lockBodyScroll } from "@/libs/scroll-lock";
 import { PRESS_SOFT_CLASS } from "@/libs/press";
 
 /**
- * Desktop confirmation modal. `ActionSheet` is a bottom sheet â€” correct on a
- * phone, wrong on a 1280px canvas â€” so the desktop skins need a centred dialog
+ * Desktop confirmation modal. `ActionSheet` is a bottom sheet correct on a
+ * phone, wrong on a 1280px canvas so the desktop skins need a centred dialog
  * with the same guarantees: `Escape` and a backdrop click dismiss it, `Tab` is
  * trapped inside while it is open, and focus returns to whatever opened it.
  *
