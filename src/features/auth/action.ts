@@ -12,9 +12,11 @@ import type {
 
 // HttpOnly keeps the token away from JS (XSS), Secure restricts it to HTTPS,
 // SameSite=Strict blocks cross-site sends (CSRF); 30 days matches backend TTL.
+// `secure` is production-only: browsers silently drop Secure cookies served
+// over plain HTTP, which breaks LAN/IP dev testing where there is no TLS.
 const COOKIE_OPTIONS = {
   httpOnly: true,
-  secure: true,
+  secure: process.env.NODE_ENV === "production",
   sameSite: "strict" as const,
   path: "/",
   maxAge: 30 * 24 * 60 * 60,

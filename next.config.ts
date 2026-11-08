@@ -8,6 +8,14 @@ const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:8080";
 const backendOrigin = new URL(BACKEND_URL).origin;
 const backendWsOrigin = backendOrigin.replace(/^http/, "ws");
 
+// Browser-side Socket.IO origin. When NEXT_PUBLIC_BACKEND_URL is unset the
+// client dials `<page-hostname>:8080`, which CSP cannot express statically —
+// dev connect-src below relaxes to any http/ws origin to cover LAN testing.
+const socketOrigin = process.env.NEXT_PUBLIC_BACKEND_URL
+  ? new URL(process.env.NEXT_PUBLIC_BACKEND_URL).origin
+  : null;
+const socketWsOrigin = socketOrigin?.replace(/^http/, "ws") ?? null;
+
 const IMAGE_HOSTS = [
   "i.ebayimg.com",
   "cdn11.bigcommerce.com",
@@ -25,6 +33,14 @@ const IMAGE_HOSTS = [
 
 const isDev = process.env.NODE_ENV === "development";
 
+// Extra dev origins beyond the built-in LAN list: ALLOWED_DEV_ORIGINS is a
+// comma-separated host list for whatever network the dev machine sits on.
+const envDevOrigins = (process.env.ALLOWED_DEV_ORIGINS ?? "")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+const devOrigins = ["10.25.33.35", "192.168.88.165", "192.168.1.9", ...envDevOrigins];
+
 const nextConfig: NextConfig = {
   reactCompiler: false,
   turbopack: {
@@ -37,7 +53,7 @@ const nextConfig: NextConfig = {
     })),
   },
   // Dev-only LAN origins; never ship these to production.
-  ...(isDev ? { allowedDevOrigins: ["10.25.33.35", "192.168.88.165", "192.168.1.9"] } : {}),
+  ...(isDev ? { allowedDevOrigins: devOrigins } : {}),
   async rewrites() {
     return [
       {
@@ -50,10 +66,14 @@ const nextConfig: NextConfig = {
     const csp = [
       "default-src 'self'",
       "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+      // qr-scanner decodes inside a Web Worker built from a blob: URL.
+      "worker-src 'self' blob:",
       "style-src 'self' 'unsafe-inline'",
       `img-src 'self' data: blob: ${IMAGE_HOSTS.map((h) => `https://${h}`).join(" ")}`,
       "font-src 'self' data:",
-      `connect-src 'self' ${backendOrigin} ${backendWsOrigin} ${backendWsOrigin.replace(/^ws/, "wss")}`,
+      // Dev allows any http(s)/ws(s) connect origin so the notification socket
+      // can reach the backend on a LAN IP the build did not know about.
+      `connect-src 'self' ${backendOrigin} ${backendWsOrigin} ${backendWsOrigin.replace(/^ws/, "wss")} ${socketOrigin ?? ""} ${socketWsOrigin ?? ""} ${isDev ? "http: https: ws: wss:" : ""}`,
       "frame-src 'self' https://maps.google.com https://www.google.com https://www.youtube-nocookie.com https://player.vimeo.com",
       "frame-ancestors 'none'",
       "base-uri 'self'",
@@ -67,7 +87,7 @@ const nextConfig: NextConfig = {
       { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
       {
         key: "Permissions-Policy",
-        value: "camera=(), microphone=(), geolocation=(self), payment=(), usb=()",
+        value: "camera=(self), microphone=(), geolocation=(self), payment=(), usb=()",
       },
       {
         key: "Strict-Transport-Security",
