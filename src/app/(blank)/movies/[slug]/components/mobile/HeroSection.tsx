@@ -2,10 +2,9 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { ArrowLeft, Heart, Play, Star, Clock } from "lucide-react";
+import { ArrowLeft, Heart, Play, Star, Clock, X } from "lucide-react";
 import { useMovieDetail } from "@/features/movies/contexts/MovieDetailContext";
 import { toTrailerEmbedUrl } from "@/features/movies/utils/trailer";
-import TrailerModal from "@/components/shared/TrailerModal";
 import { useWishlist, type WishlistFeedback } from "@/features/wishlist/contexts/WishlistContext";
 import { useSmartBack } from "@/hooks/useSmartBack";
 import { useLocale } from "@/contexts/LocaleContext";
@@ -29,103 +28,125 @@ export default function HeroSection() {
   }
 
   return (
-    <>
-      <section className="relative w-full h-85">
-      <Image
-        src={movie.src || "/images/movie-poster-placeholder.jpg"}
-        alt={movie.title}
-        fill
-        sizes="100vw"
-        className="object-cover"
-        priority
-      />
+    <section className="relative w-full h-85">
+      {isTrailerOpen ? (
+        <>
+          <div className="absolute inset-0 bg-black">
+            {trailerEmbedUrl ? (
+              <iframe
+                className="h-full w-full"
+                src={trailerEmbedUrl}
+                title={`${movie.title} Trailer`}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            ) : (
+              <p className="flex h-full items-center justify-center px-6 text-center text-sm text-(--color-text-muted)">
+                {translate("movies.detail.trailer_unavailable")}
+              </p>
+            )}
+          </div>
 
-      <div className="absolute inset-0 bg-black/25" />
-      <div className="absolute inset-0 bg-linear-to-b from-transparent via-transparent to-(--color-bg)" />
-
-      <button
-        type="button"
-        onClick={() => setIsTrailerOpen(true)}
-        className="absolute inset-0 flex items-center justify-center group"
-        aria-label={translate("movies.detail.watch_trailer")}
-      >
-        <div className="w-14 h-14 rounded-full backdrop-blur-xs bg-(--color-gold)/20 border border-(--color-gold) flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-200">
-          <Play size={18} className="text-(--color-gold)" />
-        </div>
-      </button>
-
-      <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-4 pt-5">
-        <button
-          type="button"
-          onClick={handleBack}
-          className="w-9 h-9 rounded-full bg-black/40 flex items-center justify-center"
-          aria-label={translate("movies.detail.back")}
-        >
-          <ArrowLeft size={20} className="text-(--color-gold-light)" />
-        </button>
-
-        <button
-          type="button"
-          onClick={() => toggleWishlist(movie.id, buildFeedback())}
-          className="w-9 h-9 rounded-full bg-black/40 flex items-center justify-center"
-          aria-label={
-            liked
-              ? translate("movies.detail.remove_wishlist")
-              : translate("movies.detail.add_wishlist")
-          }
-        >
-          <Heart
-            size={18}
-            className={liked ? "fill-pink-400 text-pink-400" : "text-(--color-gold-light)"}
-          />
-        </button>
-      </div>
-
-      <div className="absolute bottom-0 left-0 right-0 flex items-end gap-3 px-4">
-        <div className="w-20 h-28 rounded-xl shrink-0 border border-(--color-border) overflow-hidden">
+          <button
+            type="button"
+            onClick={() => setIsTrailerOpen(false)}
+            className="absolute top-5 right-4 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-black/40"
+            aria-label={translate("common.close")}
+          >
+            <X size={20} className="text-(--color-gold-light)" />
+          </button>
+        </>
+      ) : (
+        <>
           <Image
             src={movie.src || "/images/movie-poster-placeholder.jpg"}
             alt={movie.title}
-            width={200}
-            height={280}
-            className="w-full h-full object-cover"
+            fill
+            sizes="100vw"
+            className="object-cover"
+            priority
           />
-        </div>
 
-        <div className="flex-1 pb-1">
-          <h1 className="text-(--color-text-primary) text-2xl font-extrabold leading-tight mb-1">
-            {movie.title}
-          </h1>
-          <div className="flex items-center gap-2 flex-wrap">
-            {movie.rating !== null && (
-              <>
-                <span className="flex items-center gap-1 text-(--color-gold) text-xs font-bold">
-                  <Star size={11} className="fill-(--color-gold)" />
-                  {movie.rating}/10
-                </span>
-                <span className="text-(--color-text-muted) text-xs">•</span>
-              </>
-            )}
-            <span className="text-(--color-gold-light) text-xs">{movie.genre}</span>
-            <span className="text-(--color-text-muted) text-xs">•</span>
-            <span className="flex items-center gap-1 text-(--color-text-secondary) text-xs">
-              <Clock size={11} />
-              {movie.duration} {translate("movies.detail.min")}
-            </span>
+          <div className="absolute inset-0 bg-black/25" />
+          <div className="absolute inset-0 bg-linear-to-b from-transparent via-transparent to-(--color-bg)" />
+
+          <button
+            type="button"
+            onClick={() => setIsTrailerOpen(true)}
+            className="absolute inset-0 flex items-center justify-center group"
+            aria-label={translate("movies.detail.watch_trailer")}
+          >
+            <div className="w-14 h-14 rounded-full backdrop-blur-xs bg-(--color-gold)/20 border border-(--color-gold) flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-200">
+              <Play size={18} className="text-(--color-gold)" />
+            </div>
+          </button>
+
+          <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-4 pt-5">
+            <button
+              type="button"
+              onClick={handleBack}
+              className="w-9 h-9 rounded-full bg-black/40 flex items-center justify-center"
+              aria-label={translate("movies.detail.back")}
+            >
+              <ArrowLeft size={20} className="text-(--color-gold-light)" />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => toggleWishlist(movie.id, buildFeedback())}
+              className="w-9 h-9 rounded-full bg-black/40 flex items-center justify-center"
+              aria-label={
+                liked
+                  ? translate("movies.detail.remove_wishlist")
+                  : translate("movies.detail.add_wishlist")
+              }
+            >
+              <Heart
+                size={18}
+                className={liked ? "fill-pink-400 text-pink-400" : "text-(--color-gold-light)"}
+              />
+            </button>
           </div>
-          <span className="inline-block mt-1.5 px-2 py-0.5 rounded text-2xs font-bold border border-(--color-border) text-(--color-text-secondary)">
-            {movie.ageRating}
-          </span>
-        </div>
-      </div>
-    </section>
 
-    <TrailerModal
-      isOpen={isTrailerOpen}
-      onClose={() => setIsTrailerOpen(false)}
-      title={movie.title}
-      src={trailerEmbedUrl}
-    />
-    </>
+          <div className="absolute bottom-0 left-0 right-0 flex items-end gap-3 px-4">
+            <div className="w-20 h-28 rounded-xl shrink-0 border border-(--color-border) overflow-hidden">
+              <Image
+                src={movie.src || "/images/movie-poster-placeholder.jpg"}
+                alt={movie.title}
+                width={200}
+                height={280}
+                className="w-full h-full object-cover"
+              />
+            </div>
+
+            <div className="flex-1 pb-1">
+              <h1 className="text-(--color-text-primary) text-2xl font-extrabold leading-tight mb-1">
+                {movie.title}
+              </h1>
+              <div className="flex items-center gap-2 flex-wrap">
+                {movie.rating !== null && (
+                  <>
+                    <span className="flex items-center gap-1 text-(--color-gold) text-xs font-bold">
+                      <Star size={11} className="fill-(--color-gold)" />
+                      {movie.rating}/10
+                    </span>
+                    <span className="text-(--color-text-muted) text-xs">•</span>
+                  </>
+                )}
+                <span className="text-(--color-gold-light) text-xs">{movie.genre}</span>
+                <span className="text-(--color-text-muted) text-xs">•</span>
+                <span className="flex items-center gap-1 text-(--color-text-secondary) text-xs">
+                  <Clock size={11} />
+                  {movie.duration} {translate("movies.detail.min")}
+                </span>
+              </div>
+              <span className="inline-block mt-1.5 px-2 py-0.5 rounded text-2xs font-bold border border-(--color-border) text-(--color-text-secondary)">
+                {movie.ageRating}
+              </span>
+            </div>
+          </div>
+        </>
+      )}
+    </section>
   );
 }
