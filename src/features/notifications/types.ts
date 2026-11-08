@@ -36,3 +36,16 @@ export interface Notification {
 export interface NotificationMeta {
   ticketId?: string;
 }
+
+export interface NotificationsMeta {
+  unreadCount: number;
+  total: number;
+  page: number;
+  limit: number;
+  hasNextPage: boolean;
+}
+
+export interface NotificationsResult {
+  items: Notification[];
+  unreadCount: number;
+}

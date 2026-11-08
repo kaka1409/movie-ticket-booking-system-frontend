@@ -18,6 +18,7 @@ import { toNotification } from "../utils/adapters";
 import { NOTIFICATION_EVENT, TICKET_UPDATED_EVENT } from "../constants";
 import { createNotificationSocket } from "../utils/socket";
 import type { Notification, NotificationWire, NotificationMeta } from "../types";
+import type { Socket } from "socket.io-client";
 
 interface NotificationContextValue {
   notifications: Notification[];
@@ -56,7 +57,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     if (!isAuthenticated || !token) return;
 
     let cancelled = false;
-    const socket = createNotificationSocket(token);
+    let socket: Socket | null = null;
 
     /**
      * Ticket-scoped notices change a ticket *someone else* may be looking at
@@ -118,15 +119,25 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
       broadcastTicketUpdate();
     };
 
-    socket.on(NOTIFICATION_EVENT, handleNew);
-    socket.io.on("reconnect", handleReconnect);
+    // REST resync runs immediately — it does not need the socket. The socket
+    // itself resolves asynchronously (dynamic import keeps socket.io-client out
+    // of the anonymous bundle); a cleanup that lands first just disconnects it.
     resync();
+    void createNotificationSocket(token).then((created) => {
+      if (cancelled) {
+        created.disconnect();
+        return;
+      }
+      socket = created;
+      socket.on(NOTIFICATION_EVENT, handleNew);
+      socket.io.on("reconnect", handleReconnect);
+    });
 
     return () => {
       cancelled = true;
-      socket.off(NOTIFICATION_EVENT, handleNew);
-      socket.io.off("reconnect", handleReconnect);
-      socket.disconnect();
+      socket?.off(NOTIFICATION_EVENT, handleNew);
+      socket?.io.off("reconnect", handleReconnect);
+      socket?.disconnect();
     };
   }, [isAuthenticated, token, locale, notify, user?.id]);
 

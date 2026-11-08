@@ -1,20 +1,11 @@
 import { apiFetch, apiMutation, withLang, type ApiResponse } from "@/libs/api";
 import { toNotification } from "./utils/adapters";
 import type { Locale } from "@/contexts/LocaleContext";
-import type { Notification, NotificationWire } from "./types";
-
-interface NotificationsMeta {
-  unreadCount: number;
-  total: number;
-  page: number;
-  limit: number;
-  hasNextPage: boolean;
-}
-
-export interface NotificationsResult {
-  items: Notification[];
-  unreadCount: number;
-}
+import type {
+  NotificationWire,
+  NotificationsMeta,
+  NotificationsResult,
+} from "./types";
 
 /**
  * GET /notifications — the inbox is the REST source of truth (the socket only

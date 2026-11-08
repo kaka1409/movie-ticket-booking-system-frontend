@@ -5,7 +5,7 @@ import { ChevronRight } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { TYPE_CONFIG } from "@/features/notifications/constants";
 import type { Notification } from "@/features/notifications/types";
-import { formatRelativeTime } from "@/libs/utils";
+import { formatRelativeTime } from "@/libs/date";
 import { PRESS_ROW_CLASS } from "@/libs/press";
 
 /**

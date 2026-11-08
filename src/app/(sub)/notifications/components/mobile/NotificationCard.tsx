@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useLocale } from "@/contexts/LocaleContext";
-import { formatRelativeTime } from "@/libs/utils";
+import { formatRelativeTime } from "@/libs/date";
 import type { Notification } from "@/features/notifications/types";
 import { TYPE_CONFIG } from "@/features/notifications/constants";
 

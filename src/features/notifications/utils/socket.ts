@@ -1,6 +1,6 @@
 "use client";
 
-import { io, type Socket } from "socket.io-client";
+import type { Socket } from "socket.io-client";
 
 /**
  * Backend origin for the Socket.IO handshake. In dev the browser talks to the
@@ -20,9 +20,11 @@ const SOCKET_URL =
 /**
  * Open an authenticated push socket: the access token travels in the handshake
  * `auth` payload (api-contract §11), and the gateway drops the connection when
- * it is missing or invalid.
+ * it is missing or invalid. `socket.io-client` is imported on demand so
+ * anonymous visitors never download it — the provider mounts on every page.
  */
-export function createNotificationSocket(token: string): Socket {
+export async function createNotificationSocket(token: string): Promise<Socket> {
+  const { io } = await import("socket.io-client");
   return io(SOCKET_URL, {
     path: "/socket.io",
     auth: { token },
