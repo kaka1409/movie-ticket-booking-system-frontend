@@ -30,8 +30,8 @@ export async function uploadAvatarAction(
   try {
     const formData = new FormData();
     formData.append("file", file);
-    const response = await apiUpload<{ data: User }>("/user/avatar", formData, token);
-    return { success: true, data: response.data };
+    const response = await apiUpload<User>("/user/avatar", formData, token);
+    return { success: true, data: response };
   } catch (error: unknown) {
     return toActionFailure(error);
   }

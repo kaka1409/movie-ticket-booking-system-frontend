@@ -165,8 +165,14 @@ export function useQuickBooking({
     () => shownCinemas?.find((cinema) => cinema.id === selectedCinemaId),
     [shownCinemas, selectedCinemaId],
   );
-  const slots = selectedCinema?.showtimes ?? [];
-  const selectedSlot = slots.find((slot) => slot.id === selectedSlotId);
+  const slots = useMemo(() => selectedCinema?.showtimes ?? [], [selectedCinema]);
+  // A native <select> never fires onChange for its only option, so the raw
+  // picked id can't drive canBook alone — fall back to the first bookable slot.
+  const effectiveSlotId =
+    selectedSlotId && slots.some((slot) => slot.id === selectedSlotId)
+      ? selectedSlotId
+      : (slots.find((slot) => slot.isAvailable)?.id ?? "");
+  const selectedSlot = slots.find((slot) => slot.id === effectiveSlotId);
   const canBook = !!effectiveMovieSlug && !!selectedSlot && selectedSlot.isAvailable;
 
   const selectMovie = useCallback((slug: string) => {
@@ -203,7 +209,7 @@ export function useQuickBooking({
     selectedCinemaId,
     selectCinema,
     slots,
-    selectedSlotId,
+    selectedSlotId: effectiveSlotId,
     selectSlot,
     slotsFailed,
     retry,
