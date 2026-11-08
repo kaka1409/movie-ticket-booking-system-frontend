@@ -211,6 +211,30 @@ body {
   opacity: 0;
 }
 
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Toasts sit bottom-center on mobile (rise) and top-right on desktop
+   (slide in from the right edge). 740px mirrors --breakpoint-md. */
+.animate-toast {
+  animation: fadeSlideIn 0.3s ease-out forwards;
+  opacity: 0;
+}
+
+@media (min-width: 740px) {
+  .animate-toast {
+    animation: slideInRight 0.3s ease-out forwards;
+  }
+}
+
 .animate-expand {
   transition: max-height 0.4s ease-out;
   overflow: hidden;
@@ -309,7 +333,8 @@ body {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-  .animate-fade-in {
+  .animate-fade-in,
+  .animate-toast {
     opacity: 1;
   }
 }

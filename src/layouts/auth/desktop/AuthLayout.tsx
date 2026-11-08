@@ -4,25 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useLocale } from "@/contexts/LocaleContext";
 import DesktopShell from "@/layouts/components/DesktopShell";
-import Logo from "@/components/ui/Logo";
 import { AUTH_PROMO_SLIDES, AUTH_PROMO_IMAGE_SIZES } from "../constants";
-
-/**
- * Brand cue printed over the artwork — logo plus strapline. Shared by the
- * tablet banner and the `lg:` artwork tile, which is why it is not duplicated.
- */
-function PromoBrand() {
-  const { translate } = useLocale();
-
-  return (
-    <div className="flex items-center gap-2">
-      <Logo size="sm" />
-      <span className="text-3xs font-semibold tracking-widest text-(--color-text-muted) uppercase">
-        {translate("common.cinematic_excellence")}
-      </span>
-    </div>
-  );
-}
 
 /**
  * Desktop auth chrome: DesktopShell around one card with two tiles — artwork
@@ -120,8 +102,6 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
                 />
 
                 <div className="absolute inset-0 flex flex-col justify-between gap-3 p-6 lg:p-8">
-                  <PromoBrand />
-
                   <div className="flex flex-col gap-4">
                     {/* Tablet / Small banner (< lg): Static slogan */}
                     <div className="flex flex-col gap-2.5 lg:hidden">
@@ -144,32 +124,30 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
                         </p>
                       </div>
                     </div>
+                  </div>
 
-                    {/* Indicator dots: Desktop only */}
-                    <div
-                      className="hidden items-center gap-2 pt-2 lg:flex"
-                      role="tablist"
-                      aria-label="Promo slideshow navigation"
-                    >
-                      {AUTH_PROMO_SLIDES.map((slide, slideIndex) => {
-                        const isActive = slideIndex === activeSlideIndex;
-                        return (
-                          <button
-                            key={slide.src}
-                            type="button"
-                            role="tab"
-                            aria-selected={isActive}
-                            aria-label={`Slide ${slideIndex + 1}`}
-                            onClick={() => setActiveSlideIndex(slideIndex)}
-                            className={`h-2 cursor-pointer rounded-full transition-all duration-300 ${
-                              isActive
-                                ? "w-8 bg-(--color-gold)"
-                                : "w-2 bg-white/40 hover:bg-white/70"
-                            }`}
-                          />
-                        );
-                      })}
-                    </div>
+                  {/* Indicator dots: Desktop only */}
+                  <div
+                    className="hidden items-center gap-2 pt-2 lg:flex"
+                    role="tablist"
+                    aria-label="Promo slideshow navigation"
+                  >
+                    {AUTH_PROMO_SLIDES.map((slide, slideIndex) => {
+                      const isActive = slideIndex === activeSlideIndex;
+                      return (
+                        <button
+                          key={slide.src}
+                          type="button"
+                          role="tab"
+                          aria-selected={isActive}
+                          aria-label={`Slide ${slideIndex + 1}`}
+                          onClick={() => setActiveSlideIndex(slideIndex)}
+                          className={`h-2 cursor-pointer rounded-full transition-all duration-300 ${
+                            isActive ? "w-8 bg-(--color-gold)" : "w-2 bg-white/40 hover:bg-white/70"
+                          }`}
+                        />
+                      );
+                    })}
                   </div>
                 </div>
               </div>

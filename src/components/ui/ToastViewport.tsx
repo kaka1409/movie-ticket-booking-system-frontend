@@ -36,7 +36,7 @@ export default function ToastViewport() {
             type="button"
             onClick={() => dismiss(toast.id)}
             aria-label="Dismiss notification"
-            className={`pointer-events-auto flex w-full max-w-md items-center gap-2.5 rounded-2xl border px-4 py-3 text-left shadow-(--shadow-card) animate-fade-in md:max-w-none ${VARIANT_CONTAINER_CLASS[toast.variant]}`}
+            className={`pointer-events-auto flex w-full max-w-md items-center gap-2.5 rounded-2xl border px-4 py-3 text-left shadow-(--shadow-card) animate-toast md:max-w-none ${VARIANT_CONTAINER_CLASS[toast.variant]}`}
           >
             <Icon size={18} className="shrink-0 text-white/90" />
             <p className="min-w-0 flex-1 truncate text-sm font-medium">{toast.message}</p>
