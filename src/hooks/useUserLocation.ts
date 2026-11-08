@@ -6,10 +6,10 @@ import {
   locateUser,
   retryUserLocation,
   subscribeUserLocation,
+  type Coordinates,
   type LocationStatus,
   type UserLocationSnapshot,
-} from "@/libs/geolocation";
-import type { Coordinates } from "@/libs/geo";
+} from "@/libs/geo";
 
 const SERVER_SNAPSHOT: UserLocationSnapshot = { coordinates: null, status: "idle" };
 

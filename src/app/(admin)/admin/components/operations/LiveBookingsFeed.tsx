@@ -4,7 +4,8 @@ import Link from "next/link";
 import { ChevronRight, CreditCard } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { formatCalendarDate } from "@/libs/date";
-import { formatRelativeTime, formatVND } from "@/libs/utils";
+import { formatVND } from "@/libs/utils";
+import { formatRelativeTime } from "@/libs/date";
 import type {
   AdminLiveBookingItem,
   AdminPaymentMethod,
@@ -90,7 +91,7 @@ export default function LiveBookingsFeed({ bookings, paymentMethods }: LiveBooki
                 <AdminPoster
                   src={booking.moviePosterUrl}
                   alt={booking.movieTitle}
-                  className="h-9 w-14 aspect-video"
+                  className="h-10 aspect-[3/2]"
                 />
                 <span className="truncate font-medium text-(--color-text-primary)">
                   {booking.movieTitle}

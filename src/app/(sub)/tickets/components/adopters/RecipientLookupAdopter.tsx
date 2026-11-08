@@ -5,7 +5,7 @@ import { getRecipient } from "@/features/tickets/api";
 import { useTransfer } from "@/features/tickets/contexts/TransferContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
-import { isValidEmail } from "@/libs/zod";
+import { isValidEmail } from "@/libs/validation";
 
 /**
  * Effect-only mount helper for the transfer step (renders nothing): resolves the

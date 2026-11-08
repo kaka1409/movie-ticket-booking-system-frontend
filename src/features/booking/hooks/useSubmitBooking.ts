@@ -6,7 +6,7 @@ import { useBooking } from "@/features/booking/contexts/BookingContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import { createBookingAction } from "@/features/booking/action";
-import { normalizePhone } from "@/libs/zod";
+import { normalizePhone } from "@/libs/validation";
 
 interface SubmitBookingResult {
   /** Whether a gateway is selected, so the pay CTA may be enabled. */

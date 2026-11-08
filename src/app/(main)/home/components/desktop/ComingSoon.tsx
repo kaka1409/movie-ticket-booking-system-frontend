@@ -6,7 +6,7 @@ import Link from "next/link";
 import { ChevronLeft, ChevronRight, Heart } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useWishlist, type WishlistFeedback } from "@/features/wishlist/contexts/WishlistContext";
-import { formatDate } from "@/libs/utils";
+import { formatDate } from "@/libs/date";
 import type { Movie } from "@/features/movies/types";
 import type { ErrorResponse } from "@/libs/api";
 import SectionFallback from "@/components/ui/SectionFallback";

@@ -2,7 +2,8 @@
 
 import { ArrowUpRight } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
-import { formatDate, formatVND } from "@/libs/utils";
+import { formatVND } from "@/libs/utils";
+import { formatDate } from "@/libs/date";
 import MicroLabel from "@/components/ui/MicroLabel";
 import type { PastTicket } from "@/features/tickets/types";
 
