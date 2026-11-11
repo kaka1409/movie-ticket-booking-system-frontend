@@ -10,7 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import { refreshAction } from "@/features/auth/action";
-import { UNAUTHORIZED_EVENT } from "@/libs/api";
+import { UNAUTHORIZED_EVENT } from "@/libs/api-contract";
 import type { User } from "@/features/auth/types";
 
 interface AuthContextType {

@@ -4,9 +4,10 @@ import { useCallback, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/contexts/ToastContext";
 import { loginAction } from "../action";
 import { createLoginSchema } from "../schema";
-import { fieldErrorsFromDetails } from "@/libs/api";
+import { fieldErrorsFromDetails } from "@/libs/api-contract";
 
 export interface LoginFormController {
   email: string;
@@ -32,6 +33,7 @@ export interface LoginFormController {
 export function useLoginForm({ returnUrl }: { returnUrl?: string } = {}): LoginFormController {
   const { translate } = useLocale();
   const { setAuth } = useAuth();
+  const { notify } = useToast();
   const router = useRouter();
 
   const [email, setEmail] = useState("");
@@ -62,6 +64,7 @@ export function useLoginForm({ returnUrl }: { returnUrl?: string } = {}): LoginF
         );
         if (loginResult.success) {
           setAuth(loginResult.data.user, loginResult.data.accessToken);
+          notify(translate("auth.login.success"), { variant: "success" });
           router.push(returnUrl ?? "/");
         } else if (loginResult.code === "INVALID_CREDENTIALS") {
           setServerError(translate("auth.login.error_invalid_credentials"));
@@ -79,7 +82,7 @@ export function useLoginForm({ returnUrl }: { returnUrl?: string } = {}): LoginF
         setIsSubmitting(false);
       }
     },
-    [isValid, setAuth, email, password, router, translate, returnUrl],
+    [isValid, setAuth, email, password, router, translate, returnUrl, notify],
   );
 
   return {

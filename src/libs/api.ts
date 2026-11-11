@@ -1,143 +1,35 @@
-const SERVER_BASE_URL = process.env.BACKEND_URL ?? "http://localhost:8080";
+import {
+  notifyUnauthorized,
+  parseApiError,
+  toErrorResponse,
+  type ApiResponse,
+} from "@/libs/api-contract";
+
+/**
+ * Backend transport, shared by the server (components, route handlers, server
+ * actions) and the two client callers that must refetch in the browser —
+ * `NotificationsContext` (inbox resync) and `MoviePreviewContext` (hover
+ * preview). The wire shapes live in `libs/api-contract.ts`.
+ *
+ * The server half of this module is validated at boot: `instrumentation.ts`
+ * imports `libs/env/server.ts`, which refuses to start a production server
+ * without `BACKEND_URL`.
+ */
+export * from "@/libs/api-contract";
+
+const BACKEND_URL = process.env.BACKEND_URL;
 const API_PREFIX = process.env.API_PREFIX ?? "/api/v1";
 
-// Client: relative URL → same-origin → Next.js rewrite proxies to the backend
-// Server: absolute URL → direct backend call, no proxy hop.
-const backendUrl = (typeof window === "undefined" ? SERVER_BASE_URL : "") + API_PREFIX;
-
-/** Window event fired when the backend answers 401 (handled by AuthContext). */
-export const UNAUTHORIZED_EVENT = "primseat:unauthorized";
-
 /**
- * Tells the client auth layer that the current credentials were rejected.
- * `/auth/*` endpoints are skipped — a failed login/refresh 401 is an expected
- * answer, not an expired session. AuthContext clears state on this event and
- * `ProtectedRoute` renders the login prompt in place (no redirect). On the
- * server (no `window`) callers render `<LoginPrompt />` on
- * `isUnauthorizedResult()` from `libs/session.ts` instead.
+ * Server: absolute origin, no proxy hop. Browser: the same-origin `/api/v1`
+ * rewrite from `next.config.ts` — `BACKEND_URL` is private and is not inlined
+ * into the client bundle, so it reads as `undefined` there (as does
+ * `API_PREFIX`, hence the literal fallback that matches the rewrite source).
  */
-function notifyUnauthorized(path: string): void {
-  if (typeof window === "undefined") return;
-  if (path.startsWith("/auth/")) return;
-  window.dispatchEvent(new Event(UNAUTHORIZED_EVENT));
-}
-
-type SuccessResponse<T, M = Record<string, unknown>> = {
-  data: T;
-  meta?: M;
-};
-
-/**
- * Append the backend content-locale query (`?lang=en|vn`) to a path that may
- * already carry a query string. Catalog endpoints read it, and so do the
- * notification reads — a notice's text is stored as a code + params and rendered
- * per locale. Auth, seats, holds and bookings stay lang-less, as does every
- * ticket read that only carries codes and instants.
- */
-export function withLang(path: string, locale: "en" | "vn"): string {
-  return `${path}${path.includes("?") ? "&" : "?"}lang=${locale}`;
-}
-
-export type ErrorResponse = {
-  error: {
-    status: number;
-    code: string;
-    message: string;
-    details?: { code: string; message: string; field?: string; detail?: string }[];
-  };
-};
-
-export function fieldErrorsFromDetails(
-  details: ErrorResponse["error"]["details"],
-): Record<string, string> {
-  return (details ?? []).reduce<Record<string, string>>((errors, detail) => {
-    if (detail.field && !errors[detail.field]) errors[detail.field] = detail.message;
-    return errors;
-  }, {});
-}
-
-/**
- * Discriminated result of every query: `{ data, meta? }` on success or
- * `{ error }` on failure. Narrow with `"error" in result`.
- */
-export type ApiResponse<T, M = Record<string, unknown>> = SuccessResponse<T, M> | ErrorResponse;
-
-export type ActionFailure = {
-  success: false;
-  error: string;
-  status?: number;
-  code?: string;
-  details?: ErrorResponse["error"]["details"];
-};
-
-/** Preserve the normalized API error fields when converting a thrown mutation into an action result. */
-export function toActionFailure(reason: unknown): ActionFailure {
-  const error = reason as
-    | (Error & {
-        status?: number;
-        code?: string;
-        body?: { error?: { details?: ErrorResponse["error"]["details"] } };
-      })
-    | null;
-  return {
-    success: false,
-    error: error instanceof Error ? error.message : String(reason),
-    status: error?.status,
-    code: error?.code,
-    details: error?.body?.error?.details,
-  };
-}
-
-export function actionFailureFromApiError(error: ErrorResponse["error"]): ActionFailure {
-  return {
-    success: false,
-    error: error.message,
-    status: error.status,
-    code: error.code,
-    details: error.details,
-  };
-}
-
-function parseApiError(status: number, body: unknown): ErrorResponse["error"] {
-  const error = (
-    body as {
-      error?: {
-        code?: unknown;
-        message?: unknown;
-        details?: unknown;
-      };
-    } | null
-  )?.error;
-
-  return {
-    status,
-    code:
-      typeof error?.code === "string"
-        ? error.code
-        : status >= 500
-          ? "INTERNAL_SERVER_ERROR"
-          : "UNKNOWN_ERROR",
-    message: typeof error?.message === "string" ? error.message : `API error: ${status}`,
-    details: Array.isArray(error?.details) ? error.details : undefined,
-  };
-}
-
-/**
- * A thrown/rejected call expressed as an `{ error }` union, so a caller that
- * awaits a query directly can render an error state instead of unwinding the
- * render (status 0 = the request never produced an HTTP answer).
- */
-export function toErrorResponse(reason: unknown): ErrorResponse {
-  const message = reason instanceof Error ? reason.message : String(reason);
-  const failure = reason as { status?: number; code?: string } | null;
-  return {
-    error: {
-      status: failure?.status ?? 0,
-      code: failure?.code ?? "UNKNOWN_ERROR",
-      message,
-    },
-  };
-}
+const backendUrl =
+  typeof window === "undefined"
+    ? `${BACKEND_URL ?? "http://localhost:8080"}${API_PREFIX}`
+    : API_PREFIX;
 
 /**
  * Await a query and express a rejection as `{ error }`. Streamed sections await
@@ -173,8 +65,8 @@ export function toApiResponse<T, M = Record<string, unknown>>(
  * - A 401 (except on `/auth/*`) additionally dispatches `UNAUTHORIZED_EVENT`:
  *   `AuthContext` clears the session and `ProtectedRoute` renders the prompt in
  *   place — never a redirect.
- * - On the server pass the incoming cookies via the `cookie` arg —
- *   `credentials: "include"` only forwards cookies in the browser.
+ * - Pass the incoming cookies via the `cookie` arg — `credentials: "include"`
+ *   only forwards cookies in the browser.
  */
 export async function apiFetch<T, M = Record<string, unknown>>(
   path: string,
@@ -231,6 +123,61 @@ export async function apiFetch<T, M = Record<string, unknown>>(
   return { data: body as T };
 }
 
+/** Error shape thrown by {@link requestOrThrow} — `status`/`code`/`body` ride on the Error. */
+type ApiRequestError = Error & { status: number; body: unknown; code: string };
+
+function toNetworkError(cause: unknown): ApiRequestError {
+  const error = new Error("Network error") as ApiRequestError;
+  error.status = 0;
+  error.body = null;
+  error.code = "NETWORK_ERROR";
+  error.cause = cause;
+  return error;
+}
+
+function toHttpError(path: string, status: number, body: unknown): ApiRequestError {
+  if (status === 401) notifyUnauthorized(path);
+  const apiError = parseApiError(status, body);
+  const error = new Error(apiError.message) as ApiRequestError;
+  error.status = apiError.status;
+  error.body = body;
+  error.code = apiError.code;
+  return error;
+}
+
+/**
+ * Shared transport for the throwing mutations: attaches auth headers, turns a
+ * network failure or non-2xx answer into an {@link ApiRequestError}. Callers
+ * own the body encoding (JSON vs multipart) and the success payload shape.
+ */
+async function requestOrThrow(
+  path: string,
+  init: RequestInit,
+  token?: string,
+  cookie?: string,
+): Promise<Response> {
+  let response: Response;
+  try {
+    response = await fetch(backendUrl + path, {
+      ...init,
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...(cookie ? { Cookie: cookie } : {}),
+        ...init.headers,
+      },
+    });
+  } catch (cause) {
+    throw toNetworkError(cause);
+  }
+
+  if (!response.ok) {
+    const body = await response.json().catch(() => null);
+    throw toHttpError(path, response.status, body);
+  }
+
+  return response;
+}
+
 /**
  * POST/PUT/PATCH/DELETE a backend endpoint. Unlike {@link apiFetch} this THROWS
  * an `Error` (with `status`, `code` and `body` attached) on network or HTTP
@@ -263,46 +210,15 @@ export async function apiMutation<T>(
   cookie?: string,
   raw?: boolean,
 ): Promise<T | Response> {
-  const headers = {
-    "Content-Type": "application/json",
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    ...(cookie ? { Cookie: cookie } : {}),
-    ...options.headers,
-  };
-
-  let response: Response;
-  try {
-    response = await fetch(backendUrl + path, {
+  const response = await requestOrThrow(
+    path,
+    {
       ...options,
-      headers,
-    });
-  } catch (cause) {
-    const error = new Error("Network error") as Error & {
-      status: number;
-      body: unknown;
-      code: string;
-    };
-    error.status = 0;
-    error.body = null;
-    error.code = "NETWORK_ERROR";
-    error.cause = cause;
-    throw error;
-  }
-
-  if (!response.ok) {
-    const body = await response.json().catch(() => null);
-    if (response.status === 401) notifyUnauthorized(path);
-    const apiError = parseApiError(response.status, body);
-    const error = new Error(apiError.message) as Error & {
-      status: number;
-      body: unknown;
-      code: string;
-    };
-    error.status = apiError.status;
-    error.body = body;
-    error.code = apiError.code;
-    throw error;
-  }
+      headers: { "Content-Type": "application/json", ...options.headers },
+    },
+    token,
+    cookie,
+  );
 
   return raw ? response : response.json();
 }
@@ -317,44 +233,12 @@ export async function apiUpload<T>(
   token?: string,
   cookie?: string,
 ): Promise<T> {
-  let response: Response;
-  try {
-    response = await fetch(backendUrl + path, {
-      method: "POST",
-      body: formData,
-      headers: {
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        ...(cookie ? { Cookie: cookie } : {}),
-      },
-      credentials: "include",
-    });
-  } catch (cause) {
-    const error = new Error("Network error") as Error & {
-      status: number;
-      body: unknown;
-      code: string;
-    };
-    error.status = 0;
-    error.body = null;
-    error.code = "NETWORK_ERROR";
-    error.cause = cause;
-    throw error;
-  }
-
-  if (!response.ok) {
-    const body = await response.json().catch(() => null);
-    if (response.status === 401) notifyUnauthorized(path);
-    const apiError = parseApiError(response.status, body);
-    const error = new Error(apiError.message) as Error & {
-      status: number;
-      body: unknown;
-      code: string;
-    };
-    error.status = apiError.status;
-    error.body = body;
-    error.code = apiError.code;
-    throw error;
-  }
+  const response = await requestOrThrow(
+    path,
+    { method: "POST", body: formData, credentials: "include" },
+    token,
+    cookie,
+  );
 
   const body = await response.json().catch(() => null);
   if (body === null || body === undefined) {
