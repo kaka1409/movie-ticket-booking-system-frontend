@@ -1,11 +1,17 @@
+import { publicEnv } from "@/libs/env/public";
+
 /**
  * Canonical site identity for SEO metadata (`metadata`, `generateMetadata`,
  * `robots.ts`, `sitemap.ts`). Kept in one module so every consumer resolves
  * the same absolute origin.
+ *
+ * Only public values live here, so the module stays importable from a client
+ * component (a footer can use `SITE_NAME` without duplicating it); the origin
+ * itself is validated in `libs/env/public.ts`.
  */
 
-/** Public origin of the deployed site — set before `pnpm build` in production. */
-export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+/** Public origin of the deployed site — set `NEXT_PUBLIC_SITE_URL` before `pnpm build`. */
+export const SITE_URL = publicEnv.siteUrl;
 
 export const SITE_NAME = "PrimeSeat";
 

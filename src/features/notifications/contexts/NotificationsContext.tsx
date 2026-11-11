@@ -124,6 +124,9 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     // of the anonymous bundle); a cleanup that lands first just disconnects it.
     resync();
     void createNotificationSocket(token).then((created) => {
+      // A deployment without a browser-reachable backend origin skips the
+      // socket entirely; the REST resync above still fills the inbox.
+      if (!created) return;
       if (cancelled) {
         created.disconnect();
         return;

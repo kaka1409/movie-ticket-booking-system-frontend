@@ -1,5 +1,7 @@
+import "server-only";
+
 import { cookies } from "next/headers";
-import type { ApiResponse } from "@/libs/api";
+import type { ApiResponse } from "@/libs/api-contract";
 
 /**
  * Full incoming `Cookie` header for server-side `apiFetch`/`apiMutation`

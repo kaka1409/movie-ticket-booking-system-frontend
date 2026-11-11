@@ -1,37 +1,17 @@
 import type { NextConfig } from "next";
 import path from "path";
+import { IMAGE_HOSTS } from "./src/libs/image-hosts";
 
 const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:8080";
 
-// Build-time CSP allow-lists. `rewrites()` and `headers()` are evaluated at
-// build time, so these reflect the env present during `pnpm build`.
-const backendOrigin = new URL(BACKEND_URL).origin;
-const backendWsOrigin = backendOrigin.replace(/^http/, "ws");
-
-// Browser-side Socket.IO origin. When NEXT_PUBLIC_BACKEND_URL is unset the
-// client dials `<page-hostname>:8080`, which CSP cannot express statically —
-// dev connect-src below relaxes to any http/ws origin to cover LAN testing.
-const socketOrigin = process.env.NEXT_PUBLIC_BACKEND_URL
-  ? new URL(process.env.NEXT_PUBLIC_BACKEND_URL).origin
-  : null;
-const socketWsOrigin = socketOrigin?.replace(/^http/, "ws") ?? null;
-
-const IMAGE_HOSTS = [
-  "i.ebayimg.com",
-  "cdn11.bigcommerce.com",
-  "cdn.dribbble.com",
-  "encrypted-tbn0.gstatic.com",
-  "m.media-amazon.com",
-  "upload.wikimedia.org",
-  "image.tmdb.org",
-  "lumiere-a.akamaihd.net",
-  "i.pravatar.cc",
-  "images.ctfassets.net",
-  "res.cloudinary.com",
-  "flagcdn.com",
-];
-
 const isDev = process.env.NODE_ENV === "development";
+
+// A production build without a backend origin bakes `localhost` into the
+// rewrites — every deployed request then fails with a connection error far from
+// the cause. Throw at build time instead (`.env.local` / build env must carry it).
+if (!isDev && !process.env.BACKEND_URL) {
+  throw new Error("BACKEND_URL must be set for a production build (next.config.ts rewrites)");
+}
 
 // Extra dev origins beyond the built-in LAN list: ALLOWED_DEV_ORIGINS is a
 // comma-separated host list for whatever network the dev machine sits on.
@@ -39,7 +19,7 @@ const envDevOrigins = (process.env.ALLOWED_DEV_ORIGINS ?? "")
   .split(",")
   .map((origin) => origin.trim())
   .filter(Boolean);
-const devOrigins = ["10.25.33.35", "192.168.88.165", "192.168.1.9", ...envDevOrigins];
+const devOrigins = ["10.25.33.207", "192.168.88.165", "192.168.1.9", ...envDevOrigins];
 
 const nextConfig: NextConfig = {
   reactCompiler: false,
@@ -51,6 +31,7 @@ const nextConfig: NextConfig = {
       protocol: "https",
       hostname,
     })),
+    qualities: [75, 90],
   },
   // Dev-only LAN origins; never ship these to production.
   ...(isDev ? { allowedDevOrigins: devOrigins } : {}),
@@ -62,44 +43,27 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  /**
+   * Static security headers. The Content-Security-Policy is **not** here: it
+   * needs a per-request nonce, so `src/proxy.ts` owns it (see that file).
+   */
   async headers() {
-    const csp = [
-      "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
-      // qr-scanner decodes inside a Web Worker built from a blob: URL.
-      "worker-src 'self' blob:",
-      "style-src 'self' 'unsafe-inline'",
-      `img-src 'self' data: blob: ${IMAGE_HOSTS.map((h) => `https://${h}`).join(" ")}`,
-      "font-src 'self' data:",
-      // Dev allows any http(s)/ws(s) connect origin so the notification socket
-      // can reach the backend on a LAN IP the build did not know about.
-      `connect-src 'self' ${backendOrigin} ${backendWsOrigin} ${backendWsOrigin.replace(/^ws/, "wss")} ${socketOrigin ?? ""} ${socketWsOrigin ?? ""} ${isDev ? "http: https: ws: wss:" : ""}`,
-      "frame-src 'self' https://maps.google.com https://www.google.com https://www.youtube-nocookie.com https://player.vimeo.com",
-      "frame-ancestors 'none'",
-      "base-uri 'self'",
-      "form-action 'self'",
-      "object-src 'none'",
-    ].join("; ");
-
-    const securityHeaders = [
-      { key: "X-Content-Type-Options", value: "nosniff" },
-      { key: "X-Frame-Options", value: "DENY" },
-      { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-      {
-        key: "Permissions-Policy",
-        value: "camera=(self), microphone=(), geolocation=(self), payment=(), usb=()",
-      },
-      {
-        key: "Strict-Transport-Security",
-        value: "max-age=63072000; includeSubDomains; preload",
-      },
-      { key: "Content-Security-Policy", value: csp },
-    ];
-
     return [
       {
         source: "/:path*",
-        headers: securityHeaders,
+        headers: [
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "X-Frame-Options", value: "DENY" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          {
+            key: "Permissions-Policy",
+            value: "camera=(self), microphone=(), geolocation=(self), payment=(), usb=()",
+          },
+          {
+            key: "Strict-Transport-Security",
+            value: "max-age=63072000; includeSubDomains; preload",
+          },
+        ],
       },
     ];
   },

@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getRequestCookie, hasSession } from "@/libs/session";
-
-const SERVER_BASE_URL = process.env.BACKEND_URL ?? "http://localhost:8080";
-const API_PREFIX = process.env.API_PREFIX ?? "/api/v1";
+import { serverEnv } from "@/libs/env/server";
 
 /**
  * CSV export proxy. Route handlers are not wrapped by the `(admin)` layout, so
@@ -17,7 +15,7 @@ export async function GET(request: NextRequest) {
 
   const cookie = await getRequestCookie();
   const upstream = await fetch(
-    `${SERVER_BASE_URL}${API_PREFIX}/admin/transactions/export${request.nextUrl.search}`,
+    `${serverEnv.backendUrl}${serverEnv.apiPrefix}/admin/transactions/export${request.nextUrl.search}`,
     {
       headers: cookie ? { cookie } : {},
       cache: "no-store",
@@ -25,10 +23,7 @@ export async function GET(request: NextRequest) {
   );
 
   if (!upstream.ok || !upstream.body) {
-    return NextResponse.json(
-      { error: "Export failed" },
-      { status: upstream.status || 502 },
-    );
+    return NextResponse.json({ error: "Export failed" }, { status: upstream.status || 502 });
   }
 
   return new NextResponse(upstream.body, {
