@@ -19,7 +19,7 @@ const envDevOrigins = (process.env.ALLOWED_DEV_ORIGINS ?? "")
   .split(",")
   .map((origin) => origin.trim())
   .filter(Boolean);
-const devOrigins = ["10.25.33.207", "192.168.88.165", "192.168.1.9", ...envDevOrigins];
+const devOrigins = ["10.25.34.154", "192.168.88.165", "192.168.1.9", ...envDevOrigins];
 
 const nextConfig: NextConfig = {
   reactCompiler: false,
