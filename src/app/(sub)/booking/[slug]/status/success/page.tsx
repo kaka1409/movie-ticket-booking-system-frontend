@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { redirect } from "next/navigation";
 import { getMovieDetail } from "@/features/movies/api";
 import { getBookingById, getPaymentMethods } from "@/features/booking/api";
 import { getRequestCookie, getRequestLocale, isUnauthorizedResult } from "@/libs/session";
@@ -33,6 +34,15 @@ export default async function SuccessPage({
   if (bookingResult && isUnauthorizedResult(bookingResult)) return <LoginPrompt />;
 
   const booking = bookingResult && !("error" in bookingResult) ? bookingResult.data : null;
+
+  // Success is only honest once the backend confirms `paid`: a failed read or
+  // a still-pending booking belongs on the failure page, not here.
+  if (query.bookingId && (!booking || booking.status !== "paid")) {
+    redirect(
+      `/booking/${slug}/status/failed?bookingId=${encodeURIComponent(query.bookingId)}&reason=payment_unconfirmed`,
+    );
+  }
+
   // Payment gateways may return their own reference; the fetched booking wins
   // over the raw URL param only when the param is absent.
   const transactionId = query.transactionId ?? booking?.transactionRef ?? booking?.id ?? "N/A";
