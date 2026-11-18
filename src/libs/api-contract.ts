@@ -25,6 +25,38 @@ export function notifyUnauthorized(path: string): void {
   window.dispatchEvent(new Event(UNAUTHORIZED_EVENT));
 }
 
+/**
+ * Browser-only escape hatch for an expired access token: `AuthContext`
+ * registers a refresher that trades the HttpOnly refresh cookie for a new
+ * access token. `apiFetch` calls it on a Bearer 401 and retries once, so a
+ * routine expiry no longer logs the user out. Nothing registers on the server,
+ * where a 401 keeps its old meaning.
+ */
+type AccessTokenRefresher = () => Promise<string | null>;
+
+let accessTokenRefresher: AccessTokenRefresher | null = null;
+let refreshInFlight: Promise<string | null> | null = null;
+
+export function registerAccessTokenRefresher(refresher: AccessTokenRefresher | null): void {
+  accessTokenRefresher = refresher;
+}
+
+/** True when a browser session refresher is registered (i.e. inside AuthProvider). */
+export function hasAccessTokenRefresher(): boolean {
+  return accessTokenRefresher !== null;
+}
+
+/** Single-flight token refresh — concurrent 401s share one rotation. */
+export function refreshAccessToken(): Promise<string | null> {
+  if (!accessTokenRefresher) return Promise.resolve(null);
+  refreshInFlight ??= accessTokenRefresher()
+    .catch(() => null)
+    .finally(() => {
+      refreshInFlight = null;
+    });
+  return refreshInFlight;
+}
+
 export type SuccessResponse<T, M = Record<string, unknown>> = {
   data: T;
   meta?: M;

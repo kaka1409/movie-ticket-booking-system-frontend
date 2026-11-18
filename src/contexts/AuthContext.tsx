@@ -7,10 +7,11 @@ import {
   useEffect,
   useCallback,
   useMemo,
+  useRef,
   type ReactNode,
 } from "react";
 import { refreshAction } from "@/features/auth/action";
-import { UNAUTHORIZED_EVENT } from "@/libs/api-contract";
+import { registerAccessTokenRefresher, UNAUTHORIZED_EVENT } from "@/libs/api-contract";
 import type { User } from "@/features/auth/types";
 
 interface AuthContextType {
@@ -29,10 +30,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  // Bumped on every explicit login/logout so a slow mount-time refresh cannot
+  // resurrect a session the user just replaced or cleared.
+  const sessionEpochRef = useRef(0);
 
   useEffect(() => {
+    const epoch = sessionEpochRef.current;
     refreshAction()
       .then((result) => {
+        if (epoch !== sessionEpochRef.current) return;
         if (result.success) {
           setToken(result.data.accessToken);
           setUser(result.data.user);
@@ -41,17 +47,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .catch((error: unknown) => {
         console.warn("Session restore failed:", error);
       })
-      .finally(() => setIsLoading(false));
+      .finally(() => {
+        if (epoch === sessionEpochRef.current) setIsLoading(false);
+      });
   }, []);
 
   const setAuth = useCallback((user: User, token: string) => {
+    sessionEpochRef.current += 1;
     setToken(token);
     setUser(user);
   }, []);
 
   const clearAuth = useCallback(() => {
+    sessionEpochRef.current += 1;
     setToken(null);
     setUser(null);
+  }, []);
+
+  // apiFetch's 401 path calls this to trade the refresh cookie for a new
+  // access token before giving up — concurrent 401s share one rotation.
+  useEffect(() => {
+    registerAccessTokenRefresher(async () => {
+      const epoch = sessionEpochRef.current;
+      const result = await refreshAction();
+      if (!result.success) return null;
+      // A login/logout that landed mid-refresh owns the session now.
+      if (epoch !== sessionEpochRef.current) return null;
+      setToken(result.data.accessToken);
+      setUser(result.data.user);
+      return result.data.accessToken;
+    });
+    return () => registerAccessTokenRefresher(null);
   }, []);
 
   // Backend answered 401 on an authenticated request — the session is gone

@@ -1,6 +1,8 @@
 import {
+  hasAccessTokenRefresher,
   notifyUnauthorized,
   parseApiError,
+  refreshAccessToken,
   toErrorResponse,
   type ApiResponse,
 } from "@/libs/api-contract";
@@ -68,11 +70,12 @@ export function toApiResponse<T, M = Record<string, unknown>>(
  * - Pass the incoming cookies via the `cookie` arg — `credentials: "include"`
  *   only forwards cookies in the browser.
  */
-export async function apiFetch<T, M = Record<string, unknown>>(
+async function fetchApiOnce<T, M = Record<string, unknown>>(
   path: string,
-  options?: RequestInit,
-  token?: string,
-  cookie?: string,
+  options: RequestInit | undefined,
+  token: string | undefined,
+  cookie: string | undefined,
+  isRetry: boolean,
 ): Promise<ApiResponse<T, M>> {
   const headers = {
     "Content-Type": "application/json",
@@ -94,7 +97,16 @@ export async function apiFetch<T, M = Record<string, unknown>>(
 
   if (!response.ok) {
     const body = await response.json().catch(() => null);
-    if (response.status === 401) notifyUnauthorized(path);
+    // A Bearer 401 gets one refresh-and-retry before it counts as a dead
+    // session — the wrapper below owns that decision, so the first attempt
+    // must not announce the logout yet.
+    const mayRetry =
+      response.status === 401 &&
+      !isRetry &&
+      token !== undefined &&
+      typeof window !== "undefined" &&
+      hasAccessTokenRefresher();
+    if (response.status === 401 && !mayRetry) notifyUnauthorized(path);
     return { error: parseApiError(response.status, body) };
   }
 
@@ -121,6 +133,24 @@ export async function apiFetch<T, M = Record<string, unknown>>(
   }
 
   return { data: body as T };
+}
+
+export async function apiFetch<T, M = Record<string, unknown>>(
+  path: string,
+  options?: RequestInit,
+  token?: string,
+  cookie?: string,
+): Promise<ApiResponse<T, M>> {
+  const first = await fetchApiOnce<T, M>(path, options, token, cookie, false);
+  if (!("error" in first) || first.error.status !== 401 || token === undefined) return first;
+
+  const freshToken = await refreshAccessToken();
+  if (!freshToken || freshToken === token) {
+    // Refresh failed or rotated to the same token — the session really is dead.
+    notifyUnauthorized(path);
+    return first;
+  }
+  return fetchApiOnce<T, M>(path, options, freshToken, cookie, true);
 }
 
 /** Error shape thrown by {@link requestOrThrow} — `status`/`code`/`body` ride on the Error. */
@@ -220,7 +250,9 @@ export async function apiMutation<T>(
     cookie,
   );
 
-  return raw ? response : response.json();
+  // A 204/empty body is a valid success for DELETE — `json()` would throw a
+  // raw SyntaxError instead of letting the caller see the empty payload.
+  return raw ? response : response.json().catch(() => null);
 }
 
 /**
