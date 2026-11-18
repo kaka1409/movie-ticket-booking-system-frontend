@@ -71,6 +71,9 @@ export function ShowtimesProvider({
   const router = useRouter();
   const pathname = usePathname();
   const { setSelectedShowtime } = useMovieSelection();
+  // Last-request-wins guard: rapid date switches must not let an older
+  // response overwrite the cinemas of the day now shown in the URL.
+  const loadSeqRef = useRef(0);
 
   const [activeDate, setActiveDate] = useState(initialDate);
   const [cinemas, setCinemas] = useState(initialCinemas);
@@ -84,6 +87,7 @@ export function ShowtimesProvider({
 
   const loadDate = useCallback(
     (value: string) => {
+      const seq = ++loadSeqRef.current;
       startTransition(async () => {
         setActiveDate(value);
         // Switching the day invalidates any picked showtime.
@@ -91,6 +95,7 @@ export function ShowtimesProvider({
         router.replace(`${pathname}?date=${value}`, { scroll: false });
 
         const result = await getShowtimes(movieSlug, value);
+        if (seq !== loadSeqRef.current) return;
         if ("error" in result) {
           setCinemas([]);
           setError(result.error.message);
