@@ -1,6 +1,6 @@
 "use client";
 
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { MessageSquare } from "lucide-react";
@@ -8,6 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useToast } from "@/contexts/ToastContext";
 import Badge from "@/components/ui/Badge";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import AdminButton from "@/app/(admin)/admin/components/shared/AdminButton";
 import { ADMIN_INPUT_CLASS } from "@/features/admin/constants";
 import { resolveAdminError } from "@/features/admin/utils/errorMessages";
@@ -16,12 +17,7 @@ import {
   updateUserStatusAction,
 } from "@/features/admin/actions/users.action";
 import { formatCalendarDate } from "@/libs/date";
-import type {
-  AdminActionResult,
-  AdminUser,
-  AdminUserRole,
-  AdminUserStatus,
-} from "@/features/admin/types";
+import type { AdminActionResult, AdminUser, AdminUserRole } from "@/features/admin/types";
 
 /**
  * The expanded-row panel for one account: read-only facts plus the two writes
@@ -34,6 +30,7 @@ export default function UserInlineEdit({ user }: { user: AdminUser }) {
   const { notify } = useToast();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const [isBanOpen, setIsBanOpen] = useState(false);
 
   const isSelf = currentUser?.id === user.id;
 
@@ -113,8 +110,13 @@ export default function UserInlineEdit({ user }: { user: AdminUser }) {
           variant={user.status === "active" ? "danger" : "outline"}
           disabled={isSelf || isPending}
           onClick={() => {
-            const next: AdminUserStatus = user.status === "active" ? "banned" : "active";
-            runMutation(() => updateUserStatusAction(token ?? "", user.id, next));
+            // Banning revokes the account's sessions — a single stray click
+            // must not do that, so only the confirm dialog commits.
+            if (user.status === "active") {
+              setIsBanOpen(true);
+            } else {
+              runMutation(() => updateUserStatusAction(token ?? "", user.id, "active"));
+            }
           }}
         >
           {user.status === "active" ? translate("admin.users.ban") : translate("admin.users.unban")}
@@ -128,6 +130,21 @@ export default function UserInlineEdit({ user }: { user: AdminUser }) {
           {translate("admin.users.view_reviews")}
         </Link>
       </div>
+
+      <ConfirmDialog
+        isOpen={isBanOpen}
+        onClose={() => setIsBanOpen(false)}
+        onConfirm={() => {
+          setIsBanOpen(false);
+          runMutation(() => updateUserStatusAction(token ?? "", user.id, "banned"));
+        }}
+        title={translate("admin.users.ban_title")}
+        description={translate("admin.users.ban_body").replace("{email}", user.email)}
+        confirmLabel={translate("admin.users.ban")}
+        cancelLabel={translate("admin.common.cancel")}
+        isPending={isPending}
+        danger
+      />
     </div>
   );
 }
