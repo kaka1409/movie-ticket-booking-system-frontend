@@ -64,7 +64,7 @@ export function ModificationProvider({
   children: ReactNode;
   initialSeatCount?: number;
 }) {
-  const [modificationType, setModificationType] = useState<ModificationType | null>(null);
+  const [modificationType, setModificationTypeState] = useState<ModificationType | null>(null);
 
   // showtime states
   const [query, setQuery] = useState("");
@@ -89,6 +89,14 @@ export function ModificationProvider({
   // its state are siblings, and the context is the only channel between them.
   const retryShowtimes = useCallback(() => setShowtimesRetryToken((token) => token + 1), []);
   const retrySeatMap = useCallback(() => setSeatMapRetryToken((token) => token + 1), []);
+
+  // Picks belong to the change kind they were made under — switching type must
+  // not let seats/showtime chosen for the old kind leak into the submit.
+  const setModificationType = useCallback((type: ModificationType | null) => {
+    setModificationTypeState(type);
+    setSelectedSeats([]);
+    setSelectedShowtime(null);
+  }, []);
 
   const toggleSeat = useCallback((seat: ModificationSeat) => {
     setSelectedSeats((previous) => {
@@ -141,6 +149,7 @@ export function ModificationProvider({
     }),
     [
       modificationType,
+      setModificationType,
       selectedShowtime,
       selectedSeats,
       toggleSeat,
