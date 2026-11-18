@@ -34,9 +34,12 @@ export function resolveSlotSelection(
   date: string,
   showtimeId: string,
 ): CinemaDraft {
-  const matchedShowtime = cinema.showtimes.find(
-    (slot) => (showtimeId !== "" && slot.id === showtimeId) || slot.time === time,
-  );
+  // Id match wins outright: two slots can share a start time in different
+  // rooms, so an `||` time fallback would silently pick the wrong room.
+  const matchedShowtime =
+    showtimeId !== ""
+      ? cinema.showtimes.find((slot) => slot.id === showtimeId)
+      : cinema.showtimes.find((slot) => slot.time === time);
 
   return {
     cinemaId: cinema.id,
@@ -146,10 +149,7 @@ export function toDateOptions(
 }
 
 /** Showtimes arrive already grouped by cinema — reshape them for the step's cards. */
-export function toCinemas(
-  groups: ShowtimesResponse["cinemas"],
-  locale: "en" | "vn",
-): Cinema[] {
+export function toCinemas(groups: ShowtimesResponse["cinemas"], locale: "en" | "vn"): Cinema[] {
   return groups.map((group) => ({
     id: group.id,
     name: group.name,
@@ -161,10 +161,7 @@ export function toCinemas(
     showtimes: group.showtimes.map((slot) => ({
       id: slot.id,
       time: slot.startTime,
-      room: getRoomDisplayName(
-        { name: slot.roomName, nameVi: slot.roomNameVi },
-        locale,
-      ),
+      room: getRoomDisplayName({ name: slot.roomName, nameVi: slot.roomNameVi }, locale),
       available: slot.isAvailable,
       format: slot.format,
     })),

@@ -21,6 +21,7 @@ function groupToCinemas(showtimes: EligibleShowtime[], stripDate?: boolean): Cin
     badge: "",
     badgeColor: "",
     showtimes: items.map((slot) => ({
+      id: slot.showtimeId,
       time: slot.time,
       room: slot.room,
       available: true,
@@ -87,18 +88,27 @@ export default function ShowtimeList() {
     time: string,
     meta?: { room?: string; date?: string; showtimeId?: string },
   ) => {
-    const matched = filtered.find(
-      (showtime) =>
-        showtime.cinemaId === cinemaId &&
-        showtime.time === time &&
-        (meta?.date ? showtime.date === meta.date : true),
+    // showtimeId is the only unambiguous identity — same cinema can run two
+    // rooms at the same time on the same day.
+    const matched = filtered.find((showtime) =>
+      meta?.showtimeId
+        ? showtime.showtimeId === meta.showtimeId
+        : showtime.cinemaId === cinemaId &&
+          showtime.time === time &&
+          (meta?.date ? showtime.date === meta.date : true),
     );
 
-    if (matched) {
-      setSelectedShowtime(
-        selectedShowtime?.cinemaId === cinemaId && selectedShowtime?.time === time ? null : matched,
-      );
-    }
+    if (!matched) return;
+
+    const isSelected =
+      selectedShowtime?.showtimeId && matched.showtimeId
+        ? selectedShowtime.showtimeId === matched.showtimeId
+        : selectedShowtime?.cinemaId === matched.cinemaId &&
+          selectedShowtime?.time === matched.time &&
+          selectedShowtime?.room === matched.room &&
+          selectedShowtime?.date === matched.date;
+
+    setSelectedShowtime(isSelected ? null : matched);
   };
 
   return (
