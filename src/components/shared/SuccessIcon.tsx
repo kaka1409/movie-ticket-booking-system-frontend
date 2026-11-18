@@ -3,6 +3,7 @@
 import { Check } from "lucide-react";
 import { useMounted } from "@/hooks/useMounted";
 import { useLocale } from "@/contexts/LocaleContext";
+import Reveal from "@/components/ui/Reveal";
 
 export default function SuccessIcon({
   titleKey,
@@ -16,11 +17,7 @@ export default function SuccessIcon({
 
   return (
     <section className="flex flex-col items-center text-center px-6 gap-4">
-      <div
-        className={`flex items-center justify-center transition duration-700 ${
-          mounted ? "opacity-100 scale-100" : "opacity-0 scale-50"
-        }`}
-      >
+      <Reveal variant="scale" className="flex items-center justify-center">
         <div className="relative flex items-center justify-center">
           <div
             className={`absolute w-24 h-24 rounded-full bg-emerald-500/10 ${
@@ -32,20 +29,16 @@ export default function SuccessIcon({
             <Check size={36} className="text-white" strokeWidth={2.5} />
           </div>
         </div>
-      </div>
+      </Reveal>
 
-      <div
-        className={`transition duration-700 delay-200 ${
-          mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-        }`}
-      >
+      <Reveal delay={200}>
         <h1 className="font-extrabold text-3xl text-white leading-tight mb-2">
           {translate(titleKey)}
         </h1>
         <p className="text-sm text-white/60 leading-relaxed max-w-xs mx-auto">
           {translate(messageKey)}
         </p>
-      </div>
+      </Reveal>
     </section>
   );
 }

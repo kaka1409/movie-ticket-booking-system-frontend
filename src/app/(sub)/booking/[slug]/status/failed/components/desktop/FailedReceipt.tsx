@@ -3,13 +3,13 @@
 import Image from "next/image";
 import { CalendarDays, MonitorPlay } from "lucide-react";
 import { useBooking } from "@/features/booking/contexts/BookingContext";
-import { useMounted } from "@/hooks/useMounted";
 import { useLocale } from "@/contexts/LocaleContext";
 import { bookingCardData, resolveTicketIdentity } from "@/features/booking/utils/bookingCard";
 import { paymentErrorCode } from "@/features/booking/utils/paymentFailure";
 import DetailRow from "@/components/shared/DetailRow";
 import PriceBreakdown from "@/components/shared/PriceBreakdown";
 import TearLine from "@/components/ui/TearLine";
+import Reveal from "@/components/ui/Reveal";
 import Badge from "@/components/ui/Badge";
 import type { Movie } from "@/features/movies/types";
 import type { BookingDetail, PaymentMethodOption } from "@/features/booking/types";
@@ -42,17 +42,16 @@ export default function FailedReceipt({
     foods,
     total,
   } = useBooking();
-  const mounted = useMounted();
   const { translate, locale } = useLocale();
 
   const cardData = booking ? bookingCardData(booking, paymentMethods, locale) : null;
   const { posterSrc, title, ageRating } = resolveTicketIdentity(movie, booking);
 
   return (
-    <div
-      className={`overflow-visible rounded-2xl border border-red-500/20 bg-(--color-surface) shadow-[0_0_0_1px_rgba(239,68,68,0.06)] transition duration-700 delay-300 ${
-        mounted ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
-      }`}
+    <Reveal
+      variant="rise-lg"
+      delay={300}
+      className="overflow-visible rounded-2xl border border-red-500/20 bg-(--color-surface) shadow-[0_0_0_1px_rgba(239,68,68,0.06)]"
     >
       <div className="flex gap-5 p-6">
         {posterSrc && (
@@ -122,6 +121,6 @@ export default function FailedReceipt({
           </span>
         </div>
       </div>
-    </div>
+    </Reveal>
   );
 }

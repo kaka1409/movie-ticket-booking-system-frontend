@@ -3,12 +3,12 @@
 import Image from "next/image";
 import { QRCodeSVG } from "qrcode.react";
 import { useBooking } from "@/features/booking/contexts/BookingContext";
-import { useMounted } from "@/hooks/useMounted";
 import { bookingCardData, resolveTicketIdentity } from "@/features/booking/utils/bookingCard";
 import { useLocale } from "@/contexts/LocaleContext";
 import DetailRow from "@/components/shared/DetailRow";
 import PriceBreakdown from "@/components/shared/PriceBreakdown";
 import TearLine from "@/components/ui/TearLine";
+import Reveal from "@/components/ui/Reveal";
 import { MonitorPlay, CalendarDays } from "lucide-react";
 import type { Movie } from "@/features/movies/types";
 import type { BookingDetail, PaymentMethodOption } from "@/features/booking/types";
@@ -36,7 +36,6 @@ export default function TicketCard({
     foods,
     total,
   } = useBooking();
-  const mounted = useMounted();
   const { translate, locale } = useLocale();
 
   const cardData = booking ? bookingCardData(booking, paymentMethods, locale) : null;
@@ -47,10 +46,10 @@ export default function TicketCard({
     : `https://primseat.com/tickets/${transactionId}`;
 
   return (
-    <div
-      className={`mx-4 rounded-3xl overflow-visible bg-(--color-surface) border border-(--color-border) shadow-(--shadow-card) transition duration-700 delay-300 print-keep ${
-        mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
-      }`}
+    <Reveal
+      variant="rise-lg"
+      delay={300}
+      className="mx-4 rounded-3xl overflow-visible bg-(--color-surface) border border-(--color-border) shadow-(--shadow-card) print-keep"
     >
       <div className="flex gap-3 p-4">
         {posterSrc && (
@@ -120,6 +119,6 @@ export default function TicketCard({
           <span className="font-bold text-white">#{bookingRef}</span>
         </p>
       </div>
-    </div>
+    </Reveal>
   );
 }

@@ -7,6 +7,7 @@ import { formatVND } from "@/libs/utils";
 import { useMounted } from "@/hooks/useMounted";
 import Button from "@/components/ui/Button";
 import MicroLabel from "@/components/ui/MicroLabel";
+import Reveal from "@/components/ui/Reveal";
 
 export default function CancelResult({
   status,
@@ -32,11 +33,7 @@ export default function CancelResult({
     return (
       <main className="flex-1 overflow-y-auto pb-8 pt-4 px-4 space-y-6">
         <section className="flex flex-col items-center text-center gap-4">
-          <div
-            className={`flex items-center justify-center transition duration-700 ${
-              mounted ? "opacity-100 scale-100" : "opacity-0 scale-50"
-            }`}
-          >
+          <Reveal variant="scale" className="flex items-center justify-center">
             <div className="relative flex items-center justify-center">
               <div
                 className={`absolute w-24 h-24 rounded-full bg-emerald-500/10 ${
@@ -51,26 +48,21 @@ export default function CancelResult({
                 <Check size={36} className="text-white" strokeWidth={2.5} />
               </div>
             </div>
-          </div>
+          </Reveal>
 
-          <div
-            className={`transition duration-700 delay-200 ${
-              mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-            }`}
-          >
+          <Reveal delay={200}>
             <h1 className="font-extrabold text-3xl text-(--color-text-primary) leading-tight mb-2">
               {translate("tickets.cancel.success_title")}
             </h1>
             <p className="text-sm text-(--color-text-muted) leading-relaxed max-w-xs mx-auto">
               {translate("tickets.cancel.success_message")}
             </p>
-          </div>
+          </Reveal>
         </section>
 
-        <div
-          className={`rounded-2xl bg-(--color-surface) border border-(--color-border) p-5 space-y-4 transition duration-700 delay-300 ${
-            mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-          }`}
+        <Reveal
+          delay={300}
+          className="rounded-2xl bg-(--color-surface) border border-(--color-border) p-5 space-y-4"
         >
           <div className="text-center space-y-1">
             <p className="text-xs text-(--color-text-muted) uppercase tracking-wider font-bold">
@@ -104,13 +96,9 @@ export default function CancelResult({
               {translate("tickets.cancel.success_processing")}
             </span>
           </div>
-        </div>
+        </Reveal>
 
-        <div
-          className={`space-y-3 transition duration-700 delay-500 ${
-            mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-          }`}
-        >
+        <Reveal delay={500} className="space-y-3">
           <Button
             onClick={() => {
               router.replace(`/tickets/${id}`);
@@ -128,7 +116,7 @@ export default function CancelResult({
           >
             {translate("tickets.cancel.success_back_home")}
           </Button>
-        </div>
+        </Reveal>
       </main>
     );
   }
@@ -136,11 +124,7 @@ export default function CancelResult({
   return (
     <main className="flex-1 overflow-y-auto pb-8 pt-4 px-4 space-y-6">
       <section className="flex flex-col items-center text-center gap-4">
-        <div
-          className={`flex items-center justify-center transition duration-500 ${
-            mounted ? "opacity-100 scale-100" : "opacity-0 scale-50"
-          }`}
-        >
+        <Reveal variant="scale" duration={500} className="flex items-center justify-center">
           <div className="relative flex items-center justify-center">
             <div className="absolute w-24 h-24 rounded-full bg-red-500/8" />
             <div className="absolute w-20 h-20 rounded-full bg-red-500/12" />
@@ -152,27 +136,19 @@ export default function CancelResult({
               <AlertCircle size={34} className="text-red-400" strokeWidth={2} />
             </div>
           </div>
-        </div>
+        </Reveal>
 
-        <div
-          className={`transition duration-700 delay-200 ${
-            mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-          }`}
-        >
+        <Reveal delay={200}>
           <h1 className="font-extrabold text-3xl text-(--color-text-primary) leading-tight mb-2">
             {translate("tickets.cancel.error.title")}
           </h1>
           <p className="text-sm text-(--color-text-muted) leading-relaxed max-w-xs mx-auto">
             {errorMessage ?? translate("tickets.cancel.error.fallback")}
           </p>
-        </div>
+        </Reveal>
       </section>
 
-      <div
-        className={`space-y-3 transition duration-700 delay-500 ${
-          mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-        }`}
-      >
+      <Reveal delay={500} className="space-y-3">
         <Button onClick={onRetry}>{translate("tickets.cancel.failed_retry")}</Button>
 
         <button
@@ -183,7 +159,7 @@ export default function CancelResult({
           <HeadphonesIcon size={17} />
           {translate("tickets.cancel.failed_contact_support")}
         </button>
-      </div>
+      </Reveal>
     </main>
   );
 }

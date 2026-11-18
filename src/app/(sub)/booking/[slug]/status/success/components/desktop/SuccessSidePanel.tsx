@@ -2,9 +2,9 @@
 
 import { QRCodeSVG } from "qrcode.react";
 import { Download, Home } from "lucide-react";
-import { useMounted } from "@/hooks/useMounted";
 import { useLocale } from "@/contexts/LocaleContext";
 import Button from "@/components/ui/Button";
+import Reveal from "@/components/ui/Reveal";
 import type { BookingDetail } from "@/features/booking/types";
 
 /**
@@ -23,18 +23,13 @@ export default function SuccessSidePanel({
   onDownload: () => void;
   isDownloading: boolean;
 }) {
-  const mounted = useMounted();
   const { translate } = useLocale();
 
   const bookingRef = booking ? (booking.transactionRef ?? booking.id) : transactionId;
   const qrValue = `https://primseat.com/tickets/${booking ? booking.id : transactionId}`;
 
   return (
-    <aside
-      className={`transition duration-700 delay-500 ${
-        mounted ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
-      }`}
-    >
+    <Reveal as="aside" delay={500}>
       <div className="rounded-2xl border border-(--color-border) bg-(--color-surface) p-6 print-keep">
         <div className="flex flex-col items-center gap-4 rounded-2xl bg-white p-6">
           <QRCodeSVG value={qrValue} size={220} level="H" className="print-qr" />
@@ -57,6 +52,6 @@ export default function SuccessSidePanel({
           </Button>
         </div>
       </div>
-    </aside>
+    </Reveal>
   );
 }

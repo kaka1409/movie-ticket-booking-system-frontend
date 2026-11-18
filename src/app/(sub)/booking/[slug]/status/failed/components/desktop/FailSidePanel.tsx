@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { ChevronRight, HeadphonesIcon, Home, RefreshCw } from "lucide-react";
-import { useMounted } from "@/hooks/useMounted";
 import { useLocale } from "@/contexts/LocaleContext";
 import Button from "@/components/ui/Button";
+import Reveal from "@/components/ui/Reveal";
 
 /**
  * Desktop failure side panel: retry and home on top, then the support entry —
@@ -15,15 +15,10 @@ export default function FailSidePanel() {
   const params = useParams();
   const router = useRouter();
   const slug = params.slug as string;
-  const mounted = useMounted();
   const { translate } = useLocale();
 
   return (
-    <aside
-      className={`space-y-4 transition duration-700 delay-500 ${
-        mounted ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
-      }`}
-    >
+    <Reveal as="aside" delay={500} className="space-y-4">
       <div className="space-y-3 rounded-2xl border border-(--color-border) bg-(--color-surface) p-6">
         <Button icon={RefreshCw} onClick={() => router.push(`/booking/${slug}/payment`)}>
           {translate("booking.status.failed.retry")}
@@ -56,6 +51,6 @@ export default function FailSidePanel() {
           className="text-(--color-text-muted) transition-colors group-hover:text-(--color-gold)"
         />
       </Link>
-    </aside>
+    </Reveal>
   );
 }

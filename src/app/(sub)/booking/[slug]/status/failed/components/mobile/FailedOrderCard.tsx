@@ -2,11 +2,11 @@
 
 import Image from "next/image";
 import { useBooking } from "@/features/booking/contexts/BookingContext";
-import { useMounted } from "@/hooks/useMounted";
 import { useLocale } from "@/contexts/LocaleContext";
 import DetailRow from "@/components/shared/DetailRow";
 import PriceBreakdown from "@/components/shared/PriceBreakdown";
 import TearLine from "@/components/ui/TearLine";
+import Reveal from "@/components/ui/Reveal";
 import Badge from "@/components/ui/Badge";
 import { bookingCardData, resolveTicketIdentity } from "@/features/booking/utils/bookingCard";
 import { paymentErrorCode } from "@/features/booking/utils/paymentFailure";
@@ -37,7 +37,6 @@ export default function FailedOrderCard({
     foods,
     total,
   } = useBooking();
-  const mounted = useMounted();
   const { translate, locale } = useLocale();
 
   const cardData = booking ? bookingCardData(booking, paymentMethods, locale) : null;
@@ -46,10 +45,10 @@ export default function FailedOrderCard({
   const errorCode = paymentErrorCode(reason);
 
   return (
-    <div
-      className={`mx-4 rounded-3xl overflow-visible bg-(--color-surface) border border-red-500/20 shadow-[0_0_0_1px_rgba(239,68,68,0.06)] transition duration-700 delay-300 ${
-        mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
-      }`}
+    <Reveal
+      variant="rise-lg"
+      delay={300}
+      className="mx-4 rounded-3xl overflow-visible bg-(--color-surface) border border-red-500/20 shadow-[0_0_0_1px_rgba(239,68,68,0.06)]"
     >
       <div className="flex gap-3 p-4">
         {posterSrc && (
@@ -120,6 +119,6 @@ export default function FailedOrderCard({
       </div>
 
       <TearLine lineClassName="mx-3" />
-    </div>
+    </Reveal>
   );
 }

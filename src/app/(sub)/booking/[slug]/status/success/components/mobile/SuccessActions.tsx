@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { Download, Home } from "lucide-react";
-import { useMounted } from "@/hooks/useMounted";
 import { useLocale } from "@/contexts/LocaleContext";
 import Button from "@/components/ui/Button";
+import Reveal from "@/components/ui/Reveal";
 
 export default function SuccessActions({
   onDownload,
@@ -13,15 +13,10 @@ export default function SuccessActions({
   onDownload: () => void;
   isDownloading: boolean;
 }) {
-  const mounted = useMounted();
   const { translate } = useLocale();
 
   return (
-    <div
-      className={`px-4 space-y-3 pb-4 transition duration-700 delay-500 ${
-        mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-      }`}
-    >
+    <Reveal delay={500} className="px-4 space-y-3 pb-4">
       <Button icon={Download} onClick={onDownload} loading={isDownloading}>
         {translate("booking.status.success.download")}
       </Button>
@@ -33,6 +28,6 @@ export default function SuccessActions({
         <Home size={17} />
         {translate("booking.common.back_to_home")}
       </Link>
-    </div>
+    </Reveal>
   );
 }

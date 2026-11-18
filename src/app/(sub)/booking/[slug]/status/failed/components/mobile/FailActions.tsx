@@ -3,24 +3,19 @@
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { RefreshCw, Home, ChevronRight, HeadphonesIcon } from "lucide-react";
-import { useMounted } from "@/hooks/useMounted";
 import { useLocale } from "@/contexts/LocaleContext";
 import Button from "@/components/ui/Button";
+import Reveal from "@/components/ui/Reveal";
 
 export default function FailActions() {
   const params = useParams();
   const router = useRouter();
   const slug = params.slug as string;
-  const mounted = useMounted();
   const { translate } = useLocale();
 
   return (
     <>
-      <div
-        className={`px-4 space-y-3 transition duration-700 delay-500 ${
-          mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-        }`}
-      >
+      <Reveal delay={500} className="px-4 space-y-3">
         <Button icon={RefreshCw} onClick={() => router.push(`/booking/${slug}/payment`)}>
           {translate("booking.status.failed.retry")}
         </Button>
@@ -28,13 +23,9 @@ export default function FailActions() {
         <Button variant="outline" icon={Home} onClick={() => router.push("/")}>
           {translate("booking.common.back_to_home")}
         </Button>
-      </div>
+      </Reveal>
 
-      <div
-        className={`px-4 pb-4 transition duration-700 delay-[600ms] ${
-          mounted ? "opacity-100" : "opacity-0"
-        }`}
-      >
+      <Reveal variant="fade" delay={600} className="px-4 pb-4">
         <Link
           href="/help"
           className="w-full flex items-center justify-between px-4 py-3 rounded-2xl bg-(--color-surface) border border-(--color-border) hover:border-(--color-gold)/20 transition-colors group"
@@ -57,7 +48,7 @@ export default function FailActions() {
             className="text-(--color-text-muted) group-hover:text-(--color-gold) transition-colors"
           />
         </Link>
-      </div>
+      </Reveal>
     </>
   );
 }

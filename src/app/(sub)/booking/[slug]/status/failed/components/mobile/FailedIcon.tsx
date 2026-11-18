@@ -4,6 +4,7 @@ import { AlertCircle } from "lucide-react";
 import { useMounted } from "@/hooks/useMounted";
 import { useLocale } from "@/contexts/LocaleContext";
 import { failReasonMessageKey } from "@/features/booking/utils/paymentFailure";
+import Reveal from "@/components/ui/Reveal";
 
 export default function FailedIcon({ reason }: { reason: string | null }) {
   const mounted = useMounted();
@@ -11,11 +12,7 @@ export default function FailedIcon({ reason }: { reason: string | null }) {
 
   return (
     <section className="flex flex-col items-center text-center px-6 gap-4">
-      <div
-        className={`flex items-center justify-center transition duration-500 ${
-          mounted ? "opacity-100 scale-100" : "opacity-0 scale-50"
-        }`}
-      >
+      <Reveal variant="scale" duration={500} className="flex items-center justify-center">
         <div className="relative flex items-center justify-center">
           <div className="absolute w-24 h-24 rounded-full bg-red-500/8" />
           <div className="absolute w-20 h-20 rounded-full bg-red-500/12" />
@@ -27,18 +24,14 @@ export default function FailedIcon({ reason }: { reason: string | null }) {
             <AlertCircle size={34} className="text-red-400" strokeWidth={2} />
           </div>
         </div>
-      </div>
+      </Reveal>
 
-      <div
-        className={`transition duration-700 delay-200 ${
-          mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-        }`}
-      >
+      <Reveal delay={200}>
         <h1 className="font-extrabold text-3xl text-white leading-tight mb-2">
           {translate("booking.status.failed.title")}
         </h1>
         <FailReason reason={reason} />
-      </div>
+      </Reveal>
     </section>
   );
 }
