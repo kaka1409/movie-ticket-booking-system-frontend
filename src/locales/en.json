@@ -267,6 +267,8 @@
       "awaiting_deadline": "Payment closes at {time}.",
       "awaiting_cancel_hint": "If the payment window runs out, you can withdraw the offer and keep the ticket.",
       "cancel_transfer": "Cancel Transfer",
+      "withdraw_title": "Withdraw this transfer offer?",
+      "withdraw_body": "The offer is cancelled and the ticket stays with you. If the recipient is already paying, the withdrawal may be refused.",
       "sent_badge": "Transferred",
       "received_badge": "Received",
       "transferred_to": "Transferred to {name}",
@@ -684,7 +686,6 @@
         "opening": "Opening your payment…",
         "waiting": "Waiting for the payment provider to confirm.",
         "open_wallet": "Open the payment page",
-        "check_status": "I've paid — check status",
         "window_closed": "Window closed",
         "expired_title": "The payment window closed",
         "expired_desc": "The provider will not accept this code anymore. Start a new attempt while your seats are still held.",
@@ -743,7 +744,8 @@
       "error_password_required": "Password is required.",
       "error_invalid_credentials": "Invalid email or password.",
       "error_account_banned": "This account is suspended. Please contact support.",
-      "error_server": "Something went wrong. Please try again."
+      "error_server": "Something went wrong. Please try again.",
+      "success": "Signed in successfully."
     },
     "register": {
       "title": "Create Account",
@@ -772,6 +774,7 @@
       "error_confirm_required": "Please confirm your password.",
       "error_confirm_match": "Passwords do not match.",
       "error_server": "Something went wrong. Please try again.",
+      "success_please_login": "Account created — please sign in.",
       "terms_prefix": "I agree to the ",
       "terms_of_service": "Terms of Service",
       "terms_and": " and ",
@@ -1487,6 +1490,8 @@
       "status_active": "Active",
       "status_banned": "Banned",
       "ban": "Ban",
+      "ban_title": "Ban this account?",
+      "ban_body": "{email} will be signed out everywhere and blocked from logging in until unbanned.",
       "unban": "Unban",
       "change_role": "Change role",
       "self_change": "You cannot change your own role.",

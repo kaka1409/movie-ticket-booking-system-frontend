@@ -267,6 +267,8 @@
       "awaiting_deadline": "Thanh toán đóng lúc {time}.",
       "awaiting_cancel_hint": "Nếu hết thời gian thanh toán, bạn có thể hủy lời mời và giữ lại vé.",
       "cancel_transfer": "Hủy Chuyển Vé",
+      "withdraw_title": "Hủy lời mời chuyển vé này?",
+      "withdraw_body": "Lời mời sẽ bị hủy và vé vẫn thuộc về bạn. Nếu người nhận đang thanh toán, thao tác có thể bị từ chối.",
       "sent_badge": "Đã Chuyển Nhượng",
       "received_badge": "Nhận Chuyển Nhượng",
       "transferred_to": "Đã chuyển cho {name}",
@@ -684,7 +686,6 @@
         "opening": "Đang mở thanh toán…",
         "waiting": "Đang chờ nhà cung cấp thanh toán xác nhận.",
         "open_wallet": "Mở trang thanh toán",
-        "check_status": "Tôi đã thanh toán — kiểm tra",
         "window_closed": "Hết thời gian",
         "expired_title": "Đã hết thời gian thanh toán",
         "expired_desc": "Mã này không còn dùng được. Hãy tạo lượt thanh toán mới khi ghế vẫn đang được giữ.",
@@ -743,7 +744,8 @@
       "error_password_required": "Mật khẩu là bắt buộc.",
       "error_invalid_credentials": "Email hoặc mật khẩu không đúng.",
       "error_account_banned": "Tài khoản này đã bị khóa. Vui lòng liên hệ bộ phận hỗ trợ.",
-      "error_server": "Đã xảy ra lỗi. Vui lòng thử lại."
+      "error_server": "Đã xảy ra lỗi. Vui lòng thử lại.",
+      "success": "Đăng nhập thành công."
     },
     "register": {
       "title": "Tạo Tài Khoản",
@@ -772,6 +774,7 @@
       "error_confirm_required": "Vui lòng xác nhận mật khẩu.",
       "error_confirm_match": "Mật khẩu không khớp.",
       "error_server": "Đã xảy ra lỗi. Vui lòng thử lại.",
+      "success_please_login": "Tạo tài khoản thành công — vui lòng đăng nhập.",
       "terms_prefix": "Tôi đồng ý với ",
       "terms_of_service": "Điều Khoản Dịch Vụ",
       "terms_and": " và ",
@@ -1487,6 +1490,8 @@
       "status_active": "Đang hoạt động",
       "status_banned": "Đã khóa",
       "ban": "Khóa",
+      "ban_title": "Khóa tài khoản này?",
+      "ban_body": "{email} sẽ bị đăng xuất khỏi mọi phiên và không thể đăng nhập cho đến khi được mở khóa.",
       "unban": "Mở khóa",
       "change_role": "Đổi vai trò",
       "self_change": "Bạn không thể tự đổi vai trò của mình.",
