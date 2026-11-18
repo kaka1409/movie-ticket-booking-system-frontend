@@ -27,17 +27,16 @@ import type { AdminTransactionDetail } from "@/features/admin/types";
  * rules allow. Cancel goes through a confirm dialog: a paid booking refunds
  * real money, so the operator sees the consequence before committing.
  */
-export default function TransactionDetailPanel({
-  transactionId,
-}: {
-  transactionId: string;
-}) {
+export default function TransactionDetailPanel({ transactionId }: { transactionId: string }) {
   const { translate, locale } = useLocale();
   const { token } = useAuth();
   const { notify } = useToast();
   const router = useRouter();
   const [detail, setDetail] = useState<AdminTransactionDetail | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
+  // Bumped after a write so the panel re-reads its own detail — router.refresh
+  // only re-renders server components, and this panel owns its client fetch.
+  const [detailVersion, setDetailVersion] = useState(0);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -55,7 +54,7 @@ export default function TransactionDetailPanel({
     return () => {
       cancelled = true;
     };
-  }, [transactionId]);
+  }, [transactionId, detailVersion]);
 
   const handleCancel = () => {
     if (!token) return;
@@ -74,6 +73,7 @@ export default function TransactionDetailPanel({
         ),
         { variant: "success" },
       );
+      setDetailVersion((version) => version + 1);
       router.refresh();
     });
   };
@@ -82,7 +82,11 @@ export default function TransactionDetailPanel({
     return <ErrorAlert message={loadError} />;
   }
   if (!detail) {
-    return <p className="py-4 text-[12px] text-(--color-text-muted)">{translate("admin.common.loading")}</p>;
+    return (
+      <p className="py-4 text-[12px] text-(--color-text-muted)">
+        {translate("admin.common.loading")}
+      </p>
+    );
   }
 
   const isCancellable = detail.status === "pending" || detail.status === "paid";
@@ -157,9 +161,7 @@ export default function TransactionDetailPanel({
             {detail.foods.map((food) => (
               <li key={food.id} className="text-(--color-text-primary)">
                 {food.name} ×{food.quantity}{" "}
-                <span className="text-(--color-text-muted)">
-                  ({formatVND(food.price, locale)})
-                </span>
+                <span className="text-(--color-text-muted)">({formatVND(food.price, locale)})</span>
               </li>
             ))}
           </ul>
@@ -170,9 +172,7 @@ export default function TransactionDetailPanel({
             {translate("admin.transactions.detail_payment")}
           </h4>
           <div className="mt-1 space-y-2">
-            {detail.payments.length === 0 && (
-              <p className="text-(--color-text-muted)">—</p>
-            )}
+            {detail.payments.length === 0 && <p className="text-(--color-text-muted)">—</p>}
             {detail.payments.map((payment) => (
               <div key={payment.id} className="rounded-lg border border-(--color-border) p-2">
                 <div className="flex items-center gap-2">

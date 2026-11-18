@@ -34,6 +34,9 @@ export default function TicketDetailPanel({ ticket }: { ticket: AdminTicket }) {
   const router = useRouter();
   const [detail, setDetail] = useState<AdminTicketDetail | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
+  // Bumped after a write so the panel re-reads its own detail — router.refresh
+  // only re-renders server components, and this panel owns its client fetch.
+  const [detailVersion, setDetailVersion] = useState(0);
   const [isCancelOpen, setIsCancelOpen] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -51,7 +54,7 @@ export default function TicketDetailPanel({ ticket }: { ticket: AdminTicket }) {
     return () => {
       cancelled = true;
     };
-  }, [ticket.id]);
+  }, [ticket.id, detailVersion]);
 
   const handleCheckIn = () => {
     if (!token) return;
@@ -62,6 +65,7 @@ export default function TicketDetailPanel({ ticket }: { ticket: AdminTicket }) {
         return;
       }
       notify(translate("admin.tickets.checked_in"), { variant: "success" });
+      setDetailVersion((version) => version + 1);
       router.refresh();
     });
   };
@@ -83,6 +87,7 @@ export default function TicketDetailPanel({ ticket }: { ticket: AdminTicket }) {
         ),
         { variant: "success" },
       );
+      setDetailVersion((version) => version + 1);
       router.refresh();
     });
   };
@@ -179,13 +184,11 @@ export default function TicketDetailPanel({ ticket }: { ticket: AdminTicket }) {
               {translate(`admin.tickets.status_${detail.status}`)}
             </Badge>
             <p className="text-(--color-text-muted)">
-              {translate("admin.tickets.issued_at")}:{" "}
-              {new Date(detail.issuedAt).toLocaleString()}
+              {translate("admin.tickets.issued_at")}: {new Date(detail.issuedAt).toLocaleString()}
             </p>
             {detail.usedAt && (
               <p className="text-(--color-text-muted)">
-                {translate("admin.tickets.used_at")}:{" "}
-                {new Date(detail.usedAt).toLocaleString()}
+                {translate("admin.tickets.used_at")}: {new Date(detail.usedAt).toLocaleString()}
               </p>
             )}
             {detail.reminderSentAt && (
@@ -249,12 +252,7 @@ export default function TicketDetailPanel({ ticket }: { ticket: AdminTicket }) {
       <div className="flex flex-wrap items-center gap-2 border-t border-(--color-border) pt-3">
         {isActive && (
           <>
-            <AdminButton
-              size="sm"
-              variant="outline"
-              disabled={isPending}
-              onClick={handleCheckIn}
-            >
+            <AdminButton size="sm" variant="outline" disabled={isPending} onClick={handleCheckIn}>
               <ScanLine size={13} aria-hidden className="mr-1 inline" />
               {translate("admin.tickets.check_in")}
             </AdminButton>
