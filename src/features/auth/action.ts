@@ -142,19 +142,20 @@ export async function refreshAction(): Promise<RefreshActionResult> {
 export type LogoutActionResult = { success: true } | ActionFailure;
 
 export async function logoutAction(): Promise<LogoutActionResult> {
-  try {
-    const refreshToken = await getRefreshToken();
+  const refreshToken = await getRefreshToken();
 
+  try {
     await apiMutation(
       "/auth/logout",
       { method: "POST" },
       undefined,
       refreshToken ? cookieHeader(refreshToken) : undefined,
     );
-
-    await deleteRefreshToken();
-    return { success: true };
-  } catch (error: unknown) {
-    return toActionFailure(error);
+  } catch {
+    // Server-side revocation is best-effort: a dead backend must not keep the
+    // refresh cookie alive on this browser, so the delete below always runs.
   }
+
+  await deleteRefreshToken();
+  return { success: true };
 }
