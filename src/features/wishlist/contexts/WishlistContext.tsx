@@ -1,6 +1,15 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+  useRef,
+  type ReactNode,
+} from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/contexts/ToastContext";
 import { useLocale } from "@/contexts/LocaleContext";
@@ -30,45 +39,89 @@ interface WishlistContextType {
 
 const STORAGE_KEY = "wishlist";
 
+/**
+ * localStorage is shared by every account on this browser, so picks are stored
+ * under the signed-in user's id (`null` = signed-out draft). Without the owner
+ * tag, account B would inherit account A's hearts after a logout/login.
+ */
+interface StoredWishlist {
+  owner: string | null;
+  ids: string[];
+}
+
 const WishlistContext = createContext<WishlistContextType | null>(null);
 
-function readStoredWishlist(): string[] {
+function isIdList(value: unknown): value is string[] {
+  return Array.isArray(value) && value.every((id) => typeof id === "string");
+}
+
+function readStoredWishlist(owner: string | null): string[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
     const parsed: unknown = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed.filter((id): id is string => typeof id === "string") : [];
+    // Legacy entries were a bare id array — they predate owner tagging, so only
+    // a signed-out visitor may claim them (a logged-in account hydrates from
+    // the server anyway and must not inherit a stranger's draft).
+    if (isIdList(parsed)) return owner === null ? parsed : [];
+    if (parsed && typeof parsed === "object" && "ids" in parsed) {
+      const entry = parsed as StoredWishlist;
+      return entry.owner === owner && isIdList(entry.ids) ? entry.ids : [];
+    }
+    return [];
   } catch {
     return [];
   }
 }
 
 export function WishlistProvider({ children }: { children: ReactNode }) {
-  const { token } = useAuth();
+  const { token, user, isLoading: isAuthLoading } = useAuth();
   const { notify } = useToast();
   const { locale } = useLocale();
   const [wishlist, setWishlist] = useState<string[]>([]);
+  const ownerId = user?.id ?? null;
+  const restoredRef = useRef(false);
+  const lastOwnerRef = useRef<string | null | undefined>(undefined);
 
-  // Mount-only restore of logged-out picks. Intentionally two-pass: first paint
-  // renders the SSR-identical empty draft (no hydration mismatch — localStorage
-  // has no server equivalent), then stored ids merge in. A server hydration
-  // that already ran keeps its order.
+  // Mount-only restore of the CURRENT identity's picks, deferred until the
+  // session resolves: reading earlier would tag the wrong owner. Two-pass like
+  // before — first paint stays SSR-identical, stored ids merge in after.
   useEffect(() => {
-    const stored = readStoredWishlist();
+    if (isAuthLoading || restoredRef.current) return;
+    restoredRef.current = true;
+    const stored = readStoredWishlist(ownerId);
     if (stored.length > 0) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setWishlist((previous) => [...previous, ...stored.filter((id) => !previous.includes(id))]);
     }
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- restore runs once when auth settles
+  }, [isAuthLoading]);
 
-  // Mirror every change so logged-out picks survive refreshes.
+  // An account switch (login, logout, different user) invalidates every local
+  // pick — they belonged to the previous identity's bucket.
   useEffect(() => {
+    if (isAuthLoading) return;
+    if (lastOwnerRef.current === undefined) {
+      lastOwnerRef.current = ownerId;
+      return;
+    }
+    if (lastOwnerRef.current === ownerId) return;
+    lastOwnerRef.current = ownerId;
+     
+    setWishlist([]);
+  }, [ownerId, isAuthLoading]);
+
+  // Mirror every change under the current owner so picks survive refreshes
+  // without leaking across accounts.
+  useEffect(() => {
+    if (isAuthLoading) return;
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(wishlist));
+      const entry: StoredWishlist = { owner: ownerId, ids: wishlist };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(entry));
     } catch {
       // Storage full/disabled — the in-memory draft still works for the session.
     }
-  }, [wishlist]);
+  }, [wishlist, ownerId, isAuthLoading]);
 
   const toggleWishlist = useCallback(
     (id: string, feedback?: WishlistFeedback) => {
@@ -107,11 +160,12 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
     setWishlist((previous) => [...ids, ...previous.filter((id) => !ids.includes(id))]);
   }, []);
 
-  return (
-    <WishlistContext.Provider value={{ wishlist, toggleWishlist, isWishlisted, hydrateWishlist }}>
-      {children}
-    </WishlistContext.Provider>
+  const value = useMemo(
+    () => ({ wishlist, toggleWishlist, isWishlisted, hydrateWishlist }),
+    [wishlist, toggleWishlist, isWishlisted, hydrateWishlist],
   );
+
+  return <WishlistContext.Provider value={value}>{children}</WishlistContext.Provider>;
 }
 
 export function useWishlist(): WishlistContextType {
