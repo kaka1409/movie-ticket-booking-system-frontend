@@ -1,8 +1,10 @@
 "use client";
 
+import { useRef, useState } from "react";
 import { Clock, Loader2, XCircle } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { formatVND } from "@/libs/utils";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import MicroLabel from "@/components/ui/MicroLabel";
 import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext";
 import { useCancelTransfer } from "@/features/tickets/hooks/useCancelTransfer";
@@ -46,6 +48,8 @@ export default function TicketQrPanel() {
   const { ticket, transfer, incomingTransfer } = useTicketDetail();
   const { translate, locale } = useLocale();
   const { cancelFormAction, isCancelPending, error: cancelError } = useCancelTransfer();
+  const [isWithdrawOpen, setIsWithdrawOpen] = useState(false);
+  const withdrawFormRef = useRef<HTMLFormElement>(null);
 
   if (transfer) {
     return (
@@ -87,11 +91,12 @@ export default function TicketQrPanel() {
           </p>
         )}
 
-        <form action={cancelFormAction}>
+        <form ref={withdrawFormRef} action={cancelFormAction}>
           <input type="hidden" name="ticketId" value={ticket.id} />
           <button
-            type="submit"
+            type="button"
             disabled={isCancelPending}
+            onClick={() => setIsWithdrawOpen(true)}
             className="flex w-full items-center justify-center gap-2 rounded-2xl border border-red-500/60 bg-transparent py-3.5 text-xs font-extrabold tracking-widest text-red-400 uppercase transition duration-150 hover:bg-red-500/10 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-40"
           >
             {isCancelPending ? (
@@ -107,6 +112,21 @@ export default function TicketQrPanel() {
             {cancelError}
           </p>
         )}
+
+        <ConfirmDialog
+          isOpen={isWithdrawOpen}
+          onClose={() => setIsWithdrawOpen(false)}
+          onConfirm={() => {
+            setIsWithdrawOpen(false);
+            withdrawFormRef.current?.requestSubmit();
+          }}
+          title={translate("tickets.transfer.withdraw_title")}
+          description={translate("tickets.transfer.withdraw_body")}
+          confirmLabel={translate("tickets.transfer.cancel_transfer")}
+          cancelLabel={translate("tickets.transfer.cancel")}
+          isPending={isCancelPending}
+          danger
+        />
       </section>
     );
   }
@@ -173,8 +193,6 @@ export default function TicketQrPanel() {
           <p className="text-center text-xs leading-relaxed text-(--color-text-muted)">
             {translate("tickets.scan_instruction")}
           </p>
-
-
         </div>
       ) : (
         <div className="flex flex-col items-center gap-2 rounded-2xl border border-(--color-border) bg-(--color-surface-2) px-4 py-8 text-center">

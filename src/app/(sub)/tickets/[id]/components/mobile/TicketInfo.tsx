@@ -1,9 +1,11 @@
 "use client";
 
+import { useRef, useState } from "react";
 import Image from "next/image";
 import { MonitorPlay, CalendarDays, Clock, Loader2, XCircle } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { formatVND } from "@/libs/utils";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import DetailRow from "@/components/shared/DetailRow";
 import PriceBreakdown from "@/components/shared/PriceBreakdown";
 import MicroLabel from "@/components/ui/MicroLabel";
@@ -19,6 +21,8 @@ export default function TicketInfo() {
   const { ticket, transfer, incomingTransfer } = useTicketDetail();
   const { translate, locale } = useLocale();
   const { cancelFormAction, isCancelPending, error: cancelError } = useCancelTransfer();
+  const [isWithdrawOpen, setIsWithdrawOpen] = useState(false);
+  const withdrawFormRef = useRef<HTMLFormElement>(null);
 
   const seatItems = ticket?.seatItems ?? [];
 
@@ -130,11 +134,12 @@ export default function TicketInfo() {
               </p>
             )}
 
-            <form action={cancelFormAction} className="mt-1">
+            <form ref={withdrawFormRef} action={cancelFormAction} className="mt-1">
               <input type="hidden" name="ticketId" value={ticket.id} />
               <button
-                type="submit"
+                type="button"
                 disabled={isCancelPending}
+                onClick={() => setIsWithdrawOpen(true)}
                 className="px-5 py-2.5 rounded-xl font-extrabold text-xs tracking-widest uppercase transition duration-150 active:scale-[0.98] border border-red-500/60 text-red-400 bg-transparent disabled:opacity-40"
               >
                 {isCancelPending ? (
@@ -150,6 +155,21 @@ export default function TicketInfo() {
                 {cancelError}
               </p>
             )}
+
+            <ConfirmDialog
+              isOpen={isWithdrawOpen}
+              onClose={() => setIsWithdrawOpen(false)}
+              onConfirm={() => {
+                setIsWithdrawOpen(false);
+                withdrawFormRef.current?.requestSubmit();
+              }}
+              title={translate("tickets.transfer.withdraw_title")}
+              description={translate("tickets.transfer.withdraw_body")}
+              confirmLabel={translate("tickets.transfer.cancel_transfer")}
+              cancelLabel={translate("tickets.transfer.cancel")}
+              isPending={isCancelPending}
+              danger
+            />
           </div>
         ) : incomingTransfer ? (
           /* Recipient: no QR until the money lands and ownership moves. */
