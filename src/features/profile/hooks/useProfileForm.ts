@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback, useTransition } from "react";
+import { useState, useMemo, useCallback, useEffect, useRef, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -26,6 +26,22 @@ export function useProfileForm() {
   const [serverError, setServerError] = useState("");
 
   const [isPending, startTransition] = useTransition();
+
+  // The form can mount before the session restore lands (user still null) —
+  // re-seed the fields when a DIFFERENT identity arrives, never on a same-id
+  // profile patch, so in-progress edits survive an updateUser() refresh.
+  const userId = user?.id ?? null;
+  const syncedUserIdRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (userId === syncedUserIdRef.current) return;
+    syncedUserIdRef.current = userId;
+     
+    setFullName(user?.name ?? "");
+     
+    setPhone(user?.phone ?? "");
+     
+    setDob(toDateInputValue(user?.dob));
+  }, [userId, user?.name, user?.phone, user?.dob]);
 
   const hasChanges =
     fullName !== (user?.name ?? "") ||
