@@ -23,6 +23,9 @@ const devOrigins = ["10.25.33.207", "192.168.88.165", "192.168.1.9", ...envDevOr
 
 const nextConfig: NextConfig = {
   reactCompiler: false,
+  experimental: {
+    agentUpgrade: "security",
+  },
   turbopack: {
     root: path.resolve(__dirname),
   },
