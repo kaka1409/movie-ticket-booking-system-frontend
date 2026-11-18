@@ -20,9 +20,9 @@ const variantClasses: Record<ButtonVariant, string> = {
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
-  sm: "py-3 text-xs tracking-wide rounded-xl",
-  md: "py-3.5 text-sm tracking-widest rounded-2xl",
-  lg: "py-4 text-sm tracking-widest rounded-2xl",
+  sm: "px-4 py-3 text-xs tracking-wide rounded-xl",
+  md: "px-6 py-3.5 text-sm tracking-widest rounded-2xl",
+  lg: "px-8 py-4 text-sm tracking-widest rounded-2xl",
 };
 
 export default function Button({

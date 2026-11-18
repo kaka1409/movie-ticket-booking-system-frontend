@@ -33,6 +33,9 @@ export default function ActionSheet({ isOpen, onClose, children }: ActionSheetPr
     <div
       className={`fixed inset-0 z-overlay ${isOpen ? "" : "pointer-events-none"}`}
       aria-hidden={!isOpen}
+      // Closed sheets stay mounted for the slide-out transition — `inert`
+      // keeps their buttons out of the tab order and click reach.
+      inert={!isOpen}
     >
       <div
         onClick={onClose}
