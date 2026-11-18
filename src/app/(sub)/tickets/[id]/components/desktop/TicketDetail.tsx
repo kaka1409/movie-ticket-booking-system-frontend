@@ -1,6 +1,6 @@
 "use client";
 
-import TicketImageWrapper from "./TicketImageWrapper";
+import TicketCapture from "./TicketCapture";
 import MobileHintPanel from "./MobileHintPanel";
 import TicketActionsPanel from "./TicketActionsPanel";
 import TicketHeader from "./TicketHeader";
@@ -26,7 +26,9 @@ export default function TicketDetail() {
 
       <div className="mt-8 grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_360px] xl:grid-cols-[minmax(0,1fr)_400px] xl:gap-10">
         <main className="min-w-0">
-          <TicketImageWrapper ref={ticketRef} />
+          <div ref={ticketRef} className="flex flex-col">
+            <TicketCapture />
+          </div>
         </main>
 
         <aside className="space-y-5 lg:sticky lg:top-24">

@@ -1,6 +1,6 @@
 "use client";
 
-import TicketImageWrapper from "./TicketImageWrapper";
+import TicketInfo from "./TicketInfo";
 import TicketActions from "./TicketActions";
 import { useDownloadTicket } from "@/features/tickets/hooks/useDownloadTicket";
 import { useTicketDetail } from "@/features/tickets/contexts/TicketDetailContext";
@@ -19,7 +19,9 @@ export default function MobileTicketDetail() {
 
   return (
     <>
-      <TicketImageWrapper ref={ticketRef} />
+      <div ref={ticketRef} className="flex flex-col">
+        <TicketInfo />
+      </div>
       <TicketActions downloadTicket={handleDownload} isDownloading={isDownloading} />
     </>
   );
