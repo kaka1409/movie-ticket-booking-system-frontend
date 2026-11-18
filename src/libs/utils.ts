@@ -1,15 +1,3 @@
-/** Lowercase, strip Vietnamese diacritics and punctuation, collapse spaces to hyphens. */
-export function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-")
-    .replace(/^-|-$/g, "");
-}
-
 /** BCP-47 tag for `Intl`/`toLocale*` calls — the UI locale is `en` | `vn`. */
 export function toLocaleTag(locale: "en" | "vn"): string {
   return locale === "vn" ? "vi-VN" : "en-US";
@@ -30,5 +18,3 @@ export function getRoomDisplayName(
 ): string {
   return locale === "vn" && room.nameVi ? room.nameVi : room.name;
 }
-
-
