@@ -174,6 +174,7 @@ export default function SeedScheduleModal({
                       <span className="block text-[10px] text-(--color-text-muted)">
                         {item.weekday.map((slot) => slot.startTime).join(" · ")}
                         {item.weekend.length !== item.weekday.length &&
+                          item.weekend.length > 0 &&
                           ` / wknd +${item.weekend[item.weekend.length - 1].startTime}`}
                       </span>
                     </span>
@@ -246,8 +247,8 @@ export default function SeedScheduleModal({
         {stage === "preview" && preview && (
           <>
             <p className="text-[12px] text-(--color-text-muted)">
-              {translate(`admin.showtimes.template_${preview.template}`)} ·{" "}
-              {preview.horizonDays}d · {preview.runDays}d/run
+              {translate(`admin.showtimes.template_${preview.template}`)} · {preview.horizonDays}d ·{" "}
+              {preview.runDays}d/run
             </p>
             {stats(preview)}
             <p className="text-[11px] text-(--color-text-muted)">
