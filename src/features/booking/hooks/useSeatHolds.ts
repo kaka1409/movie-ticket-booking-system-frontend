@@ -46,21 +46,33 @@ export function useSeatHolds({
   holdShowtimeId,
   setSeatHold,
 }: SeatHoldOptions): void {
-  const restoredRef = useRef(false);
+  // Keyed by showtime: a failed restore must not latch `restored`, and a slot
+  // change inside the same mount still gets its own restore attempt.
+  const restoredForRef = useRef<string | null>(null);
+  const latestShowtimeRef = useRef(showtimeId);
+
+  // Tracks the slot across renders so an in-flight restore GET can tell its
+  // seats belong to a showtime the user already navigated away from.
+  useEffect(() => {
+    latestShowtimeRef.current = showtimeId;
+  }, [showtimeId]);
 
   // Hard-refresh restore: re-select the caller's live hold and adopt its deadline.
   useEffect(() => {
-    if (!token || !showtimeId || restoredRef.current) return;
-    restoredRef.current = true;
+    if (!token || !showtimeId || restoredForRef.current === showtimeId) return;
 
     void (async () => {
       const result = await getSeatHolds(showtimeId, token);
+      // The slot moved while the GET was in flight — its seats belong to the
+      // old showtime and must not be applied to the new grid.
+      if (latestShowtimeRef.current !== showtimeId) return;
       if ("error" in result) return;
 
       const { seatIds, expiresAt } = result.data;
       const deadline = expiresAt ? Date.parse(expiresAt) : null;
       if (seatIds.length === 0 || deadline === null || deadline <= Date.now()) return;
 
+      restoredForRef.current = showtimeId;
       setSeatHold(deadline, showtimeId);
       // The reducer applies the ids to the grid it holds when the dispatch
       // lands, so a toggle made while the GET was in flight is not lost.
