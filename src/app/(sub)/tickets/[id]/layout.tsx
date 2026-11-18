@@ -20,10 +20,11 @@ export default async function TicketDetailLayout({
   if (isUnauthorizedResult(result)) {
     return <LoginPrompt />;
   }
-  // An absent ticket surfaces as the backend 404 — anything else failed
-  // mid-fetch also lands here (no ticket to show either way).
+  // Only a real 404 means the ticket is gone — a network/5xx failure must
+  // surface as an error (with retry), not a fake "not found" page.
   if ("error" in result) {
-    notFound();
+    if (result.error.status === 404) notFound();
+    throw new Error(result.error.message || "Failed to load ticket");
   }
 
   return (
