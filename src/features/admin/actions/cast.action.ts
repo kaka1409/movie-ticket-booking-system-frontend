@@ -16,7 +16,8 @@ export async function getCastMembersAction(
     const params = new URLSearchParams({ limit: "50" });
     if (search) params.set("search", search);
 
-    const result = await apiFetch<{ members: AdminCastMember[] }>(
+    // BE wraps the member array as `data` directly (pagination rides in `meta`).
+    const result = await apiFetch<AdminCastMember[]>(
       `/admin/cast?${params.toString()}`,
       { cache: "no-store" },
       token,
@@ -27,7 +28,7 @@ export async function getCastMembersAction(
       return actionFailureFromApiError(result.error);
     }
 
-    return { success: true, data: result.data.members };
+    return { success: true, data: result.data };
   } catch (error) {
     return toActionFailure(error);
   }

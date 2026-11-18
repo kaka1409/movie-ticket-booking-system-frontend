@@ -75,21 +75,28 @@ export async function getMovieCastAction(
   }
 }
 
+/** BE answers `{ items: [...] }` (MovieCastListSchema), not a bare item. */
 export async function addMovieCastAction(
   token: string,
   slug: string,
   input: AdminCastInput,
-): Promise<AdminActionResult<AdminMovieCastItem>> {
-  return mutateAdmin<AdminMovieCastItem>("POST", `/admin/movies/${slug}/cast`, token, input);
+): Promise<AdminActionResult<{ items: AdminMovieCastItem[] }>> {
+  return mutateAdmin<{ items: AdminMovieCastItem[] }>(
+    "POST",
+    `/admin/movies/${slug}/cast`,
+    token,
+    input,
+  );
 }
 
+/** Same `{ items: [...] }` envelope as the add path. */
 export async function updateMovieCastAction(
   token: string,
   slug: string,
   castId: string,
   input: AdminCastInput,
-): Promise<AdminActionResult<AdminMovieCastItem>> {
-  return mutateAdmin<AdminMovieCastItem>(
+): Promise<AdminActionResult<{ items: AdminMovieCastItem[] }>> {
+  return mutateAdmin<{ items: AdminMovieCastItem[] }>(
     "PATCH",
     `/admin/movies/${slug}/cast/${castId}`,
     token,
@@ -97,10 +104,15 @@ export async function updateMovieCastAction(
   );
 }
 
+/** BE answers `{ castId, deleted: true }`. */
 export async function deleteMovieCastAction(
   token: string,
   slug: string,
   castId: string,
-): Promise<AdminActionResult<{ id: string }>> {
-  return mutateAdmin<{ id: string }>("DELETE", `/admin/movies/${slug}/cast/${castId}`, token);
+): Promise<AdminActionResult<{ castId: string; deleted: boolean }>> {
+  return mutateAdmin<{ castId: string; deleted: boolean }>(
+    "DELETE",
+    `/admin/movies/${slug}/cast/${castId}`,
+    token,
+  );
 }

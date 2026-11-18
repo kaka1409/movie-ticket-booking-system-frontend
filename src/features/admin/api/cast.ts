@@ -14,15 +14,17 @@ export async function getAdminCastMembers(params: {
     limit: params.limit,
   });
 
-  const result = await apiFetch<
-    { members: AdminCastMember[] },
-    AdminPaginationMeta
-  >(`/admin/cast${query}`, ADMIN_NO_STORE, undefined, await adminCookie());
+  const result = await apiFetch<AdminCastMember[], AdminPaginationMeta>(
+    `/admin/cast${query}`,
+    ADMIN_NO_STORE,
+    undefined,
+    await adminCookie(),
+  );
 
   if ("error" in result) return result;
 
   return {
-    data: result.data.members,
+    data: result.data,
     meta: result.meta,
   };
 }
