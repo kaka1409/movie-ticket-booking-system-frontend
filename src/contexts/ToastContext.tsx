@@ -1,6 +1,14 @@
 "use client";
 
-import { createContext, useContext, useState, useCallback, useRef, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useMemo,
+  useRef,
+  type ReactNode,
+} from "react";
 
 export type ToastVariant = "success" | "error" | "info";
 
@@ -54,9 +62,11 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     [dismiss],
   );
 
-  return (
-    <ToastContext.Provider value={{ toasts, notify, dismiss }}>{children}</ToastContext.Provider>
-  );
+  // Every notify() used to re-render all ~40 consumers — memoize so unrelated
+  // renders upstream don't cascade through the toast tree either.
+  const value = useMemo(() => ({ toasts, notify, dismiss }), [toasts, notify, dismiss]);
+
+  return <ToastContext.Provider value={value}>{children}</ToastContext.Provider>;
 }
 
 export function useToast(): ToastContextType {
