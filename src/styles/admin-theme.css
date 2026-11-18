@@ -1,16 +1,14 @@
 /**
  * Admin theme scope — imported ONLY by `src/app/(admin)/layout.tsx`.
- *
- * `AdminLayout` emits `data-admin-theme`, so the public storefront (which never
- * carries the attribute) stays dark no matter what the console preference is.
- * The light palette re-points the existing semantic tokens instead of adding a
- * second set: every shared primitive (`Button`, `Badge`, `Chip`, `Tabs`,
- * `.surface-raised`) re-themes without touching a class name.
+ * `AdminLayout` emits `data-admin-theme`, so the public storefront (which
+ * never carries the attribute) stays dark. The light palette re-points the
+ * existing semantic tokens instead of adding a second set, so every shared
+ * primitive re-themes without touching a class name.
  *
  * Both blocks below carry the SAME declarations on purpose — an explicit
  * `light` pick and a `system` pick that resolves to light must look identical.
- * CSS has no mixin and `@container style()` (the only conditional-on-custom-
- * property mechanism) is not supported in Firefox, so do NOT merge them.
+ * CSS has no mixin and `@container style()` is unsupported in Firefox, so do
+ * NOT merge them.
  */
 
 [data-admin-theme="light"] {

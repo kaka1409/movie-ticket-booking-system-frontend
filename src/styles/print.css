@@ -1,10 +1,9 @@
 /**
- * Print stylesheet — vé (booking status success) và mã QR thanh toán.
- *
- * Token flip sang light: tái dùng hệ token thay vì đánh nhau với màu tối.
- * Chrome (header/footer/nav/toast/snackbar/CTA) ẩn bằng utility `print:hidden`
- * tại call site. Hai device tree luôn render nên route phải đánh dấu
- * `print:hidden` (mobile) + `print:block` (desktop) để in đúng 1 bản.
+ * Print stylesheet — ticket (booking status success) and payment QR code.
+ * Flips the token palette to light so print never fights the dark theme;
+ * chrome is hidden via `print:hidden` at call sites, and routes mark one
+ * device tree `print:hidden` + the other `print:block` so exactly one copy
+ * prints (both trees always render).
  */
 @media print {
   :root {
