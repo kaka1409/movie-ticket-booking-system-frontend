@@ -137,20 +137,22 @@ export default function RoomSeatDiagram({
         setSeatTypes(typesResult.data);
         setLayout(layoutResult.data);
       },
-    );
+    ).catch(() => {
+      // A rejected action must still clear the skeleton — without this the
+      // diagram spins forever because `isLoading` never flips off.
+      if (!cancelled) setLoadError(translate("admin.common.load_failed"));
+    });
 
     return () => {
       cancelled = true;
     };
-  }, [token, roomId]);
+  }, [token, roomId, translate]);
 
   const diagramRows = useMemo<DisplayRow[]>(() => {
     if (!layout) return [];
 
     return layout.rows.map((row) => {
-      const segmentCells = row.segments.map((segment) =>
-        segmentToCells(row.rowLabel, segment),
-      );
+      const segmentCells = row.segments.map((segment) => segmentToCells(row.rowLabel, segment));
       const [left, right] = toHalfRows(segmentCells);
       return { label: row.rowLabel, left, right };
     });
@@ -165,12 +167,7 @@ export default function RoomSeatDiagram({
           {translate("admin.rooms.seat_diagram")} — {getRoomDisplayName(room, locale)}
         </h3>
         <div className="ml-auto flex items-center gap-2">
-          <AdminButton
-            size="sm"
-            variant="outline"
-            icon={Armchair}
-            onClick={onOpenSeatTypes}
-          >
+          <AdminButton size="sm" variant="outline" icon={Armchair} onClick={onOpenSeatTypes}>
             {translate("admin.seatTypes.title")}
           </AdminButton>
           <AdminButton size="sm" variant="ghost" icon={Pencil} onClick={onEditLayout}>
@@ -204,11 +201,7 @@ export default function RoomSeatDiagram({
               {translate("admin.seatLayout.screen")}
             </span>
             <svg width={300} height={24} viewBox="0 0 300 24" fill="none" aria-hidden>
-              <path
-                d="M 2 20 Q 150 0 298 20"
-                stroke="rgba(255,204,77,0.8)"
-                strokeWidth="5"
-              />
+              <path d="M 2 20 Q 150 0 298 20" stroke="rgba(255,204,77,0.8)" strokeWidth="5" />
             </svg>
           </div>
 

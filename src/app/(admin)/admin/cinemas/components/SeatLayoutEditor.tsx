@@ -107,10 +107,7 @@ export default function SeatLayoutEditor({
   const isPaintingRef = useRef(false);
   const roomId = room?.id ?? "";
 
-  const maps = useMemo(
-    () => (seatTypes ? mapsFromSeatTypes(seatTypes) : EMPTY_MAPS),
-    [seatTypes],
-  );
+  const maps = useMemo(() => (seatTypes ? mapsFromSeatTypes(seatTypes) : EMPTY_MAPS), [seatTypes]);
 
   const formSignature = `${isOpen}-${roomId}`;
   const [syncedFormSignature, setSyncedFormSignature] = useState(formSignature);
@@ -173,13 +170,17 @@ export default function SeatLayoutEditor({
         setSeatTypes(typesResult.data);
         hydrateFromLayout(typesResult.data, layoutResult.data);
       },
-    );
+    ).catch(() => {
+      // A rejected action must still clear the skeleton — without this the
+      // editor spins forever because `isLoading` never flips off.
+      if (!cancelled) setLoadError(translate("admin.common.load_failed"));
+    });
 
     return () => {
       cancelled = true;
     };
     // hydrateFromLayout only writes state; the effect keys off the fetch inputs.
-  }, [isOpen, roomId, token]);
+  }, [isOpen, roomId, token, translate]);
 
   useEffect(() => {
     const stopPainting = () => {
@@ -355,7 +356,13 @@ export default function SeatLayoutEditor({
               </button>
             </div>
 
-            <AdminButton size="sm" variant="ghost" icon={Eraser} onClick={clearAll} disabled={paintedCount === 0}>
+            <AdminButton
+              size="sm"
+              variant="ghost"
+              icon={Eraser}
+              onClick={clearAll}
+              disabled={paintedCount === 0}
+            >
               {translate("admin.seatLayout.clear_all")}
             </AdminButton>
           </div>
@@ -371,11 +378,7 @@ export default function SeatLayoutEditor({
                 {translate("admin.seatLayout.screen")}
               </span>
               <svg width={300} height={24} viewBox="0 0 300 24" fill="none" aria-hidden>
-                <path
-                  d="M 2 20 Q 150 0 298 20"
-                  stroke="rgba(255,204,77,0.8)"
-                  strokeWidth="5"
-                />
+                <path d="M 2 20 Q 150 0 298 20" stroke="rgba(255,204,77,0.8)" strokeWidth="5" />
               </svg>
             </div>
 
