@@ -7,6 +7,7 @@ import {
   createReviewAction,
   updateReviewAction,
   deleteReviewAction,
+  type ActionResult,
 } from "../action";
 import { useReviewVotes } from "./useReviewVotes";
 import type {
@@ -175,76 +176,90 @@ export function useMovieReviews({
     }
   }, [fetchPage, sort, translate]);
 
-  const create = useCallback(
-    async (rating: number, text: string): Promise<boolean> => {
-      if (!token) return false;
-      setMutating(true);
+  /**
+   * Shared envelope for the three write actions: clears the inline error,
+   * reports a rejected/transport failure once, then hands the refetched page
+   * to `onSuccess` (default: straight into the list) and toasts the outcome.
+   */
+  const runReviewMutation = useCallback(
+    async (
+      action: () => Promise<ActionResult<ReviewsResponse>>,
+      options: {
+        successKey: string;
+        onSuccess?: (data: ReviewsResponse) => void | Promise<void>;
+      },
+    ): Promise<boolean> => {
       setActionError(null);
       try {
-        const result = await createReviewAction(
-          {
-            movieSlug,
-            rating,
-            comment: text,
-            refetchSkip: 0,
-            refetchLimit: PAGE_SIZE,
-            sort,
-          },
-          token,
-        );
+        const result = await action();
         if (!result.success) {
           setActionError(result.error);
           notify(translate("movies.detail.action_failed"), { variant: "error" });
           return false;
         }
-        applyData(result.data);
-        setPage(1);
-        scrollToAnchor();
-        notify(translate("movies.detail.review_posted"), { variant: "success" });
+        if (options.onSuccess) await options.onSuccess(result.data);
+        else applyData(result.data);
+        notify(translate(options.successKey), { variant: "success" });
         return true;
       } catch {
         setActionError(translate("movies.detail.action_failed"));
         notify(translate("movies.detail.action_failed"), { variant: "error" });
         return false;
-      } finally {
-        setMutating(false);
       }
     },
-    [token, movieSlug, sort, applyData, scrollToAnchor, translate, notify],
+    [applyData, notify, translate],
+  );
+
+  const create = useCallback(
+    async (rating: number, text: string): Promise<boolean> => {
+      if (!token) return false;
+      setMutating(true);
+      const isCreated = await runReviewMutation(
+        () =>
+          createReviewAction(
+            {
+              movieSlug,
+              rating,
+              comment: text,
+              refetchSkip: 0,
+              refetchLimit: PAGE_SIZE,
+              sort,
+            },
+            token,
+          ),
+        { successKey: "movies.detail.review_posted" },
+      );
+      if (isCreated) {
+        setPage(1);
+        scrollToAnchor();
+      }
+      setMutating(false);
+      return isCreated;
+    },
+    [token, movieSlug, sort, runReviewMutation, scrollToAnchor],
   );
 
   const save = useCallback(
     async (id: string, rating: number, text: string): Promise<boolean> => {
       if (!token) return false;
-      setActionError(null);
-      try {
-        const result = await updateReviewAction(
-          {
-            reviewId: id,
-            movieSlug,
-            rating,
-            comment: text,
-            refetchSkip: (page - 1) * PAGE_SIZE,
-            refetchLimit: PAGE_SIZE,
-            sort,
-          },
-          token,
-        );
-        if (!result.success) {
-          setActionError(result.error);
-          notify(translate("movies.detail.action_failed"), { variant: "error" });
-          return false;
-        }
-        applyData(result.data);
-        notify(translate("movies.detail.review_updated"), { variant: "success" });
-        return true;
-      } catch {
-        setActionError(translate("movies.detail.action_failed"));
-        notify(translate("movies.detail.action_failed"), { variant: "error" });
-        return false;
-      }
+      return runReviewMutation(
+        () =>
+          updateReviewAction(
+            {
+              reviewId: id,
+              movieSlug,
+              rating,
+              comment: text,
+              refetchSkip: (page - 1) * PAGE_SIZE,
+              refetchLimit: PAGE_SIZE,
+              sort,
+            },
+            token,
+          ),
+        { successKey: "movies.detail.review_updated" },
+      );
     },
-    [token, movieSlug, page, sort, applyData, translate, notify],
+    [token, movieSlug, page, sort, runReviewMutation],
   );
 
   const remove = useCallback(
@@ -253,37 +268,32 @@ export function useMovieReviews({
       if (!window.confirm(translate("movies.detail.delete_confirm"))) {
         return false;
       }
-      setActionError(null);
-      try {
-        const result = await deleteReviewAction(
-          {
-            reviewId: id,
-            movieSlug,
-            refetchSkip: (page - 1) * PAGE_SIZE,
-            refetchLimit: PAGE_SIZE,
-            sort,
+      return runReviewMutation(
+        () =>
+          deleteReviewAction(
+            {
+              reviewId: id,
+              movieSlug,
+              refetchSkip: (page - 1) * PAGE_SIZE,
+              refetchLimit: PAGE_SIZE,
+              sort,
+            },
+            token,
+          ),
+        {
+          successKey: "movies.detail.review_deleted",
+          onSuccess: async (data) => {
+            // Deleting the last row of a later page steps back one page.
+            if (data.reviews.length === 0 && page > 1) {
+              await fetchPage(page - 1, sort);
+            } else {
+              applyData(data);
+            }
           },
-          token,
-        );
-        if (!result.success) {
-          setActionError(result.error);
-          notify(translate("movies.detail.action_failed"), { variant: "error" });
-          return false;
-        }
-        if (result.data.reviews.length === 0 && page > 1) {
-          await fetchPage(page - 1, sort);
-        } else {
-          applyData(result.data);
-        }
-        notify(translate("movies.detail.review_deleted"), { variant: "success" });
-        return true;
-      } catch {
-        setActionError(translate("movies.detail.action_failed"));
-        notify(translate("movies.detail.action_failed"), { variant: "error" });
-        return false;
-      }
+        },
+      );
     },
-    [token, movieSlug, page, sort, applyData, fetchPage, translate, notify],
+    [token, movieSlug, page, sort, runReviewMutation, fetchPage, applyData, translate],
   );
 
   const vote = useCallback(
