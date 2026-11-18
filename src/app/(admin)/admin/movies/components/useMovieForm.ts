@@ -1,13 +1,9 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/contexts/AuthContext";
-import { useLocale } from "@/contexts/LocaleContext";
-import { useToast } from "@/contexts/ToastContext";
-import { createMovieSchema, toAdminFieldErrors } from "@/features/admin/schema";
+import { createMovieSchema } from "@/features/admin/schema";
 import { ADMIN_FORM_SAMPLES } from "@/features/admin/samples";
 import { createMovieAction, updateMovieAction } from "@/features/admin/actions/movies.action";
+import { useAdminForm } from "@/features/admin/hooks/useAdminForm";
 import type { AdminMovie, AdminMovieInput, AdminMovieStatus } from "@/features/admin/types";
 
 export interface MovieFormState {
@@ -87,10 +83,10 @@ function toFormState(movie: AdminMovie | null): MovieFormState {
 }
 
 /**
- * Shared state + submit pipeline for the movie form, used by BOTH the create
- * dialog and the expandable-row editor so validation and the wire payload
- * cannot drift between the two surfaces. `resetKey` re-seeds the form when the
- * edit target changes (dialog: open flag + movie id; inline: mount per expand).
+ * Movie form state + wire payload, used by BOTH the create dialog and the
+ * expandable-row editor so validation and the payload cannot drift between
+ * the two surfaces. `resetKey` re-seeds the form when the edit target changes
+ * (dialog: open flag + movie id; inline: mount per expand).
  */
 export function useMovieForm({
   movie,
@@ -101,39 +97,66 @@ export function useMovieForm({
   resetKey: string;
   onSaved: () => void;
 }) {
-  const { translate } = useLocale();
-  const { token } = useAuth();
-  const { notify } = useToast();
-  const router = useRouter();
+  const form = useAdminForm({
+    entity: movie,
+    resetKey,
+    onSaved,
+    toFormState,
+    // The schema factory takes `isEditing`; `useAdminForm` supplies it.
+    schema: (translate, isEditing) => createMovieSchema(translate, isEditing),
+    sample: () => ({ ...ADMIN_FORM_SAMPLES.movie, genreIds: [] }),
+    persist: ({ token, entity, data: form }) => {
+      const isEditing = entity !== null;
+      // Empty string means "not set": the update DTO takes `null` to clear a
+      // nullable column and rejects `""`, while a required column is omitted.
+      const payload: AdminMovieInput = {
+        title: form.title,
+        status: form.status,
+        genreIds: form.genreIds,
+      };
 
-  const [values, setValues] = useState<MovieFormState>(() => toFormState(movie));
-  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-  const [submitError, setSubmitError] = useState<string | null>(null);
-  const [isPending, startTransition] = useTransition();
+      if (!isEditing && form.slug !== "") payload.slug = form.slug;
+      if (form.director !== "") payload.director = form.director;
+      if (form.language !== "") payload.language = form.language;
+      if (form.duration !== "") payload.duration = Number(form.duration);
+      if (form.releaseDate !== "") payload.releaseDate = form.releaseDate;
+      if (form.synopsis !== "") payload.synopsis = form.synopsis;
+      if (form.synopsisVi !== "") payload.synopsisVi = form.synopsisVi;
+      if (form.featuredOrder !== "") payload.featuredOrder = Number(form.featuredOrder);
 
-  const [syncedResetKey, setSyncedResetKey] = useState(resetKey);
-  if (resetKey !== syncedResetKey) {
-    setSyncedResetKey(resetKey);
-    setValues(toFormState(movie));
-    setFieldErrors({});
-    setSubmitError(null);
-  }
+      if (isEditing) {
+        payload.isFeatured = form.isFeatured;
+        payload.ageRatingId = form.ageRatingId || null;
+        payload.posterUrl = form.posterUrl || null;
+        payload.trailerUrl = form.trailerUrl || null;
+        payload.featuredLabel = form.featuredLabel || null;
+        payload.featuredLabelVi = form.featuredLabelVi || null;
+        payload.featuredDescription = form.featuredDescription || null;
+        payload.featuredDescriptionVi = form.featuredDescriptionVi || null;
+        payload.featuredFrom = form.featuredFrom || null;
+        payload.featuredTo = form.featuredTo || null;
+      } else {
+        if (form.ageRatingId !== "") payload.ageRatingId = form.ageRatingId;
+        if (form.posterUrl !== "") payload.posterUrl = form.posterUrl;
+        if (form.trailerUrl !== "") payload.trailerUrl = form.trailerUrl;
+        if (form.featuredLabel !== "") payload.featuredLabel = form.featuredLabel;
+        if (form.featuredLabelVi !== "") payload.featuredLabelVi = form.featuredLabelVi;
+        if (form.featuredDescription !== "") payload.featuredDescription = form.featuredDescription;
+        if (form.featuredDescriptionVi !== "") {
+          payload.featuredDescriptionVi = form.featuredDescriptionVi;
+        }
+        if (form.featuredFrom !== "") payload.featuredFrom = form.featuredFrom;
+        if (form.featuredTo !== "") payload.featuredTo = form.featuredTo;
+      }
 
-  const updateField = <TField extends keyof MovieFormState>(
-    field: TField,
-    value: MovieFormState[TField],
-  ) => {
-    setValues((current) => ({ ...current, [field]: value }));
-    setFieldErrors((current) => {
-      if (!(field in current)) return current;
-      const next = { ...current };
-      delete next[field];
-      return next;
-    });
-  };
+      return entity
+        ? updateMovieAction(token, entity.slug, payload)
+        : createMovieAction(token, { ...payload, title: form.title });
+    },
+  });
 
   const toggleGenre = (genreId: string) => {
-    setValues((current) => ({
+    form.setValues((current) => ({
       ...current,
       genreIds: current.genreIds.includes(genreId)
         ? current.genreIds.filter((id) => id !== genreId)
@@ -141,95 +164,5 @@ export function useMovieForm({
     }));
   };
 
-  /** Prefill the create form with a valid test record — never submits. */
-  const fillSample = () => {
-    setValues({ ...ADMIN_FORM_SAMPLES.movie, genreIds: [] });
-    setFieldErrors({});
-    setSubmitError(null);
-  };
-
-  const submit = () => {
-    const isEditing = movie !== null;
-    const parsed = createMovieSchema(translate, isEditing).safeParse(values);
-
-    if (!parsed.success) {
-      setFieldErrors(toAdminFieldErrors(parsed.error));
-      return;
-    }
-    if (!token) {
-      setSubmitError(translate("admin.common.session_expired"));
-      return;
-    }
-
-    const form = parsed.data;
-    // Empty string means "not set": the update DTO takes `null` to clear a
-    // nullable column and rejects `""`, while a required column is omitted.
-    const payload: AdminMovieInput = {
-      title: form.title,
-      status: form.status,
-      genreIds: form.genreIds,
-    };
-
-    if (!isEditing && form.slug !== "") payload.slug = form.slug;
-    if (form.director !== "") payload.director = form.director;
-    if (form.language !== "") payload.language = form.language;
-    if (form.duration !== "") payload.duration = Number(form.duration);
-    if (form.releaseDate !== "") payload.releaseDate = form.releaseDate;
-    if (form.synopsis !== "") payload.synopsis = form.synopsis;
-    if (form.synopsisVi !== "") payload.synopsisVi = form.synopsisVi;
-    if (form.featuredOrder !== "") payload.featuredOrder = Number(form.featuredOrder);
-
-    if (isEditing) {
-      payload.isFeatured = form.isFeatured;
-      payload.ageRatingId = form.ageRatingId || null;
-      payload.posterUrl = form.posterUrl || null;
-      payload.trailerUrl = form.trailerUrl || null;
-      payload.featuredLabel = form.featuredLabel || null;
-      payload.featuredLabelVi = form.featuredLabelVi || null;
-      payload.featuredDescription = form.featuredDescription || null;
-      payload.featuredDescriptionVi = form.featuredDescriptionVi || null;
-      payload.featuredFrom = form.featuredFrom || null;
-      payload.featuredTo = form.featuredTo || null;
-    } else {
-      if (form.ageRatingId !== "") payload.ageRatingId = form.ageRatingId;
-      if (form.posterUrl !== "") payload.posterUrl = form.posterUrl;
-      if (form.trailerUrl !== "") payload.trailerUrl = form.trailerUrl;
-      if (form.featuredLabel !== "") payload.featuredLabel = form.featuredLabel;
-      if (form.featuredLabelVi !== "") payload.featuredLabelVi = form.featuredLabelVi;
-      if (form.featuredDescription !== "") payload.featuredDescription = form.featuredDescription;
-      if (form.featuredDescriptionVi !== "") {
-        payload.featuredDescriptionVi = form.featuredDescriptionVi;
-      }
-      if (form.featuredFrom !== "") payload.featuredFrom = form.featuredFrom;
-      if (form.featuredTo !== "") payload.featuredTo = form.featuredTo;
-    }
-
-    startTransition(async () => {
-      const result = isEditing
-        ? await updateMovieAction(token, movie.slug, payload)
-        : await createMovieAction(token, { ...payload, title: form.title });
-
-      if (!result.success) {
-        setSubmitError(result.error);
-        return;
-      }
-
-      notify(translate(isEditing ? "admin.common.saved" : "admin.common.created"), {
-        variant: "success",
-      });
-      onSaved();
-      router.refresh();
-    });
-  };
-
-  return {
-    values,
-    fieldErrors,
-    submitError,
-    isPending,
-    updateField,
-    toggleGenre,
-    fillSample,
-    submit,
-  };
+  return { ...form, toggleGenre };
 }
