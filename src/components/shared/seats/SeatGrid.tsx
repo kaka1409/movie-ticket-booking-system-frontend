@@ -44,8 +44,17 @@ export default function SeatGrid({
           <span className="text-2xs font-bold tracking-[0.2em] text-(--color-gold) uppercase">
             {translate("booking.common.screen")}
           </span>
-          <svg width={screenWidth} height={screenHeight} viewBox={`0 0 ${screenWidth - 40} ${screenHeight}`} fill="none">
-            <path d={`M 2 ${screenHeight - 4} Q ${screenWidth / 2} 0 ${screenWidth - 2} ${screenHeight - 4}`} stroke="rgba(255,204,77,0.8)" strokeWidth="5" />
+          <svg
+            width={screenWidth}
+            height={screenHeight}
+            viewBox={`0 0 ${screenWidth - 40} ${screenHeight}`}
+            fill="none"
+          >
+            <path
+              d={`M 2 ${screenHeight - 4} Q ${screenWidth / 2} 0 ${screenWidth - 2} ${screenHeight - 4}`}
+              stroke="rgba(255,204,77,0.8)"
+              strokeWidth="5"
+            />
           </svg>
         </div>
       )}

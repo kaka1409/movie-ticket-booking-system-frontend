@@ -59,12 +59,7 @@ export default function AdminPagination({
 
   const isBlocked = (target: number) => disabled || target < 1 || target > totalPages;
 
-  const renderControl = (
-    target: number,
-    label: string,
-    content: ReactNode,
-    className: string,
-  ) => {
+  const renderControl = (target: number, label: string, content: ReactNode, className: string) => {
     const blocked = isBlocked(target);
 
     if (hrefFor) {

@@ -4,9 +4,7 @@
  * anything else (including unknown hosts) yields `null` so the Play button can
  * hide instead of shipping a broken iframe.
  */
-export function toTrailerEmbedUrl(
-  raw: string | null | undefined,
-): string | null {
+export function toTrailerEmbedUrl(raw: string | null | undefined): string | null {
   if (typeof raw !== "string" || !raw.trim()) return null;
 
   let url: URL;

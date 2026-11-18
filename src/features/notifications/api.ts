@@ -1,11 +1,7 @@
 import { apiFetch, apiMutation, withLang, type ApiResponse } from "@/libs/api";
 import { toNotification } from "./utils/adapters";
 import type { Locale } from "@/contexts/LocaleContext";
-import type {
-  NotificationWire,
-  NotificationsMeta,
-  NotificationsResult,
-} from "./types";
+import type { NotificationWire, NotificationsMeta, NotificationsResult } from "./types";
 
 /**
  * GET /notifications — the inbox is the REST source of truth (the socket only

@@ -20,15 +20,7 @@ export interface KpiMetricDef {
   key: KpiMetricKey;
   titleKey: string;
   /** Key into the Chart.js palette returned by `useAdminChartTheme`. */
-  paletteKey:
-    | "gold"
-    | "cyan"
-    | "emerald"
-    | "purple"
-    | "blue"
-    | "orange"
-    | "teal"
-    | "rose";
+  paletteKey: "gold" | "cyan" | "emerald" | "purple" | "blue" | "orange" | "teal" | "rose";
 }
 
 export const KPI_METRICS: KpiMetricDef[] = [

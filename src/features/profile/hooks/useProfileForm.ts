@@ -35,11 +35,11 @@ export function useProfileForm() {
   useEffect(() => {
     if (userId === syncedUserIdRef.current) return;
     syncedUserIdRef.current = userId;
-     
+
     setFullName(user?.name ?? "");
-     
+
     setPhone(user?.phone ?? "");
-     
+
     setDob(toDateInputValue(user?.dob));
   }, [userId, user?.name, user?.phone, user?.dob]);
 

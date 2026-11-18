@@ -9,7 +9,10 @@ import { useToast } from "@/contexts/ToastContext";
 import Badge from "@/components/ui/Badge";
 import AdminButton from "@/app/(admin)/admin/components/shared/AdminButton";
 import AdminDeleteDialog from "@/app/(admin)/admin/components/shared/AdminDeleteDialog";
-import { getAdminShowtimeSeatsAction, deleteShowtimeAction } from "@/features/admin/actions/showtimes.action";
+import {
+  getAdminShowtimeSeatsAction,
+  deleteShowtimeAction,
+} from "@/features/admin/actions/showtimes.action";
 import { getRoomDisplayName } from "@/libs/utils";
 import type { AdminScheduleSlot, AdminShowtimeSeats } from "@/features/admin/types";
 
@@ -139,7 +142,9 @@ export default function ShowtimeDetailDrawer({
               <div className="mt-3 flex flex-wrap gap-3 text-[10px] text-(--color-text-muted)">
                 {(["free", "held", "booked", "checked_in"] as const).map((status) => (
                   <span key={status} className="flex items-center gap-1">
-                    <span className={`inline-block h-2.5 w-2.5 rounded-sm ${SEAT_COLORS[status].split(" ")[1]}`} />
+                    <span
+                      className={`inline-block h-2.5 w-2.5 rounded-sm ${SEAT_COLORS[status].split(" ")[1]}`}
+                    />
                     {translate(`admin.showtimes.seat_${status}`)}
                   </span>
                 ))}

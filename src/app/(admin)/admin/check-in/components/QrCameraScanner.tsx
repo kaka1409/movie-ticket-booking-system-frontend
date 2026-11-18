@@ -106,12 +106,7 @@ export default function QrCameraScanner({ onScan, disabled }: QrCameraScannerPro
 
       <div className="mt-3 flex items-center gap-3">
         {isActive ? (
-          <AdminButton
-            icon={CameraOff}
-            variant="outline"
-            size="md"
-            onClick={stop}
-          >
+          <AdminButton icon={CameraOff} variant="outline" size="md" onClick={stop}>
             {translate("admin.checkin.camera_stop")}
           </AdminButton>
         ) : (
@@ -129,9 +124,7 @@ export default function QrCameraScanner({ onScan, disabled }: QrCameraScannerPro
         )}
       </div>
 
-      {error && (
-        <p className="mt-2 text-2xs text-red-400">{error}</p>
-      )}
+      {error && <p className="mt-2 text-2xs text-red-400">{error}</p>}
     </div>
   );
 }

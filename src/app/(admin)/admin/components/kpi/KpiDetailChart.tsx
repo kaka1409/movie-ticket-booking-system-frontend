@@ -7,10 +7,7 @@ import { TrendingUp } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { formatVND, toLocaleTag } from "@/libs/utils";
 import { useAdminChartTheme } from "@/features/admin/hooks/useAdminChartTheme";
-import type {
-  AdminAnalyticsTimeRange,
-  AdminKpiSummary,
-} from "@/features/admin/types";
+import type { AdminAnalyticsTimeRange, AdminKpiSummary } from "@/features/admin/types";
 import type { ChartOptions } from "chart.js";
 import {
   formatKpiValue,
@@ -153,8 +150,7 @@ function CartesianChart({
     [palette, kind, format, locale, minValue, maxValue],
   );
 
-  if (kind === "bar")
-    return <Bar data={chartData} options={chartOptions as ChartOptions<"bar">} />;
+  if (kind === "bar") return <Bar data={chartData} options={chartOptions as ChartOptions<"bar">} />;
   return <Line data={chartData} options={chartOptions as ChartOptions<"line">} />;
 }
 

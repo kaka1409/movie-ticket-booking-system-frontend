@@ -21,10 +21,7 @@ export async function toAvatarBlob(file: File): Promise<Blob> {
   }
 
   // Cover-fit crop so the result is always square regardless of source ratio.
-  const scale = Math.max(
-    AVATAR_SIZE / bitmap.width,
-    AVATAR_SIZE / bitmap.height,
-  );
+  const scale = Math.max(AVATAR_SIZE / bitmap.width, AVATAR_SIZE / bitmap.height);
   const width = bitmap.width * scale;
   const height = bitmap.height * scale;
   const offsetX = (AVATAR_SIZE - width) / 2;

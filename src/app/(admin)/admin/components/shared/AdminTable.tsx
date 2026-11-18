@@ -198,7 +198,11 @@ export default function AdminTable<TRow>({
 
                 {isExpandable && (
                   <>
-                    <tr className={isExpanded ? "admin-expand-toggle is-expanded" : "admin-expand-toggle"}>
+                    <tr
+                      className={
+                        isExpanded ? "admin-expand-toggle is-expanded" : "admin-expand-toggle"
+                      }
+                    >
                       <td colSpan={columns.length}>
                         <button
                           type="button"

@@ -135,9 +135,7 @@ export default function MoviesManager({
   const buildHref = (
     filters: MovieFilters,
     page = 1,
-    sortState: { sort: string; dir: string } | null = sort
-      ? { sort, dir }
-      : null,
+    sortState: { sort: string; dir: string } | null = sort ? { sort, dir } : null,
   ) => {
     const params = new URLSearchParams();
 
@@ -292,9 +290,7 @@ export default function MoviesManager({
             variant="ghost"
             icon={movie.isFeatured ? StarOff : Star}
             label={translate(
-              movie.isFeatured
-                ? "admin.movies.featured_disable"
-                : "admin.movies.featured_enable",
+              movie.isFeatured ? "admin.movies.featured_disable" : "admin.movies.featured_enable",
             )}
             disabled={isMutating}
             onClick={() => {

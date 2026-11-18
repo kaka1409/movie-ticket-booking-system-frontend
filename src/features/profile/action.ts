@@ -23,10 +23,7 @@ export async function updateProfileAction(
   }
 }
 
-export async function uploadAvatarAction(
-  token: string,
-  file: File,
-): Promise<ProfileActionResult> {
+export async function uploadAvatarAction(token: string, file: File): Promise<ProfileActionResult> {
   try {
     const formData = new FormData();
     formData.append("file", file);
@@ -39,11 +36,7 @@ export async function uploadAvatarAction(
 
 export async function removeAvatarAction(token: string): Promise<ProfileActionResult> {
   try {
-    const response = await apiMutation<{ data: User }>(
-      "/user/avatar",
-      { method: "DELETE" },
-      token,
-    );
+    const response = await apiMutation<{ data: User }>("/user/avatar", { method: "DELETE" }, token);
     return { success: true, data: response.data };
   } catch (error: unknown) {
     return toActionFailure(error);

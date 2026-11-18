@@ -15,7 +15,15 @@ import type { SeatRow } from "@/features/booking/types";
  * Desktop: legend is rendered separately in SeatContent, so showLegend=false, size=xl.
  * Mobile: legend is rendered by SeatGrid, so showLegend=true, size=sm (default).
  */
-export default function SeatMapWrapper({ initialRows, showLegend = true, size = "sm" }: { initialRows: SeatRow[]; showLegend?: boolean; size?: "xs" | "sm" | "md" | "lg" | "xl" }) {
+export default function SeatMapWrapper({
+  initialRows,
+  showLegend = true,
+  size = "sm",
+}: {
+  initialRows: SeatRow[];
+  showLegend?: boolean;
+  size?: "xs" | "sm" | "md" | "lg" | "xl";
+}) {
   const { seatGrid, selectedSeats, toggleSeat } = useBooking();
 
   const rows = useMemo(

@@ -38,7 +38,12 @@ export default function ReviewCard({
     return (
       <div className="py-4 border-b border-(--color-border) last:border-0 space-y-3">
         <div className="flex items-center gap-2">
-          <Avatar src={review.src} name={review.user} size="w-9 h-9" fallbackSrc={DEFAULT_AVATAR_SRC} />
+          <Avatar
+            src={review.src}
+            name={review.user}
+            size="w-9 h-9"
+            fallbackSrc={DEFAULT_AVATAR_SRC}
+          />
           <div>
             <p className="text-(--color-text-primary) text-sm font-bold leading-tight">
               {review.user}
@@ -112,7 +117,12 @@ export default function ReviewCard({
     >
       <div className="flex items-start justify-between mb-2">
         <div className="flex items-center gap-2">
-          <Avatar src={review.src} name={review.user} size="w-9 h-9" fallbackSrc={DEFAULT_AVATAR_SRC} />
+          <Avatar
+            src={review.src}
+            name={review.user}
+            size="w-9 h-9"
+            fallbackSrc={DEFAULT_AVATAR_SRC}
+          />
           <div>
             <p className="text-(--color-text-primary) text-sm font-bold leading-tight">
               {review.user}

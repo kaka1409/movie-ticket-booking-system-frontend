@@ -68,10 +68,7 @@ export function toUpcomingTicket(summary: TicketSummaryWire, locale: "en" | "vn"
     format: summary.format,
     seatItems: summary.seatLabels.map((label): SeatTicket => ({ label, type: "", price: 0 })),
     poster: summary.posterUrl ?? POSTER_FALLBACK,
-    room: getRoomDisplayName(
-      { name: summary.roomName, nameVi: summary.roomNameVi },
-      locale,
-    ),
+    room: getRoomDisplayName({ name: summary.roomName, nameVi: summary.roomNameVi }, locale),
     totalPrice: summary.totalPrice,
     isTransferring: summary.pendingTransfer !== null,
   };
@@ -90,10 +87,7 @@ export function toPastTicket(summary: TicketSummaryWire, locale: "en" | "vn"): P
     cinema: summary.cinemaName,
     seatItems: summary.seatLabels.map((label): SeatTicket => ({ label, type: "", price: 0 })),
     transferProvenance,
-    room: getRoomDisplayName(
-      { name: summary.roomName, nameVi: summary.roomNameVi },
-      locale,
-    ),
+    room: getRoomDisplayName({ name: summary.roomName, nameVi: summary.roomNameVi }, locale),
     totalPrice: summary.totalPrice,
   };
 }

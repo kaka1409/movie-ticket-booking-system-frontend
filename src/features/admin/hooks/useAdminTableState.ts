@@ -85,9 +85,7 @@ export function useAdminTableState<TRow, TFilters extends object = Record<string
       if (a == null) return 1;
       if (b == null) return -1;
       const compared =
-        typeof a === "number" && typeof b === "number"
-          ? a - b
-          : String(a).localeCompare(String(b));
+        typeof a === "number" && typeof b === "number" ? a - b : String(a).localeCompare(String(b));
       return compared * direction;
     });
   }, [rows, search, getSearchText, matches, filters, sort, getSortValue]);

@@ -8,10 +8,7 @@ import AdminFormField, {
   AdminCheckbox,
 } from "@/app/(admin)/admin/components/shared/AdminFormField";
 import { ADMIN_INPUT_CLASS, ADMIN_LABEL_CLASS } from "@/features/admin/constants";
-import type {
-  AdminCatalogEntry,
-  AdminMovieStatus,
-} from "@/features/admin/types";
+import type { AdminCatalogEntry, AdminMovieStatus } from "@/features/admin/types";
 import type { MovieFormState } from "./useMovieForm";
 
 const STATUS_OPTIONS: Array<{ value: AdminMovieStatus; labelKey: string }> = [
@@ -251,7 +248,10 @@ export default function MovieFormFields({
       {isEditing && (
         <FormSection titleKey="admin.movies.section_featured">
           <div className="grid gap-3 sm:grid-cols-2">
-            <AdminFormField labelKey="admin.movies.featured_label" error={fieldErrors.featuredLabel}>
+            <AdminFormField
+              labelKey="admin.movies.featured_label"
+              error={fieldErrors.featuredLabel}
+            >
               <input
                 type="text"
                 name="featuredLabel"
@@ -320,7 +320,10 @@ export default function MovieFormFields({
               />
             </AdminFormField>
 
-            <AdminFormField labelKey="admin.movies.featured_order" error={fieldErrors.featuredOrder}>
+            <AdminFormField
+              labelKey="admin.movies.featured_order"
+              error={fieldErrors.featuredOrder}
+            >
               <input
                 type="number"
                 name="featuredOrder"

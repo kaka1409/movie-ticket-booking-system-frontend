@@ -8,7 +8,6 @@ export type AdminMovieStatus = "now_showing" | "coming_soon" | "ended";
 
 export type AdminMovieFeaturedState = "flagged" | "active" | "scheduled" | "expired";
 
-
 export interface AdminMovieGenre {
   id: string;
   name: string;

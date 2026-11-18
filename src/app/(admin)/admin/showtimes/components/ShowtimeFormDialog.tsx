@@ -1,11 +1,7 @@
 "use client";
 
 import AdminFormModal from "@/app/(admin)/admin/components/shared/AdminFormModal";
-import type {
-  AdminCatalogEntry,
-  AdminCinema,
-  AdminShowtimeSlot,
-} from "@/features/admin/types";
+import type { AdminCatalogEntry, AdminCinema, AdminShowtimeSlot } from "@/features/admin/types";
 import ShowtimeFormFields from "./ShowtimeFormFields";
 import { useShowtimeForm, type ShowtimeFormState } from "./useShowtimeForm";
 

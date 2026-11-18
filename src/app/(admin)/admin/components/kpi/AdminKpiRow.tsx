@@ -14,9 +14,7 @@ import type { KpiMetricKey } from "@/features/admin/utils/kpiMetrics";
 
 // Chart.js is ~200KB of canvas code the metric grid does not need — split it
 // into on-demand chunks so the KPI tiles paint without waiting for it.
-const chartLoading = () => (
-  <div className="h-72 animate-pulse rounded-xl bg-(--color-surface-2)" />
-);
+const chartLoading = () => <div className="h-72 animate-pulse rounded-xl bg-(--color-surface-2)" />;
 const KpiDetailChart = dynamic(() => import("./KpiDetailChart"), {
   ssr: false,
   loading: chartLoading,

@@ -1,4 +1,9 @@
-import type { AdminBookingStatus, AdminPaymentMethodCode, AdminPaymentStatus, AdminTicketStatus } from "./common";
+import type {
+  AdminBookingStatus,
+  AdminPaymentMethodCode,
+  AdminPaymentStatus,
+  AdminTicketStatus,
+} from "./common";
 
 /** One row of the admin ticket table — entitlement + owner/buyer + showtime context. */
 export interface AdminTicket {

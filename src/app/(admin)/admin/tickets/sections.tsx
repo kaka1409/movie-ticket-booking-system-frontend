@@ -4,13 +4,7 @@ import { isUnauthorizedResult } from "@/libs/session";
 import type { AdminTicketStatus } from "@/features/admin/types";
 import TicketsManager from "./components/TicketsManager";
 
-const TICKET_STATUSES: AdminTicketStatus[] = [
-  "active",
-  "used",
-  "expired",
-  "cancelled",
-  "refunded",
-];
+const TICKET_STATUSES: AdminTicketStatus[] = ["active", "used", "expired", "cancelled", "refunded"];
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
 export interface AdminTicketsQuery {

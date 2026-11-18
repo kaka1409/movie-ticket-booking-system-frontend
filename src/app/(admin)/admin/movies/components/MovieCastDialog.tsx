@@ -91,19 +91,22 @@ export default function MovieCastDialog({
     setCastItems(result.data.items);
   }, [slug, token]);
 
-  const reloadCastMembers = useCallback(async (search: string) => {
-    if (!token) return;
-    setIsLoadingCastMembers(true);
-    const result = await getCastMembersAction(token, search || undefined);
-    setIsLoadingCastMembers(false);
+  const reloadCastMembers = useCallback(
+    async (search: string) => {
+      if (!token) return;
+      setIsLoadingCastMembers(true);
+      const result = await getCastMembersAction(token, search || undefined);
+      setIsLoadingCastMembers(false);
 
-    if (!result.success) {
-      setCastMembers([]);
-      return;
-    }
+      if (!result.success) {
+        setCastMembers([]);
+        return;
+      }
 
-    setCastMembers(result.data);
-  }, [token]);
+      setCastMembers(result.data);
+    },
+    [token],
+  );
 
   useEffect(() => {
     if (!isOpen) return;

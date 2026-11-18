@@ -10,13 +10,8 @@ import AdminTable, {
   type AdminTableColumn,
 } from "@/app/(admin)/admin/components/shared/AdminTable";
 import { formatVND } from "@/libs/utils";
-import type {
-  AdminPaginationMeta,
-  AdminTransaction,
-} from "@/features/admin/types";
-import TransactionsFiltersCard, {
-  type TransactionFilterDraft,
-} from "./TransactionsFiltersCard";
+import type { AdminPaginationMeta, AdminTransaction } from "@/features/admin/types";
+import TransactionsFiltersCard, { type TransactionFilterDraft } from "./TransactionsFiltersCard";
 import TransactionDetailPanel from "./TransactionDetailPanel";
 import AdminAvatar from "../../components/shared/AdminAvatar";
 import AdminPoster from "../../components/shared/AdminPoster";
@@ -84,9 +79,7 @@ export default function TransactionsManager({
   const handleSort = (key: string) => {
     const currentDir = dir === "asc" ? "asc" : "desc";
     const nextDir = sort === key ? (currentDir === "asc" ? "desc" : "asc") : "asc";
-    startNavigation(() =>
-      router.push(buildHref(filters, 1, { sort: key, dir: nextDir })),
-    );
+    startNavigation(() => router.push(buildHref(filters, 1, { sort: key, dir: nextDir })));
   };
 
   const isFiltered = Object.values(filters).some((value) => value !== "");
@@ -104,9 +97,7 @@ export default function TransactionsManager({
             className="h-10 aspect-[3/2]"
           />
           <div className="min-w-0">
-            <p className="truncate font-semibold text-(--color-text-primary)">
-              {row.movie.title}
-            </p>
+            <p className="truncate font-semibold text-(--color-text-primary)">{row.movie.title}</p>
             <p className="truncate text-[11px] text-(--color-text-muted)">
               {row.showtime.date} · {row.showtime.startTime} · {row.showtime.cinemaName}
             </p>
@@ -195,9 +186,7 @@ export default function TransactionsManager({
       className: "w-28",
       align: "right",
       cell: (row) => (
-        <span className="tabular-nums font-semibold">
-          {formatVND(row.totalPrice, locale)}
-        </span>
+        <span className="tabular-nums font-semibold">{formatVND(row.totalPrice, locale)}</span>
       ),
     },
     {
@@ -206,9 +195,7 @@ export default function TransactionsManager({
       sortKey: "createdAt",
       className: "w-32",
       cell: (row) => (
-        <span className="text-[11px]">
-          {new Date(row.createdAt).toLocaleDateString()}
-        </span>
+        <span className="text-[11px]">{new Date(row.createdAt).toLocaleDateString()}</span>
       ),
     },
   ];
@@ -219,9 +206,7 @@ export default function TransactionsManager({
         filters={filters}
         total={pagination.total}
         isFiltered={isFiltered}
-        onApply={(draft) =>
-          startNavigation(() => router.push(buildHref({ ...filters, ...draft })))
-        }
+        onApply={(draft) => startNavigation(() => router.push(buildHref({ ...filters, ...draft })))}
         onClear={() => startNavigation(() => router.push("/admin/transactions"))}
       />
 

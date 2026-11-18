@@ -84,10 +84,7 @@ export function AdminSkeletonTabs({ count = 3 }: { count?: number }) {
   return (
     <div className="mb-3 flex gap-1" aria-hidden>
       {Array.from({ length: count }).map((_, index) => (
-        <div
-          key={index}
-          className="h-8 w-24 animate-pulse rounded-xl bg-(--color-surface-2)"
-        />
+        <div key={index} className="h-8 w-24 animate-pulse rounded-xl bg-(--color-surface-2)" />
       ))}
     </div>
   );
@@ -95,10 +92,7 @@ export function AdminSkeletonTabs({ count = 3 }: { count?: number }) {
 
 export function AdminPagerSkeleton() {
   return (
-    <div
-      className="mt-3 flex animate-pulse items-center justify-between gap-3"
-      aria-hidden
-    >
+    <div className="mt-3 flex animate-pulse items-center justify-between gap-3" aria-hidden>
       <div className="h-3 w-20 rounded bg-(--color-surface-2)" />
       <div className="flex gap-1.5">
         <div className="h-8 w-20 rounded-xl border border-(--color-border) bg-(--color-surface-2)" />
@@ -213,9 +207,7 @@ export function AdminListSkeleton({
           {search ? <AdminSkeletonSearch className="w-full sm:max-w-xs" /> : null}
           {select ? <AdminSkeletonSelect /> : null}
           {apply ? <AdminSkeletonButton /> : null}
-          {total ? (
-            <div className="h-3 w-24 animate-pulse rounded bg-(--color-surface-2)" />
-          ) : null}
+          {total ? <div className="h-3 w-24 animate-pulse rounded bg-(--color-surface-2)" /> : null}
           {action ? <AdminSkeletonButton className="ml-auto" /> : null}
         </div>
       )}

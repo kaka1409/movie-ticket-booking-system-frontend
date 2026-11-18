@@ -167,12 +167,7 @@ export default function ResearchCandidateCard({
           </AdminButton>
         )}
         {(candidate.status === "pending" || candidate.status === "rejected") && (
-          <AdminButton
-            icon={Trash2}
-            variant="danger"
-            disabled={actionsDisabled}
-            onClick={onDelete}
-          >
+          <AdminButton icon={Trash2} variant="danger" disabled={actionsDisabled} onClick={onDelete}>
             {translate("admin.common.delete")}
           </AdminButton>
         )}

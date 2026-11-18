@@ -1,9 +1,5 @@
 import { apiFetch } from "@/libs/api";
-import type {
-  MovieResearchCandidate,
-  MovieResearchModel,
-  MovieResearchRun,
-} from "../types";
+import type { MovieResearchCandidate, MovieResearchModel, MovieResearchRun } from "../types";
 import { ADMIN_NO_STORE, adminCookie, buildAdminQuery } from "./shared";
 
 export async function getMovieResearchCandidates(status?: string) {

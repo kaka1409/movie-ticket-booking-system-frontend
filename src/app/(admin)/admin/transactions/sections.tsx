@@ -8,18 +8,8 @@ import type {
 } from "@/features/admin/types";
 import TransactionsManager from "./components/TransactionsManager";
 
-const BOOKING_STATUSES: AdminBookingStatus[] = [
-  "pending",
-  "paid",
-  "expired",
-  "cancelled",
-];
-const PAYMENT_STATUSES: AdminPaymentStatus[] = [
-  "pending",
-  "success",
-  "failed",
-  "expired",
-];
+const BOOKING_STATUSES: AdminBookingStatus[] = ["pending", "paid", "expired", "cancelled"];
+const PAYMENT_STATUSES: AdminPaymentStatus[] = ["pending", "success", "failed", "expired"];
 const PAYMENT_METHODS: AdminPaymentMethodCode[] = ["vnpay", "momo", "simulated"];
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -49,14 +39,10 @@ export async function TransactionsManagerSection({
   const validStatus = BOOKING_STATUSES.includes(status as AdminBookingStatus)
     ? (status as AdminBookingStatus)
     : "";
-  const validPaymentStatus = PAYMENT_STATUSES.includes(
-    paymentStatus as AdminPaymentStatus,
-  )
+  const validPaymentStatus = PAYMENT_STATUSES.includes(paymentStatus as AdminPaymentStatus)
     ? (paymentStatus as AdminPaymentStatus)
     : "";
-  const validPaymentMethod = PAYMENT_METHODS.includes(
-    paymentMethod as AdminPaymentMethodCode,
-  )
+  const validPaymentMethod = PAYMENT_METHODS.includes(paymentMethod as AdminPaymentMethodCode)
     ? (paymentMethod as AdminPaymentMethodCode)
     : "";
   const validDateFrom = DATE_PATTERN.test(dateFrom) ? dateFrom : "";

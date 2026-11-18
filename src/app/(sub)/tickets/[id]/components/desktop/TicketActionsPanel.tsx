@@ -24,7 +24,10 @@ interface TicketActionsPanelProps {
   isDownloading: boolean;
 }
 
-export default function TicketActionsPanel({ downloadTicket, isDownloading }: TicketActionsPanelProps) {
+export default function TicketActionsPanel({
+  downloadTicket,
+  isDownloading,
+}: TicketActionsPanelProps) {
   const { ticket, viewerRole, transfer, incomingTransfer } = useTicketDetail();
   const { translate } = useLocale();
   const { acceptFormAction, declineFormAction, isAccepting, isDeclining, isBusy, error } =
@@ -110,7 +113,9 @@ export default function TicketActionsPanel({ downloadTicket, isDownloading }: Ti
           variant="desktop"
           icon={Download}
           label={translate("tickets.detail.download_ticket")}
-          description={isDownloading ? "Downloading..." : translate("tickets.detail.download_ticket_desc")}
+          description={
+            isDownloading ? "Downloading..." : translate("tickets.detail.download_ticket_desc")
+          }
           onClick={downloadTicket}
         />
       )}

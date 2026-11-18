@@ -2,7 +2,6 @@ export type AdminUserRole = "USER" | "ADMIN";
 
 export type AdminUserStatus = "active" | "banned";
 
-
 export interface AdminUser {
   id: string;
   fullname: string;

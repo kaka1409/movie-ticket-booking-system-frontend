@@ -65,7 +65,10 @@ export default function PhoneField({
           <span className="text-sm font-semibold text-(--color-text-primary) pointer-events-none">
             {countryCode}
           </span>
-          <ChevronDown size={14} className="text-(--color-text-muted) pointer-events-none group-focus-within:text-(--color-gold) transition-colors duration-150" />
+          <ChevronDown
+            size={14}
+            className="text-(--color-text-muted) pointer-events-none group-focus-within:text-(--color-gold) transition-colors duration-150"
+          />
         </div>
 
         <div className="h-6 w-px bg-(--color-border)" />
@@ -73,7 +76,9 @@ export default function PhoneField({
         <Phone
           size={18}
           className={`flex-shrink-0 transition-colors duration-150 h-4.5 w-4.5 ${
-            error ? "text-red-400" : "text-(--color-text-muted) group-focus-within:text-(--color-gold)"
+            error
+              ? "text-red-400"
+              : "text-(--color-text-muted) group-focus-within:text-(--color-gold)"
           }`}
         />
         <input

@@ -23,7 +23,10 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useLogout } from "@/features/auth/hooks/useLogout";
 import { ADMIN_NAV_GROUPS, isAdminNavActive } from "@/features/admin/adminSections";
-import { AdminSidebarProvider, useAdminSidebar } from "@/features/admin/contexts/AdminSidebarContext";
+import {
+  AdminSidebarProvider,
+  useAdminSidebar,
+} from "@/features/admin/contexts/AdminSidebarContext";
 import { ADMIN_SIDEBAR_COLLAPSED_PX, ADMIN_SIDEBAR_EXPANDED_PX } from "@/features/admin/constants";
 import { useAdminTheme } from "@/features/admin/hooks/useAdminTheme";
 import type { AdminSidebarMode, AdminTheme } from "@/features/admin/types";

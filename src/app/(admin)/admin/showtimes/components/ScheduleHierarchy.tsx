@@ -189,13 +189,7 @@ export default function ScheduleHierarchy({
                                 <button
                                   type="button"
                                   onClick={() =>
-                                    onSlotClick(
-                                      slot,
-                                      room.id,
-                                      room.name,
-                                      room.nameVi,
-                                      cinema.name,
-                                    )
+                                    onSlotClick(slot, room.id, room.name, room.nameVi, cinema.name)
                                   }
                                   className={`w-full rounded-xl border p-2.5 text-left transition hover:border-(--color-gold)/60 ${
                                     slot.isPast

@@ -34,7 +34,9 @@ export async function DesktopSeatMapSection({ seatMapPromise }: SeatSectionProps
     return <SectionFallback error={result.error} />;
   }
 
-  return <SeatMapWrapper initialRows={adaptSeatMap(result.data).rows} showLegend={false} size="xl" />;
+  return (
+    <SeatMapWrapper initialRows={adaptSeatMap(result.data).rows} showLegend={false} size="xl" />
+  );
 }
 
 /**

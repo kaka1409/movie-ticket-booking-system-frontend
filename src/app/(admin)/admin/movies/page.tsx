@@ -8,12 +8,7 @@ import { MoviesManagerSection } from "./sections";
 export const metadata: Metadata = { title: "Movies" };
 
 const STATUSES: AdminMovieStatus[] = ["now_showing", "coming_soon", "ended"];
-const FEATURED_STATES: AdminMovieFeaturedState[] = [
-  "flagged",
-  "active",
-  "scheduled",
-  "expired",
-];
+const FEATURED_STATES: AdminMovieFeaturedState[] = ["flagged", "active", "scheduled", "expired"];
 const DATE_PARAM = /^\d{4}-\d{2}-\d{2}$/;
 /** Mirrors the BE `ADMIN_MOVIE_SORT_FIELDS` whitelist. */
 const MOVIE_SORT_FIELDS = ["title", "status", "releaseDate", "duration", "rating", "createdAt"];

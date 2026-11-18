@@ -52,8 +52,6 @@ export interface AdminShowtimeCreateInput extends AdminShowtimeInput {
   startTime: string;
 }
 
-
-
 export interface AdminScheduleMovie {
   id: string;
   title: string;

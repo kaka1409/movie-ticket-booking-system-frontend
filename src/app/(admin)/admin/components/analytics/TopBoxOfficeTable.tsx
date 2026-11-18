@@ -51,57 +51,53 @@ export default function TopBoxOfficeTable({ movies }: TopBoxOfficeTableProps) {
           {translate("admin.dashboard.empty_top_movies")}
         </p>
       ) : (
-      <div className="mt-4 flex-1 space-y-3">
-        {movies.map((movie) => (
-          <div
-            key={movie.id}
-            className="flex items-center gap-3 rounded-xl border border-(--color-border)/50 bg-(--color-surface-2)/40 p-2.5 transition-colors hover:bg-(--color-surface-2)"
-          >
-            <span
-              className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md border text-xs font-bold ${getRankBadgeClass(
-                movie.rank,
-              )}`}
+        <div className="mt-4 flex-1 space-y-3">
+          {movies.map((movie) => (
+            <div
+              key={movie.id}
+              className="flex items-center gap-3 rounded-xl border border-(--color-border)/50 bg-(--color-surface-2)/40 p-2.5 transition-colors hover:bg-(--color-surface-2)"
             >
-              {movie.rank}
-            </span>
+              <span
+                className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md border text-xs font-bold ${getRankBadgeClass(
+                  movie.rank,
+                )}`}
+              >
+                {movie.rank}
+              </span>
 
-            <AdminPoster
-              src={movie.posterUrl}
-              alt={movie.title}
-              className="h-12 aspect-[3/2]"
-            />
+              <AdminPoster src={movie.posterUrl} alt={movie.title} className="h-12 aspect-[3/2]" />
 
-            <div className="min-w-0 flex-1">
-              <h3 className="truncate text-xs font-bold text-(--color-text-primary)">
-                {movie.title}
-              </h3>
-              <p className="truncate text-3xs text-(--color-text-muted)">{movie.genre}</p>
-            </div>
-
-            <div className="shrink-0 text-right">
-              <p className="text-xs font-bold text-(--color-text-primary)">
-                {formatVND(movie.revenue, locale)}
-              </p>
-              <p className="text-3xs text-(--color-text-muted)">
-                {movie.ticketsSold.toLocaleString(toLocaleTag(locale))}{" "}
-                {translate("admin.dashboard.tickets_suffix")}
-              </p>
-            </div>
-
-            <div className="hidden w-16 shrink-0 sm:block">
-              <div className="flex items-center justify-between text-3xs font-medium text-(--color-text-muted)">
-                <span>{movie.occupancyRate}%</span>
+              <div className="min-w-0 flex-1">
+                <h3 className="truncate text-xs font-bold text-(--color-text-primary)">
+                  {movie.title}
+                </h3>
+                <p className="truncate text-3xs text-(--color-text-muted)">{movie.genre}</p>
               </div>
-              <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-(--color-surface)">
-                <div
-                  className="h-full rounded-full bg-(--color-gold)"
-                  style={{ width: `${movie.occupancyRate}%` }}
-                />
+
+              <div className="shrink-0 text-right">
+                <p className="text-xs font-bold text-(--color-text-primary)">
+                  {formatVND(movie.revenue, locale)}
+                </p>
+                <p className="text-3xs text-(--color-text-muted)">
+                  {movie.ticketsSold.toLocaleString(toLocaleTag(locale))}{" "}
+                  {translate("admin.dashboard.tickets_suffix")}
+                </p>
+              </div>
+
+              <div className="hidden w-16 shrink-0 sm:block">
+                <div className="flex items-center justify-between text-3xs font-medium text-(--color-text-muted)">
+                  <span>{movie.occupancyRate}%</span>
+                </div>
+                <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-(--color-surface)">
+                  <div
+                    className="h-full rounded-full bg-(--color-gold)"
+                    style={{ width: `${movie.occupancyRate}%` }}
+                  />
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
       )}
     </div>
   );

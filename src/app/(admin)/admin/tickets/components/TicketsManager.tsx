@@ -11,9 +11,7 @@ import AdminTable, {
 } from "@/app/(admin)/admin/components/shared/AdminTable";
 import { formatVND } from "@/libs/utils";
 import type { AdminPaginationMeta, AdminTicket } from "@/features/admin/types";
-import TicketsFiltersCard, {
-  type TicketFilterDraft,
-} from "./TicketsFiltersCard";
+import TicketsFiltersCard, { type TicketFilterDraft } from "./TicketsFiltersCard";
 import TicketDetailPanel from "./TicketDetailPanel";
 import AdminAvatar from "../../components/shared/AdminAvatar";
 import AdminPoster from "../../components/shared/AdminPoster";
@@ -73,9 +71,7 @@ export default function TicketsManager({
   const handleSort = (key: string) => {
     const currentDir = dir === "asc" ? "asc" : "desc";
     const nextDir = sort === key ? (currentDir === "asc" ? "desc" : "asc") : "asc";
-    startNavigation(() =>
-      router.push(buildHref(filters, 1, { sort: key, dir: nextDir })),
-    );
+    startNavigation(() => router.push(buildHref(filters, 1, { sort: key, dir: nextDir })));
   };
 
   const isFiltered = Object.values(filters).some((value) => value !== "");
@@ -171,9 +167,7 @@ export default function TicketsManager({
       sortKey: "issuedAt",
       className: "w-32",
       cell: (row) => (
-        <span className="text-[11px]">
-          {new Date(row.issuedAt).toLocaleDateString()}
-        </span>
+        <span className="text-[11px]">{new Date(row.issuedAt).toLocaleDateString()}</span>
       ),
     },
   ];
@@ -184,9 +178,7 @@ export default function TicketsManager({
         filters={filters}
         total={pagination.total}
         isFiltered={isFiltered}
-        onApply={(draft) =>
-          startNavigation(() => router.push(buildHref({ ...filters, ...draft })))
-        }
+        onApply={(draft) => startNavigation(() => router.push(buildHref({ ...filters, ...draft })))}
         onClear={() => startNavigation(() => router.push("/admin/tickets"))}
       />
 

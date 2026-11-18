@@ -107,7 +107,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
     }
     if (lastOwnerRef.current === ownerId) return;
     lastOwnerRef.current = ownerId;
-     
+
     setWishlist([]);
   }, [ownerId, isAuthLoading]);
 

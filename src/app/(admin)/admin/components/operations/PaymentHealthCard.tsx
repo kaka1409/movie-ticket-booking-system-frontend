@@ -55,8 +55,7 @@ export default function PaymentHealthCard({ health }: PaymentHealthCardProps) {
       <div className="mt-4 space-y-2">
         {health.methods.map((method) => {
           const sellable = method.isActive && method.adapterEnabled;
-          const label =
-            locale === "vn" && method.nameVi ? method.nameVi : method.nameEn;
+          const label = locale === "vn" && method.nameVi ? method.nameVi : method.nameEn;
           const stats = [
             {
               key: "success",

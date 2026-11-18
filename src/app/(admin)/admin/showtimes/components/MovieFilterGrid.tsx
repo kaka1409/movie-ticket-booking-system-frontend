@@ -91,11 +91,7 @@ export default function MovieFilterGrid({
             title={movie.title}
             className={cardClass(value === movie.slug)}
           >
-            <AdminPoster
-              src={movie.posterUrl}
-              alt=""
-              className="h-16 aspect-[3/2] rounded-md"
-            />
+            <AdminPoster src={movie.posterUrl} alt="" className="h-16 aspect-[3/2] rounded-md" />
             <div className="min-w-0 flex-1 text-left">
               <span className="block truncate text-xs font-bold text-(--color-text-primary)">
                 {movie.title}

@@ -3,10 +3,7 @@
 import { TrendingUp } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useAdminChartTheme } from "@/features/admin/hooks/useAdminChartTheme";
-import type {
-  AdminAnalyticsTimeRange,
-  AdminKpiSummary,
-} from "@/features/admin/types";
+import type { AdminAnalyticsTimeRange, AdminKpiSummary } from "@/features/admin/types";
 import {
   formatKpiValue,
   getKpiGrowth,

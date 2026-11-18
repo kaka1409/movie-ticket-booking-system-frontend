@@ -154,8 +154,8 @@ export default function SeatLayoutEditor({
 
     let cancelled = false;
 
-    Promise.all([getAdminSeatTypesAction(token), getAdminRoomSeatLayoutAction(token, roomId)]).then(
-      ([typesResult, layoutResult]) => {
+    Promise.all([getAdminSeatTypesAction(token), getAdminRoomSeatLayoutAction(token, roomId)])
+      .then(([typesResult, layoutResult]) => {
         if (cancelled) return;
 
         if (!typesResult.success) {
@@ -169,12 +169,12 @@ export default function SeatLayoutEditor({
 
         setSeatTypes(typesResult.data);
         hydrateFromLayout(typesResult.data, layoutResult.data);
-      },
-    ).catch(() => {
-      // A rejected action must still clear the skeleton — without this the
-      // editor spins forever because `isLoading` never flips off.
-      if (!cancelled) setLoadError(translate("admin.common.load_failed"));
-    });
+      })
+      .catch(() => {
+        // A rejected action must still clear the skeleton — without this the
+        // editor spins forever because `isLoading` never flips off.
+        if (!cancelled) setLoadError(translate("admin.common.load_failed"));
+      });
 
     return () => {
       cancelled = true;

@@ -32,15 +32,21 @@ export async function ShowtimesManagerSection({ movie, date }: AdminShowtimesQue
   const stripDates = Array.from({ length: STRIP_DAYS }, (_, index) => addDays(today, index));
   const to = stripDates[stripDates.length - 1];
 
-  const [moviesResult, cinemasResult, formatsResult, templatesResult, scheduleResult, summaryResult] =
-    await Promise.all([
-      getAdminMovies({ page: 1, limit: 100 }),
-      getAdminCinemas(),
-      getAdminCatalog("formats"),
-      getAdminSlotTemplates(),
-      getAdminSchedule(resolvedDate),
-      getAdminScheduleSummary(from, to),
-    ]);
+  const [
+    moviesResult,
+    cinemasResult,
+    formatsResult,
+    templatesResult,
+    scheduleResult,
+    summaryResult,
+  ] = await Promise.all([
+    getAdminMovies({ page: 1, limit: 100 }),
+    getAdminCinemas(),
+    getAdminCatalog("formats"),
+    getAdminSlotTemplates(),
+    getAdminSchedule(resolvedDate),
+    getAdminScheduleSummary(from, to),
+  ]);
 
   // Each read narrows individually — a single failure fails the whole section.
   for (const result of [

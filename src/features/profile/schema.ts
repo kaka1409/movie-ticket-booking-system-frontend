@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { isValidPhone, PASSWORD_UPPERCASE, PASSWORD_NUMBER, PASSWORD_SPECIAL } from "@/libs/validation";
+import {
+  isValidPhone,
+  PASSWORD_UPPERCASE,
+  PASSWORD_NUMBER,
+  PASSWORD_SPECIAL,
+} from "@/libs/validation";
 
 const DATE_INPUT_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 

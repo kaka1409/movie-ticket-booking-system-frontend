@@ -38,7 +38,12 @@ export default function ReviewCard({
     return (
       <article className="space-y-3 border-b border-(--color-border) py-5 last:border-0">
         <div className="flex items-center gap-3">
-          <Avatar src={review.src} name={review.user} size="h-9 w-9" fallbackSrc={DEFAULT_AVATAR_SRC} />
+          <Avatar
+            src={review.src}
+            name={review.user}
+            size="h-9 w-9"
+            fallbackSrc={DEFAULT_AVATAR_SRC}
+          />
           <div className="flex gap-1">
             {REVIEW_RATING_STEPS.map((star) => (
               <button
@@ -109,7 +114,12 @@ export default function ReviewCard({
     >
       <div className="mb-2 flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
-          <Avatar src={review.src} name={review.user} size="h-9 w-9" fallbackSrc={DEFAULT_AVATAR_SRC} />
+          <Avatar
+            src={review.src}
+            name={review.user}
+            size="h-9 w-9"
+            fallbackSrc={DEFAULT_AVATAR_SRC}
+          />
 
           <div>
             <p className="text-sm leading-tight font-bold text-(--color-text-primary)">

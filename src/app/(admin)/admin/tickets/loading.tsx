@@ -1,4 +1,7 @@
-import { AdminHeaderSkeleton, AdminListSkeleton } from "@/app/(admin)/admin/components/shared/AdminSkeletons";
+import {
+  AdminHeaderSkeleton,
+  AdminListSkeleton,
+} from "@/app/(admin)/admin/components/shared/AdminSkeletons";
 
 export default function Loading() {
   return (

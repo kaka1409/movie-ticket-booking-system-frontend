@@ -63,9 +63,7 @@ export async function LiveBookingsSection() {
   }
   if ("error" in bookingsResult) return <AdminDataError message={bookingsResult.error.message} />;
   if ("error" in methodsResult) return <AdminDataError message={methodsResult.error.message} />;
-  return (
-    <LiveBookingsFeed bookings={bookingsResult.data} paymentMethods={methodsResult.data} />
-  );
+  return <LiveBookingsFeed bookings={bookingsResult.data} paymentMethods={methodsResult.data} />;
 }
 
 /** Payment health: demo-mode banner + per-method settlement stats. */

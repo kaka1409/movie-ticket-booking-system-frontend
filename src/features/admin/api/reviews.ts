@@ -1,9 +1,5 @@
 import { apiFetch, type ApiResponse } from "@/libs/api";
-import type {
-  AdminPaginationMeta,
-  AdminReview,
-  AdminReviewStatusFilter,
-} from "../types";
+import type { AdminPaginationMeta, AdminReview, AdminReviewStatusFilter } from "../types";
 import { ADMIN_NO_STORE, adminCookie, buildAdminQuery } from "./shared";
 
 /**

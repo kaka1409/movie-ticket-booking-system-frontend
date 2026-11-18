@@ -1,10 +1,4 @@
-import {
-  apiFetch,
-  apiMutation,
-  toErrorResponse,
-  withLang,
-  type ApiResponse,
-} from "@/libs/api";
+import { apiFetch, apiMutation, toErrorResponse, withLang, type ApiResponse } from "@/libs/api";
 import type {
   ComboItem,
   FoodItem,

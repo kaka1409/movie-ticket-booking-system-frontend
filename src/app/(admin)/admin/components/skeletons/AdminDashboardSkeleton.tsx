@@ -1,4 +1,10 @@
-function CardShell({ className = "", children }: { className?: string; children?: React.ReactNode }) {
+function CardShell({
+  className = "",
+  children,
+}: {
+  className?: string;
+  children?: React.ReactNode;
+}) {
   return (
     <div
       className={`animate-pulse rounded-2xl border border-(--color-border) bg-(--color-surface) p-5 ${className}`}

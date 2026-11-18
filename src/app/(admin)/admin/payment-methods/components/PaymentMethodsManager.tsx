@@ -53,13 +53,10 @@ const getPaymentMethodSortValue = (method: AdminPaymentMethod, key: string) => {
 export default function PaymentMethodsManager({ methods }: { methods: AdminPaymentMethod[] }) {
   const { translate } = useLocale();
 
-  const {
-    filters,
-    setFilters,
-    sort,
-    toggleSort,
-    visibleRows,
-  } = useAdminTableState<AdminPaymentMethod, PaymentMethodFilters>({
+  const { filters, setFilters, sort, toggleSort, visibleRows } = useAdminTableState<
+    AdminPaymentMethod,
+    PaymentMethodFilters
+  >({
     rows: methods,
     getSearchText: getPaymentMethodSearchText,
     matches: matchesPaymentMethodFilters,

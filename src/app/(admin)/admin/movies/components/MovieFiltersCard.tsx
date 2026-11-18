@@ -6,11 +6,7 @@ import { useLocale } from "@/contexts/LocaleContext";
 import Chip from "@/components/ui/Chip";
 import AdminButton from "@/app/(admin)/admin/components/shared/AdminButton";
 import AdminSearchInput from "@/app/(admin)/admin/components/shared/AdminSearchInput";
-import {
-  ADMIN_CARD_CLASS,
-  ADMIN_INPUT_CLASS,
-  ADMIN_LABEL_CLASS,
-} from "@/features/admin/constants";
+import { ADMIN_CARD_CLASS, ADMIN_INPUT_CLASS, ADMIN_LABEL_CLASS } from "@/features/admin/constants";
 import type {
   AdminCatalogEntry,
   AdminMovieFeaturedState,
@@ -143,9 +139,7 @@ export default function MovieFiltersCard({
                 key={option.value}
                 label={translate(option.labelKey)}
                 active={statusValue === option.value}
-                onClick={() =>
-                  setStatusValue(statusValue === option.value ? "" : option.value)
-                }
+                onClick={() => setStatusValue(statusValue === option.value ? "" : option.value)}
                 variant="selectable"
               />
             ))}
@@ -174,9 +168,7 @@ export default function MovieFiltersCard({
         </div>
 
         <div>
-          <span className={ADMIN_LABEL_CLASS}>
-            {translate("admin.movies.filter_age_rating")}
-          </span>
+          <span className={ADMIN_LABEL_CLASS}>{translate("admin.movies.filter_age_rating")}</span>
           <div className="mt-1.5 flex flex-wrap gap-1.5">
             <Chip
               label={translate("admin.movies.all_age_ratings")}
@@ -189,9 +181,7 @@ export default function MovieFiltersCard({
                 key={entry.id}
                 label={entry.name}
                 active={ageRatingValue === entry.name}
-                onClick={() =>
-                  setAgeRatingValue(ageRatingValue === entry.name ? "" : entry.name)
-                }
+                onClick={() => setAgeRatingValue(ageRatingValue === entry.name ? "" : entry.name)}
                 variant="selectable"
               />
             ))}
@@ -213,9 +203,7 @@ export default function MovieFiltersCard({
                 label={translate(option.labelKey)}
                 active={featuredStateValue === option.value}
                 onClick={() =>
-                  setFeaturedStateValue(
-                    featuredStateValue === option.value ? "" : option.value,
-                  )
+                  setFeaturedStateValue(featuredStateValue === option.value ? "" : option.value)
                 }
                 variant="selectable"
               />
@@ -224,9 +212,7 @@ export default function MovieFiltersCard({
         </div>
 
         <label className="block">
-          <span className={ADMIN_LABEL_CLASS}>
-            {translate("admin.movies.filter_release_from")}
-          </span>
+          <span className={ADMIN_LABEL_CLASS}>{translate("admin.movies.filter_release_from")}</span>
           <input
             type="date"
             name="releaseFrom"
@@ -237,9 +223,7 @@ export default function MovieFiltersCard({
         </label>
 
         <label className="block">
-          <span className={ADMIN_LABEL_CLASS}>
-            {translate("admin.movies.filter_release_to")}
-          </span>
+          <span className={ADMIN_LABEL_CLASS}>{translate("admin.movies.filter_release_to")}</span>
           <input
             type="date"
             name="releaseTo"
@@ -255,9 +239,7 @@ export default function MovieFiltersCard({
           {translate("admin.common.apply")}
         </AdminButton>
         {isFiltered && (
-          <AdminButton onClick={handleClear}>
-            {translate("admin.common.clear_filters")}
-          </AdminButton>
+          <AdminButton onClick={handleClear}>{translate("admin.common.clear_filters")}</AdminButton>
         )}
       </div>
     </form>

@@ -82,78 +82,83 @@ export default function LiveShowtimesMonitor({ showtimes }: LiveShowtimesMonitor
           {translate("admin.dashboard.empty_showtimes")}
         </p>
       ) : (
-      <div className="mt-4 flex-1 space-y-2.5 overflow-x-auto">
-        <div className="min-w-[560px]">
-          {visibleShowtimes.map((item) => {
-            const statusBadge = getStatusBadge(item.status);
-            const fillPercent = Math.round((item.bookedSeats / item.totalSeats) * 100);
+        <div className="mt-4 flex-1 space-y-2.5 overflow-x-auto">
+          <div className="min-w-[560px]">
+            {visibleShowtimes.map((item) => {
+              const statusBadge = getStatusBadge(item.status);
+              const fillPercent = Math.round((item.bookedSeats / item.totalSeats) * 100);
 
-            return (
-              <div
-                key={item.id}
-                className="flex items-center justify-between gap-3 border-b border-(--color-border)/50 py-2.5 last:border-b-0 hover:bg-(--color-surface-2)/30 px-2 rounded-lg transition-colors"
-              >
-                <div className="w-24 shrink-0">
-                  <span className="text-xs font-bold text-(--color-text-primary)">
-                    {item.startTime}
-                  </span>
-                  <span className="text-3xs text-(--color-text-muted)"> - {item.endTime}</span>
-                  <div className="mt-0.5">
-                    <span className="inline-block rounded bg-(--color-surface-2) px-1.5 py-0.5 text-3xs font-semibold text-(--color-text-secondary)">
-                      {item.format}
+              return (
+                <div
+                  key={item.id}
+                  className="flex items-center justify-between gap-3 border-b border-(--color-border)/50 py-2.5 last:border-b-0 hover:bg-(--color-surface-2)/30 px-2 rounded-lg transition-colors"
+                >
+                  <div className="w-24 shrink-0">
+                    <span className="text-xs font-bold text-(--color-text-primary)">
+                      {item.startTime}
+                    </span>
+                    <span className="text-3xs text-(--color-text-muted)"> - {item.endTime}</span>
+                    <div className="mt-0.5">
+                      <span className="inline-block rounded bg-(--color-surface-2) px-1.5 py-0.5 text-3xs font-semibold text-(--color-text-secondary)">
+                        {item.format}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex min-w-0 flex-1 items-center gap-2 px-2">
+                    <AdminPoster
+                      src={item.posterUrl}
+                      alt={item.movieTitle}
+                      className="h-10 aspect-[3/2]"
+                    />
+                    <div className="min-w-0">
+                      <h3 className="truncate text-xs font-bold text-(--color-text-primary)">
+                        {item.movieTitle}
+                      </h3>
+                      <p className="truncate text-3xs text-(--color-text-muted)">
+                        {item.cinemaName} ·{" "}
+                        {getRoomDisplayName(
+                          { name: item.roomName, nameVi: item.roomNameVi },
+                          locale,
+                        )}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="w-28 shrink-0 text-right">
+                    <p className="text-xs font-semibold text-(--color-text-primary)">
+                      {item.bookedSeats} / {item.totalSeats}{" "}
+                      <span className="text-3xs text-(--color-text-muted)">
+                        {translate("admin.dashboard.seats_suffix")}
+                      </span>
+                    </p>
+                    <div className="mt-1 flex items-center justify-end gap-1.5">
+                      <div className="h-1.5 w-16 overflow-hidden rounded-full bg-(--color-surface-2)">
+                        <div
+                          className="h-full rounded-full bg-(--color-gold)"
+                          style={{ width: `${fillPercent}%` }}
+                        />
+                      </div>
+                      <span className="text-3xs text-(--color-text-muted)">{fillPercent}%</span>
+                    </div>
+                    <p className="mt-0.5 text-3xs text-(--color-text-muted)">
+                      {translate("admin.dashboard.checkin_progress")}: {item.checkedInSeats}/
+                      {item.bookedSeats}
+                    </p>
+                  </div>
+
+                  <div className="w-24 shrink-0 text-right">
+                    <span
+                      className={`inline-block rounded-md border px-2 py-0.5 text-3xs font-semibold ${statusBadge.className}`}
+                    >
+                      {statusBadge.label}
                     </span>
                   </div>
                 </div>
-
-                <div className="flex min-w-0 flex-1 items-center gap-2 px-2">
-                  <AdminPoster
-                    src={item.posterUrl}
-                    alt={item.movieTitle}
-                    className="h-10 aspect-[3/2]"
-                  />
-                  <div className="min-w-0">
-                    <h3 className="truncate text-xs font-bold text-(--color-text-primary)">
-                      {item.movieTitle}
-                    </h3>
-                    <p className="truncate text-3xs text-(--color-text-muted)">
-                      {item.cinemaName} ·{" "}
-                      {getRoomDisplayName({ name: item.roomName, nameVi: item.roomNameVi }, locale)}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="w-28 shrink-0 text-right">
-                  <p className="text-xs font-semibold text-(--color-text-primary)">
-                    {item.bookedSeats} / {item.totalSeats}{" "}
-                    <span className="text-3xs text-(--color-text-muted)">{translate("admin.dashboard.seats_suffix")}</span>
-                  </p>
-                  <div className="mt-1 flex items-center justify-end gap-1.5">
-                    <div className="h-1.5 w-16 overflow-hidden rounded-full bg-(--color-surface-2)">
-                      <div
-                        className="h-full rounded-full bg-(--color-gold)"
-                        style={{ width: `${fillPercent}%` }}
-                      />
-                    </div>
-                    <span className="text-3xs text-(--color-text-muted)">{fillPercent}%</span>
-                  </div>
-                  <p className="mt-0.5 text-3xs text-(--color-text-muted)">
-                    {translate("admin.dashboard.checkin_progress")}:{" "}
-                    {item.checkedInSeats}/{item.bookedSeats}
-                  </p>
-                </div>
-
-                <div className="w-24 shrink-0 text-right">
-                  <span
-                    className={`inline-block rounded-md border px-2 py-0.5 text-3xs font-semibold ${statusBadge.className}`}
-                  >
-                    {statusBadge.label}
-                  </span>
-                </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
-      </div>
       )}
     </div>
   );

@@ -23,13 +23,7 @@ export default function TicketCapture() {
   return (
     <div className="rounded-3xl overflow-hidden bg-(--color-surface) border border-(--color-border) shadow-xl">
       <div className="relative w-full h-80 bg-(--color-surface) overflow-hidden">
-        <Image
-          src={ticket.poster}
-          alt={ticket.movie}
-          fill
-          sizes="100%"
-          className="object-cover"
-        />
+        <Image src={ticket.poster} alt={ticket.movie} fill sizes="100%" className="object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
         <div className="absolute bottom-0 left-0 right-0 px-6 pb-4">
           <div className="flex items-center gap-2 mb-1.5">

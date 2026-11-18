@@ -1,14 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import {
-  ArrowRight,
-  CreditCard,
-  ListChecks,
-  RotateCcw,
-  ShieldBan,
-  Ticket,
-} from "lucide-react";
+import { ArrowRight, CreditCard, ListChecks, RotateCcw, ShieldBan, Ticket } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import type { AdminActionQueue } from "@/features/admin/types";
 
@@ -117,9 +110,7 @@ export default function ActionQueueCard({ queue }: ActionQueueCardProps) {
                 <span className="block truncate text-2xs text-(--color-text-muted)">
                   {translate(item.labelKey)}
                 </span>
-                <span className="text-sm font-bold text-(--color-text-primary)">
-                  {count}
-                </span>
+                <span className="text-sm font-bold text-(--color-text-primary)">{count}</span>
               </span>
               <ArrowRight
                 size={12}

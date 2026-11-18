@@ -29,4 +29,3 @@ export type AdminPaymentStatus = "pending" | "success" | "failed" | "expired";
 export type AdminPaymentMethodCode = "vnpay" | "momo" | "simulated";
 
 export type AdminTicketStatus = "active" | "used" | "expired" | "cancelled" | "refunded";
-

@@ -2,7 +2,17 @@
 
 import { useLocale } from "@/contexts/LocaleContext";
 
-function LegendItem({ color, label, icon, desktop }: { color: string; label: string; icon?: string; desktop?: boolean }) {
+function LegendItem({
+  color,
+  label,
+  icon,
+  desktop,
+}: {
+  color: string;
+  label: string;
+  icon?: string;
+  desktop?: boolean;
+}) {
   if (desktop) {
     return (
       <div className="flex items-center gap-2 px-3 py-2 rounded-lg border border-(--color-border) bg-(--color-surface-2) hover:bg-(--color-surface-3) transition-colors cursor-default">
@@ -28,7 +38,13 @@ function LegendItem({ color, label, icon, desktop }: { color: string; label: str
   );
 }
 
-export default function SeatLegend({ showSweetbox = true, desktop = false }: { showSweetbox?: boolean; desktop?: boolean }) {
+export default function SeatLegend({
+  showSweetbox = true,
+  desktop = false,
+}: {
+  showSweetbox?: boolean;
+  desktop?: boolean;
+}) {
   const { translate } = useLocale();
 
   if (desktop) {
@@ -43,7 +59,11 @@ export default function SeatLegend({ showSweetbox = true, desktop = false }: { s
             label={translate("booking.seats.available")}
             desktop
           />
-          <LegendItem color="bg-(--color-gold)" label={translate("booking.seats.selected")} desktop />
+          <LegendItem
+            color="bg-(--color-gold)"
+            label={translate("booking.seats.selected")}
+            desktop
+          />
           <LegendItem
             color="bg-(--color-surface-2) border border-(--color-border)"
             label={translate("booking.seats.occupied")}

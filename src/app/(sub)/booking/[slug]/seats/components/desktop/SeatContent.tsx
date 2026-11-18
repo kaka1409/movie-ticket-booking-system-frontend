@@ -66,9 +66,7 @@ export default function SeatContent({ slots }: { slots: ReactNode }) {
         </h1>
 
         <SeatLegend desktop />
-        <div className="mt-6">
-          {slots}
-        </div>
+        <div className="mt-6">{slots}</div>
       </div>
     </BookingStepLayout>
   );

@@ -77,7 +77,11 @@ export default function ShowtimeFormFields({
         </select>
       </AdminFormField>
 
-      <AdminFormField labelKey="admin.showtimes.column_format" error={fieldErrors.formatId} required>
+      <AdminFormField
+        labelKey="admin.showtimes.column_format"
+        error={fieldErrors.formatId}
+        required
+      >
         <select
           name="formatId"
           value={values.formatId}

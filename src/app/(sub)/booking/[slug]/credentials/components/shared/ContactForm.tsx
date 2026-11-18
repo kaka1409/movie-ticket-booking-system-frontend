@@ -13,7 +13,13 @@ import PhoneField from "./PhoneField";
  * resolved `user` — initializing the fields inline used to leave them empty on a
  * hard refresh, because AuthContext resolves asynchronously.
  */
-export default function ContactForm({ className = "px-4 space-y-4", showPrivacy = false }: { className?: string; showPrivacy?: boolean }) {
+export default function ContactForm({
+  className = "px-4 space-y-4",
+  showPrivacy = false,
+}: {
+  className?: string;
+  showPrivacy?: boolean;
+}) {
   const { isLoading } = useAuth();
 
   if (isLoading) {

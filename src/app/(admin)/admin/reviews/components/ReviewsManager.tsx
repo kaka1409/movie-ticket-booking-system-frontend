@@ -67,9 +67,7 @@ export default function ReviewsManager({
   const buildHref = (
     filters: ReviewFilterDraft,
     page = 1,
-    sortState: { sortBy: string; dir: string } | null = sortBy
-      ? { sortBy, dir }
-      : null,
+    sortState: { sortBy: string; dir: string } | null = sortBy ? { sortBy, dir } : null,
   ) => {
     const params = new URLSearchParams();
 
@@ -105,11 +103,7 @@ export default function ReviewsManager({
       sortKey: "author",
       cell: (r) => (
         <div className="flex min-w-0 items-center gap-2">
-          <AdminAvatar
-            name={r.user.fullname}
-            avatarUrl={r.user.avatarUrl}
-            size={26}
-          />
+          <AdminAvatar name={r.user.fullname} avatarUrl={r.user.avatarUrl} size={26} />
           <div className="min-w-0">
             <p className="truncate font-semibold text-(--color-text-primary)">{r.user.fullname}</p>
             <p className="truncate text-[11px] text-(--color-text-muted)">{r.user.email}</p>

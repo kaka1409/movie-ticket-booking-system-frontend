@@ -121,8 +121,8 @@ export default function RoomSeatDiagram({
 
     let cancelled = false;
 
-    Promise.all([getAdminSeatTypesAction(token), getAdminRoomSeatLayoutAction(token, roomId)]).then(
-      ([typesResult, layoutResult]) => {
+    Promise.all([getAdminSeatTypesAction(token), getAdminRoomSeatLayoutAction(token, roomId)])
+      .then(([typesResult, layoutResult]) => {
         if (cancelled) return;
 
         if (!typesResult.success) {
@@ -136,12 +136,12 @@ export default function RoomSeatDiagram({
 
         setSeatTypes(typesResult.data);
         setLayout(layoutResult.data);
-      },
-    ).catch(() => {
-      // A rejected action must still clear the skeleton — without this the
-      // diagram spins forever because `isLoading` never flips off.
-      if (!cancelled) setLoadError(translate("admin.common.load_failed"));
-    });
+      })
+      .catch(() => {
+        // A rejected action must still clear the skeleton — without this the
+        // diagram spins forever because `isLoading` never flips off.
+        if (!cancelled) setLoadError(translate("admin.common.load_failed"));
+      });
 
     return () => {
       cancelled = true;

@@ -88,9 +88,7 @@ export default function MovieResearchManager({
   // the slow refresh below is only a reconcile for events missed mid-reconnect.
   useEffect(() => {
     if (!isRunActive || !latestRun) return;
-    const source = new EventSource(
-      `/api/v1/admin/movie-research/runs/${latestRun.id}/events`,
-    );
+    const source = new EventSource(`/api/v1/admin/movie-research/runs/${latestRun.id}/events`);
     source.onmessage = (message) => {
       let event: ResearchStreamEvent;
       try {
@@ -131,12 +129,15 @@ export default function MovieResearchManager({
   useEffect(() => {
     if (!isAwaitingRun && !isRunActive) return;
     let polls = 0;
-    const interval = setInterval(() => {
-      polls += 1;
-      // ~60s grace for the run row to appear, then stop fast-polling.
-      if (isAwaitingRun && !isRunActive && polls >= 15) setAwaitingRun(false);
-      router.refresh();
-    }, isAwaitingRun ? 4000 : 15000);
+    const interval = setInterval(
+      () => {
+        polls += 1;
+        // ~60s grace for the run row to appear, then stop fast-polling.
+        if (isAwaitingRun && !isRunActive && polls >= 15) setAwaitingRun(false);
+        router.refresh();
+      },
+      isAwaitingRun ? 4000 : 15000,
+    );
     return () => clearInterval(interval);
   }, [isAwaitingRun, isRunActive, router]);
 
@@ -166,10 +167,7 @@ export default function MovieResearchManager({
       })
     : null;
 
-  const execute = <T,>(
-    operation: () => Promise<AdminActionResult<T>>,
-    onSuccess?: () => void,
-  ) => {
+  const execute = <T,>(operation: () => Promise<AdminActionResult<T>>, onSuccess?: () => void) => {
     startTransition(async () => {
       const result = await operation();
       if (!result.success) {
@@ -209,9 +207,7 @@ export default function MovieResearchManager({
                 icon={Pause}
                 disabled={busy || !token}
                 onClick={() =>
-                  execute(() =>
-                    controlMovieResearchRunAction(token!, latestRun.id, "pause"),
-                  )
+                  execute(() => controlMovieResearchRunAction(token!, latestRun.id, "pause"))
                 }
               >
                 {translate("admin.research.pause")}
@@ -223,9 +219,7 @@ export default function MovieResearchManager({
                 variant="primary"
                 disabled={busy || !token}
                 onClick={() =>
-                  execute(() =>
-                    controlMovieResearchRunAction(token!, latestRun.id, "resume"),
-                  )
+                  execute(() => controlMovieResearchRunAction(token!, latestRun.id, "resume"))
                 }
               >
                 {translate("admin.research.resume")}
@@ -237,9 +231,7 @@ export default function MovieResearchManager({
                 variant="danger"
                 disabled={busy || !token}
                 onClick={() =>
-                  execute(() =>
-                    controlMovieResearchRunAction(token!, latestRun.id, "stop"),
-                  )
+                  execute(() => controlMovieResearchRunAction(token!, latestRun.id, "stop"))
                 }
               >
                 {translate("admin.research.stop")}
@@ -288,7 +280,8 @@ export default function MovieResearchManager({
               {latestRun.model && <span>· {latestRun.model}</span>}
             </p>
             <p>
-              {shownProgress && shownProgress.processed > 0 &&
+              {shownProgress &&
+                shownProgress.processed > 0 &&
                 `${translate("admin.research.processed")}: ${shownProgress.processed} · `}
               {shownProgress?.discovered ?? 0} {translate("admin.research.found")} ·{" "}
               {translate("admin.research.enriched")}: {shownProgress?.enriched ?? 0}
@@ -331,17 +324,13 @@ export default function MovieResearchManager({
               candidate={candidate}
               actionsDisabled={busy || !token}
               onReject={() =>
-                execute(() =>
-                  updateMovieResearchCandidateAction(token!, candidate.id, "rejected"),
-                )
+                execute(() => updateMovieResearchCandidateAction(token!, candidate.id, "rejected"))
               }
               onImport={() =>
                 execute(() => importMovieResearchCandidateAction(token!, candidate.id))
               }
               onReopen={() =>
-                execute(() =>
-                  updateMovieResearchCandidateAction(token!, candidate.id, "pending"),
-                )
+                execute(() => updateMovieResearchCandidateAction(token!, candidate.id, "pending"))
               }
               onDelete={() =>
                 execute(() => deleteMovieResearchCandidateAction(token!, candidate.id))
