@@ -140,11 +140,13 @@ export function useMovieListFeed({
         if (cancelled || seq !== seqRef.current) return; // stale response
         if ("error" in result) {
           // Mark the key as attempted (stops the refetch loop) and surface
-          // the error; retryFetch clears both and re-runs this effect.
+          // the error; retryFetch clears both and re-runs this effect. The old
+          // query's rows are dropped too — keeping them under the new key lets
+          // loadMore append this query's page 2 onto the wrong list.
           setFetchFailure({ key: currentKey, error: result.error });
           setLists((previous) => ({
             ...previous,
-            [activeTab]: { ...previous[activeTab], queryKey: currentKey },
+            [activeTab]: { movies: [], meta: undefined, queryKey: currentKey },
           }));
           return;
         }
@@ -168,7 +170,7 @@ export function useMovieListFeed({
         });
         setLists((previous) => ({
           ...previous,
-          [activeTab]: { ...previous[activeTab], queryKey: currentKey },
+          [activeTab]: { movies: [], meta: undefined, queryKey: currentKey },
         }));
       });
 
