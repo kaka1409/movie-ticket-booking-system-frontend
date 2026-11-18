@@ -152,13 +152,15 @@ export default function WishlistMovieRow({
               ? translate("profile.wishlist.remove_wishlist")
               : translate("profile.wishlist.add_wishlist")
           }
-          className="flex items-center gap-1.5 rounded-xl border border-(--color-border) bg-(--color-surface-2) px-3 py-2 text-xs font-semibold text-(--color-text-muted) transition hover:border-rose-500/50 hover:text-rose-400 active:scale-95"
+          className="flex items-center gap-1.5 rounded-xl border border-(--color-gold)/50 px-4 py-2.5 text-xs font-bold text-(--color-gold) transition hover:bg-(--color-gold)/10 active:scale-95"
         >
           <Heart
             size={14}
-            className={liked ? "fill-rose-500 text-rose-500" : "fill-transparent text-white"}
+            className={
+              liked ? "fill-rose-500 text-rose-500" : "fill-transparent text-(--color-gold)"
+            }
           />
-          <span className="text-3xs">{translate("profile.wishlist.remove_wishlist")}</span>
+          <span>{translate("profile.wishlist.remove_wishlist")}</span>
         </button>
       </div>
     </article>

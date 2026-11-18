@@ -64,7 +64,7 @@ export default function WishlistCard({
                 : translate("profile.wishlist.add_wishlist")
             }
             onClick={() => onToggleWishlist(movie)}
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-(--color-surface-2)"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-(--color-gold)/50 text-(--color-gold) transition hover:bg-(--color-gold)/10"
           >
             <Heart
               className={`h-4 w-4 ${

@@ -68,7 +68,7 @@ export default function WishlistContent({ initialItems }: { initialItems: Wishli
         </div>
 
         <div className="flex items-center gap-3 px-3 py-1 sm:gap-4 sm:px-5">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-(--color-surface-2) text-emerald-400">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-(--color-surface-2) text-(--color-gold)">
             <Ticket size={17} />
           </span>
           <div className="min-w-0">
@@ -80,7 +80,7 @@ export default function WishlistContent({ initialItems }: { initialItems: Wishli
         </div>
 
         <div className="flex items-center gap-3 px-3 py-1 sm:gap-4 sm:px-5">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-(--color-surface-2) text-(--color-gold-light)">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-(--color-surface-2) text-(--color-gold)">
             <Calendar size={17} />
           </span>
           <div className="min-w-0">
