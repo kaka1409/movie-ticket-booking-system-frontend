@@ -101,9 +101,9 @@ export function getTicketOwnership(
 /* ─── Transfer recipient (LIVE) ─────────────────────────── */
 
 /**
- * Exact-email recipient lookup — `GET /user/search?email=`. Any failure
- * (unknown email, self, network) resolves to `null`; the caller treats that as
- * "no such recipient" rather than an error state.
+ * Exact-email recipient lookup — `GET /user/search?email=`. The result keeps
+ * "no such recipient" (backend 404) apart from a real lookup failure
+ * (network/5xx) so the UI never claims an invalid email on a transport error.
  *
  * Client callers pass the RAM `token`; server components pass the forwarded
  * refresh `cookie` (the route accepts Bearer OR refresh cookie).
@@ -111,9 +111,9 @@ export function getTicketOwnership(
 export async function getRecipient(
   email: string,
   options?: { token?: string; cookie?: string },
-): Promise<Recipient | null> {
+): Promise<{ recipient: Recipient | null; isError: boolean }> {
   const trimmed = email.trim();
-  if (!trimmed) return null;
+  if (!trimmed) return { recipient: null, isError: false };
 
   const result = await apiFetch<SearchRecipientWire>(
     `/user/search?email=${encodeURIComponent(trimmed)}`,
@@ -121,8 +121,8 @@ export async function getRecipient(
     options?.token,
     options?.cookie,
   );
-  if ("error" in result) return null;
-  return toRecipient(result.data);
+  if ("error" in result) return { recipient: null, isError: result.error.status !== 404 };
+  return { recipient: result.data ? toRecipient(result.data) : null, isError: false };
 }
 
 /* ─── Modification Queries ──────────────────────────────── */

@@ -22,7 +22,7 @@ export default async function ConfirmPage({ params, searchParams }: ConfirmPageP
   // can be missing when this step is opened directly.
   if (!recipientEmail) redirect(`/tickets/${id}/transfer`);
 
-  const recipient = await getRecipient(recipientEmail, {
+  const { recipient } = await getRecipient(recipientEmail, {
     cookie: await getRequestCookie(),
   });
   if (!recipient) redirect(`/tickets/${id}/transfer`);

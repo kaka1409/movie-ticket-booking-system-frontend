@@ -33,18 +33,20 @@ export default function RecipientLookupAdopter() {
     // Bearer token authenticates the client call.
     const lookup = canSearch
       ? getRecipient(email, { token: token ?? undefined })
-      : Promise.resolve(null);
+      : Promise.resolve({ recipient: null, isError: false });
 
     lookup
-      .then((found) => {
+      .then(({ recipient: found, isError }) => {
         if (requestSequence !== requestSequenceRef.current) return;
         setRecipient(found);
-        setIsRecipientMissing(canSearch && !found);
+        // Only a confirmed "no such user" may show the missing-recipient
+        // notice — a lookup failure must not masquerade as an invalid email.
+        setIsRecipientMissing(canSearch && !found && !isError);
       })
       .catch(() => {
         if (requestSequence !== requestSequenceRef.current) return;
         setRecipient(null);
-        setIsRecipientMissing(canSearch);
+        setIsRecipientMissing(false);
       });
   }, [debouncedQuery, setRecipient, setIsRecipientMissing, token]);
 
