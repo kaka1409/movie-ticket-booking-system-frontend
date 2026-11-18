@@ -53,24 +53,38 @@ const BookingContext = createContext<BookingContextType | null>(null);
 /** Tab-scoped session start (epoch ms) — survives a refresh, dies with the tab. */
 const SESSION_START_KEY = "booking:countdownStart";
 
+// sessionStorage can throw where storage is disabled or full (Safari private
+// mode, enterprise policy) — a countdown hint must never take the flow down.
 function readSessionStart(): number | null {
   if (typeof window === "undefined") return null;
-  const raw = window.sessionStorage.getItem(SESSION_START_KEY);
-  const parsed = raw === null ? NaN : Number(raw);
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+  try {
+    const raw = window.sessionStorage.getItem(SESSION_START_KEY);
+    const parsed = raw === null ? NaN : Number(raw);
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+  } catch {
+    return null;
+  }
 }
 
 function writeSessionStart(now: number): void {
   if (typeof window === "undefined") return;
-  // First start wins — a re-press must never move the session.
-  if (window.sessionStorage.getItem(SESSION_START_KEY) === null) {
-    window.sessionStorage.setItem(SESSION_START_KEY, String(now));
+  try {
+    // First start wins — a re-press must never move the session.
+    if (window.sessionStorage.getItem(SESSION_START_KEY) === null) {
+      window.sessionStorage.setItem(SESSION_START_KEY, String(now));
+    }
+  } catch {
+    // Storage unavailable — the in-memory countdown still works for this mount.
   }
 }
 
 function clearSessionStart(): void {
   if (typeof window === "undefined") return;
-  window.sessionStorage.removeItem(SESSION_START_KEY);
+  try {
+    window.sessionStorage.removeItem(SESSION_START_KEY);
+  } catch {
+    // Nothing to clean up when storage itself is unavailable.
+  }
 }
 
 export function BookingProvider({
