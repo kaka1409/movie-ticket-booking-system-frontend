@@ -3,11 +3,11 @@
 import { useCallback, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale } from "@/contexts/LocaleContext";
-import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/contexts/ToastContext";
 import { buildLoginUrl } from "../utils";
-import { loginAction, registerAction } from "../action";
+import { registerAction } from "../action";
 import { createRegisterSchema } from "../schema";
-import { fieldErrorsFromDetails } from "@/libs/api";
+import { fieldErrorsFromDetails } from "@/libs/api-contract";
 
 export interface RegisterFormController {
   name: string;
@@ -40,17 +40,15 @@ export interface RegisterFormController {
  * Register form logic, shared by both device skins: field state, Zod
  * validation, the server-action call and the post-register navigation.
  *
- * Registering signs the visitor in in one go: `POST /auth/register` only
- * answers with a message and no session, so the hook then calls
- * `loginAction` with the same credentials, adopts the session and lands on
- * `returnUrl`. If that follow-up fails (the account does exist by then), it
- * falls back to the login page with the target preserved.
+ * `POST /auth/register` only answers with a message and no session, so a
+ * successful submit lands on the login page with `returnUrl` preserved —
+ * the visitor signs in explicitly before reaching the target.
  */
 export function useRegisterForm({
   returnUrl,
 }: { returnUrl?: string } = {}): RegisterFormController {
   const { translate } = useLocale();
-  const { setAuth } = useAuth();
+  const { notify } = useToast();
   const router = useRouter();
 
   const [name, setName] = useState("");
@@ -99,23 +97,15 @@ export function useRegisterForm({
           return;
         }
 
-        const session = await loginAction(
-          { success: false, error: "" },
-          { email: email.trim(), password },
-        );
-        if (session.success) {
-          setAuth(session.data.user, session.data.accessToken);
-          router.push(returnUrl ?? "/");
-        } else {
-          router.push(buildLoginUrl(returnUrl));
-        }
+        notify(translate("auth.register.success_please_login"), { variant: "success" });
+        router.push(buildLoginUrl(returnUrl));
       } catch {
         setServerError(translate("auth.register.error_server"));
       } finally {
         setIsSubmitting(false);
       }
     },
-    [isValid, termsAccepted, name, email, phone, password, router, setAuth, translate, returnUrl],
+    [isValid, termsAccepted, name, email, phone, password, router, notify, translate, returnUrl],
   );
 
   return {
@@ -138,7 +128,8 @@ export function useRegisterForm({
     confirmError: touched
       ? (serverFieldErrors.confirmPassword ?? fieldErrors.confirmPassword?.[0])
       : undefined,
-    termsError: touched && !termsAccepted ? translate("auth.register.error_terms_required") : undefined,
+    termsError:
+      touched && !termsAccepted ? translate("auth.register.error_terms_required") : undefined,
     serverError,
     isSubmitting,
     handleSubmit,
