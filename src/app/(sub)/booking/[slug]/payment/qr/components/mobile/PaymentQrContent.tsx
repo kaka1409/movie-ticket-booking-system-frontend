@@ -25,7 +25,6 @@ export default function PaymentQrMobile({
   paymentMethods: PaymentMethodOption[];
 }) {
   const { translate } = useLocale();
-  const canSync = payment.intent?.status === "pending" && !payment.isRefundQueued;
 
   return (
     <div className="min-h-dvh bg-(--color-bg)">
@@ -63,11 +62,8 @@ export default function PaymentQrMobile({
 
         <PaymentIntentActions
           isDemo={isDemo}
-          canSync={canSync}
-          isSyncing={payment.isSyncing}
           isOpening={payment.isOpening}
           simulatingOutcome={payment.simulatingOutcome}
-          onSync={payment.sync}
           onSimulate={payment.simulate}
         />
 

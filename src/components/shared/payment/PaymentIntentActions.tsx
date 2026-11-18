@@ -1,6 +1,6 @@
 "use client";
 
-import { Ban, CheckCircle2, RefreshCw, XCircle } from "lucide-react";
+import { Ban, CheckCircle2, XCircle } from "lucide-react";
 import Button from "@/components/ui/Button";
 import MicroLabel from "@/components/ui/MicroLabel";
 import { useLocale } from "@/contexts/LocaleContext";
@@ -17,47 +17,26 @@ const DEMO_OPTIONS: {
 ];
 
 /**
- * The two manual controls: ask the provider for the truth, and (in demo mode)
- * script the provider's answer. Both are shared by the two skins — they drive
- * the same server calls, so their availability must not differ by width.
+ * Demo-only controls that script the provider's answer. Shared by the two
+ * skins — they drive the same server calls, so their availability must not
+ * differ by width.
  */
 export default function PaymentIntentActions({
   isDemo,
-  canSync,
-  isSyncing,
   isOpening,
   simulatingOutcome,
-  onSync,
   onSimulate,
 }: {
   isDemo: boolean;
-  /** False once the attempt settled — there is nothing left to reconcile. */
-  canSync: boolean;
-  isSyncing: boolean;
   isOpening: boolean;
   simulatingOutcome: SimulatedOutcome | null;
-  onSync: () => void;
   onSimulate: (outcome: SimulatedOutcome) => void;
 }) {
   const { translate } = useLocale();
-  const isBusy = isSyncing || isOpening || simulatingOutcome !== null;
+  const isBusy = isOpening || simulatingOutcome !== null;
 
   return (
     <div className="space-y-3">
-      {canSync && (
-        <Button
-          variant="outline"
-          size="md"
-          onClick={onSync}
-          loading={isSyncing}
-          disabled={isBusy}
-          icon={RefreshCw}
-          iconPosition="left"
-        >
-          {translate("booking.payment.qr.check_status")}
-        </Button>
-      )}
-
       {isDemo && (
         <div className="rounded-2xl border border-dashed border-(--color-border) bg-(--color-surface) p-4">
           <MicroLabel className="text-(--color-text-muted)">

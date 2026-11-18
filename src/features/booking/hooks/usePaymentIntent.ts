@@ -6,6 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import { getBookingById, getPaymentIntent } from "../api";
 import { createPaymentIntentAction, simulatePaymentAction, syncPaymentAction } from "../action";
+import { usePaymentAttempt } from "./usePaymentAttempt";
 import type {
   BookingDetail,
   PaymentIntent,
@@ -56,11 +57,7 @@ export function usePaymentIntent({
   const [intent, setIntent] = useState<PaymentIntent | null>(null);
   const [isClosed, setIsClosed] = useState(booking.status !== "pending");
   const [isOpening, setIsOpening] = useState(false);
-  const [isSyncing, setIsSyncing] = useState(false);
-  const [simulatingOutcome, setSimulatingOutcome] = useState<SimulatedOutcome | null>(null);
   const [isRefundQueued, setIsRefundQueued] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [notice, setNotice] = useState<string | null>(null);
 
   const bookingId = booking.id;
   /** One terminal decision per page — a late poll must not navigate twice. */
@@ -83,30 +80,14 @@ export function usePaymentIntent({
     [bookingId, router, slug],
   );
 
-  const openIntent = useCallback(async () => {
-    if (!token) return;
-    setIsOpening(true);
-    setErrorMessage(null);
-    setNotice(null);
-
-    try {
-      const result = await createPaymentIntentAction({ bookingId, method }, token);
-      if (!result.success) {
-        // The window closed between the server render and this call.
-        if (result.code === "BOOKING_EXPIRED") setIsClosed(true);
-        else setErrorMessage(result.error);
-        return;
-      }
-      setIntent(result.data);
-    } catch {
-      setErrorMessage(translate("common.error"));
-    } finally {
-      setIsOpening(false);
-    }
-  }, [bookingId, method, token, translate]);
-
   const applyOutcome = useCallback(
-    (outcome: PaymentOutcomeWithIntent) => {
+    (
+      outcome: PaymentOutcomeWithIntent,
+      helpers: {
+        setErrorMessage: (message: string | null) => void;
+        setNotice: (message: string | null) => void;
+      },
+    ) => {
       setIntent(outcome.intent);
       if (hasResolved.current) return;
 
@@ -131,11 +112,55 @@ export function usePaymentIntent({
           }
           return;
         case "no_change":
-          setNotice(translate("booking.payment.qr.not_confirmed"));
+          helpers.setNotice(translate("booking.payment.qr.not_confirmed"));
       }
     },
     [goToFailure, goToSuccess, translate],
   );
+
+  const simulateAction = useCallback(
+    (outcome: SimulatedOutcome, attemptToken: string) =>
+      simulatePaymentAction({ bookingId, outcome }, attemptToken),
+    [bookingId],
+  );
+
+  const syncAction = useCallback(
+    (attemptToken: string) => syncPaymentAction({ bookingId }, attemptToken),
+    [bookingId],
+  );
+
+  const {
+    isSyncing,
+    simulatingOutcome,
+    errorMessage,
+    notice,
+    setErrorMessage,
+    setNotice,
+    simulate,
+    sync,
+  } = usePaymentAttempt({ simulateAction, syncAction, applyOutcome });
+
+  const openIntent = useCallback(async () => {
+    if (!token) return;
+    setIsOpening(true);
+    setErrorMessage(null);
+    setNotice(null);
+
+    try {
+      const result = await createPaymentIntentAction({ bookingId, method }, token);
+      if (!result.success) {
+        // The window closed between the server render and this call.
+        if (result.code === "BOOKING_EXPIRED") setIsClosed(true);
+        else setErrorMessage(result.error);
+        return;
+      }
+      setIntent(result.data);
+    } catch {
+      setErrorMessage(translate("common.error"));
+    } finally {
+      setIsOpening(false);
+    }
+  }, [bookingId, method, token, translate, setErrorMessage, setNotice]);
 
   useEffect(() => {
     if (!token || hasBootstrapped.current) return;
@@ -157,7 +182,7 @@ export function usePaymentIntent({
       }
       setIntent(current.data);
     })();
-  }, [bookingId, isClosed, openIntent, token]);
+  }, [bookingId, isClosed, openIntent, token, setErrorMessage]);
 
   const intentStatus = intent?.status ?? null;
 
@@ -189,62 +214,20 @@ export function usePaymentIntent({
     hasResolved.current = true;
     void (async () => {
       const bookingResult = await getBookingById(bookingId, undefined, token ?? undefined);
-      if (!("error" in bookingResult) && bookingResult.data.status !== "paid") {
+      if ("error" in bookingResult) {
+        // A failed read is not proof of payment — stay on the QR page and let
+        // the user retry instead of navigating to a fake success screen.
+        hasResolved.current = false;
+        setErrorMessage(translate("common.error"));
+        return;
+      }
+      if (bookingResult.data.status !== "paid") {
         setIsRefundQueued(true);
         return;
       }
       goToSuccess();
     })();
-  }, [bookingId, goToFailure, goToSuccess, intent, token]);
-
-  const simulate = useCallback(
-    async (outcome: SimulatedOutcome) => {
-      if (!token || simulatingOutcome !== null) return;
-      setSimulatingOutcome(outcome);
-      setErrorMessage(null);
-      setNotice(null);
-
-      try {
-        const result = await simulatePaymentAction({ bookingId, outcome }, token);
-        if (!result.success) {
-          setErrorMessage(
-            result.status === 403
-              ? translate("booking.payment.qr.demo_unavailable")
-              : result.status === 409
-                ? translate("booking.payment.qr.no_open_payment")
-                : result.error,
-          );
-          return;
-        }
-        applyOutcome(result.data);
-      } catch {
-        setErrorMessage(translate("common.error"));
-      } finally {
-        setSimulatingOutcome(null);
-      }
-    },
-    [applyOutcome, bookingId, simulatingOutcome, token, translate],
-  );
-
-  const sync = useCallback(async () => {
-    if (!token || isSyncing) return;
-    setIsSyncing(true);
-    setErrorMessage(null);
-    setNotice(null);
-
-    try {
-      const result = await syncPaymentAction({ bookingId }, token);
-      if (!result.success) {
-        setErrorMessage(result.error);
-        return;
-      }
-      applyOutcome(result.data);
-    } catch {
-      setErrorMessage(translate("common.error"));
-    } finally {
-      setIsSyncing(false);
-    }
-  }, [applyOutcome, bookingId, isSyncing, token, translate]);
+  }, [bookingId, goToFailure, goToSuccess, intent, token, setErrorMessage, translate]);
 
   const reopen = useCallback(async () => {
     hasResolved.current = false;

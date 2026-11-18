@@ -30,7 +30,6 @@ export default function PaymentQrDesktop({
   paymentMethods: PaymentMethodOption[];
 }) {
   const { translate } = useLocale();
-  const canSync = payment.intent?.status === "pending" && !payment.isRefundQueued;
 
   return (
     <div className="mx-auto w-full max-w-7xl px-6 py-8 lg:px-8">
@@ -71,11 +70,8 @@ export default function PaymentQrDesktop({
 
             <PaymentIntentActions
               isDemo={isDemo}
-              canSync={canSync}
-              isSyncing={payment.isSyncing}
               isOpening={payment.isOpening}
               simulatingOutcome={payment.simulatingOutcome}
-              onSync={payment.sync}
               onSimulate={payment.simulate}
             />
           </div>

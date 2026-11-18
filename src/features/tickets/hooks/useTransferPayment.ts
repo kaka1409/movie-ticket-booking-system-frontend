@@ -10,6 +10,7 @@ import {
   simulateTransferPaymentAction,
   syncTransferPaymentAction,
 } from "@/features/booking/action";
+import { usePaymentAttempt } from "@/features/booking/hooks/usePaymentAttempt";
 import type {
   PaymentIntent,
   PaymentMethodId,
@@ -20,6 +21,12 @@ import { getTicketOwnership } from "../api";
 
 /** Provider poll cadence: fast enough to feel live, cheap enough for a demo. */
 const INTENT_POLL_INTERVAL_MS = 3000;
+
+/** The attempt's message channel — passed down so pre-hook callbacks never close over hook state. */
+interface PaymentMessages {
+  setErrorMessage: (message: string | null) => void;
+  setNotice: (message: string | null) => void;
+}
 
 /**
  * Where the recipient's checkout stands:
@@ -67,10 +74,6 @@ export function useTransferPayment({
   const [stage, setStage] = useState<TransferPaymentStage>("reading");
   const [intent, setIntent] = useState<PaymentIntent | null>(null);
   const [isOpening, setIsOpening] = useState(false);
-  const [isSyncing, setIsSyncing] = useState(false);
-  const [simulatingOutcome, setSimulatingOutcome] = useState<SimulatedOutcome | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [notice, setNotice] = useState<string | null>(null);
 
   /** One terminal decision per page — a late poll must not navigate twice. */
   const hasResolved = useRef(false);
@@ -86,9 +89,9 @@ export function useTransferPayment({
    * capture leaves it with the sender, a settled one moved it here.
    */
   const resolveCapture = useCallback(
-    async (captured: PaymentIntent) => {
+    async (captured: PaymentIntent, messages: PaymentMessages) => {
       setIntent(captured);
-      setErrorMessage(null);
+      messages.setErrorMessage(null);
       if (!token) return;
 
       const ownership = await getTicketOwnership(ticketId, token);
@@ -101,7 +104,7 @@ export function useTransferPayment({
           return;
         }
         setStage("paying");
-        setErrorMessage(ownership.error.message);
+        messages.setErrorMessage(ownership.error.message);
         return;
       }
       if (ownership.data.viewerRole === "owner") {
@@ -115,9 +118,9 @@ export function useTransferPayment({
   );
 
   const applyIntent = useCallback(
-    (next: PaymentIntent) => {
+    (next: PaymentIntent, messages: PaymentMessages) => {
       if (next.status === "success") {
-        void resolveCapture(next);
+        void resolveCapture(next, messages);
         return;
       }
       setIntent(next);
@@ -137,7 +140,7 @@ export function useTransferPayment({
   );
 
   const applyOutcome = useCallback(
-    (outcome: PaymentOutcomeWithIntent) => {
+    (outcome: PaymentOutcomeWithIntent, helpers: PaymentMessages) => {
       setIntent(outcome.intent);
 
       switch (outcome.settlement) {
@@ -157,17 +160,39 @@ export function useTransferPayment({
         case "no_change":
           // Nothing left to apply: the attempt's own state is the answer.
           if (outcome.intent.status === "pending") {
-            setNotice(translate("tickets.transfer.payment.not_confirmed"));
+            helpers.setNotice(translate("tickets.transfer.payment.not_confirmed"));
             return;
           }
-          applyIntent(outcome.intent);
+          applyIntent(outcome.intent, helpers);
           return;
         default:
-          applyIntent(outcome.intent);
+          applyIntent(outcome.intent, helpers);
       }
     },
     [applyIntent, goToTicket, translate],
   );
+
+  const simulateAction = useCallback(
+    (outcome: SimulatedOutcome, attemptToken: string) =>
+      simulateTransferPaymentAction({ transferId, outcome }, attemptToken),
+    [transferId],
+  );
+
+  const syncAction = useCallback(
+    (attemptToken: string) => syncTransferPaymentAction({ transferId }, attemptToken),
+    [transferId],
+  );
+
+  const {
+    isSyncing,
+    simulatingOutcome,
+    errorMessage,
+    notice,
+    setErrorMessage,
+    setNotice,
+    simulate,
+    sync,
+  } = usePaymentAttempt({ simulateAction, syncAction, applyOutcome });
 
   const start = useCallback(
     async (method: PaymentMethodId) => {
@@ -186,14 +211,14 @@ export function useTransferPayment({
           setErrorMessage(result.error);
           return;
         }
-        applyIntent(result.data);
+        applyIntent(result.data, { setErrorMessage, setNotice });
       } catch {
         setErrorMessage(translate("common.error"));
       } finally {
         setIsOpening(false);
       }
     },
-    [applyIntent, transferId, token, translate],
+    [applyIntent, transferId, token, translate, setErrorMessage, setNotice],
   );
 
   useEffect(() => {
@@ -209,9 +234,9 @@ export function useTransferPayment({
         setStage("choosing");
         return;
       }
-      applyIntent(current.data);
+      applyIntent(current.data, { setErrorMessage, setNotice });
     })();
-  }, [applyIntent, token, transferId]);
+  }, [applyIntent, token, transferId, setErrorMessage, setNotice]);
 
   useEffect(() => {
     if (!token || stage !== "paying" || intent?.status !== "pending") return;
@@ -222,61 +247,12 @@ export function useTransferPayment({
         // A transient read failure keeps the visible code on screen.
         if ("error" in current) return;
         if (current.data.status === intent.status) return;
-        applyIntent(current.data);
+        applyIntent(current.data, { setErrorMessage, setNotice });
       })();
     }, INTENT_POLL_INTERVAL_MS);
 
     return () => clearInterval(intervalId);
-  }, [applyIntent, intent?.status, stage, token, transferId]);
-
-  const simulate = useCallback(
-    async (outcome: SimulatedOutcome) => {
-      if (!token || simulatingOutcome !== null) return;
-      setSimulatingOutcome(outcome);
-      setErrorMessage(null);
-      setNotice(null);
-
-      try {
-        const result = await simulateTransferPaymentAction({ transferId, outcome }, token);
-        if (!result.success) {
-          setErrorMessage(
-            result.status === 403
-              ? translate("booking.payment.qr.demo_unavailable")
-              : result.status === 409
-                ? translate("booking.payment.qr.no_open_payment")
-                : result.error,
-          );
-          return;
-        }
-        applyOutcome(result.data);
-      } catch {
-        setErrorMessage(translate("common.error"));
-      } finally {
-        setSimulatingOutcome(null);
-      }
-    },
-    [applyOutcome, simulatingOutcome, token, translate, transferId],
-  );
-
-  const sync = useCallback(async () => {
-    if (!token || isSyncing) return;
-    setIsSyncing(true);
-    setErrorMessage(null);
-    setNotice(null);
-
-    try {
-      const result = await syncTransferPaymentAction({ transferId }, token);
-      if (!result.success) {
-        setErrorMessage(result.error);
-        return;
-      }
-      applyOutcome(result.data);
-    } catch {
-      setErrorMessage(translate("common.error"));
-    } finally {
-      setIsSyncing(false);
-    }
-  }, [applyOutcome, isSyncing, token, translate, transferId]);
+  }, [applyIntent, intent?.status, stage, token, transferId, setErrorMessage, setNotice]);
 
   const retry = useCallback(() => {
     hasResolved.current = false;
@@ -284,7 +260,7 @@ export function useTransferPayment({
     setNotice(null);
     setErrorMessage(null);
     setStage("choosing");
-  }, []);
+  }, [setNotice, setErrorMessage]);
 
   return {
     stage,

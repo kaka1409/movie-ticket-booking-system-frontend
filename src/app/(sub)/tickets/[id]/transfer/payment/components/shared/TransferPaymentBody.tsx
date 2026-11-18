@@ -133,11 +133,8 @@ export default function TransferPaymentBody({
 
           <PaymentIntentActions
             isDemo={view.isDemo}
-            canSync={payment.intent !== null}
-            isSyncing={payment.isSyncing}
             isOpening={payment.isOpening}
             simulatingOutcome={payment.simulatingOutcome}
-            onSync={payment.sync}
             onSimulate={payment.simulate}
           />
         </div>
