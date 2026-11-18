@@ -50,3 +50,8 @@ export function authReturnTarget(rawReturnUrl: string | null | undefined): strin
   const safeReturnUrl = getSafeReturnUrl(rawReturnUrl);
   return safeReturnUrl === "/" ? undefined : safeReturnUrl;
 }
+
+/** Display member code (`PS-` + first 8 hex chars of the user id, uppercased). */
+export function getMemberCode(userId: string): string {
+  return `PS-${userId.replace(/-/g, "").slice(0, 8).toUpperCase()}`;
+}

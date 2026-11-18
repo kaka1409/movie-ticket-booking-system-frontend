@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Crown, Sparkles, ShieldCheck, UserCog, LockKeyhole } from "lucide-react";
 import { useLocale } from "@/contexts/LocaleContext";
 import AvatarRing from "@/components/ui/AvatarRing";
+import { getMemberCode } from "@/features/auth/utils";
 import type { User } from "@/features/auth/types";
 
 /**
@@ -13,7 +14,7 @@ import type { User } from "@/features/auth/types";
  */
 export default function MemberCard({ user }: { user: User }) {
   const { translate } = useLocale();
-  const memberCode = `PS-${user.id.replace(/-/g, "").slice(0, 8).toUpperCase()}`;
+  const memberCode = getMemberCode(user.id);
 
   return (
     <article className="relative overflow-hidden rounded-2xl border border-(--color-gold)/30 bg-gradient-to-br from-(--color-surface) via-(--color-surface-2) to-(--color-surface) p-6 shadow-xl">

@@ -4,6 +4,7 @@ import { ShieldCheck, LogOut, Loader2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useLogout } from "@/features/auth/hooks/useLogout";
+import { getMemberCode } from "@/features/auth/utils";
 import AvatarRing from "@/components/ui/AvatarRing";
 
 /**
@@ -18,7 +19,7 @@ export default function AccountHero() {
 
   if (!user) return null;
 
-  const memberCode = `PS-${user.id.replace(/-/g, "").slice(0, 8).toUpperCase()}`;
+  const memberCode = getMemberCode(user.id);
 
   return (
     <div className="relative overflow-hidden rounded-3xl border border-(--color-border) bg-gradient-to-r from-(--color-surface) via-(--color-surface-2) to-(--color-surface) p-6 shadow-(--shadow-card) lg:p-8">
