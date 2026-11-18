@@ -22,7 +22,9 @@ Keep import boundaries aligned with these rules when moving a component; a moved
 
 ## Framework / Toolchain Quirks
 
-- **Proxy convention**: Next 16 renamed `middleware.ts` → `src/proxy.ts` (exported `proxy()` function). A leftover `middleware.ts` is deprecated and **silently ignored at build time**; `proxy` runs on the Node.js runtime only. The project currently defines no proxy — route protection lives in `hasSession()` gates (see Protected Route Guards).
+- **Proxy convention**: Next 16 renamed `middleware.ts` → `src/proxy.ts` (exported `proxy()` function, Node.js runtime only). A leftover `middleware.ts` is deprecated and **silently ignored at build time**. The project has exactly one proxy and it does one job: minting a per-request CSP nonce and writing the policy onto both the request and the response, so `script-src` runs without `'unsafe-inline'`. Route protection stays in `hasSession()` gates (see Protected Route Guards) — the proxy never authorizes and never redirects, and its matcher excludes `/api/*`, `/_next/*` and static files.
+- **Env access**: app code never reads `process.env` directly. `src/libs/env/public.ts` holds the client-safe `NEXT_PUBLIC_*` values (each one a literal read — Next inlines those at build time and the browser bundle has no `process.env` object); `src/libs/env/server.ts` is `server-only`, parses `BACKEND_URL`/`API_PREFIX` with zod and is imported by `src/instrumentation.ts`, so a production boot without a backend origin fails immediately instead of rendering against `localhost`. Importing a server-only module from a client component is a build error — that is the guard working, not a false positive.
+- **API layer shape**: `src/libs/api-contract.ts` (client-safe wire shapes + pure error helpers, imported by `AuthContext` and the auth hooks) vs `src/libs/api.ts` (the transport — used by server code and by the two browser callers, `NotificationsContext` and `MoviePreviewContext`). The transport resolves an absolute base on the server and the same-origin `/api/v1` rewrite in the browser.
 - **React Compiler OFF** (`reactCompiler: false`); the `babel-plugin-react-compiler` devDep was removed.
 - **Tailwind CSS v4** via `@tailwindcss/postcss`. Use `@import "tailwindcss"` syntax. No JS config file. Custom `@utility scrollbar-hide` in `global.css`. Custom animations: `animate-fade-in` (fadeSlideIn keyframe), `animate-expand`.
 - **Brand theme**: CSS custom properties in `global.css` (gold/black). Access via `var(--color-*)`. Spacing via `var(--space-*)`. Radius via `var(--radius-*)`. Shadows via `var(--shadow-*)`.
@@ -61,10 +63,17 @@ Keep import boundaries aligned with these rules when moving a component; a moved
 
 ## API Layer
 
-`src/libs/api.ts` exports two functions:
+Two modules, because two callers live in the browser:
+
+- `src/libs/api-contract.ts` — client-safe: wire shapes (`ApiResponse`/`SuccessResponse`/`ErrorResponse`/`ActionFailure`), the pure error helpers (`parseApiError`, `toErrorResponse`, `toActionFailure`, `fieldErrorsFromDetails`), `withLang`, and `UNAUTHORIZED_EVENT`. `AuthContext` and the auth hooks import from here; nothing in this file touches `process.env` or performs a request.
+- `src/libs/api.ts` — the transport, used by server code and by the two browser callers (`NotificationsContext` inbox resync, `MoviePreviewContext` hover preview). It re-exports the contract, so server files keep one import path.
+
+The transport:
 
 - `apiFetch<T>(path, options?, token?, cookie?)` — GET queries. Sends `credentials: "include"` by default — this forwards cookies **in the browser only**; during server rendering it does nothing. Server components fetching user-scoped data MUST pass `await getRequestCookie()` as the 4th arg (sets the `Cookie` header), e.g. `getBookingById(bookingId, await getRequestCookie())`.
 - `apiMutation<T>(path, options, token?, cookie?, raw?)` — POST/PATCH/PUT/DELETE mutations. `method` required. `cookie` param forwards Cookie header. `raw: true` returns `Response` (for reading `Set-Cookie` headers in auth actions). No credentials by default.
+- `apiUpload<T>(path, formData, token?, cookie?)` — multipart POST (avatar). Never sets `Content-Type`: the multipart boundary must come from `FormData`.
+- `settleApiResponse` / `toApiResponse` — turn a rejection into the `{ error }` arm, so a streamed section renders the failure in place instead of unwinding its boundary.
 - The three seat-hold functions in `features/booking/api.ts` are the exception that calls `apiMutation`/`apiFetch` **from the browser with a Bearer token** (RAM-only access token), and so is `getPaymentIntent` (the intent route is JWT-only, so the refresh cookie cannot stand in). `apiMutation` throws on failure, so the hold wrappers convert throws into the `{ error }` union arm via `toErrorUnion` — the context only ever consumes unions.
 - **Time fields on the wire**: showtime `date` (`YYYY-MM-DD`) + `startTime`/`endTime`/`showtimeStart`/`showtimeEnd` (`HH:mm`) are the cinema's wall clock in `Asia/Ho_Chi_Minh`, not instants. Compose them locally when an absolute moment is needed (`buildShowtimeStart`/`buildShowtimeEnd` in `features/tickets/adapters/ticket.ts` → `new Date(y, m - 1, d, hh, mm)`), which is correct for a visitor in UTC+7. Real instants (`createdAt`, `expiresAt`, `usedAt`, …) arrive as ISO-8601 `…Z` and are parsed directly.
 

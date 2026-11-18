@@ -7,7 +7,8 @@ pnpm dev           # dev server on :3000 (compiles new routes on demand)
 pnpm build         # production build - needs the backend on :8080
 pnpm lint          # ESLint flat config (next/core-web-vitals + typescript)
 pnpm typecheck     # tsc --noEmit
-pnpm verify        # lint + typecheck - run before handing work over
+pnpm verify        # lint + typecheck + format:check - run before handing work over
+pnpm verify:prod   # verify + build (needs the backend on :8080 and no dev server)
 pnpm format        # Prettier write (printWidth 100, double quotes)
 ```
 
@@ -27,7 +28,7 @@ Never run `pnpm build` while `pnpm dev` is running: both write `.next`, and Next
 ### Framework notes
 
 - Tailwind CSS v4 via `@tailwindcss/postcss`, `@import "tailwindcss"`, no JS config; colors/spacing use `bg-(--color-gold)`-style CSS variables.
-- Next 16: `middleware.ts` is gone (renamed `src/proxy.ts`); this project defines no proxy - guards are `hasSession()` + `ProtectedRoute`.
+- Next 16: `middleware.ts` is gone (renamed `src/proxy.ts`). `src/proxy.ts` exists only to emit the per-request CSP nonce + policy; route protection is still `hasSession()` + `ProtectedRoute`, never the proxy.
 - `reactCompiler: false`. Navigation is `<Link>` + `usePathname()`/`useSearchParams()` (wrap the latter in `<Suspense>`); `"use client"` on any file using hooks; every route has a `loading.tsx`.
 - Icons `lucide-react`, QR `qrcode.react`, images `next/image` (host allowlist in `next.config.ts`).
 
@@ -76,6 +77,7 @@ No automated layer checker ships yet — `pnpm typecheck` still catches an alias
 ## Write-time rules (short form)
 
 - `api.ts` = GET queries via `apiFetch`; `action.ts` = `"use server"` mutations via `apiMutation`. Actions return `{ success: true, data } | { success: false, error, status? }` and never throw.
+- Env: never `process.env` in app code - `libs/env/public.ts` for client-safe `NEXT_PUBLIC_*`, `libs/env/server.ts` (`server-only`, validated at boot by `src/instrumentation.ts`) for the rest. Client code imports wire shapes/helpers from `libs/api-contract`; `libs/api` is the transport (server + the two browser callers).
 - Server components fetching user-scoped data must pass `await getRequestCookie()`; `credentials: "include"` only works in the browser. `GET /seats` is one of them: with the refresh cookie the backend reports the caller's own held seats as `idle` (contract §4.1.4), without it they come back `occupied` and a back-navigation/refresh empties the seat draft. That call is also `cache: "no-store"` — the payload is identity-scoped.
 - React 19: a `useActionState` dispatcher must sit on a real `<form action={formAction}>` - calling it from `onClick` skips the transition, so `isPending` never flips and double submits get through.
 - Both device trees always render: mount every side effect once at PAGE level, keep step logic in `features/*/hooks`, use `lg:`/`xl:` inside desktop components.
@@ -119,3 +121,13 @@ The backend exposes its whole admin surface under `/api/v1/admin/*` (BE `AGENTS.
 - Toolchain quirks, server actions, API layer, catalog i18n, form validation (full detail): `docs/conventions.md`
 - Pending work / production readiness: `docs/progress.md`
 - Desktop skin rules: `.opencode/skills/fe-desktop-skin/SKILL.md`
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+## This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->

@@ -13,6 +13,7 @@
 - [x] Production build + lint pass
 - [x] Prettier — `.prettierrc` + `.prettierignore` + `pnpm format`; whole codebase formatted
 - [x] Environment documentation — `.env.example` added; README documents `BACKEND_URL`/`API_PREFIX` (evaluated at build time)
+- [x] Environment validation — `libs/env/public.ts` (client-safe `NEXT_PUBLIC_*`) + `libs/env/server.ts` (`server-only`, zod, validated at boot by `src/instrumentation.ts`, refuses a production start without `BACKEND_URL`); a production build without `NEXT_PUBLIC_BACKEND_URL` turns realtime off instead of guessing `<host>:8080`
 - [x] README accuracy — stale `features/auth/api.ts` reference fixed; env + test sections added
 - [x] Unused dev tooling — `babel-plugin-react-compiler` removed (`reactCompiler: false` unchanged)
 - [ ] Mock data - live vs mock split marked at each function. Booking flow, tickets (listing/detail/transfer/modify/cancel), wishlist, notifications, home QuickBooking, the whole movies catalog and the reviews block (list, votes, filters) are LIVE (no mock in any fetcher). Remaining: `movies/mock.tsx` (`ALL_MOVIES` - the desktop preview popover's field fallback only) `[blocked]`
@@ -25,7 +26,7 @@
 - [x] Layered route guards (`hasSession()` → `ProtectedRoute` → cookie forward)
 - [x] `next/image` host allowlist (11 explicit hosts, no wildcards)
 - [x] Session/401 handling — client: `UNAUTHORIZED_EVENT` in `libs/api.ts` → `AuthContext` clears state only, `ProtectedRoute` renders the prompt in place (excludes `/auth/*`, no redirect); server: `isUnauthorizedResult()` in `libs/session.ts` → `<LoginPrompt />` in place — wired on tickets listing/detail and booking seats/status pages
-- [ ] Security headers — no CSP/HSTS/X-Frame-Options/Referrer-Policy `[before deploy]`
+- [x] Security headers — `next.config.ts` sends `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy` and HSTS; the **CSP is per-request** from `src/proxy.ts` (`script-src` nonce + `strict-dynamic`, no `'unsafe-inline'`; `style-src` keeps `'unsafe-inline'` for Tailwind v4's runtime style injection and the dev overlay)
 - [x] Reviews, booking and ticket modify/cancel actions pass raw `accessToken` as a server-action argument — the remaining places the token crosses the wire; prefer cookie `[now]`; ticket **transfer** actions already forward the refresh cookie
 - [ ] `allowedDevOrigins` hardcodes LAN IPs — dev-only, harmless in production `[before deploy]`
 
@@ -41,9 +42,9 @@
 ### Level 4 — Operations
 
 - [x] Console cleanliness (3 `console.warn`, 0 `console.log` in `src/`)
-- [ ] Deploy config — no `output: "standalone"`, no Dockerfile/vercel.json `[before deploy]`
+- [x] Deploy config — Vercel-only: `vercel.json` pins `sin1`, no `output: "standalone"`, no Dockerfile
 - [ ] CI/CD — no `.github/` workflows `[before deploy]`
-- [ ] Build-time env — `next.config.ts` `rewrites()` evaluates `BACKEND_URL` at build time; undocumented `[before deploy]`
+- [x] Build-time env — every variable is consumed at build time (`rewrites()`, inlined `NEXT_PUBLIC_*`); documented in `README.md` §Environment Variables
 - [x] SEO — root metadata (`metadataBase`, title template, OG/Twitter, `NEXT_PUBLIC_SITE_URL` in `libs/site.ts`), `generateMetadata` on `movies/[slug]` (canonical, OG), per-page titles, `robots: noindex` on all protected/auth routes, `app/robots.ts` + `app/sitemap.ts`, JSON-LD `Movie` + `AggregateRating` on the detail page. Remaining: locale-aware metadata (titles don't vary by `locale` cookie) and hreflang (not applicable — locale is cookie-based, not URL-based)
 - [x] Font loading — `next/font` Inter (self-hosted, `latin`+`latin-ext`+`vietnamese` subsets, `display: swap`) wired to `--font-inter` → `--font-sans` in `global.css`
 - [x] Transfer actions complete and documented: all transfer flow pages documented in `docs/pages.md`, transfer feature updated in `docs/features.md`, transfer state management added to `docs/state.md`, transfer security progress tracked in `docs/progress.md`
@@ -56,6 +57,7 @@
 - [ ] Tests pass in CI `[before deploy]`
 
 ### Trailer + Avatar upload (2026-11-05)
-- [x] FE trailer: Movie.trailerUrl, 	oTrailerEmbedUrl, TrailerModal src prop, wired movie-detail mobile+desktop + home desktop, admin MovieFormDialog field.
-- [x] FE avatar: piUpload, 	oAvatarBlob, useAvatarUpload, mobile AvatarEditor + desktop AvatarSection enabled.
+
+- [x] FE trailer: Movie.trailerUrl, oTrailerEmbedUrl, TrailerModal src prop, wired movie-detail mobile+desktop + home desktop, admin MovieFormDialog field.
+- [x] FE avatar: piUpload, oAvatarBlob, useAvatarUpload, mobile AvatarEditor + desktop AvatarSection enabled.
 - [ ] Backend migration + Cloudinary creds (user).
