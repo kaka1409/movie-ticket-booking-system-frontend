@@ -77,7 +77,7 @@ export default function QuickQrModal({
           <h3 className="mt-1 text-base font-extrabold text-white truncate px-6">{ticket.movie}</h3>
           <p className="mt-0.5 text-xs text-(--color-text-muted)">{ticket.datetime}</p>
           <p className="text-xs text-(--color-text-secondary)">
-            {ticket.cinema} {ticket.room ? `Â· ${ticket.room}` : ""}
+            {ticket.cinema} {ticket.room ? `· ${ticket.room}` : ""}
           </p>
         </div>
 

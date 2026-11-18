@@ -41,7 +41,7 @@ export const LENGTH_LABEL_KEYS: Record<(typeof LENGTH_OPTIONS)[number], string> 
   "> 120 min": "movies.filter_length.long",
 };
 
-/** Rating range bounds (backend rating scale is 0â€“10). */
+/** Rating range bounds (backend rating scale is 0–10). */
 export const RATING_MIN = 0;
 export const RATING_MAX = 10;
 export const RATING_STEP = 0.5;
